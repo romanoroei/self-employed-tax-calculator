@@ -81,7 +81,7 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <article class="metric study-metric"><p>🌱 יעד הפקדה</p><bdi class="amount" id="study-target"></bdi><small>תקרת הפקדה שנתית</small></article>
 <article class="metric highlight"><p>שווי הטבות המס</p><bdi class="amount" id="savings"></bdi><small>אומדן שנתי · מס הכנסה, ביטוח לאומי וביטוח בריאות</small></article>
 <article class="metric highlight study-metric"><p>שווי הטבות המס</p><bdi class="amount" id="study-savings"></bdi><small>אומדן שנתי · מס הכנסה, ביטוח לאומי וביטוח בריאות</small></article></div>
-<article class="metric grand-total"><div><p>💎 שילוב הטבות המס · השנה</p><small>פנסיה + קרן השתלמות</small></div><bdi class="amount" id="grand-savings"></bdi></article>
+<article class="metric grand-total"><div><p>💎 שילוב הטבות המס · <span id="grand-year"></span></p><small>פנסיה + קרן השתלמות</small></div><bdi class="amount" id="grand-savings"></bdi></article>
 <p class="planning-note">היעדים שנתיים וכוללים הפקדות שכבר בוצעו. יעד הפנסיה אינו בהכרח המינימום למיצוי ההטבות.</p>
 <details class="savings-disclosure" aria-labelledby="breakdown-title"><summary id="breakdown-title"><span class="question-icon" aria-hidden="true">?</span><span>רוצים לדעת מניין החיסכון מגיע?</span><svg class="disclosure-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="fund-tables"><section class="breakdown" aria-labelledby="pension-title"><h3 id="pension-title">🎯 פנסיה</h3>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">📉</span><div><div class="deduction-label"><strong>ניכוי - הוצאה מוכרת</strong><details class="deduction-tip" id="deduction-tip"><summary aria-label="הסבר על חישוב החיסכון מהניכוי">ⓘ</summary><p class="deduction-explanation" id="deduction-explanation"></p></details></div><small><bdi id="deduction"></bdi> מוכרים להפחתה מההכנסה</small></div><bdi id="deduction-saving"></bdi></div>
@@ -281,6 +281,7 @@ function renderEquationLines(id,lines,note='') {
   if(note){const label=document.createElement('span');label.className='formula-note';label.textContent=note;nodes.push(label);}el(id).replaceChildren(...nodes);
 }
 function renderResult(r) {
+  set('grand-year',r.year);
   const n=value=>moneyFormatter.format(value);
   const route=r.route==='mutav'?'עמית מוטב':'המסלול הרגיל';
   const insurance=r.pensionInsurance,combined=r.pensionTotal;
