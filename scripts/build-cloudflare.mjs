@@ -32,7 +32,7 @@ await writeFile(path.join(calc, 'analytics.js'), analytics);
 for (const asset of assets) await cp(path.join(root, asset), path.join(calc, asset));
 for (const entry of publicSiteEntries) await cp(path.join(root, 'business-site', entry), path.join(output, entry), {recursive:true});
 // Content versions ensure browsers pick up stylesheet and script updates together.
-const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html');
+const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html', 'magazine/financial-calendar.html');
 for (const page of businessPages) {
   const file = path.join(output, page);
   let document = await readFile(file, 'utf8');
@@ -47,7 +47,7 @@ for (const page of businessPages) {
 await writeFile(path.join(output,'_redirects'), '# Homepage is served directly; calculator retains its existing path.\n');
 await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>העמוד לא נמצא</title><h1>העמוד לא נמצא</h1><a href="/">חזרה לאתר</a></html>');
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
-const sitePages = ['', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','self-employed-tax-calculator/'];
+const sitePages = ['', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar','self-employed-tax-calculator/'];
 await writeFile(path.join(output,'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages.map(p=>`<url><loc>https://romanoinvest.co.il/${p}</loc></url>`).join('')}</urlset>`);
 const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:root,stdio:'inherit'});
 if (siteCheck.error) throw siteCheck.error;

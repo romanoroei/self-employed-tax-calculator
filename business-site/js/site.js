@@ -89,7 +89,7 @@
   if (!backLinks.length) {
     // home page: remember the spot when an article link is followed
     document.addEventListener('click', (e) => {
-      if (e.target.closest('a[href^="magazine/"]')) ss.set(SPOT, String(Math.round(window.scrollY)));
+      if (e.target.closest('a[href^="/magazine/"], a[href^="magazine/"]')) ss.set(SPOT, String(Math.round(window.scrollY)));
     });
     if (ss.get(RESTORE)) {
       ss.del(RESTORE);

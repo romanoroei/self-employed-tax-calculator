@@ -45,5 +45,5 @@ assert(js.includes('button.disabled || !form.reportValidity()'),'Prevent repeate
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,7,'Sitemap must include all seven canonical pages');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,8,'Sitemap must include all eight canonical pages');
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);
