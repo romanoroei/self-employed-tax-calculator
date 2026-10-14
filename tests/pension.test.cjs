@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
-const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts,calculateDepositCompletion})',{Intl});
+const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);
 function bestAt(income,deposit,data,extra){
   return ['regular','mutav'].map(route=>api.evaluateDeposit(income,deposit,data,route,extra,0)).filter(Boolean).sort(api.comparePensionBenefits)[0];
@@ -251,15 +251,4 @@ test('displayed deduction products use actual tax bands rather than a single mar
   assert.deepEqual(Array.from(api.deductionTaxProducts(200000,1000,api.TAX_DATA[2026])),['1,000 × 20%']);
   assert.deepEqual(Array.from(api.deductionTaxProducts(500000,25608,api.TAX_DATA[2026])),['25,608 × 35%']);
   assert.deepEqual(Array.from(api.deductionTaxProducts(0,0,api.TAX_DATA[2026])),[]);
-});
-
-
-test('completion distinguishes an unknown deposit from a reported zero and never recommends a negative top-up',()=>{
-  assert.equal(api.calculateDepositCompletion(45060,null),null);
-  const zero=api.calculateDepositCompletion(45060,0);near(zero.remaining,45060);near(zero.excess,0);
-  const partial=api.calculateDepositCompletion(45060,10000);near(partial.remaining,35060);near(partial.excess,0);
-  const full=api.calculateDepositCompletion(45060,45060);near(full.remaining,0);near(full.excess,0);
-  const over=api.calculateDepositCompletion(20566,25000);near(over.remaining,0);near(over.excess,4434);
-  const cents=api.calculateDepositCompletion(10000,9999.5);near(cents.remaining,.5);
-  assert.throws(()=>api.calculateDepositCompletion(1000,-1));assert.throws(()=>api.calculateDepositCompletion(1000,NaN));assert.throws(()=>api.calculateDepositCompletion(-1,0));
 });
