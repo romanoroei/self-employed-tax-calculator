@@ -14,6 +14,7 @@ test('2026 maximum-income example preserves conservative target and tax benefits
   const r=api.calculateCombined(500000,2026);
   assert.equal(r.targetDeposit,45642);
   assert.equal(r.minimumDeposit,45060);
+  assert.equal(r.deposit,45060);
   assert.equal(r.deduction,25608);
   assert.equal(r.credit,12804);
   near(r.total,13444.2);
@@ -44,6 +45,7 @@ test('minimum preserves all displayed pension benefits across years and tier bou
     const r=api.calculateScenario(income,year,0,extra);
     assert.ok(Number.isInteger(r.minimumDeposit)&&r.minimumDeposit>=0&&r.minimumDeposit<=r.targetDeposit);
     const minimum=bestAt(income,r.minimumDeposit,r.data,extra);
+    assert.equal(r.deposit,r.minimumDeposit);
     near(minimum.total,r.total);
     near(minimum.deduction,r.deduction);
     const insurance=api.insuranceEstimate(income,minimum.deduction,year);
