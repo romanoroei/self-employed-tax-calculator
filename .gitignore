@@ -4,3 +4,5 @@
 !.gitignore
 !.nojekyll
 !brand-logo.png
+!tests/
+!tests/pension.test.cjs
