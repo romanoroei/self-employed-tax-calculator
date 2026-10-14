@@ -89,6 +89,17 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <article class="metric grand-total"><div><p>💎 שילוב הטבות המס הפוטנציאליות · <span id="grand-year"></span></p><small>פנסיה + קרן השתלמות</small></div><bdi class="amount" id="grand-savings"></bdi></article>
 <p class="planning-note"><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p>
 <p class="planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p>
+<details class="savings-disclosure" id="custom-deposits"><summary>מפקידים פחות מהיעד? חשבו לפי הסכום שלכם</summary>
+<form id="custom-deposit-form" class="panel" style="margin-top:12px" novalidate>
+<p class="helper" id="custom-help">הזינו את סך ההפקדות המתוכננות לשנת המס, כולל מה שכבר הופקד. שדה ריק ייחשב כאפס.</p>
+<div class="grid" style="margin-top:16px"><div><label for="custom-study">הפקדה שנתית לקרן השתלמות</label><div class="input-wrap"><input id="custom-study" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="custom-help custom-error"><span class="currency" aria-hidden="true">₪</span></div></div><div><label for="custom-pension">הפקדה שנתית לפנסיה</label><div class="input-wrap"><input id="custom-pension" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-describedby="custom-help custom-error"><span class="currency" aria-hidden="true">₪</span></div></div></div>
+<p class="error" id="custom-error" role="alert"></p><button class="primary" type="submit">חישוב ההטבה לפי ההפקדה שלי</button>
+<div id="custom-result" aria-live="polite" hidden><p class="helper" id="custom-context"></p>
+<div class="row"><span>מס הכנסה · הטבה פוטנציאלית</span><bdi id="custom-tax"></bdi></div>
+<div class="row"><span>ביטוח לאומי ובריאות · אומדן חיסכון</span><bdi id="custom-insurance"></bdi></div>
+<article class="metric grand-total"><div><p>הטבת המס הפוטנציאלית בהפקדה שלכם</p><small>פנסיה + קרן השתלמות · אומדן שנתי</small></div><bdi class="amount" id="custom-total"></bdi></article>
+<p class="helper">החישוב לפני נקודות זיכוי והטבות אישיות. המימוש תלוי בחבות המס בפועל. פטור עתידי על רווחי קרן ההשתלמות אינו כלול בסכום.</p></div>
+</form></details>
 <details class="savings-disclosure" aria-labelledby="breakdown-title"><summary id="breakdown-title"><span class="question-icon" aria-hidden="true">?</span><span>רוצים לדעת מניין החיסכון שלכם?</span><svg class="disclosure-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="fund-tables"><section class="breakdown" aria-labelledby="study-title"><h3 id="study-title">🌱 קרן השתלמות</h3>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">📉</span><div><strong>ניכוי - הוצאה מוכרת</strong><small><bdi id="study-deduction"></bdi> מוכרים להפחתה מההכנסה</small></div><bdi id="study-tax"></bdi></div>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">🛡️</span><div><strong>ביטוח לאומי</strong><small>אומדן החיסכון בזכות הניכוי</small></div><bdi id="study-national"></bdi></div>
@@ -252,15 +263,15 @@ const STUDY_DATA=Object.freeze({
   2025:{ceiling:20520,taxableIncome:293397,maxDeductible:13203},
   2026:{ceiling:20566,taxableIncome:293397,maxDeductible:13203}
 });
-function calculateStudyFund(income,year){
+function calculateStudyFund(income,year,deposit=STUDY_DATA[year]?.ceiling){
   const data=STUDY_DATA[year];
-  if(!data || !Number.isFinite(income) || income<0)throw new RangeError('Invalid study-fund inputs');
+  if(!data || ![income,deposit].every(Number.isFinite) || Math.min(income,deposit)<0)throw new RangeError('Invalid study-fund inputs');
   const baseIncome=Math.min(income,data.taxableIncome);
-  const deduction=Math.min(baseIncome*.045,data.maxDeductible);
+  const deduction=Math.min(deposit,baseIncome*.045,data.maxDeductible);
   const targetDeposit=income>0?data.ceiling:0;
   const deductionSaving=incomeTax(income,TAX_DATA[year])-incomeTax(Math.max(0,income-deduction),TAX_DATA[year]);
   const insurance=insuranceEstimate(income,deduction,year);
-  const capitalGain=targetDeposit*(Math.pow(1.08,6)-1);
+  const capitalGain=Math.min(deposit,targetDeposit)*(Math.pow(1.08,6)-1);
   return {data,baseIncome,deduction,targetDeposit,deductionSaving,insurance,total:deductionSaving+insurance.national+insurance.health,capitalGain,capitalBenefit:capitalGain*.25};
 }
 function calculateCombined(income,year,extraCredit=true){
@@ -270,6 +281,16 @@ function calculateCombined(income,year,extraCredit=true){
   const insurance=insuranceEstimate(pension.income,pension.deduction,year);
   const pensionTotal=pension.total+insurance.national+insurance.health;
   return {...pension,originalIncome:income,study,pensionInsurance:insurance,pensionTotal,grandTotal:pensionTotal+study.total};
+}
+function calculateChosenDeposits(income,year,pensionDeposit,studyDeposit,extraCredit=true){
+  if(!TAX_DATA[year] || ![income,pensionDeposit,studyDeposit].every(Number.isFinite) || Math.min(income,pensionDeposit,studyDeposit)<0)throw new RangeError('Invalid chosen deposits');
+  const study=calculateStudyFund(income,year,studyDeposit);
+  const pensionIncome=Math.max(0,income-study.deduction);
+  const pension=['regular','mutav'].map(route=>evaluateDeposit(pensionIncome,pensionDeposit,TAX_DATA[year],route,extraCredit,0)).filter(Boolean).sort((a,b)=>b.total-a.total||b.deduction-a.deduction)[0];
+  const pensionInsurance=insuranceEstimate(pensionIncome,pension.deduction,year);
+  const tax=study.deductionSaving+pension.total;
+  const insurance=study.insurance.national+study.insurance.health+pensionInsurance.national+pensionInsurance.health;
+  return {study,pension,tax,insurance,total:tax+insurance};
 }
 function isValidContactEmail(raw){
   const email=raw.trim();if(email.length>254)return false;
@@ -304,6 +325,7 @@ function renderEquationLines(id,lines,note='') {
   if(note){const label=document.createElement('span');label.className='formula-note';label.textContent=note;nodes.push(label);}el(id).replaceChildren(...nodes);
 }
 function renderResult(r) {
+  el('custom-result').hidden=true;set('custom-error','');
   set('grand-year',r.year);
   const n=value=>moneyFormatter.format(value);
   const route=r.route==='mutav'?'עמית מוטב':'המסלול הרגיל';
@@ -364,6 +386,21 @@ el('recalculate').addEventListener('click',()=>{
   el('results').hidden=true;el('share-calculator').hidden=true;el('recalculate').hidden=true;set('error','');
   el('income').focus({preventScroll:true});el('income').select();moveToElement(el('income'),'center');
 });
+function submitChosenDeposits(event){
+  event.preventDefault();
+  const income=parseIncome(el('income').value),year=Number(el('year').value);
+  const read=id=>el(id).value.trim()?parseIncome(el(id).value):0;
+  const pensionDeposit=read('custom-pension'),studyDeposit=read('custom-study');
+  if(![income,pensionDeposit,studyDeposit].every(Number.isFinite) || Math.min(income,pensionDeposit,studyDeposit)<0){
+    set('custom-error','יש להזין סכומי הפקדה תקינים, חיוביים או אפס.');el('custom-result').hidden=true;return;
+  }
+  const r=calculateChosenDeposits(income,year,pensionDeposit,studyDeposit,!el('disability-deduction').checked);
+  set('custom-error','');set('custom-tax',money(r.tax));set('custom-insurance',money(r.insurance));set('custom-total',money(r.total));
+  set('custom-context',`שנת ${year} · הכנסה חייבת ${money(income)} · פנסיה ${money(pensionDeposit)} · קרן השתלמות ${money(studyDeposit)}`);
+  el('custom-result').hidden=false;
+}
+el('custom-deposit-form').addEventListener('submit',submitChosenDeposits);
+for(const id of ['custom-study','custom-pension'])el(id).addEventListener('input',()=>{formatIncomeInput(el(id));el('custom-result').hidden=true;set('custom-error','');});
 el('calculator').addEventListener('submit',submitCalculation);
 for(const id of ['income']){
   el(id).addEventListener('input',()=>{formatIncomeInput(el(id));el('results').hidden=true;set('error','');});
