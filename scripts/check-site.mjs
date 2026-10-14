@@ -19,13 +19,16 @@ for(const file of published){
   if(!clean)continue;
   const target=clean.startsWith('/')?path.join(root,clean.slice(1)):path.resolve(path.dirname(file),clean);
   assert(target===root||target.startsWith(root+path.sep),'Reference escapes deployment: '+ref);
-  await stat(target).catch(()=>assert.fail('Missing asset: '+path.relative(root,file)+' -> '+ref));
+  await stat(target).catch(async()=>{
+   if (!path.extname(target)) return stat(target+'.html').catch(()=>assert.fail('Missing page: '+ref));
+   assert.fail('Missing asset: '+path.relative(root,file)+' -> '+ref);
+  });
  }
  if(ext==='.html'){
   pageCount++;
   if(path.basename(file)==='404.html')continue;
   const rel=path.relative(root,file).replaceAll('\\','/');
-  const expected='https://romanoinvest.co.il/'+(rel==='index.html'?'':rel.replace(/index\.html$/,''));
+  const expected='https://romanoinvest.co.il/'+(rel==='index.html'?'':rel.replace(/index\.html$/,'').replace(/\.html$/,''));
   assert(text.includes('rel="canonical" href="'+expected+'"'),'Incorrect canonical: '+rel);
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
   assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);

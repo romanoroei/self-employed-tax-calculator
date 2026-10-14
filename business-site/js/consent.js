@@ -80,7 +80,7 @@
     <div class="a11y-panel" id="a11y-panel" role="group" aria-label="תפריט נגישות" hidden>
       ${OPTIONS.map(([cls, label]) => `<button type="button" data-a11y="${cls}" aria-pressed="false">${label}</button>`).join('')}
       <button type="button" data-a11y-reset>איפוס הגדרות</button>
-      <a href="${root}accessibility.html">הצהרת נגישות</a>
+      <a href="/accessibility">הצהרת נגישות</a>
     </div>`;
   document.body.append(wrap);
   const toggle = wrap.querySelector('.a11y-toggle');
@@ -106,7 +106,7 @@
   banner.setAttribute('role', 'region');
   banner.setAttribute('aria-label', 'הודעה על עוגיות');
   banner.innerHTML = `
-    <p>העמודים העסקיים אינם משתמשים בעוגיות מעקב או פרסום. במחשבון הטבות המס, מדידה מופעלת רק לאחר אישור נפרד. אנחנו שומרים בדפדפן שלכם רק את ההעדפות שבחרתם, כמו הגדרות נגישות. אם בעתיד נוסיף כלי מדידה, הם יופעלו רק באישורכם. <a href="${root}privacy.html#cookies">למדיניות הפרטיות</a></p>
+    <p>העמודים העסקיים אינם משתמשים בעוגיות מעקב או פרסום. במחשבון הטבות המס, מדידה מופעלת רק לאחר אישור נפרד. אנחנו שומרים בדפדפן שלכם רק את ההעדפות שבחרתם, כמו הגדרות נגישות. אם בעתיד נוסיף כלי מדידה, הם יופעלו רק באישורכם. <a href="/privacy#cookies">למדיניות הפרטיות</a></p>
     <div class="cookie-actions">
       <button type="button" data-consent="all">אישור</button>
       <button type="button" data-consent="essential">הכרחיות בלבד</button>
