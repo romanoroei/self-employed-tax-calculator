@@ -1,0 +1,79 @@
+/* Shared on every page: skip link, cookie notice, accessibility menu and its modes.
+   Colours are set here directly so the file works with both site.css and legal.css. */
+
+.skip-link {
+  position: absolute; inset-inline-start: 8px; top: -60px; z-index: 100;
+  background: #C9B772; color: #081826; font-weight: 700; padding: 12px 18px; text-decoration: none;
+}
+.skip-link:focus { top: 8px; }
+
+/* ----- accessibility menu ----- */
+.a11y { position: fixed; left: 12px; bottom: 12px; z-index: 96; font-family: "Heebo", Arial, sans-serif; }
+.a11y-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  background: #0C2134; color: #F1F1EE; border: 2px solid #C9B772; border-radius: 0;
+  font: inherit; font-size: 15px; font-weight: 700; padding: 10px 14px; min-height: 48px;
+}
+.a11y-toggle svg { width: 24px; height: 24px; fill: #C9B772; }
+.a11y-panel {
+  position: absolute; bottom: 58px; left: 0; width: 230px;
+  display: grid; gap: 4px; padding: 8px; background: #081826;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+}
+.a11y-panel[hidden] { display: none; }
+.a11y-panel button, .a11y-panel a {
+  display: block; width: 100%; text-align: start; cursor: pointer;
+  background: #2B3947; color: #F1F1EE; border: 0; border-radius: 0;
+  font: inherit; font-size: 15px; padding: 11px 14px; text-decoration: none;
+}
+.a11y-panel button[aria-pressed="true"] { background: #C9B772; color: #081826; font-weight: 700; }
+.a11y-panel a { background: transparent; text-decoration: underline; }
+.a11y :focus-visible, .cookie :focus-visible { outline: 3px solid #C9B772; outline-offset: 2px; }
+
+/* ----- cookie notice ----- */
+.cookie {
+  position: fixed; inset-inline: 12px; bottom: 12px; z-index: 95;
+  max-width: 760px; margin-inline-end: auto;
+  display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+  background: #0C2134; color: #F1F1EE; padding: 18px 20px;
+  font-family: "Heebo", Arial, sans-serif; font-size: 15px; line-height: 1.55;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+}
+.cookie p { margin: 0; flex: 1 1 320px; }
+.cookie a { color: #C9B772; }
+.cookie-actions { display: flex; gap: 8px; }
+.cookie-actions button {
+  cursor: pointer; border: 0; border-radius: 0; font: inherit; font-weight: 700; padding: 10px 18px; min-height: 44px;
+  background: #C9B772; color: #081826;
+}
+.cookie-actions button + button { background: #2B3947; color: #F1F1EE; }
+
+/* ----- modes ----- */
+html.a11y-text { zoom: 1.18; }
+html.a11y-gray { filter: grayscale(1); }
+html.a11y-contrast { filter: contrast(1.45); }
+html.a11y-gray.a11y-contrast { filter: grayscale(1) contrast(1.45); }
+html.a11y-links a { text-decoration: underline !important; text-decoration-thickness: 2px !important; outline: 1px dashed currentColor; outline-offset: 2px; }
+html.a11y-font body, html.a11y-font button, html.a11y-font input, html.a11y-font select { font-family: Arial, Helvetica, sans-serif !important; letter-spacing: .01em; }
+html.a11y-still *, html.a11y-still *::before, html.a11y-still *::after {
+  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+html.a11y-still [data-reveal] { opacity: 1 !important; transform: none !important; }
+
+@media (max-width: 700px) {
+  .a11y-toggle span { display: none; }
+  .cookie { inset-inline: 8px; bottom: 68px; padding: 14px 16px; }
+}
+
+/* ----- back to top ----- */
+.to-top {
+  position: fixed; left: 12px; bottom: 72px; z-index: 94;
+  width: 48px; height: 48px; display: grid; place-items: center; cursor: pointer;
+  background: #C9B772; border: 0; border-radius: 0;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms, background-color 160ms ease;
+}
+.to-top.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease, transform 220ms ease, visibility 0s, background-color 160ms ease; }
+.to-top svg { width: 24px; height: 24px; fill: #081826; }
+.to-top:focus-visible { outline: 3px solid #0C2134; outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .to-top:hover { background: #E3D6A3; } }

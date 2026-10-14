@@ -12,3 +12,7 @@
 
 !scripts/
 !scripts/build-cloudflare.mjs
+
+!business-site/
+!business-site/**
+!scripts/check-site.mjs
