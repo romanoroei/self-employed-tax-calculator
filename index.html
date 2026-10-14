@@ -76,6 +76,9 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 .maximum-scope{margin-top:18px}.maximum-scope legend{font-size:13px;font-weight:400;color:#cbd5e1;margin-bottom:7px}.scope-options{display:flex;gap:4px;padding:4px;border:1px solid #47556966;border-radius:10px;background:#0f172a55}.scope-options label{flex:1;position:relative;min-width:0;min-height:42px;margin:0;padding:8px 5px;border:1px solid transparent;border-radius:7px;background:transparent;gap:0;font-size:13px;font-weight:400;color:#a8b8cf;transition:background .15s,color .15s}.scope-options input{position:absolute;width:1px;height:1px;min-height:0;margin:0;opacity:0;clip-path:inset(50%);overflow:hidden}.scope-options label:has(input:checked){border-color:#64748b66;background:#33415580;color:#f8fafc}.scope-options label:hover{color:#f8fafc;background:#33415544}.scope-options label:has(input:focus-visible){outline:2px solid #7dd3fc;outline-offset:1px}
 #result-meta{margin:0 0 14px;padding:0;border:0;border-radius:0;background:none;font-size:14px;font-weight:400;color:#cbd5e1}.maximum-plan-note{margin:10px 0 0;padding:0;border:0;border-radius:0;background:none;color:var(--muted);font-size:12px}.main-comparison .table-monthly{display:block;margin-top:4px;color:#a8b8cf;font-size:11px;font-weight:400;line-height:1.5;white-space:nowrap}.main-comparison .benefit-total .table-monthly{color:#b4d6e5;font-size:11px;font-weight:400}.main-comparison .editable-deposit .table-monthly{margin-top:5px}.recalculate{width:auto;min-height:44px;margin:16px auto 0;padding:9px 24px;background:#1e293b66;border-color:#64748b88;color:#dbe4f0;font:inherit;font-size:13px}.recalculate:hover{background:#33415580;border-color:#94a3b8}
 @media(max-width:560px){.scope-options{gap:2px}.scope-options label{flex-direction:row;min-height:42px;padding:8px 3px;font-size:11px}#result-meta{font-size:12px}.main-comparison .table-monthly,.main-comparison .benefit-total .table-monthly{font-size:9px;letter-spacing:-.15px}.main-comparison th,.main-comparison td{padding-block:12px}}
+</style><style>
+.main-comparison tbody td>bdi{font-size:18px}.main-comparison .benefit-total td>bdi{font-size:24px}.main-comparison .table-input-wrap input{font-size:18px}
+@media(max-width:560px){.main-comparison tbody td>bdi{font-size:14px}.main-comparison .benefit-total td>bdi{font-size:18px}.main-comparison .table-input-wrap input{font-size:14px}}
 </style></head>
 <body>
 <a class="skip-link" href="#main-content">דלגו לתוכן המרכזי</a>
@@ -126,7 +129,7 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <p>פרסומי רשות המסים: <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2025.pdf" target="_blank" rel="noopener noreferrer">תקרות קרן ההשתלמות לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-guide-knowyourright/he/Guides_IncomeTax_da-2025.pdf" target="_blank" rel="noopener noreferrer">מדריך הניכויים והזיכויים לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2024.pdf" target="_blank" rel="noopener noreferrer">תקרות לשנת 2024</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf" target="_blank" rel="noopener noreferrer">תקרות וסף עמית מוטב לשנת 2026</a> · <a href="https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employers-info-300326-1/he/IncomeTax_IncomeTaxEmployersInfo_employers-info-300326-1.pdf" target="_blank" rel="noopener noreferrer">מדרגות המס המעודכנות לשנת 2026</a>. הנתונים נבדקו ב־10.10.2026. לפני הפקדה יש לבדוק זכאות אישית עם רואה חשבון או יועץ מס.</p>
 </details>
 <p class="helper">נתוני הביטוח: <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/rates.aspx" target="_blank" rel="noopener noreferrer">שיעורי ביטוח לאומי ובריאות</a> · <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/hishov.dmey.bituach.aspx" target="_blank" rel="noopener noreferrer">שיטת חישוב בסיס דמי הביטוח</a>.</p>
-<section class="calculation-explanations" aria-labelledby="explanations-title"><h2 id="explanations-title">מידע על החישוב וההפקדות</h2><p class="helper">כל הסכומים בטבלה שנתיים. הסכום הקטן מתחתיהם הוא ממוצע חודשי, בחלוקה ל־12.</p><p class="helper">הבחירה קובעת את יעד המקסימום. תוכלו להשוות אליו את ההפקדה האישית ואת המינימום לפי החוק.</p><p class="helper" id="tax-rate-note"></p><p id="maximum-plan-note" class="maximum-plan-note"></p><p class="helper" id="custom-help">הזינו בעמודת ״ההפקדה שלי״ את סך ההפקדות השנתיות, כולל מה שכבר הופקד. החישוב מתעדכן אוטומטית; שדה ריק נחשב כאפס.</p><p class="helper" id="custom-benefit-summary"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p><p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p><details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p></section>
+<section class="calculation-explanations" aria-labelledby="explanations-title"><h2 id="explanations-title">מידע על החישוב וההפקדות</h2><p class="helper">כל הסכומים בטבלה שנתיים. בשורות ההפקדה מוצג מתחתם ממוצע חודשי, בחלוקה ל־12.</p><p class="helper">הבחירה קובעת את יעד המקסימום. תוכלו להשוות אליו את ההפקדה האישית ואת המינימום לפי החוק.</p><p id="maximum-plan-note" class="maximum-plan-note"></p><p class="helper" id="custom-help">הזינו בעמודת ״ההפקדה שלי״ את סך ההפקדות השנתיות, כולל מה שכבר הופקד. החישוב מתעדכן אוטומטית; שדה ריק נחשב כאפס.</p><p class="helper" id="custom-benefit-summary"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p><p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p><details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p></section>
 <section class="legal-footer" aria-labelledby="legal-notes-title"><h2 id="legal-notes-title">הערות משפטיות</h2><p>המחשבון הוא כלי המחשה ותכנון ראשוני לעצמאי בעל הכנסה מעסק בלבד. הוא אינו ייעוץ מס, ייעוץ השקעות או ייעוץ/שיווק פנסיוני אישי, ואינו המלצה לביצוע הפקדה או בחירת מוצר. החישוב לפי שנת המס שנבחרה, לפני נקודות זיכוי והטבות אישיות, ובכפוף לתנאי הזכאות. הדין, הוראות הרשויות ותנאי המוצרים גוברים על תוצאות המחשבון.</p><p>החיסכון מחושב לפי מדרגות מס ובהנחות המפורטות לעיל. אומדני הביטוח הלאומי והבריאות אינם חישוב שומה סופי; הסיכום אינו כולל את ההשפעה המשנית של שינוי הניכוי בגין דמי הביטוח. תחזית הרווחים היא המחשה בלבד, ללא דמי ניהול ואינפלציה, ואינה מבטיחה תשואה או פטור. יש לבדוק את הנתונים והזכאות עם בעל מקצוע לפני פעולה; חבות המס תיקבע בידי הרשויות.</p><nav class="legal-links" aria-label="מידע משפטי ופרטיות"><button type="button" data-legal="disclosure">גילוי נאות</button><button type="button" data-legal="privacy">מדיניות פרטיות</button><button type="button" data-legal="accessibility">הצהרת נגישות</button><button type="button" id="cookie-settings">עוגיות</button></nav></section><footer>תכנון פנסיה וקרן השתלמות · שנות מס 2024–2026 · כל הסכומים בש״ח</footer>
 </div>
 </main>
@@ -396,8 +399,8 @@ function renderResult(r,mode='target',animate=true) {
   set('study-income',`מחושב לפי הכנסה של ${n(r.originalIncome)} ש"ח`);
   set('study-exempt-ceiling',money(study.data.ceiling));
   renderEquationLines('study-formula',[{equation:`min(${n(study.deposit)}, ${n(study.baseIncome)} × 4.5%, ${n(study.data.maxDeductible)}) = ${money(study.deduction)}`,explanation:`ניכוי מההכנסה, עד תקרת הכנסה של ${money(study.data.taxableIncome)}.`},{equation:`${n(incomeTax(r.originalIncome,r.data))} − ${n(incomeTax(r.income,r.data))} = ${money(study.deductionSaving)}`,explanation:'החיסכון במס הוא ההפרש לפני הניכוי ואחריו, לפי מדרגות המס.'},{equation:`${n(study.deductionSaving)} + ${n(study.insurance.national)} + ${n(study.insurance.health)} = ${money(study.total)}`,explanation:'מס הכנסה + ביטוח לאומי + ביטוח בריאות.'},{equation:`${n(Math.min(study.deposit,study.targetDeposit))} × (1.08⁶ − 1) × 25% = ${money(study.capitalBenefit)}`,explanation:'תחזית הטבת הפטור על רווחי הפקדת השנה, לאחר 6 שנים.'}]);
-  set('result-meta',`הכנסה שנתית: ${money(r.originalIncome)} · שנת ${r.year}`);
-  set('tax-rate-note',`מס שולי בחישוב: ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}.`);
+  set('result-meta',`הכנסה שנתית: ${money(r.originalIncome)} · שנת ${r.year} · מס שולי ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}`);
+
   for(const [id,value] of Object.entries({deduction:r.deduction,'deduction-saving':r.deductionSaving,credit:r.credit,'credit-saving':r.creditSaving,'national-saving':insurance.national,'health-saving':insurance.health,total:combined}))set(id,money(value));
   const first=Math.min(r.income,r.data.firstTier),second=Math.min(Math.max(0,r.income-r.data.firstTier),r.data.firstTier);
   const base=r.route==='mutav'?second:Math.min(r.income,r.data.regularCeiling);
@@ -452,6 +455,7 @@ function submitCalculation(event,navigate=true){
   const income=parseIncome(el('income').value),year=Number(el('year').value);
   if(!Number.isFinite(income)||income<0){set('error','יש להזין סכום מספרי תקין וחיובי או אפס.');el('results').hidden=true;el('income').focus();return;}
   set('error','');set('comparison-status','');
+  renderParameters(year);
   const extra=!el('disability-deduction').checked;
   targetPlan=calculateMaximumPlan(income,year,extra,document.querySelector('input[name="maximum-scope"]:checked').value);
   const duty=calculateMandatoryDeposit(income,year);
@@ -509,7 +513,7 @@ function renderComparison(r,mode){
           input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();updateCustomCalculation();}});
           wrap.append(fieldLabel,input,currency);td.append(wrap);
         }else{const amount=document.createElement('bdi');amount.id='compare-'+plan+'-'+key;td.append(amount);}
-        const monthly=document.createElement('small');monthly.className='table-monthly';monthly.id='compare-'+plan+'-'+key+'-monthly';td.append(monthly);
+        if(['pension','study','deposits'].includes(key)){const monthly=document.createElement('small');monthly.className='table-monthly';monthly.id='compare-'+plan+'-'+key+'-monthly';td.append(monthly);}
         tr.append(td);
       });return tr;
     }));
@@ -523,7 +527,7 @@ function renderComparison(r,mode){
       const cell=el('compare-'+['target','custom','law'][index]+'-'+key);
       if(cell)cell.textContent=plan?money(value(plan)):'—';
       const monthly=el('compare-'+['target','custom','law'][index]+'-'+key+'-monthly');
-      monthly.textContent=plan?'כ־'+money(value(plan)/12)+' לחודש':'—';
+      if(monthly)monthly.textContent=plan?'כ־'+money(value(plan)/12)+' לחודש':'—';
     });
   });
   set('custom-benefit-summary',customPlan?'הטבת המס בהפקדה שלכם: '+money(customPlan.grandTotal)+' לשנה.':'');
@@ -543,7 +547,7 @@ function resetCalculation(){
   el('results').classList.remove('animate');
   el('results').querySelectorAll('details').forEach(details=>details.open=false);
   el('results').querySelectorAll('bdi,.formula').forEach(node=>node.textContent='');
-  for(const id of ['error','custom-error','comparison-status','comparison-difference','custom-benefit-summary','result-meta','tax-rate-note','maximum-plan-note','law-formula','breakdown-context','pension-income','study-income'])set(id,'');
+  for(const id of ['error','custom-error','comparison-status','comparison-difference','custom-benefit-summary','result-meta','maximum-plan-note','law-formula','breakdown-context','pension-income','study-income'])set(id,'');
   document.querySelectorAll('[data-breakdown]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.breakdown==='target')));
   renderParameters(Number(el('year').value));
   el('income').focus({preventScroll:true});
@@ -554,10 +558,8 @@ el('calculator').addEventListener('submit',submitCalculation);
 el('income').addEventListener('input',()=>{formatIncomeInput(el('income'));el('results').hidden=true;set('error','');});
 el('income').addEventListener('blur',()=>{const value=parseIncome(el('income').value);if(Number.isFinite(value))el('income').value=moneyFormatter.format(Math.round(value));});
 el('income').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();submitCalculation();}});
-document.querySelectorAll('input[name="maximum-scope"]').forEach(input=>input.addEventListener('change',()=>{
-  if(el('income').value.trim())submitCalculation(undefined,false);
-}));
-for(const id of ['year','disability-deduction'])el(id).addEventListener('change',()=>{renderParameters(Number(el('year').value));if(el('income').value.trim())submitCalculation(undefined,false);});
+
+
 renderParameters(Number(el('year').value));
 function markContactField(id,message){
   const input=el(id);input.setAttribute('aria-invalid',message?'true':'false');set(id+'-error',message);return !message;
