@@ -4,10 +4,10 @@
   const STORAGE_KEY = 'pension-calculator-analytics-consent-v1';
   const MAX_AGE = 180 * 24 * 60 * 60 * 1000;
   const PATH = '/self-employed-tax-calculator/';
-  const EVENTS = new Set(['calculation_complete', 'contact_click', 'contact_email_open', 'contact_email_compose', 'benefit_breakdown_open', 'service_details_open', 'calculator_share']);
+  const EVENTS = new Set(['calculation_complete', 'contact_click', 'contact_email_open', 'contact_email_compose', 'benefit_breakdown_view', 'service_details_open', 'calculator_share']);
   const LOCATIONS = new Set(['comparison', 'page_end', 'footer']);
   const CHANNELS = new Set(['whatsapp', 'phone', 'email']);
-  let consent = null, started = false;
+  let consent = null, started = false, breakdownVisible = false, breakdownReported = false;
   const banner = document.getElementById('analytics-consent');
   const status = document.getElementById('analytics-consent-status');
   window['ga-disable-' + ID] = true;
@@ -75,6 +75,7 @@
       if (started) gtag('consent', 'update', { analytics_storage: 'denied' });
       clearCookies();
     }
+    if (allowed) reportBreakdownView();
     status.textContent = allowed ? 'השימוש בעוגיות אושר. אפשר לשנות את הבחירה בכל עת.' : 'עוגיות ניתוח השימוש כבויות. המחשבון זמין במלואו.';
   }
   function choose(allowed) {
@@ -98,7 +99,11 @@
     banner.hidden = false;
     document.getElementById(consent ? 'analytics-allow' : 'analytics-deny').focus();
   });
-  document.addEventListener('pension:calculated', () => track('calculation_complete'));
+  document.addEventListener('pension:calculated', () => {
+    track('calculation_complete');
+    breakdownReported = false;
+    reportBreakdownView();
+  });
   document.addEventListener('pension:email-compose', () => track('contact_email_compose', { contact_channel: 'email', cta_location: emailLocation }));
   let emailLocation = 'comparison';
   document.addEventListener('click', event => {
@@ -116,9 +121,19 @@
       track('contact_click', { cta_location: location, contact_channel: 'phone' });
     } else if (target.matches('.share-calculator')) track('calculator_share');
   });
-  document.getElementById('benefit-breakdown').addEventListener('toggle', event => {
-    if (event.target.open) track('benefit_breakdown_open');
-  });
+  function reportBreakdownView() {
+    if (consent === true && started && breakdownVisible && !breakdownReported) {
+      track('benefit_breakdown_view');
+      breakdownReported = true;
+    }
+  }
+  if ('IntersectionObserver' in window) {
+    const observer = new window.IntersectionObserver(entries => {
+      breakdownVisible = entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.1);
+      reportBreakdownView();
+    }, { threshold: 0.1 });
+    observer.observe(document.getElementById('benefit-breakdown'));
+  }
   for (const details of document.querySelectorAll('.advisor-service-details')) details.addEventListener('toggle', () => {
     if (details.open) track('service_details_open', { cta_location: locationOf(details) });
   });

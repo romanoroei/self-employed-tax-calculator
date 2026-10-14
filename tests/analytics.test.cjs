@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const source = fs.readFileSync(require('node:path').join(__dirname, '../analytics.js'), 'utf8');
 const KEY = 'pension-calculator-analytics-consent-v1';
 const ID = 'G-9GFDYS61G9';
-function setup({ saved, blocked = false, url = 'https://romanoroei.github.io/self-employed-tax-calculator/?utm_source=accountant&utm_medium=referral&income=987654&email=private%40example.com#secret', referrer = 'https://example.org/private?email=secret@example.org' } = {}) {
+function setup({ saved, blocked = false, observer = false, url = 'https://romanoroei.github.io/self-employed-tax-calculator/?utm_source=accountant&utm_medium=referral&income=987654&email=private%40example.com#secret', referrer = 'https://example.org/private?email=secret@example.org' } = {}) {
   const elements = new Map(), scripts = [], cookieWrites = [], storage = new Map();
   if (saved !== undefined) storage.set(KEY, JSON.stringify(saved));
   function node(id) {
@@ -29,6 +29,11 @@ function setup({ saved, blocked = false, url = 'https://romanoroei.github.io/sel
   let cookieJar = document.cookie;
   Object.defineProperty(document, 'cookie', { get: () => cookieJar, set: value => { cookieWrites.push(value); cookieJar = cookieJar.split(';').filter(part => part.trim().split('=')[0] !== value.split('=')[0]).join(';'); } });
   const window = Object.assign(node('window'), { location: new URL(url) });
+  let observeView;
+  if (observer) window.IntersectionObserver = class {
+    constructor(callback) { observeView = callback; }
+    observe() {}
+  };
   const localStorage = {
     getItem: key => { if (blocked) throw Error('blocked'); return storage.get(key) || null; },
     setItem: (key, value) => { if (blocked) throw Error('blocked'); storage.set(key, value); }
@@ -37,6 +42,7 @@ function setup({ saved, blocked = false, url = 'https://romanoroei.github.io/sel
   const queue = () => (window.dataLayer || []).map(args => JSON.parse(JSON.stringify([...args])));
   const events = () => queue().filter(command => command[0] === 'event');
   return { window, document, get, scripts, cookieWrites, storage, queue, events,
+    showBreakdown: ratio => observeView([{isIntersecting:ratio>0,intersectionRatio:ratio}]),
     calculate: () => document.emit('pension:calculated'),
     click: (selector, location = '#contact-card') => { const target = node('link'); target.selector = selector; target.location = location; document.emit('click', { target }); },
     allow: () => get('analytics-allow').emit('click'), deny: () => get('analytics-deny').emit('click')
@@ -105,4 +111,17 @@ test('direct privacy and accessibility mail links report only channel and locati
   const env=setup();env.allow();env.click('a[href^="mailto:"]','#footer');
   const event=env.events().find(e=>e[1]==='contact_click');
   assert.deepEqual(event[2],{send_to:ID,cta_location:'footer',contact_channel:'email'});
+});
+
+test('always-open breakdown is counted only when visible and consented, once per calculation', () => {
+  const env=setup({observer:true});env.calculate();env.showBreakdown(0.3);
+  assert.equal(env.events().length,0);env.allow();
+  const views=()=>env.events().filter(e=>e[1]==='benefit_breakdown_view').length;
+  assert.equal(views(),1);env.showBreakdown(0);env.showBreakdown(0.3);assert.equal(views(),1);
+  env.calculate();assert.equal(views(),2);env.deny();env.calculate();env.showBreakdown(0.3);assert.equal(views(),2);
+});
+test('breakdown outside viewport or below visibility threshold does not count as viewed', () => {
+  const env=setup({observer:true});env.allow();env.calculate();env.showBreakdown(0.05);
+  assert.equal(env.events().filter(e=>e[1]==='benefit_breakdown_view').length,0);
+  env.showBreakdown(0.1);assert.equal(env.events().filter(e=>e[1]==='benefit_breakdown_view').length,1);
 });
