@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
-const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateScenario,calculateCombined,calculateChosenDeposits,evaluateDeposit,insuranceEstimate})',{Intl});
+const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);
 function bestAt(income,deposit,data,extra){
   return ['regular','mutav'].map(route=>api.evaluateDeposit(income,deposit,data,route,extra,0)).filter(Boolean).sort((a,b)=>b.total-a.total||b.deduction-a.deduction)[0];
@@ -95,4 +95,37 @@ test('chosen deposits reproduce target benefits and preserve pension status thre
   }
   assert.throws(()=>api.calculateChosenDeposits(100000,2026,-1,0));
   assert.throws(()=>api.calculateChosenDeposits(100000,2026,0,NaN));
+});
+
+test('mandatory deposits use the two legal bands and annual ceiling in each year',()=>{
+  for(const year of [2024,2025,2026]){
+    const half=api.TAX_DATA[year].averageMonthlyWage*6;
+    near(api.calculateMandatoryDeposit(0,year).deposit,0);
+    near(api.calculateMandatoryDeposit(50000,year).raw,2225);
+    near(api.calculateMandatoryDeposit(half,year).raw,half*.0445);
+    near(api.calculateMandatoryDeposit(half+1000,year).raw,half*.0445+125.5);
+    const capped=api.calculateMandatoryDeposit(half*2,year);
+    near(capped.raw,half*.17);
+    assert.equal(capped.deposit,Math.ceil(capped.raw));
+    assert.equal(api.calculateMandatoryDeposit(1000000,year).deposit,capped.deposit);
+  }
+  assert.equal(api.calculateMandatoryDeposit(500000,2026).deposit,14045);
+  assert.equal(api.calculateMandatoryDeposit(500000,2025).deposit,12787);
+  assert.throws(()=>api.calculateMandatoryDeposit(-1,2026));
+  assert.throws(()=>api.calculateMandatoryDeposit(100000,2023));
+});
+test('selected plans preserve the deposit, complete breakdown, and combined benefits',()=>{
+  for(const [pension,study] of [[0,0],[1000,2000],[5000,3000],[14045,0],[50000,25000]]){
+    const r=api.createDepositPlan(200000,2026,pension,study);
+    const chosen=api.calculateChosenDeposits(200000,2026,pension,study);
+    assert.equal(r.minimumDeposit,pension);
+    assert.equal(r.study.deposit,study);
+    near(r.income,200000-r.study.deduction);
+    near(r.grandTotal,chosen.total);
+    near(r.pensionTotal+r.study.total,r.grandTotal);
+    near(r.deductionSaving+r.creditSaving,r.total);
+    near(r.study.capitalBenefit,Math.min(study,20566)*(Math.pow(1.08,6)-1)*.25);
+  }
+  const target=api.calculateCombined(500000,2026);
+  near(api.createDepositPlan(500000,2026,target.minimumDeposit,target.study.deposit).grandTotal,target.grandTotal);
 });
