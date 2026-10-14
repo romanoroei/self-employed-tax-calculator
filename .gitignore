@@ -6,3 +6,6 @@
 !brand-logo.png
 !tests/
 !tests/pension.test.cjs
+
+!analytics.js
+!tests/analytics.test.cjs
