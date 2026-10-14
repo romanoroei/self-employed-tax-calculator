@@ -31,6 +31,8 @@ Google נטען רק לאחר אישור מדידה. לפני אישור, לאח
 
 מאפייני אירוע מוגדרים בדוחות: cta_location (comparison / page_end / footer), contact_channel (whatsapp / phone / email).
 
+האירועים contact_click ו־contact_email_compose מוגדרים כאירועים מרכזיים, פעם אחת בכל סשן וללא ערך כספי ברירת מחדל.
+
 לחיצה על WhatsApp, טלפון או פתיחת תוכנת הדואר אינן הוכחה שהתקבלה פנייה. לא נשלח generate_lead. קבלת פנייה, התאמה, שיחה והצטרפות דורשות מעקב עסקי נוסף.
 
 בדיקות: `node --test tests/analytics.test.cjs tests/pension.test.cjs`.
