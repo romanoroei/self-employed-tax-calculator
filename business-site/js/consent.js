@@ -106,7 +106,7 @@
   banner.setAttribute('role', 'region');
   banner.setAttribute('aria-label', 'הודעה על עוגיות');
   banner.innerHTML = `
-    <p>בעמודים העסקיים אין שימוש בעוגיות מעקב או פרסום. העדפות השימוש באתר נשמרות בדפדפן שלכם בלבד. במחשבון הטבות המס, Google Analytics מופעל רק לאחר אישור נפרד שלכם. <a href="/privacy#cookies">למדיניות הפרטיות</a></p>
+    <p>האתר משתמש במדדי ביצועים כלליים ללא עוגיות מעקב או פרסום. העדפות השימוש נשמרות בדפדפן שלכם בלבד. במחשבון הטבות המס, Google Analytics מופעל רק לאחר אישור נפרד שלכם. <a href="/privacy#cookies">למדיניות הפרטיות</a></p>
     <div class="cookie-actions">
       <button type="button" data-consent="all">אישור</button>
       <button type="button" data-consent="essential">הכרחיות בלבד</button>
