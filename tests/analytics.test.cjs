@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
-const source = fs.readFileSync(require('node:path').join(__dirname, '../analytics.js'), 'utf8');
+const source = fs.readFileSync(require('node:path').join(process.env.CALCULATOR_TEST_ROOT || require('node:path').join(__dirname, '..'), 'analytics.js'), 'utf8');
 const KEY = 'pension-calculator-analytics-consent-v1';
 const ID = 'G-9GFDYS61G9';
 function setup({ saved, blocked = false, observer = false, url = 'https://romanoroei.github.io/self-employed-tax-calculator/?utm_source=accountant&utm_medium=referral&income=987654&email=private%40example.com#secret', referrer = 'https://example.org/private?email=secret@example.org' } = {}) {
@@ -124,4 +124,21 @@ test('breakdown outside viewport or below visibility threshold does not count as
   const env=setup({observer:true});env.allow();env.calculate();env.showBreakdown(0.05);
   assert.equal(env.events().filter(e=>e[1]==='benefit_breakdown_view').length,0);
   env.showBreakdown(0.1);assert.equal(env.events().filter(e=>e[1]==='benefit_breakdown_view').length,1);
+});
+
+
+test('new production domains report their own clean URL; previews stay unmeasured', () => {
+  for (const host of ['romanoinvest.co.il', 'www.romanoinvest.co.il']) {
+    const env = setup({url: 'https://' + host + '/self-employed-tax-calculator/?utm_source=accountant&income=987654#private'});
+    env.allow(); env.calculate();
+    assert.equal(env.scripts.length, 1);
+    const config = env.queue().find(args => args[0] === 'config')[2];
+    assert.equal(config.page_location, 'https://' + host + '/self-employed-tax-calculator/?utm_source=accountant');
+    assert(!JSON.stringify(env.queue()).includes('987654'));
+  }
+  for (const host of ['romanoinvest.pages.dev','romanoinvest-git.pages.dev','example.com','romanoinvest.co.il.example.com']) {
+    const env=setup({url:'https://'+host+'/self-employed-tax-calculator/'});
+    env.allow(); env.calculate();
+    assert.equal(env.scripts.length,0); assert.equal(env.events().length,0);
+  }
 });

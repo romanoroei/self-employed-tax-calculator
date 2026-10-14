@@ -4,6 +4,7 @@
   const STORAGE_KEY = 'pension-calculator-analytics-consent-v1';
   const MAX_AGE = 180 * 24 * 60 * 60 * 1000;
   const PATH = '/self-employed-tax-calculator/';
+  const HOSTS = new Set(['romanoroei.github.io', 'romanoinvest.co.il', 'www.romanoinvest.co.il']);
   const EVENTS = new Set(['calculation_complete', 'contact_click', 'contact_email_open', 'contact_email_compose', 'benefit_breakdown_view', 'service_details_open', 'calculator_share']);
   const LOCATIONS = new Set(['comparison', 'page_end', 'footer']);
   const CHANNELS = new Set(['whatsapp', 'phone', 'email']);
@@ -20,7 +21,7 @@
     return null;
   }
   function pageLocation() {
-    const clean = new URL('https://romanoroei.github.io' + PATH);
+    const clean = new URL('https://' + window.location.hostname + PATH);
     const current = new URL(window.location.href);
     for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
       const value = current.searchParams.get(key);
@@ -33,7 +34,7 @@
   }
   function gtag() { window.dataLayer.push(arguments); }
   function start() {
-    if (started || window.location.hostname !== 'romanoroei.github.io' || !window.location.pathname.startsWith(PATH)) return;
+    if (started || !HOSTS.has(window.location.hostname) || !window.location.pathname.startsWith(PATH)) return;
     started = true;
     window.dataLayer = window.dataLayer || [];
     gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });

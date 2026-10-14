@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
-const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+const html=fs.readFileSync(path.join(process.env.CALCULATOR_TEST_ROOT || path.join(__dirname,'..'),'index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
 const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts,parseIncome,formatIncomeInput,isAmountWithinLimit,MAX_ANNUAL_INCOME,MAX_ANNUAL_DEPOSIT})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);

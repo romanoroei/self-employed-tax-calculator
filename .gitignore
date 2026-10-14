@@ -9,3 +9,6 @@
 
 !analytics.js
 !tests/analytics.test.cjs
+
+!scripts/
+!scripts/build-cloudflare.mjs
