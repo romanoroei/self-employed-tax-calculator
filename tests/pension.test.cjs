@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
-const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits})',{Intl});
+const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);
 function bestAt(income,deposit,data,extra){
   return ['regular','mutav'].map(route=>api.evaluateDeposit(income,deposit,data,route,extra,0)).filter(Boolean).sort(api.comparePensionBenefits)[0];
@@ -243,4 +243,12 @@ test('both-product maximum preserves the existing combined plan and invalid choi
   assert.throws(()=>api.calculateMaximumPlan(200000,2026,true,'other'));
   assert.throws(()=>api.calculateMaximumPlan(-1,2026,true,'pension'));
   assert.throws(()=>api.calculateMaximumPlan(100000,2023,true,'study'));
+});
+
+
+test('displayed deduction products use actual tax bands rather than a single marginal rate',()=>{
+  assert.deepEqual(Array.from(api.deductionTaxProducts(100000,20000,api.TAX_DATA[2026])),['4,120 × 10%','15,880 × 14%']);
+  assert.deepEqual(Array.from(api.deductionTaxProducts(200000,1000,api.TAX_DATA[2026])),['1,000 × 20%']);
+  assert.deepEqual(Array.from(api.deductionTaxProducts(500000,25608,api.TAX_DATA[2026])),['25,608 × 35%']);
+  assert.deepEqual(Array.from(api.deductionTaxProducts(0,0,api.TAX_DATA[2026])),[]);
 });
