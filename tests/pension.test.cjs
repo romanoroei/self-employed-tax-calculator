@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
-const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts})',{Intl});
+const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits,deductionTaxProducts,parseIncome,formatIncomeInput,isAmountWithinLimit,MAX_ANNUAL_INCOME,MAX_ANNUAL_DEPOSIT})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);
 function bestAt(income,deposit,data,extra){
   return ['regular','mutav'].map(route=>api.evaluateDeposit(income,deposit,data,route,extra,0)).filter(Boolean).sort(api.comparePensionBenefits)[0];
@@ -251,4 +251,32 @@ test('displayed deduction products use actual tax bands rather than a single mar
   assert.deepEqual(Array.from(api.deductionTaxProducts(200000,1000,api.TAX_DATA[2026])),['1,000 × 20%']);
   assert.deepEqual(Array.from(api.deductionTaxProducts(500000,25608,api.TAX_DATA[2026])),['25,608 × 35%']);
   assert.deepEqual(Array.from(api.deductionTaxProducts(0,0,api.TAX_DATA[2026])),[]);
+});
+
+function formattedAmount(raw,id){
+  const input={id,value:raw,selectionStart:raw.length,setSelectionRange(start,end){this.selectionStart=start;this.selectionEnd=end;}};
+  api.formatIncomeInput(input);return input.value;
+}
+test('income entry accepts the maximum and clamps typed or pasted larger amounts',()=>{
+  assert.equal(formattedAmount('10000000','income'),'10,000,000');
+  assert.equal(formattedAmount('10000001','income'),'10,000,000');
+  assert.equal(formattedAmount(' 99,999,999.99 ','income'),'10,000,000');
+  assert.equal(formattedAmount('9'.repeat(400),'income'),'10,000,000');
+  assert.equal(formattedAmount('9999999.99','income'),'9,999,999.99');
+});
+test('all four personal deposit fields enforce the same independent maximum',()=>{
+  for(const id of ['custom-pension','custom-study','detail-custom-pension','detail-custom-study']){
+    assert.equal(formattedAmount('499999',id),'499,999');
+    assert.equal(formattedAmount('500000',id),'499,999');
+    assert.equal(formattedAmount('499999.01',id),'499,999');
+    assert.equal(formattedAmount('499998.99',id),'499,998.99');
+    assert.equal(formattedAmount('0',id),'0');
+    assert.equal(formattedAmount('-500000',id),'-500000');
+  }
+});
+test('calculation range validation rejects excessive, negative and non-finite amounts',()=>{
+  assert(api.isAmountWithinLimit(10000000,api.MAX_ANNUAL_INCOME));
+  assert(!api.isAmountWithinLimit(10000000.01,api.MAX_ANNUAL_INCOME));
+  assert(api.isAmountWithinLimit(499999,api.MAX_ANNUAL_DEPOSIT));
+  for(const value of [500000,-1,NaN,Infinity])assert(!api.isAmountWithinLimit(value,api.MAX_ANNUAL_DEPOSIT));
 });
