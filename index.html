@@ -246,7 +246,8 @@ function insuranceEstimate(income,deduction,year=2026) {
 // Adapted from the existing study-fund calculator and its verified 2026 registry.
 // Historical income ceilings corrected to published tax-authority amounts.
 const STUDY_DATA=Object.freeze({
-  2024:{ceiling:20520,taxableIncome:293397,maxDeductible:13203},
+  // Updated Tax Authority 2024 booklet (30/04/2025) sets the exempt deposit ceiling to 20,566.
+  2024:{ceiling:20566,taxableIncome:293397,maxDeductible:13203},
   2025:{ceiling:20566,taxableIncome:293397,maxDeductible:13203},
   2026:{ceiling:20566,taxableIncome:293397,maxDeductible:13203}
 });
