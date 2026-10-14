@@ -411,12 +411,18 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 
 /* ================= Phone ================= */
 @media (max-width: 700px) {
-  :root { --bar: 60px; --gap: 6px; }
+  :root {
+    --bar: 60px; --gap: 6px;
+    --t-hero: clamp(32px, 8.5vw, 36px);
+    --t-1: 28px; --t-2: 20px; --t-3: 17px; --t-4: 16px; --t-5: 14px;
+  }
   .bar-brand { padding-inline: 14px; }
   .bar-brand strong { font-size: 17px; }
   .bar-brand span { font-size: 14px; }
   .bar-cta { padding-inline: 14px; }
   .hero-main { padding: 22px; min-height: 460px; }
+  .hero-copy > .button { display: none; }
+  .hero-lead { margin-block: 16px 0; }
   .hero-idea, .hero-facts { padding: 20px; }
   .hero-idea > span { font-size: var(--t-5); }
   .arb { grid-template-columns: minmax(0, 1fr); }

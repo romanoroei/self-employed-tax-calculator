@@ -111,12 +111,23 @@
       <button type="button" data-consent="all">אישור</button>
       <button type="button" data-consent="essential">הכרחיות בלבד</button>
     </div>`;
-  const showBanner = () => { document.body.append(banner); };
+  const updateNoticeOffset = () => {
+    html.style.setProperty('--cookie-notice-height', `${Math.ceil(banner.getBoundingClientRect().height)}px`);
+  };
+  const noticeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(updateNoticeOffset) : null;
+  const showBanner = () => {
+    document.body.append(banner);
+    document.body.classList.add('has-cookie-notice');
+    if (noticeObserver) noticeObserver.observe(banner);
+    updateNoticeOffset();
+  };
   banner.addEventListener('click', (e) => {
     const b = e.target.closest('[data-consent]');
     if (!b) return;
     store.set('rr-consent', b.dataset.consent);
     banner.remove();
+    document.body.classList.remove('has-cookie-notice');
+    if (noticeObserver) noticeObserver.disconnect();
   });
   if (!store.get('rr-consent')) showBanner();
   // any element with data-cookie-settings reopens the notice
