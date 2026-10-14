@@ -69,6 +69,9 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 .comparison-scroll{border-radius:16px;box-shadow:0 12px 30px #02061733}.main-comparison{border-color:#475569}.main-comparison th,.main-comparison td{border-inline-end:1px solid #33415588}.main-comparison tr>:last-child{border-inline-end:0}.main-comparison thead th{padding-block:20px;font-size:15px;line-height:1.55}.main-comparison thead [data-plan="target"]{border-top:4px solid #38bdf8}.main-comparison thead [data-plan="custom"]{border-top:4px solid #a78bfa}.main-comparison thead [data-plan="law"]{border-top:4px solid #94a3b8}.main-comparison tbody th{color:#e2e8f0}.main-comparison tbody tr:nth-child(even):not(.deposit-total):not(.benefit-total){background:#0f172a55}.main-comparison .deposit-total>*{border-top:1px solid #64748b;background:#26364d;padding-block:18px}.main-comparison [data-row="tax"]>*{border-top:6px solid #0f172a}.main-comparison .benefit-total>*{background:#12354b;color:#a5f3fc;border-top:2px solid #38bdf8}.main-comparison .benefit-total>.selected-plan{background:#0c4a6e}.main-comparison .editable-deposit{background:#312e8144}.table-input-wrap input{border-color:#a78bfa;background:#131c32}.table-input-wrap input:focus{outline:2px solid #c4b5fd;outline-offset:2px}.main-comparison [data-plan="custom"] .editable-hint{color:#ddd6fe}
 .breakdown-controls{display:flex;gap:6px;padding:6px;margin-top:18px;background:#0b1425;border:1px solid #334155;border-radius:12px}.breakdown-controls button{flex:1;min-height:46px;padding:10px 12px;border:1px solid transparent;border-radius:8px;background:transparent;color:#cbd5e1;font:inherit;font-size:14px;cursor:pointer}.breakdown-controls button:hover{background:#1e293b}.breakdown-controls button[aria-pressed="true"]{background:#075985;border-color:#38bdf8;color:#fff;font-weight:600}.breakdown-controls button:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}.calculation-explanations{margin-top:24px;padding:20px;border:1px solid #334155;border-radius:14px;background:#0f172a66}.calculation-explanations h2{font-size:17px;margin:0 0 14px}.fund-tables .fund-heading{margin-bottom:6px;font-size:18px}
 @media(max-width:560px){#result-meta{font-size:13px;padding:12px}.main-comparison th:first-child{width:31%}.main-comparison thead th{font-size:12px;padding:14px 4px}.main-comparison td{font-size:12px}.main-comparison .benefit-total>*{font-size:15px}.main-comparison .deposit-total>*{padding:14px 4px}.breakdown-controls button{font-size:12px;padding:8px 4px}.calculation-explanations{padding:15px}}
+</style><style>
+.maximum-scope{margin:20px 0 0;padding:0;border:0;min-width:0}.maximum-scope legend{padding:0;margin-bottom:8px;font-size:14px;font-weight:500;color:#f8fafc}.scope-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.scope-options label{display:flex;align-items:center;justify-content:center;gap:7px;margin:0;padding:11px 8px;min-height:48px;border:1px solid #475569;border-radius:10px;background:#0f172a;color:#cbd5e1;cursor:pointer;font-size:13px;text-align:center}.scope-options input{width:17px;height:17px;min-height:17px;flex:0 0 17px;margin:0;padding:0;accent-color:#38bdf8}.scope-options label:has(input:checked){border-color:#38bdf8;background:#07598566;color:#fff}.scope-options label:has(input:focus-visible){outline:2px solid #7dd3fc;outline-offset:3px}.maximum-plan-note{margin:0 0 16px;padding:12px 15px;border:1px solid #334155;border-radius:10px;background:#17253a;color:#e2e8f0;font-size:13px;line-height:1.8}
+@media(max-width:560px){.scope-options{gap:5px}.scope-options label{flex-direction:column;font-size:11px;padding:9px 4px;gap:5px}.maximum-plan-note{font-size:12px}}
 </style></head>
 <body>
 <a class="skip-link" href="#main-content">דלגו לתוכן המרכזי</a>
@@ -81,6 +84,7 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <form id="calculator" novalidate>
 <div class="fields"><div><label for="income">הכנסה שנתית חייבת</label><div class="input-wrap"><input id="income" type="text" inputmode="decimal" autocomplete="off" placeholder="לדוג&#39;: 200,000" aria-describedby="income-help error"><span class="currency" aria-hidden="true">₪</span></div></div><div><label for="year">שנת מס</label><select id="year"><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option></select></div></div>
 <p class="helper" id="income-help">הרווח השנתי אחרי הוצאות העסק, לפני ניכויי פנסיה וקרן השתלמות.</p>
+<fieldset class="maximum-scope"><legend>לאן תרצו להפקיד?</legend><div class="scope-options"><label><input type="radio" name="maximum-scope" value="both" checked><span>פנסיה + השתלמות</span></label><label><input type="radio" name="maximum-scope" value="pension"><span>פנסיה בלבד</span></label><label><input type="radio" name="maximum-scope" value="study"><span>השתלמות בלבד</span></label></div><p class="helper">הבחירה קובעת את יעד המקסימום. תוכלו להשוות אליו את ההפקדה האישית ואת המינימום לפי החוק.</p></fieldset>
 <label class="credit-option" for="disability-deduction"><input id="disability-deduction" type="checkbox" aria-describedby="credit-help"><span>נוכתה לי הוצאה בגין ביטוח אובדן כושר עבודה</span></label>
 <p class="helper" id="credit-help">אם כן, תקרת ההפקדה לזיכוי בפנסיה תחושב לפי 5% במקום 5.5%.</p>
 <p class="error" id="error" role="alert"></p>
@@ -90,7 +94,7 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <p class="privacy">הנתונים מחושבים בדפדפן בלבד ואינם נשמרים.</p>
 <section id="results" class="results" aria-labelledby="result-title" hidden>
 <div class="result-head"><h2 class="section-title" id="result-title" tabindex="-1"><span class="step">02</span>השוואת אפשרויות ההפקדה</h2></div>
-<p class="result-context" id="result-meta"></p><div id="scenario-comparison"><p class="comparison-intro">כמה מפקידים וכמה הטבות מס מקבלים בכל אפשרות? כל הסכומים שנתיים.</p><div class="comparison-scroll"><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מקסימום<br>הטבות מס</th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="error" id="custom-error" role="alert"></p><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
+<p class="result-context" id="result-meta"></p><div id="scenario-comparison"><p class="comparison-intro">כמה מפקידים וכמה הטבות מס מקבלים בכל אפשרות? כל הסכומים שנתיים.</p><p id="maximum-plan-note" class="maximum-plan-note"></p><div class="comparison-scroll"><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מקסימום<br>הטבות מס<small class="editable-hint" id="maximum-scope-label">פנסיה + השתלמות</small></th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="error" id="custom-error" role="alert"></p><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
 
 
 
@@ -298,6 +302,18 @@ function calculateCombined(income,year,extraCredit=true){
   const pensionTotal=pension.total+insurance.national+insurance.health;
   return {...pension,originalIncome:income,study,pensionInsurance:insurance,pensionTotal,grandTotal:pensionTotal+study.total};
 }
+const MAXIMUM_SCOPE_LABELS=Object.freeze({both:'פנסיה + השתלמות',pension:'פנסיה בלבד',study:'השתלמות בלבד'});
+function calculateMaximumPlan(income,year,extraCredit=true,scope='both'){
+  if(!Object.hasOwn(MAXIMUM_SCOPE_LABELS,scope))throw new RangeError('Invalid maximum scope');
+  if(scope==='both')return {...calculateCombined(income,year,extraCredit),scope};
+  if(scope==='pension'){
+    // Without a study-fund deduction, pension eligibility uses the full income.
+    const pension=calculateScenario(income,year,0,extraCredit);
+    return {...createDepositPlan(income,year,pension.minimumDeposit,0,extraCredit),targetDeposit:pension.targetDeposit,scope};
+  }
+  const study=calculateStudyFund(income,year);
+  return {...createDepositPlan(income,year,0,study.targetDeposit,extraCredit),scope};
+}
 function calculateChosenDeposits(income,year,pensionDeposit,studyDeposit,extraCredit=true){
   if(!TAX_DATA[year] || ![income,pensionDeposit,studyDeposit].every(Number.isFinite) || Math.min(income,pensionDeposit,studyDeposit)<0)throw new RangeError('Invalid chosen deposits');
   const study=calculateStudyFund(income,year,studyDeposit);
@@ -356,8 +372,8 @@ function renderEquationLines(id,lines,note='') {
 let targetPlan=null,customPlan=null,lawPlan=null;
 function renderResult(r,mode='target',animate=true) {
   set('custom-error','');
-  const labels={target:'יעד ההפקדה למיצוי הטבות המס',custom:'הטבות המס בהתאם להפקדה שלכם',law:'מינימום ההפקדה לפנסיה לפי החוק'};
-  set('breakdown-selection','פירוט ההטבות — '+{target:'מקסימום הטבות מס',custom:'ההפקדה שלי',law:'המינימום לפי החוק'}[mode]);
+  const labels={target:'יעד ההפקדה למיצוי הטבות המס — '+MAXIMUM_SCOPE_LABELS[targetPlan.scope],custom:'הטבות המס בהתאם להפקדה שלכם',law:'מינימום ההפקדה לפנסיה לפי החוק'};
+  set('breakdown-selection','פירוט ההטבות — '+{target:'מקסימום הטבות מס — '+MAXIMUM_SCOPE_LABELS[targetPlan.scope],custom:'ההפקדה שלי',law:'המינימום לפי החוק'}[mode]);
   set('deposit-planning-note',mode==='law'?'מינימום החוק מחושב לפנסיה בלבד, ללא הפקדה לקרן השתלמות. הסכום השנתי מעוגל כלפי מעלה לשקל שלם.':mode==='custom'?'החישוב מבוסס על סכומי ההפקדה השנתיים שהזנתם, כולל מה שכבר הופקד.':'יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.');
   set('breakdown-context','הפירוט המוצג: '+labels[mode]);
   {
@@ -431,7 +447,7 @@ function submitCalculation(event,navigate=true){
   if(!Number.isFinite(income)||income<0){set('error','יש להזין סכום מספרי תקין וחיובי או אפס.');el('results').hidden=true;el('income').focus();return;}
   set('error','');set('comparison-status','');
   const extra=!el('disability-deduction').checked;
-  targetPlan=calculateCombined(income,year,extra);
+  targetPlan=calculateMaximumPlan(income,year,extra,document.querySelector('input[name="maximum-scope"]:checked').value);
   const duty=calculateMandatoryDeposit(income,year);
   lawPlan=createDepositPlan(income,year,duty.deposit,0,extra);
   const deposits=readCustomDeposits();
@@ -454,6 +470,10 @@ function updateCustomCalculation(){
   set('comparison-status','הטבת המס בהפקדה שלכם: '+money(customPlan.grandTotal)+' לשנה.');
 }
 function renderComparison(r,mode){
+  set('maximum-scope-label',MAXIMUM_SCOPE_LABELS[targetPlan.scope]);
+  const scope=targetPlan.scope;
+  const pensionTarget=money(targetPlan.minimumDeposit),studyTarget=money(targetPlan.study.deposit);
+  set('maximum-plan-note',scope==='pension'?'למיצוי הטבות הפנסיה בלבד: הפקדה שנתית של '+pensionTarget+'. החישוב מניח שאין הפקדה לקרן השתלמות.':scope==='study'?'קרן השתלמות בלבד: '+studyTarget+' למיצוי תקרת ההפקדה שהרווחים עליה עשויים להיות פטורים ממס במשיכה כדין. מתוך סכום זה, עד '+money(targetPlan.study.deduction)+' מוכרים לניכוי מההכנסה השנה. אין בתרחיש זה הפקדה לפנסיה.':'יעד ההפקדה השנתי: '+pensionTarget+' לפנסיה ו־'+studyTarget+' לקרן השתלמות.');
   const plans=[targetPlan,customPlan,lawPlan];
   const rows=[
     ['pension','הפקדה לפנסיה',p=>p.minimumDeposit,''],
@@ -510,6 +530,9 @@ el('calculator').addEventListener('submit',submitCalculation);
 el('income').addEventListener('input',()=>{formatIncomeInput(el('income'));el('results').hidden=true;set('error','');});
 el('income').addEventListener('blur',()=>{const value=parseIncome(el('income').value);if(Number.isFinite(value))el('income').value=moneyFormatter.format(Math.round(value));});
 el('income').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();submitCalculation();}});
+document.querySelectorAll('input[name="maximum-scope"]').forEach(input=>input.addEventListener('change',()=>{
+  if(el('income').value.trim())submitCalculation(undefined,false);
+}));
 for(const id of ['year','disability-deduction'])el(id).addEventListener('change',()=>{renderParameters(Number(el('year').value));if(el('income').value.trim())submitCalculation(undefined,false);});
 renderParameters(Number(el('year').value));
 function markContactField(id,message){

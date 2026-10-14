@@ -5,7 +5,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const core=html.slice(html.indexOf('const TAX_DATA'),html.indexOf('function renderParameters'));
-const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits})',{Intl});
+const api=vm.runInNewContext(core+'\n;({TAX_DATA,calculateMaximumPlan,calculateScenario,calculateCombined,calculateChosenDeposits,calculateMandatoryDeposit,createDepositPlan,evaluateDeposit,insuranceEstimate,insuranceGrossBoundaries,deductionLimit,comparePensionBenefits})',{Intl});
 const near=(actual,expected)=>assert.ok(Math.abs(actual-expected)<1e-6,`${actual} != ${expected}`);
 function bestAt(income,deposit,data,extra){
   return ['regular','mutav'].map(route=>api.evaluateDeposit(income,deposit,data,route,extra,0)).filter(Boolean).sort(api.comparePensionBenefits)[0];
@@ -210,4 +210,37 @@ test('chosen allocation beats an independent grid across tax brackets and insura
       }
     }
   }
+});
+
+
+test('pension-only maximum uses full income and reproduces standalone pension optimization',()=>{
+  for(const year of [2024,2025,2026])for(const extra of [true,false])for(const income of [0,50000,100000,165000,200000,500000,1000000]){
+    const plan=api.calculateMaximumPlan(income,year,extra,'pension'),standalone=api.calculateScenario(income,year,0,extra);
+    assert.equal(plan.scope,'pension');near(plan.study.deposit,0);near(plan.study.deduction,0);near(plan.income,income);
+    near(plan.minimumDeposit,standalone.minimumDeposit);near(plan.total,standalone.total);near(plan.grandTotal,standalone.combinedBenefit);
+    const chosen=api.createDepositPlan(income,year,plan.minimumDeposit,0,extra);near(plan.grandTotal,chosen.grandTotal);
+  }
+  const pensionOnly=api.calculateMaximumPlan(165000,2026,true,'pension'),both=api.calculateMaximumPlan(165000,2026,true,'both');
+  assert.notEqual(pensionOnly.minimumDeposit,both.minimumDeposit);
+});
+
+test('study-only maximum keeps pension zero and distinguishes current deductions from the exempt ceiling',()=>{
+  for(const year of [2024,2025,2026])for(const income of [0,50000,100000,200000,500000]){
+    const plan=api.calculateMaximumPlan(income,year,true,'study');
+    assert.equal(plan.scope,'study');near(plan.minimumDeposit,0);near(plan.deposit,0);near(plan.total,0);near(plan.pensionTotal,0);
+    near(plan.study.deposit,income===0?0:year===2026?20566:20520);near(plan.study.deduction,Math.min(Math.min(income,293397)*.045,13203));
+    near(plan.grandTotal,plan.study.total);
+    const chosen=api.createDepositPlan(income,year,0,plan.study.deposit);near(plan.grandTotal,chosen.grandTotal);
+  }
+  const plan=api.calculateMaximumPlan(200000,2026,true,'study');near(plan.study.deposit,20566);near(plan.study.deduction,9000);
+});
+
+test('both-product maximum preserves the existing combined plan and invalid choices are rejected',()=>{
+  for(const year of [2024,2025,2026])for(const income of [0,100000,200000,500000]){
+    const plan=api.calculateMaximumPlan(income,year),combined=api.calculateCombined(income,year);
+    assert.equal(plan.scope,'both');near(plan.minimumDeposit,combined.minimumDeposit);near(plan.study.deposit,combined.study.deposit);near(plan.grandTotal,combined.grandTotal);
+  }
+  assert.throws(()=>api.calculateMaximumPlan(200000,2026,true,'other'));
+  assert.throws(()=>api.calculateMaximumPlan(-1,2026,true,'pension'));
+  assert.throws(()=>api.calculateMaximumPlan(100000,2023,true,'study'));
 });
