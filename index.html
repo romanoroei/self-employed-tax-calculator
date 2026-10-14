@@ -64,6 +64,11 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 </style><style>
 .table-input-wrap{position:relative;width:100%}.main-comparison .editable-deposit{padding:10px 8px;background:#0c4a6e55}.table-input-wrap input{width:100%;min-width:0;min-height:46px;padding:10px 6px 10px 23px;font-size:17px;text-align:center;border:1px solid #38bdf8;border-radius:9px;background:#0f172a;color:#f8fafc;font-weight:500}.table-input-wrap input::placeholder{font-size:12px;font-weight:400;color:#a8b8cf}.table-currency{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:13px;color:#a8b8cf;pointer-events:none}.editable-hint{display:block;font-size:11px;font-weight:400;color:#bae6fd;margin-top:4px}.table-input-wrap input[aria-invalid="true"]{border-color:#fda4af}.main-comparison .empty-plan{color:#94a3b8}#benefit-breakdown[hidden]{display:none}
 @media(max-width:560px){.main-comparison .editable-deposit{padding:8px 3px}.table-input-wrap input{font-size:12px;min-height:44px;padding:9px 2px 9px 14px}.table-input-wrap input::placeholder{font-size:10px}.table-currency{left:4px;font-size:10px}.editable-hint{font-size:9px}}
+</style><style>
+#result-meta{margin:0 0 18px;padding:14px 18px;border-right:3px solid #38bdf8;border-radius:10px;background:#0c4a6e33;font-size:15px;line-height:1.8}
+.comparison-scroll{border-radius:16px;box-shadow:0 12px 30px #02061733}.main-comparison{border-color:#475569}.main-comparison th,.main-comparison td{border-inline-end:1px solid #33415588}.main-comparison tr>:last-child{border-inline-end:0}.main-comparison thead th{padding-block:20px;font-size:15px;line-height:1.55}.main-comparison thead [data-plan="target"]{border-top:4px solid #38bdf8}.main-comparison thead [data-plan="custom"]{border-top:4px solid #a78bfa}.main-comparison thead [data-plan="law"]{border-top:4px solid #94a3b8}.main-comparison tbody th{color:#e2e8f0}.main-comparison tbody tr:nth-child(even):not(.deposit-total):not(.benefit-total){background:#0f172a55}.main-comparison .deposit-total>*{border-top:1px solid #64748b;background:#26364d;padding-block:18px}.main-comparison [data-row="tax"]>*{border-top:6px solid #0f172a}.main-comparison .benefit-total>*{background:#12354b;color:#a5f3fc;border-top:2px solid #38bdf8}.main-comparison .benefit-total>.selected-plan{background:#0c4a6e}.main-comparison .editable-deposit{background:#312e8144}.table-input-wrap input{border-color:#a78bfa;background:#131c32}.table-input-wrap input:focus{outline:2px solid #c4b5fd;outline-offset:2px}.main-comparison [data-plan="custom"] .editable-hint{color:#ddd6fe}
+.breakdown-controls{display:flex;gap:6px;padding:6px;margin-top:18px;background:#0b1425;border:1px solid #334155;border-radius:12px}.breakdown-controls button{flex:1;min-height:46px;padding:10px 12px;border:1px solid transparent;border-radius:8px;background:transparent;color:#cbd5e1;font:inherit;font-size:14px;cursor:pointer}.breakdown-controls button:hover{background:#1e293b}.breakdown-controls button[aria-pressed="true"]{background:#075985;border-color:#38bdf8;color:#fff;font-weight:600}.breakdown-controls button:focus-visible{outline:2px solid #7dd3fc;outline-offset:2px}.calculation-explanations{margin-top:24px;padding:20px;border:1px solid #334155;border-radius:14px;background:#0f172a66}.calculation-explanations h2{font-size:17px;margin:0 0 14px}.fund-tables .fund-heading{margin-bottom:6px;font-size:18px}
+@media(max-width:560px){#result-meta{font-size:13px;padding:12px}.main-comparison th:first-child{width:31%}.main-comparison thead th{font-size:12px;padding:14px 4px}.main-comparison td{font-size:12px}.main-comparison .benefit-total>*{font-size:15px}.main-comparison .deposit-total>*{padding:14px 4px}.breakdown-controls button{font-size:12px;padding:8px 4px}.calculation-explanations{padding:15px}}
 </style></head>
 <body>
 <a class="skip-link" href="#main-content">דלגו לתוכן המרכזי</a>
@@ -79,30 +84,24 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <label class="credit-option" for="disability-deduction"><input id="disability-deduction" type="checkbox" aria-describedby="credit-help"><span>נוכתה לי הוצאה בגין ביטוח אובדן כושר עבודה</span></label>
 <p class="helper" id="credit-help">אם כן, תקרת ההפקדה לזיכוי בפנסיה תחושב לפי 5% במקום 5.5%.</p>
 <p class="error" id="error" role="alert"></p>
-<button class="primary" id="calculate" type="submit">מקסימום הטבות מס</button>
+<button class="primary" id="calculate" type="submit">חשב מקסימום הטבות</button>
 </form>
 </section>
 <p class="privacy">הנתונים מחושבים בדפדפן בלבד ואינם נשמרים.</p>
 <section id="results" class="results" aria-labelledby="result-title" hidden>
 <div class="result-head"><h2 class="section-title" id="result-title" tabindex="-1"><span class="step">02</span>השוואת אפשרויות ההפקדה</h2></div>
-<p class="result-context" id="result-meta"></p><div id="scenario-comparison"><p class="comparison-intro">כמה מפקידים וכמה הטבות מס מקבלים בכל אפשרות? כל הסכומים שנתיים.</p><div class="comparison-scroll"><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מקסימום<br>הטבות מס</th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="helper" id="custom-help">הזינו בעמודת ״ההפקדה שלי״ את סך ההפקדות השנתיות, כולל מה שכבר הופקד. החישוב מתעדכן אוטומטית; שדה ריק נחשב כאפס.</p><p class="error" id="custom-error" role="alert"></p><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p></div>
+<p class="result-context" id="result-meta"></p><div id="scenario-comparison"><p class="comparison-intro">כמה מפקידים וכמה הטבות מס מקבלים בכל אפשרות? כל הסכומים שנתיים.</p><div class="comparison-scroll"><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מקסימום<br>הטבות מס</th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="error" id="custom-error" role="alert"></p><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
 
-<p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p>
-<details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p>
-<details class="savings-disclosure" id="benefit-breakdown" aria-labelledby="breakdown-title"><summary id="breakdown-title"><span class="question-icon" aria-hidden="true">?</span><span id="breakdown-selection">פירוט ההטבות</span><svg class="disclosure-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><p class="helper" id="breakdown-context"></p><div class="grid"><h3 class="fund-heading study-heading">קרן השתלמות<small class="fund-income" id="study-income"></small></h3><h3 class="fund-heading pension-heading">פנסיה<small class="fund-income" id="pension-income"></small></h3>
-<article class="metric study-metric"><p id="study-deposit-label">🌱 יעד הפקדה שנתי</p><div class="deposit-values"><bdi class="amount" id="study-target"></bdi><small class="monthly-target">כ־<bdi id="study-monthly"></bdi> לחודש</small></div></article>
-<article class="metric"><p id="pension-deposit-label">🎯 יעד הפקדה שנתי</p><div class="deposit-values"><bdi class="amount" id="optimal"></bdi><small class="monthly-target">כ־<bdi id="pension-monthly"></bdi> לחודש</small></div></article>
-<article class="metric highlight study-metric"><p>שווי הטבות המס<sup><a class="tax-note-link" href="#potential-tax-note" aria-label="הבהרה על הטבת המס הפוטנציאלית">*</a></sup></p><bdi class="amount" id="study-savings"></bdi><small>אומדן שנתי · מס הכנסה, ביטוח לאומי וביטוח בריאות</small></article>
-<article class="metric highlight"><p>שווי הטבות המס<sup><a class="tax-note-link" href="#potential-tax-note" aria-label="הבהרה על הטבת המס הפוטנציאלית">*</a></sup></p><bdi class="amount" id="savings"></bdi><small>אומדן שנתי · מס הכנסה, ביטוח לאומי וביטוח בריאות</small></article></div>
-<article class="metric grand-total"><div><p>💎 שילוב הטבות המס<sup><a class="tax-note-link" href="#potential-tax-note" aria-label="הבהרה על הטבת המס הפוטנציאלית">*</a></sup> · <span id="grand-year"></span></p><small>פנסיה + קרן השתלמות</small></div><bdi class="amount" id="grand-savings"></bdi></article>
-<div class="fund-tables"><section class="breakdown" aria-labelledby="study-title"><h3 id="study-title">🌱 קרן השתלמות</h3>
+
+
+<details class="savings-disclosure" id="benefit-breakdown" aria-labelledby="breakdown-title"><summary id="breakdown-title"><span class="question-icon" aria-hidden="true">?</span><span id="breakdown-selection">פירוט ההטבות</span><svg class="disclosure-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מקסימום הטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">החובה החוקית</button></div><p class="helper" id="breakdown-context"></p><div class="fund-tables"><section class="breakdown" aria-labelledby="study-title"><h3 class="fund-heading study-heading" id="study-title">🌱 קרן השתלמות<small class="fund-income" id="study-income"></small></h3>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">📉</span><div><strong>ניכוי - הוצאה מוכרת</strong><small><bdi id="study-deduction"></bdi> מוכרים להפחתה מההכנסה</small></div><bdi id="study-tax"></bdi></div>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">🛡️</span><div><strong>ביטוח לאומי</strong><small>אומדן החיסכון בזכות הניכוי</small></div><bdi id="study-national"></bdi></div>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">🩺</span><div><strong>ביטוח בריאות</strong><small>אומדן החיסכון בזכות הניכוי</small></div><bdi id="study-health"></bdi></div>
 <div class="row total"><span>💰 סך החיסכון המשוער שלכם</span><b><bdi id="study-total"></bdi></b></div>
 <div class="future-benefit"><div class="future-line"><span>בונוס! פטור ממס על הרווחים</span><bdi id="study-capital"></bdi></div><strong>שווי ההטבה לפי ההפקדה בחישוב זה, עד תקרת הפטור: <bdi id="study-exempt-ceiling"></bdi>, בהנחת תשואה של 8% שנתי למשך 6 שנים.</strong><small>הסכום הינו תחזית ולא כלול בסיכום השנתי</small></div>
 <details class="calculation-details"><summary>איך חישבנו?</summary><p class="formula" id="study-formula"></p><p class="helper">תחזית הרווחים מהמודל הקיים: תשואה שנתית של 8%, למשך 6 שנים, והשוואה למס של 25% על הרווח. המחשה בלבד, ללא דמי ניהול ואינפלציה; תשואה ופטור אינם מובטחים. הפטור כפוף לתנאי המשיכה בדין.</p></details></section>
-<section class="breakdown" aria-labelledby="pension-title"><h3 id="pension-title">🎯 פנסיה</h3>
+<section class="breakdown" aria-labelledby="pension-title"><h3 class="fund-heading pension-heading" id="pension-title">🎯 פנסיה<small class="fund-income" id="pension-income"></small></h3>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">📉</span><div><div class="deduction-label"><strong>ניכוי - הוצאה מוכרת</strong><details class="deduction-tip" id="deduction-tip"><summary aria-label="הסבר על חישוב החיסכון מהניכוי">ⓘ</summary><p class="deduction-explanation" id="deduction-explanation"></p></details></div><small><bdi id="deduction"></bdi> מוכרים להפחתה מההכנסה</small></div><bdi id="deduction-saving"></bdi></div>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">🎁</span><div><strong>זיכוי · הפחתה מהמס</strong><small><bdi id="credit"></bdi> × 35%</small></div><bdi id="credit-saving"></bdi></div>
 <div class="saving-item"><span class="saving-icon" aria-hidden="true">🛡️</span><div><strong>ביטוח לאומי</strong><small>אומדן החיסכון בזכות הניכוי</small></div><bdi id="national-saving"></bdi></div>
@@ -118,6 +117,7 @@ h1{font-size:clamp(27px,4.8vw,38px);line-height:1.3}.intro{font-size:16px;color:
 <p>פרסומי רשות המסים: <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2025.pdf" target="_blank" rel="noopener noreferrer">תקרות קרן ההשתלמות לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-guide-knowyourright/he/Guides_IncomeTax_da-2025.pdf" target="_blank" rel="noopener noreferrer">מדריך הניכויים והזיכויים לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2024.pdf" target="_blank" rel="noopener noreferrer">תקרות לשנת 2024</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf" target="_blank" rel="noopener noreferrer">תקרות וסף עמית מוטב לשנת 2026</a> · <a href="https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employers-info-300326-1/he/IncomeTax_IncomeTaxEmployersInfo_employers-info-300326-1.pdf" target="_blank" rel="noopener noreferrer">מדרגות המס המעודכנות לשנת 2026</a>. הנתונים נבדקו ב־10.10.2026. לפני הפקדה יש לבדוק זכאות אישית עם רואה חשבון או יועץ מס.</p>
 </details>
 <p class="helper">נתוני הביטוח: <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/rates.aspx" target="_blank" rel="noopener noreferrer">שיעורי ביטוח לאומי ובריאות</a> · <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/hishov.dmey.bituach.aspx" target="_blank" rel="noopener noreferrer">שיטת חישוב בסיס דמי הביטוח</a>.</p>
+<section class="calculation-explanations" aria-labelledby="explanations-title"><h2 id="explanations-title">מידע על החישוב וההפקדות</h2><p class="helper" id="custom-help">הזינו בעמודת ״ההפקדה שלי״ את סך ההפקדות השנתיות, כולל מה שכבר הופקד. החישוב מתעדכן אוטומטית; שדה ריק נחשב כאפס.</p><p class="helper" id="custom-benefit-summary"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p><p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p><details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p></section>
 <section class="legal-footer" aria-labelledby="legal-notes-title"><h2 id="legal-notes-title">הערות משפטיות</h2><p>המחשבון הוא כלי המחשה ותכנון ראשוני לעצמאי בעל הכנסה מעסק בלבד. הוא אינו ייעוץ מס, ייעוץ השקעות או ייעוץ/שיווק פנסיוני אישי, ואינו המלצה לביצוע הפקדה או בחירת מוצר. החישוב לפי שנת המס שנבחרה, לפני נקודות זיכוי והטבות אישיות, ובכפוף לתנאי הזכאות. הדין, הוראות הרשויות ותנאי המוצרים גוברים על תוצאות המחשבון.</p><p>החיסכון מחושב לפי מדרגות מס ובהנחות המפורטות לעיל. אומדני הביטוח הלאומי והבריאות אינם חישוב שומה סופי; הסיכום אינו כולל את ההשפעה המשנית של שינוי הניכוי בגין דמי הביטוח. תחזית הרווחים היא המחשה בלבד, ללא דמי ניהול ואינפלציה, ואינה מבטיחה תשואה או פטור. יש לבדוק את הנתונים והזכאות עם בעל מקצוע לפני פעולה; חבות המס תיקבע בידי הרשויות.</p><nav class="legal-links" aria-label="מידע משפטי ופרטיות"><button type="button" data-legal="disclosure">גילוי נאות</button><button type="button" data-legal="privacy">מדיניות פרטיות</button><button type="button" data-legal="accessibility">הצהרת נגישות</button><button type="button" id="cookie-settings">עוגיות</button></nav></section><footer>תכנון פנסיה וקרן השתלמות · שנות מס 2024–2026 · כל הסכומים בש״ח</footer>
 </div>
 </main>
@@ -331,34 +331,30 @@ function renderEquationLines(id,lines,note='') {
   });
   if(note){const label=document.createElement('span');label.className='formula-note';label.textContent=note;nodes.push(label);}el(id).replaceChildren(...nodes);
 }
-let targetPlan=null,customPlan=null,lawPlan=null,hasCustomDeposit=false;
+let targetPlan=null,customPlan=null,lawPlan=null;
 function renderResult(r,mode='target',animate=true) {
   set('custom-error','');
   const labels={target:'יעד ההפקדה למיצוי הטבות המס',custom:'הטבות המס בהתאם להפקדה שלכם',law:'מינימום ההפקדה לפנסיה לפי החוק'};
   set('breakdown-selection','פירוט ההטבות — '+{target:'מקסימום הטבות מס',custom:'ההפקדה שלי',law:'המינימום לפי החוק'}[mode]);
   set('deposit-planning-note',mode==='law'?'מינימום החוק מחושב לפנסיה בלבד, ללא הפקדה לקרן השתלמות. הסכום השנתי מעוגל כלפי מעלה לשקל שלם.':mode==='custom'?'החישוב מבוסס על סכומי ההפקדה השנתיים שהזנתם, כולל מה שכבר הופקד.':'יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.');
-  set('study-deposit-label',mode==='target'?'🌱 יעד הפקדה שנתי':'🌱 הפקדה שנתית לקרן השתלמות');
-  set('pension-deposit-label',mode==='target'?'🎯 יעד הפקדה שנתי':mode==='law'?'🎯 מינימום הפקדה שנתי':'🎯 הפקדה שנתית לפנסיה');
   set('breakdown-context','הפירוט המוצג: '+labels[mode]);
   {
     const duty=calculateMandatoryDeposit(r.originalIncome,r.year);
     set('law-formula',money(duty.first)+' × 4.45% + '+money(duty.second)+' × 12.55% = '+money(duty.deposit)+' לשנה (מעוגל כלפי מעלה לשקל שלם).');
   }
   renderComparison(r,mode);
-  set('grand-year',r.year);
+  document.querySelectorAll('[data-breakdown]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.breakdown===mode)));
   const n=value=>moneyFormatter.format(value);
   const route=r.route==='mutav'?'עמית מוטב':'המסלול הרגיל';
   const insurance=r.pensionInsurance,combined=r.pensionTotal;
   const study=r.study;
-  for(const [id,value] of Object.entries({'study-target':study.deposit,'study-savings':study.total,'grand-savings':r.grandTotal,'study-deduction':study.deduction,'study-tax':study.deductionSaving,'study-national':study.insurance.national,'study-health':study.insurance.health,'study-total':study.total,'study-capital':study.capitalBenefit}))set(id,money(value));
+  for(const [id,value] of Object.entries({'study-deduction':study.deduction,'study-tax':study.deductionSaving,'study-national':study.insurance.national,'study-health':study.insurance.health,'study-total':study.total,'study-capital':study.capitalBenefit}))set(id,money(value));
   set('pension-income',`מחושב לפי הכנסה של ${n(r.income)} ש"ח לאחר הפחתה מוכרת של ${n(study.deduction)} ש"ח לקרן ההשתלמות`);
   set('study-income',`מחושב לפי הכנסה של ${n(r.originalIncome)} ש"ח`);
-  set('pension-monthly',money(r.minimumDeposit/12));
-  set('study-monthly',money(study.deposit/12));
   set('study-exempt-ceiling',money(study.data.ceiling));
   renderEquationLines('study-formula',[{equation:`min(${n(study.deposit)}, ${n(study.baseIncome)} × 4.5%, ${n(study.data.maxDeductible)}) = ${money(study.deduction)}`,explanation:`ניכוי מההכנסה, עד תקרת הכנסה של ${money(study.data.taxableIncome)}.`},{equation:`${n(incomeTax(r.originalIncome,r.data))} − ${n(incomeTax(r.income,r.data))} = ${money(study.deductionSaving)}`,explanation:'החיסכון במס הוא ההפרש לפני הניכוי ואחריו, לפי מדרגות המס.'},{equation:`${n(study.deductionSaving)} + ${n(study.insurance.national)} + ${n(study.insurance.health)} = ${money(study.total)}`,explanation:'מס הכנסה + ביטוח לאומי + ביטוח בריאות.'},{equation:`${n(Math.min(study.deposit,study.targetDeposit))} × (1.08⁶ − 1) × 25% = ${money(study.capitalBenefit)}`,explanation:'תחזית הטבת הפטור על רווחי הפקדת השנה, לאחר 6 שנים.'}]);
-  set('result-meta',`שנת ${r.year} · מס שולי ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}`);
-  for(const [id,value] of Object.entries({optimal:r.minimumDeposit,savings:combined,deduction:r.deduction,'deduction-saving':r.deductionSaving,credit:r.credit,'credit-saving':r.creditSaving,'national-saving':insurance.national,'health-saving':insurance.health,total:combined}))set(id,money(value));
+  set('result-meta',`החישוב מתבצע עבור סך הכנסה שנתית חייבת של ${money(r.originalIncome)} לשנת ${r.year} · מס שולי ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}`);
+  for(const [id,value] of Object.entries({deduction:r.deduction,'deduction-saving':r.deductionSaving,credit:r.credit,'credit-saving':r.creditSaving,'national-saving':insurance.national,'health-saving':insurance.health,total:combined}))set(id,money(value));
   const first=Math.min(r.income,r.data.firstTier),second=Math.min(Math.max(0,r.income-r.data.firstTier),r.data.firstTier);
   const base=r.route==='mutav'?second:Math.min(r.income,r.data.regularCeiling);
   const firstDeduction=Math.min(r.deposit,.11*first);
@@ -418,14 +414,14 @@ function submitCalculation(event,navigate=true){
   lawPlan=createDepositPlan(income,year,duty.deposit,0,extra);
   const deposits=readCustomDeposits();
   const valid=[deposits.pension,deposits.study].every(Number.isFinite)&&Math.min(deposits.pension,deposits.study)>=0;
-  customPlan=hasCustomDeposit&&valid?createDepositPlan(income,year,deposits.pension,deposits.study,extra):null;
+  customPlan=valid?createDepositPlan(income,year,deposits.pension,deposits.study,extra):null;
   renderResult(targetPlan,'target');customDepositsAreValid(deposits);
   el('calculation-notes').hidden=false;el('contact-card').hidden=false;el('share-calculator').hidden=false;
   if(navigate){el('result-title').focus({preventScroll:true});moveToElement(el('results'));}
 }
 function updateCustomCalculation(){
   if(!targetPlan)return;
-  hasCustomDeposit=true;
+
   const deposits=readCustomDeposits();
   if(!customDepositsAreValid(deposits)){
     customPlan=null;renderComparison(targetPlan,'custom');el('benefit-breakdown').hidden=true;
@@ -449,7 +445,7 @@ function renderComparison(r,mode){
   // Build once, then update amounts in place so typing preserves focus, caret and keyboard.
   if(!el('comparison-body').children.length){
     el('comparison-body').replaceChildren(...rows.map(([key,label,value,kind])=>{
-      const tr=document.createElement('tr'),th=document.createElement('th');tr.className=kind;th.scope='row';th.textContent=label;
+      const tr=document.createElement('tr'),th=document.createElement('th');tr.className=kind;tr.dataset.row=key;th.scope='row';th.textContent=label;
       if(kind==='benefit-total'){
         const sup=document.createElement('sup'),a=document.createElement('a');a.className='tax-note-link';a.href='#potential-tax-note';a.setAttribute('aria-label','הבהרה על הטבת המס הפוטנציאלית');a.textContent='*';sup.append(a);th.append(sup);
       }
@@ -479,9 +475,15 @@ function renderComparison(r,mode){
       cell.textContent=plan?money(value(plan)):'—';
     });
   });
+  set('custom-benefit-summary',customPlan?'הטבת המס בהפקדה שלכם: '+money(customPlan.grandTotal)+' לשנה.':'');
   const gap=customPlan?targetPlan.grandTotal-customPlan.grandTotal:0;
   set('comparison-difference',!customPlan?'הזינו סכומי הפקדה בטבלה כדי להשוות את ההפקדה שלכם למקסימום ולמינימום לפי החוק.':gap>=0?'פער הטבות המס לעומת המקסימום: '+money(gap)+' לשנה.':'הטבת המס בהפקדה שלכם גבוהה מהיעד ב־'+money(-gap)+' לשנה.');
 }
+document.querySelectorAll('[data-breakdown]').forEach(button=>button.addEventListener('click',()=>{
+  const mode=button.dataset.breakdown,plan={target:targetPlan,custom:customPlan,law:lawPlan}[mode];
+  if(!plan){if(mode==='custom'){customDepositsAreValid(readCustomDeposits());el('custom-pension').focus();}return;}
+  renderResult(plan,mode,false);
+}));
 el('calculator').addEventListener('submit',submitCalculation);
 el('income').addEventListener('input',()=>{formatIncomeInput(el('income'));el('results').hidden=true;set('error','');});
 el('income').addEventListener('blur',()=>{const value=parseIncome(el('income').value);if(Number.isFinite(value))el('income').value=moneyFormatter.format(Math.round(value));});

@@ -36,8 +36,8 @@ test('study-fund explanation uses the income actually passed to the pension calc
   near(r.study.deduction,7425);
   near(r.income,157575);
   assert.equal([...html.matchAll(/id="joint-note"/g)].length,0);
-  assert.match(html, /<h3 class="fund-heading pension-heading">[\s\S]*?id="pension-income"[\s\S]*?<\/h3>/);
-  assert.match(html, /<h3 class="fund-heading study-heading">[\s\S]*?id="study-income"[\s\S]*?<\/h3>/);
+  assert.match(html, /<h3 class="fund-heading pension-heading"[^>]*>[\s\S]*?id="pension-income"[\s\S]*?<\/h3>/);
+  assert.match(html, /<h3 class="fund-heading study-heading"[^>]*>[\s\S]*?id="study-income"[\s\S]*?<\/h3>/);
 });
 test('minimum preserves all displayed pension benefits across years and tier boundaries',()=>{
   const incomes=[0,1,50000,84120,116399,116400,116401,157575,164399,164400,164401,165000,232799,232800,232801,291000,486797.135,500000,560280,721560,1000000];
