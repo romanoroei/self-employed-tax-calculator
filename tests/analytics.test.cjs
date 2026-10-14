@@ -96,3 +96,13 @@ test('saved opt-in loads once; cross-tab revocation stops future measurements', 
 test('local previews never load Google Analytics', () => {
   const env=setup({url:'http://localhost:8100/self-employed-tax-calculator/'});env.allow();env.calculate();assert.equal(env.scripts.length,0);assert.equal(env.events().length,0);
 });
+
+test('cookie preferences can be changed before the first calculation', () => {
+  const env=setup();env.deny();env.get('cookie-settings-intro').emit('click');
+  assert.equal(env.get('analytics-consent').hidden,false);assert.equal(env.scripts.length,0);
+});
+test('direct privacy and accessibility mail links report only channel and location', () => {
+  const env=setup();env.allow();env.click('a[href^="mailto:"]','#footer');
+  const event=env.events().find(e=>e[1]==='contact_click');
+  assert.deepEqual(event[2],{send_to:ID,cta_location:'footer',contact_channel:'email'});
+});

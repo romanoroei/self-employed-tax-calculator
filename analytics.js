@@ -75,7 +75,7 @@
       if (started) gtag('consent', 'update', { analytics_storage: 'denied' });
       clearCookies();
     }
-    status.textContent = allowed ? 'מדידה מאושרת. אפשר לשנות את הבחירה בכל עת.' : 'המדידה כבויה. המחשבון זמין במלואו.';
+    status.textContent = allowed ? 'השימוש בעוגיות אושר. אפשר לשנות את הבחירה בכל עת.' : 'עוגיות ניתוח השימוש כבויות. המחשבון זמין במלואו.';
   }
   function choose(allowed) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ allowed, at: Date.now() })); } catch (_) {}
@@ -94,7 +94,7 @@
   }
   document.getElementById('analytics-allow').addEventListener('click', () => choose(true));
   document.getElementById('analytics-deny').addEventListener('click', () => choose(false));
-  document.getElementById('cookie-settings').addEventListener('click', () => {
+  for (const id of ['cookie-settings', 'cookie-settings-intro']) document.getElementById(id)?.addEventListener('click', () => {
     banner.hidden = false;
     document.getElementById(consent ? 'analytics-allow' : 'analytics-deny').focus();
   });
@@ -110,6 +110,8 @@
       track('contact_email_open', { cta_location: location, contact_channel: 'email' });
     } else if (target.matches('.advisor-primary')) {
       track('contact_click', { cta_location: location, contact_channel: 'whatsapp' });
+    } else if (target.matches('a[href^="mailto:"]')) {
+      track('contact_click', { cta_location: location, contact_channel: 'email' });
     } else if (target.matches('a[href^="tel:"]')) {
       track('contact_click', { cta_location: location, contact_channel: 'phone' });
     } else if (target.matches('.share-calculator')) track('calculator_share');
