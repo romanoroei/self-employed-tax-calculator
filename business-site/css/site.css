@@ -171,8 +171,6 @@ html:not(.js) .bar-tools { display: none; }
 @media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
 
 /* ----- side menu: up to 900px the brand tile opens the page's sections (js/site.js) ----- */
-.bar-burger { display: none; }
-.bar-burger svg { width: 16px; height: 12px; fill: var(--gold); }
 .site-menu { position: fixed; inset: 0; z-index: 120; }
 .site-menu[hidden] { display: none; }
 .site-menu-back { position: absolute; inset: 0; background: rgba(8, 24, 38, .55); }
@@ -214,10 +212,6 @@ html.menu-open { overflow: hidden; }
   @keyframes menu-in { from { transform: translateX(100%); } }
   @keyframes menu-fade { from { opacity: 0; } }
 }
-@media (max-width: 900px) {
-  html.js .bar-burger { display: inline-grid; place-items: center; }
-}
-
 /* ================= Hero board ================= */
 .hero {
   background: var(--navy-deep);
@@ -607,7 +601,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-brand { gap: 8px; }
   .bar-brand img { width: 34px; }
 }
-/* the narrowest phones: the menu icon and the logo stay, the name is kept for screen readers only */
+/* the narrowest phones: the logo stays (it opens the menu), the name is kept for screen readers only */
 @media (max-width: 380px) {
   .bar-brand strong {
     position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;

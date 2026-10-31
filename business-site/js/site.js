@@ -61,12 +61,6 @@
   const small = matchMedia('(max-width: 900px)');
   const cta = document.querySelector('.bar-cta');
 
-  const burger = document.createElement('span');
-  burger.className = 'bar-burger';
-  burger.setAttribute('aria-hidden', 'true');
-  burger.innerHTML = '<svg viewBox="0 0 16 12" focusable="false"><path d="M0 0h16v2H0zM0 5h16v2H0zM0 10h16v2H0z"/></svg>';
-  brand.prepend(burger);
-
   const panel = document.createElement('div');
   panel.className = 'site-menu';
   panel.id = 'site-menu';
