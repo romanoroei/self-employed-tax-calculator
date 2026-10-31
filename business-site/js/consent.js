@@ -106,7 +106,7 @@
   banner.setAttribute('role', 'region');
   banner.setAttribute('aria-label', 'הודעה על עוגיות');
   banner.innerHTML = `
-    <p><strong class="cookie-title">כיף שאתם כאן!</strong> המדדים הכלליים והאנונימיים עוזרים לי לשפר את האתר. אין עוגיות מעקב או פרסום, והעדפות השימוש נשמרות בדפדפן שלכם בלבד. במחשבון הטבות המס, Google Analytics מופעל רק לאחר אישור נפרד שלכם. <a href="/privacy#cookies">למדיניות הפרטיות</a></p>
+    <p><strong class="cookie-title">כיף שאתם כאן!</strong> בלי עוגיות מעקב ובלי פרסומות, רק מדידה אנונימית שעוזרת לי לשפר את האתר. <a href="/privacy#cookies">למדיניות הפרטיות</a></p>
     <div class="cookie-actions">
       <button type="button" data-consent="all">אישור</button>
       <button type="button" data-consent="essential">הכרחיות בלבד</button>

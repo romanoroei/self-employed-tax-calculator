@@ -70,6 +70,13 @@ html.a11y-still [data-reveal] { opacity: 1 !important; transform: none !importan
   .a11y-toggle span { display: none; }
   .cookie { inset-inline: 8px; bottom: 8px; padding: 14px 16px; gap: 12px; font-size: 14px; }
   .cookie-actions { flex-wrap: wrap; }
+  /* on phones the dark notice sank into the dark sections behind it: light card, gold edge, deeper shadow */
+  .cookie { background: #FFFFFF; color: #0C2134; border-color: #C9B772; box-shadow: 0 10px 32px rgba(8, 24, 38, .32); }
+  .cookie-title { color: #0C2134; }
+  .cookie a { color: #0C2134; }
+  .cookie-actions button { background: #0C2134; color: #F1F1EE; border-color: #0C2134; }
+  .cookie-actions button + button { background: transparent; color: #0C2134; border-color: #8A97A3; }
+  .cookie :focus-visible { outline-color: #0C2134; }
 }
 
 /* ----- back to top ----- */
