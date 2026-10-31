@@ -517,6 +517,22 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
     background-blend-mode: normal, luminosity;
   }
 }
+/* tablets hide the portrait tile too: same photo behind the text, kept at portrait size
+   in the middle, with its sides faded so the edges of the picture do not show */
+@media (min-width: 701px) and (max-width: 1100px) {
+  .about-text {
+    padding-top: 290px;
+    background-color: var(--paper-2);
+    background-image:
+      linear-gradient(to bottom, rgba(228, 229, 226, 0) 0, rgba(228, 229, 226, .55) 220px, rgba(228, 229, 226, .9) 360px, var(--paper-2) 560px),
+      linear-gradient(to right, var(--paper-2) calc(50% - 250px), rgba(228, 229, 226, 0) calc(50% - 130px), rgba(228, 229, 226, 0) calc(50% + 130px), var(--paper-2) calc(50% + 250px)),
+      url("../assets/img/roei-1.jpg");
+    background-size: 100% auto, 100% 100%, 500px auto;
+    background-position: top center, center, center 0;
+    background-repeat: no-repeat;
+    background-blend-mode: normal, normal, luminosity;
+  }
+}
 /* narrow phones: the brand drops its subtitle so the tools tile fits beside it */
 @media (max-width: 520px) { .bar-brand span { display: none; } }
 @media (max-width: 400px) {
