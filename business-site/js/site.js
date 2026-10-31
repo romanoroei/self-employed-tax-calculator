@@ -51,6 +51,115 @@
   menu.addEventListener('focusout', (e) => { if (!e.relatedTarget || !e.relatedTarget.closest('.bar-tools')) close(false); });
 })();
 
+// ===== Phones and tablets: the brand tile opens a side menu of the page's sections =====
+// The section links are hidden in the top bar up to 900px, so the brand (logo and name) opens them
+// in a panel from the right. Above 900px, or without scripting, the brand stays a plain link.
+(() => {
+  const brand = document.querySelector('.bar-brand');
+  const nav = document.querySelector('.bar-nav');
+  if (!brand || !nav) return;
+  const small = matchMedia('(max-width: 900px)');
+  const cta = document.querySelector('.bar-cta');
+
+  const burger = document.createElement('span');
+  burger.className = 'bar-burger';
+  burger.setAttribute('aria-hidden', 'true');
+  burger.innerHTML = '<svg viewBox="0 0 16 12" focusable="false"><path d="M0 0h16v2H0zM0 5h16v2H0zM0 10h16v2H0z"/></svg>';
+  brand.prepend(burger);
+
+  const panel = document.createElement('div');
+  panel.className = 'site-menu';
+  panel.id = 'site-menu';
+  panel.hidden = true;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', 'תפריט האתר');
+  const top = brand.getAttribute('href') === '#top' ? '#top' : '/';
+  panel.innerHTML = `
+    <div class="site-menu-back" data-close></div>
+    <div class="site-menu-sheet">
+      <div class="site-menu-head">
+        <a class="site-menu-brand" href="${top}">${brand.querySelector('img').outerHTML}<strong>רועי רומנו</strong></a>
+        <button type="button" class="site-menu-close" data-close aria-label="סגירת התפריט"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.1 1.7L8 6.6l4.9-4.9 1.4 1.4L9.4 8l4.9 4.9-1.4 1.4L8 9.4l-4.9 4.9-1.4-1.4L6.6 8 1.7 3.1z"/></svg></button>
+      </div>
+      <nav class="site-menu-links" aria-label="נושאי האתר"></nav>
+    </div>`;
+  const list = panel.querySelector('.site-menu-links');
+  [...nav.querySelectorAll('a')].forEach((a) => {
+    const link = document.createElement('a');
+    link.href = a.getAttribute('href');
+    link.innerHTML = `<span>${a.textContent}</span><span class="v" aria-hidden="true">←</span>`;
+    list.append(link);
+  });
+  if (cta) {
+    const go = document.createElement('a');
+    go.className = 'site-menu-cta';
+    go.href = cta.getAttribute('href');
+    go.textContent = 'לשיחת היכרות ללא עלות';
+    list.append(go);
+  }
+  document.body.append(panel);
+  const sheet = panel.querySelector('.site-menu-sheet');
+  const focusables = () => [...sheet.querySelectorAll('a, button')];
+
+  const open = () => {
+    panel.hidden = false;
+    document.documentElement.classList.add('menu-open');
+    brand.setAttribute('aria-expanded', 'true');
+    focusables()[0].focus();
+  };
+  const close = (focusBrand) => {
+    if (panel.hidden) return;
+    panel.hidden = true;
+    document.documentElement.classList.remove('menu-open');
+    brand.setAttribute('aria-expanded', 'false');
+    if (focusBrand) brand.focus();
+  };
+  const sync = () => {
+    if (small.matches) {
+      brand.setAttribute('aria-controls', 'site-menu');
+      brand.setAttribute('aria-expanded', String(!panel.hidden));
+      brand.setAttribute('aria-label', 'פתיחת תפריט האתר');
+    } else {
+      close(false);
+      ['aria-controls', 'aria-expanded', 'aria-label'].forEach((n) => brand.removeAttribute(n));
+    }
+  };
+  sync();
+  small.addEventListener('change', sync);
+
+  brand.addEventListener('click', (e) => {
+    if (!small.matches) return;
+    e.preventDefault();
+    open();
+  });
+  panel.addEventListener('click', (e) => {
+    if (e.target.closest('[data-close]')) { close(true); return; }
+    const link = e.target.closest('.site-menu-links a, .site-menu-brand');
+    if (!link) return;
+    close(false);
+    // a section on this page: the link was hidden mid-click, so scroll there ourselves
+    const hash = link.getAttribute('href');
+    const target = hash.startsWith('#') && document.getElementById(hash.slice(1));
+    if (!target) return;
+    e.preventDefault();
+    history.pushState(null, '', hash);
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
+    // wait a frame: the page is still locked from the open menu until the next layout
+    requestAnimationFrame(() => target.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' }));
+  });
+  panel.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); close(true); return; }
+    if (e.key !== 'Tab') return;
+    // keep Tab inside the open menu
+    const items = focusables();
+    const first = items[0];
+    const last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+})();
+
 // ===== The gaps keep closing: bars (and the share prices) loop while the section is on screen =====
 (() => {
   const box = document.querySelector('.arb');

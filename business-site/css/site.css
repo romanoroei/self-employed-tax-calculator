@@ -170,6 +170,54 @@ html:not(.js) .bar-tools { display: none; }
 /* the tools tile takes room from the links: the last two go earlier than before */
 @media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
 
+/* ----- side menu: up to 900px the brand tile opens the page's sections (js/site.js) ----- */
+.bar-burger { display: none; }
+.bar-burger svg { width: 16px; height: 12px; fill: var(--gold); }
+.site-menu { position: fixed; inset: 0; z-index: 120; }
+.site-menu[hidden] { display: none; }
+.site-menu-back { position: absolute; inset: 0; background: rgba(8, 24, 38, .55); }
+.site-menu-sheet {
+  position: absolute; inset-block: 0; inset-inline-start: 0; width: min(340px, 86vw);
+  display: flex; flex-direction: column; gap: 4px; padding: var(--gap);
+  background: var(--navy-deep); overflow-y: auto; overscroll-behavior: contain;
+  box-shadow: -12px 0 32px rgba(0, 0, 0, .3);
+}
+.site-menu-head { display: flex; gap: 4px; min-height: calc(var(--bar) - 2 * var(--gap)); }
+.site-menu-brand {
+  flex: 1; display: flex; align-items: center; gap: 10px; padding-inline: 16px;
+  background: var(--navy); color: var(--on-dark); text-decoration: none; font-size: 17px;
+}
+.site-menu-brand img { width: 34px; height: auto; }
+.site-menu-close {
+  appearance: none; border: 0; border-radius: 0; cursor: pointer; width: 56px;
+  display: grid; place-items: center; background: var(--slate); color: var(--on-dark);
+}
+.site-menu-close svg { width: 16px; height: 16px; fill: currentColor; }
+.site-menu-links { display: flex; flex-direction: column; gap: 4px; }
+.site-menu-links a {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 56px; padding: 0 20px; background: var(--navy); color: var(--on-dark);
+  text-decoration: none; font-size: var(--t-4); font-weight: 700;
+  transition: background-color 160ms ease;
+}
+.site-menu-links .v { color: var(--gold); }
+.site-menu-links a.site-menu-cta { margin-top: 12px; justify-content: center; background: var(--gold); color: var(--navy-deep); }
+.site-menu a:focus-visible, .site-menu button:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+html.menu-open { overflow: hidden; }
+@media (hover: hover) and (pointer: fine) {
+  .site-menu-links a:not(.site-menu-cta):hover, .site-menu-brand:hover { background: var(--slate); }
+  .site-menu-close:hover { background: #34465A; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-menu:not([hidden]) .site-menu-sheet { animation: menu-in 260ms var(--ease-out); }
+  .site-menu:not([hidden]) .site-menu-back { animation: menu-fade 260ms ease; }
+  @keyframes menu-in { from { transform: translateX(100%); } }
+  @keyframes menu-fade { from { opacity: 0; } }
+}
+@media (max-width: 900px) {
+  html.js .bar-burger { display: inline-grid; place-items: center; }
+}
+
 /* ================= Hero board ================= */
 .hero {
   background: var(--navy-deep);
@@ -523,12 +571,12 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
      clear down to the shoulders, washed out under the words, in grey like the other photos.
      The photo layer keeps the picture's proportions and the padding is a share of the width,
      so the fade lands on the same part of the photo on every phone */
-  .about-text { position: relative; isolation: isolate; padding-top: 88%; }
+  .about-text { position: relative; isolation: isolate; padding-top: 66%; }
   .about-text::before {
     content: ""; position: absolute; inset: 0 0 auto; aspect-ratio: 720 / 890; z-index: -1;
     background-color: var(--paper-2);
     background-image:
-      linear-gradient(to bottom, rgba(228, 229, 226, 0) 52%, rgba(228, 229, 226, .6) 72%, rgba(228, 229, 226, .94) 84%, var(--paper-2) 96%),
+      linear-gradient(to bottom, rgba(228, 229, 226, 0) 44%, rgba(228, 229, 226, .62) 56%, rgba(228, 229, 226, .9) 66%, var(--paper-2) 82%),
       url("../assets/img/roei-1.jpg");
     background-size: 100% 100%, 100% auto;
     background-position: top center;
@@ -559,7 +607,12 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-brand { gap: 8px; }
   .bar-brand img { width: 34px; }
 }
-@media (max-width: 340px) { .bar-brand img { display: none; } }
+/* the narrowest phones: the menu icon and the logo stay, the name is kept for screen readers only */
+@media (max-width: 380px) {
+  .bar-brand strong {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+}
 .logo-wide { margin-inline: -10px; width: calc(100% + 20px); }
 
 /* ================= More areas ================= */
