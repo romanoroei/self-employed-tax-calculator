@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
+import { calendarFeed } from './calendar-feed.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'dist');
@@ -31,6 +32,8 @@ await writeFile(path.join(calc, 'index.html'), html);
 await writeFile(path.join(calc, 'analytics.js'), analytics);
 for (const asset of assets) await cp(path.join(root, asset), path.join(calc, asset));
 for (const entry of publicSiteEntries) await cp(path.join(root, 'business-site', entry), path.join(output, entry), {recursive:true});
+// Calendar apps subscribe to this address, so it must keep its name.
+await writeFile(path.join(output, 'magazine', 'financial-calendar.ics'), calendarFeed());
 // Content versions ensure browsers pick up stylesheet and script updates together.
 const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html', 'magazine/financial-calendar.html');
 for (const page of businessPages) {

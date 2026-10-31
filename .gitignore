@@ -16,3 +16,7 @@
 !business-site/
 !business-site/**
 !scripts/check-site.mjs
+!scripts/calendar-feed.mjs
+
+!functions/
+!functions/**

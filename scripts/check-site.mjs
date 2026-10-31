@@ -42,6 +42,10 @@ for(const name of ['שם מלא','טלפון','אימייל','מטרה'])assert(
 const js=await readFile(path.join(root,'js/site.js'),'utf8');
 assert(!js.includes('Preview only:')&&!js.includes('הטופס אינו פעיל'),'Preview guard must not reach production');
 assert(js.includes('button.disabled || !form.reportValidity()'),'Prevent repeated submits while pending');
+const feed=await readFile(path.join(root,'magazine/financial-calendar.ics'),'utf8');
+assert(feed.startsWith('BEGIN:VCALENDAR\r\n')&&feed.endsWith('END:VCALENDAR\r\n'),'Calendar feed is malformed');
+assert.equal([...feed.matchAll(/^BEGIN:VEVENT\r$/gm)].length,6,'Calendar feed must hold six reminders');
+assert(feed.split('\r\n').every(l=>Buffer.byteLength(l)<=75),'Calendar feed lines must be folded');
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');

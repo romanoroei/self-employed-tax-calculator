@@ -1,5 +1,5 @@
 // Roei Romano — financial calendar: marks the current month, fills the "this month" tiles,
-// filters by audience (remembered in this browser) and offers yearly reminders as an .ics file.
+// filters by audience (remembered in this browser) and offers the yearly reminders as a calendar subscription.
 
 (() => {
   const months = [...document.querySelectorAll('.cal-month')];
@@ -59,52 +59,30 @@
   const saved = store.get();
   apply(buttons.some((b) => b.dataset.filter === saved) ? saved : 'all');
 
-  // ===== Yearly reminders for the visitor's own calendar =====
-  const REMINDERS = [
-    [1, 5, 'קופת גמל להשקעה: תקרה חדשה לשנה', 'להחליט על הפקדה חד־פעמית או הוראת קבע, לפי התזרים והמטרות.'],
-    [3, 25, 'לבדוק שהגיעו טופס 106 וטופס 867', 'טופס 106 מכל מעסיק עד 31.3, וטופס 867 מכל בנק ובית השקעות.'],
-    [4, 20, 'לקרוא את הדוחות השנתיים מהקרנות', 'דמי ניהול, מסלול השקעה וכיסויים ביטוחיים, בכל דוח.'],
-    [9, 1, 'לעדכן מוטבים בקרנות ובביטוחים', 'נישואים, גירושים או לידה לא מעדכנים את המוטבים מעצמם.'],
-    [11, 15, 'לחשב כמה עוד להפקיד השנה', 'עצמאים: הפקדות לפנסיה ולקרן ההשתלמות לפני סוף שנת המס.'],
-    [12, 15, 'הפקדות ותרומות של סוף השנה', 'פנסיה וקרן השתלמות, ניצול תקרת קופת הגמל להשקעה ותרומות. הכול צריך להיקלט עד 31.12.'],
-  ];
-  const PAGE = 'https://romanoinvest.co.il/magazine/financial-calendar';
-  const pad = (n) => String(n).padStart(2, '0');
-  const esc = (s) => s.replace(/[\\;,]/g, (c) => `\\${c}`);
-  // calendar lines are limited to 75 bytes; Hebrew takes two bytes a letter, so fold every 30 characters
-  const fold = (line) => line.match(/.{1,30}/g).join('\r\n ');
-  const ics = () => {
-    const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-    const events = REMINDERS.map(([mo, d, title, text], i) => {
-      // the next time this date comes round
-      const y = (mo - 1 < m || (mo - 1 === m && d < today.getDate())) ? year + 1 : year;
-      const day = `${y}${pad(mo)}${pad(d)}`;
-      const after = new Date(Date.UTC(y, mo - 1, d + 1));
-      const end = `${after.getUTCFullYear()}${pad(after.getUTCMonth() + 1)}${pad(after.getUTCDate())}`;
-      return [
-        'BEGIN:VEVENT',
-        `UID:rr-calendar-${i + 1}@romanoinvest.co.il`,
-        `DTSTAMP:${stamp}`,
-        `DTSTART;VALUE=DATE:${day}`,
-        `DTEND;VALUE=DATE:${end}`,
-        'RRULE:FREQ=YEARLY',
-        `SUMMARY:${esc(title)}`,
-        `DESCRIPTION:${esc(`${text} ${PAGE}`)}`,
-        `URL:${PAGE}`,
-        'END:VEVENT',
-      ].map(fold).join('\r\n');
-    });
-    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Roei Romano//Financial calendar//HE', 'CALSCALE:GREGORIAN', ...events, 'END:VCALENDAR', ''].join('\r\n');
-  };
-  const button = document.querySelector('[data-ics]');
-  if (button) button.addEventListener('click', () => {
-    const url = URL.createObjectURL(new Blob([ics()], { type: 'text/calendar;charset=utf-8' }));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'romano-financial-calendar.ics';
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  // ===== Subscribing to the yearly reminders (the feed is written by the build) =====
+  // Anonymous totals only: the label is all that is sent, and a failed count never blocks anything.
+  const count = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };
+  document.querySelectorAll('a[data-subscribe]').forEach((a) => {
+    a.addEventListener('click', () => count(`subscribe:${a.dataset.subscribe}`));
   });
+  const copy = document.querySelector('button[data-subscribe="copy"]');
+  if (copy) copy.addEventListener('click', async () => {
+    const label = copy.textContent;
+    try {
+      await navigator.clipboard.writeText(copy.dataset.feed);
+      copy.textContent = 'הכתובת הועתקה. מדביקים אותה ביומן תחת "הוספת יומן מכתובת"';
+    } catch {
+      copy.textContent = copy.dataset.feed;
+    }
+    count('subscribe:copy');
+    setTimeout(() => { copy.textContent = label; }, 6000);
+  });
+
+  // a visit from a calendar reminder: count it, then drop the marker so a shared link stays clean
+  const params = new URLSearchParams(location.search);
+  if (params.get('from') === 'reminder') {
+    const month = /^#m(\d{1,2})$/.exec(location.hash);
+    if (month) count(`return:m${month[1]}`);
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
 })();
