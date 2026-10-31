@@ -112,7 +112,7 @@ a.tile { transition: background-color 180ms ease; }
 .topbar {
   position: sticky; top: 0; z-index: 50;
   background: var(--navy-deep);
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--gap);
+  display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: var(--gap);
   padding: var(--gap); height: var(--bar);
 }
 .bar-brand, .bar-cta { display: flex; align-items: center; gap: 10px; padding-inline: 22px; white-space: nowrap; }
@@ -126,6 +126,46 @@ a.tile { transition: background-color 180ms ease; }
   .bar-nav a:hover { color: var(--gold); }
   .bar-brand:hover { background: var(--navy); }
 }
+
+/* tools and calculators: a menu that drops from the tile next to the brand */
+.bar-tools { position: relative; display: flex; }
+html:not(.js) .bar-tools { display: none; }
+.bar-tools-toggle {
+  display: flex; align-items: center; gap: 10px; padding-inline: 20px; white-space: nowrap;
+  appearance: none; border: 0; border-radius: 0; cursor: pointer;
+  background: var(--navy); color: var(--gold); font-weight: 700; font-size: var(--t-5);
+  transition: background-color 160ms ease;
+}
+.bar-tools-toggle svg { width: 12px; height: 12px; fill: currentColor; transition: transform 200ms var(--ease-out); }
+.bar-tools-toggle[aria-expanded="true"] { background: var(--slate); }
+.bar-tools-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+@media (hover: hover) and (pointer: fine) { .bar-tools-toggle:hover { background: var(--slate); } }
+.tools-menu {
+  position: absolute; top: calc(100% + var(--gap)); inset-inline-start: 0; z-index: 60;
+  width: 380px; display: grid; gap: 4px; padding: var(--gap); background: var(--navy-deep);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .28);
+}
+.tools-menu[hidden] { display: none; }
+.tools-menu a {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; align-items: center;
+  padding: 14px 18px; background: var(--navy); color: var(--on-dark); text-decoration: none;
+  transition: background-color 160ms ease;
+}
+.tools-menu .k { grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: var(--gold); }
+.tools-menu strong { font-size: var(--t-5); font-weight: 700; }
+.tools-menu .v { grid-row: 2 / span 2; grid-column: 2; color: var(--gold); transition: transform 200ms var(--ease-out); }
+.tools-menu small { font-size: 13px; color: var(--on-dark-soft); }
+.tools-menu a:focus-visible { outline-offset: -3px; }
+@media (hover: hover) and (pointer: fine) {
+  .tools-menu a:hover { background: var(--slate); }
+  .tools-menu a:hover .v { transform: translateX(-4px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tools-menu:not([hidden]) { animation: tools-in 200ms var(--ease-out); }
+  @keyframes tools-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+}
+/* the tools tile takes room from the links: the last two go earlier than before */
+@media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
 
 /* ================= Hero board ================= */
 .hero {
@@ -384,7 +424,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .about-year { font-size: 30px; }
 }
 @media (max-width: 900px) {
-  .topbar { grid-template-columns: minmax(0, 1fr) auto; }
+  .topbar { grid-template-columns: minmax(0, 1fr) auto auto; }
   .bar-nav { display: none; }
   .hero { height: auto; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto; }
   .hero-main { grid-column: 1 / -1; grid-row: auto; padding: 28px; min-height: 420px; }
@@ -420,6 +460,9 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-brand strong { font-size: 17px; }
   .bar-brand span { font-size: 14px; }
   .bar-cta { padding-inline: 14px; }
+  .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
+  .tools-more { display: none; }
+  .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
   .hero-main { padding: 22px; min-height: 460px; }
   .hero-copy > .button { display: none; }
   .hero-lead { margin-block: 16px 0; }
@@ -458,6 +501,14 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .about-text { grid-column: 1 / -1; }
   .about-year { font-size: 28px; }
 }
+/* narrow phones: the brand drops its subtitle so the tools tile fits beside it */
+@media (max-width: 520px) { .bar-brand span { display: none; } }
+@media (max-width: 400px) {
+  .bar-brand, .bar-cta { padding-inline: 10px; }
+  .bar-brand { gap: 8px; }
+  .bar-brand img { width: 34px; }
+}
+@media (max-width: 340px) { .bar-brand img { display: none; } }
 .logo-wide { margin-inline: -10px; width: calc(100% + 20px); }
 
 /* ================= More areas ================= */

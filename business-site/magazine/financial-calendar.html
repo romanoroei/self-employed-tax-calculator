@@ -24,6 +24,15 @@
 
 <header class="topbar" id="top">
   <a class="tile tile-ink bar-brand" href="/"><img src="../assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
+  <div class="bar-tools">
+    <button type="button" class="bar-tools-toggle" aria-expanded="false" aria-controls="tools-menu">כלים<span class="tools-more"> ומחשבונים</span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 8.6L1.2 3.8l1-1L6 6.6l3.8-3.8 1 1z"/></svg></button>
+    <div class="tools-menu" id="tools-menu" hidden>
+      <a href="/magazine/financial-calendar"><span class="k">לוח שנה</span><strong>לוח השנה הפיננסי</strong><small>מה לבדוק בכל חודש</small><span class="v" aria-hidden="true">←</span></a>
+      <a href="/self-employed-tax-calculator/"><span class="k">מחשבון</span><strong>הטבות מס לעצמאים</strong><small>הפקדות לפנסיה ולקרן השתלמות</small><span class="v" aria-hidden="true">←</span></a>
+      <a href="https://romanoroei.github.io/KerenHeshtalmut/consumer/" target="_blank" rel="noopener"><span class="k">כלי</span><strong>קרן השתלמות לעצמאים</strong><small>כמה להפקיד ומה ההטבה</small><span class="v" aria-hidden="true">↗</span></a>
+      <a href="https://romanoroei.github.io/DrawWise/" target="_blank" rel="noopener"><span class="k">כלי</span><strong>מאיפה למשוך קודם</strong><small>סדר משיכות לפי מס</small><span class="v" aria-hidden="true">↗</span></a>
+    </div>
+  </div>
   <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
     <a href="/#approach">הגישה שלי</a>
     <a href="/#clients">את מי אני מלווה</a>
@@ -64,7 +73,7 @@
     </a>
     <div class="tile tile-slate cal-ics">
       <strong>תזכורות ביומן שלכם</strong>
-      <p>חמש תזכורות שחוזרות כל שנה: טופס 106 וטופס 867 במרץ, הדוחות השנתיים באפריל, עדכון מוטבים בספטמבר, ובנובמבר ובדצמבר ההפקדות של סוף השנה.</p>
+      <p>שש תזכורות שחוזרות כל שנה: תקרת קופת הגמל להשקעה בינואר, טופס 106 וטופס 867 במרץ, הדוחות השנתיים באפריל, עדכון מוטבים בספטמבר, ובנובמבר ובדצמבר ההפקדות של סוף השנה.</p>
       <button type="button" class="button" data-ics>להוספה ליומן</button>
     </div>
   </div>
@@ -86,6 +95,7 @@
       <ul class="cal-items">
         <li data-for="s"><span class="cal-meta"><span class="cal-tag">שכירים</span></span><strong>טופס 101 למעסיק</strong><p>בתחילת כל שנת מס ממלאים מחדש את טופס 101. הוא קובע את נקודות הזיכוי שלכם, ולכן כדאי לעדכן בו ילדים, תואר אקדמי, מגורים ביישוב מזכה או עבודה נוספת.</p></li>
         <li data-for="e"><span class="cal-meta"><span class="cal-tag">עצמאים</span></span><strong>הפקדה חודשית במקום הפקדה אחת בדצמבר</strong><p>הוראת קבע לפנסיה ולקרן ההשתלמות מפזרת את הסכום על פני השנה, ומונעת הפקדה גדולה ולחוצה בסוף השנה.</p></li>
+        <li data-for="i"><span class="cal-meta"><span class="cal-tag">משקיעים</span></span><strong>קופת גמל להשקעה: תקרה חדשה</strong><p>עם תחילת השנה נפתחת תקרת הפקדה חדשה. מחליטים איך להפקיד לפי התזרים והמטרות: סכום חד־פעמי עכשיו, או הוראת קבע חודשית לאורך השנה.</p></li>
         <li data-for="i"><span class="cal-meta"><span class="cal-tag">משקיעים</span></span><strong>תמונת פתיחה לשנה</strong><p>רושמים כמה יש בכל חשבון ואיך הכסף מחולק בין מניות, אג"ח ומזומן. זו נקודת הייחוס לבדיקות של המשך השנה.</p></li>
       </ul>
       <p class="cal-empty" hidden>אין החודש משימה מיוחדת לקבוצה הזו.</p>
@@ -196,6 +206,7 @@
       <p class="cal-focus">עד 31.12 השנה נסגרת.</p>
       <ul class="cal-items">
         <li data-for="e"><span class="cal-meta"><span class="cal-tag">עצמאים</span><span class="cal-date">עד 31.12</span></span><strong>הפקדות לפנסיה ולקרן ההשתלמות</strong><p>כדי שההפקדה תיחשב לשנה הזו, היא צריכה להיקלט בקרן בפועל עד סוף השנה. העברה ברגע האחרון עלולה להיקלט מאוחר מדי, ולכן עדיף לא לחכות לשבוע האחרון.</p></li>
+        <li data-for="i"><span class="cal-meta"><span class="cal-tag">משקיעים</span><span class="cal-date">עד 31.12</span></span><strong>קופת גמל להשקעה: ניצול התקרה</strong><p>לקופת גמל להשקעה יש תקרת הפקדה שנתית, ומה שלא הופקד עד סוף השנה לא עובר לשנה הבאה. בודקים כמה הופקד השנה וכמה עוד אפשר להשלים.</p></li>
         <li data-for="all"><span class="cal-meta"><span class="cal-tag">לכולם</span><span class="cal-date">עד 31.12</span></span><strong>תרומות</strong><p>תרומה למוסד ציבורי מוכר מזכה בזיכוי ממס בשנה שבה ניתנה. שומרים את הקבלות.</p></li>
         <li data-for="s"><span class="cal-meta"><span class="cal-tag">שכירים</span><span class="cal-date">עד 31.12</span></span><strong>החזר מס על <span data-years-back="6">השנה הוותיקה בחלון</span></strong><p>זו השנה האחרונה שבה אפשר לבקש החזר על שנת המס הזו. אחרי 31 בדצמבר היא יוצאת מחלון שש השנים.</p></li>
       </ul>

@@ -42,6 +42,7 @@
   box-shadow: 0 6px 24px rgba(0, 0, 0, .22);
 }
 .cookie p { margin: 0; flex: 1 1 320px; min-width: 0; }
+.cookie-title { display: block; margin-bottom: 2px; font-size: 17px; font-weight: 800; color: #E3D6A3; }
 .cookie a { color: #E3D6A3; text-decoration: underline; text-underline-offset: 3px; }
 .cookie-actions { display: flex; gap: 8px; }
 .cookie-actions button {
