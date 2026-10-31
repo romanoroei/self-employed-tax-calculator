@@ -187,7 +187,7 @@ html:not(.js) .bar-tools { display: none; }
 .hero-main h1 { font-size: var(--t-hero); font-weight: 800; line-height: 1.08; letter-spacing: -0.015em; color: var(--on-dark); }
 .hero-main h1 span { display: block; }
 .hero-role { font-weight: 400; color: var(--gold); }
-.hero-lead { margin-block: 18px 28px; font-size: var(--t-3); line-height: 1.55; max-width: 40ch; color: var(--on-dark-soft); }
+.hero-lead { margin-block: 18px 0; font-size: var(--t-3); line-height: 1.55; max-width: 40ch; color: var(--on-dark-soft); }
 .hero-idea { padding: 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
 .hero-idea strong { font-size: var(--t-2); font-weight: 800; color: var(--gold); line-height: 1.2; }
 .hero-idea > span { font-size: var(--t-4); line-height: 1.5; color: var(--on-dark-soft); max-width: 34ch; }
@@ -466,7 +466,6 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
   .hero-main { padding: 22px; min-height: 390px; }
   .hero-bg { object-position: 50% 0; }
-  .hero-copy > .button { display: none; }
   .hero-lead { margin-block: 16px 0; }
   .hero-idea, .hero-facts { padding: 20px; }
   .hero-idea > span { font-size: var(--t-5); }
