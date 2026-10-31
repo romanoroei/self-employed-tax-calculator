@@ -203,8 +203,27 @@
   });
 })();
 
-// ===== Calendar subscribe buttons: anonymous click totals (functions/api/count.js) =====
-// Only the label is sent; a failed count never blocks the subscription itself.
+// ===== Calendar subscribe buttons =====
+// webcal:// opens only on Apple devices (or where desktop Outlook is installed); elsewhere the click does
+// nothing, so other devices get Outlook on the web instead. The markup keeps webcal for when scripting is off.
+(() => {
+  const FEED = 'https://romanoinvest.co.il/magazine/financial-calendar.ics';
+  const apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  const phone = /iPhone|iPod/.test(navigator.userAgent);
+  document.querySelectorAll('a[data-subscribe="apple"]').forEach((a) => {
+    if (apple) {
+      a.textContent = phone ? 'ליומן אייפון' : 'ליומן Apple';
+      return;
+    }
+    a.href = `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(FEED)}&name=${encodeURIComponent('לוח השנה הפיננסי')}`;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'ליומן Outlook';
+    a.dataset.subscribe = 'outlook';
+  });
+})();
+
+// Anonymous click totals (functions/api/count.js). Only the label is sent; a failed count never blocks the subscription.
 document.querySelectorAll('a[data-subscribe]').forEach((a) => {
   a.addEventListener('click', () => {
     try { navigator.sendBeacon('/api/count', `subscribe:${a.dataset.subscribe}`); } catch { /* counting is optional */ }
