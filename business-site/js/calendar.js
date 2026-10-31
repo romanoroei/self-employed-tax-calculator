@@ -61,10 +61,8 @@
 
   // ===== Subscribing to the yearly reminders (the feed is written by the build) =====
   // Anonymous totals only: the label is all that is sent, and a failed count never blocks anything.
+  // Clicks on the subscribe links are counted by site.js, which every page loads.
   const count = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };
-  document.querySelectorAll('a[data-subscribe]').forEach((a) => {
-    a.addEventListener('click', () => count(`subscribe:${a.dataset.subscribe}`));
-  });
   const copy = document.querySelector('button[data-subscribe="copy"]');
   if (copy) copy.addEventListener('click', async () => {
     const label = copy.textContent;

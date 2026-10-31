@@ -202,3 +202,11 @@
       .finally(() => { button.disabled = false; button.textContent = 'לשליחת הפרטים'; });
   });
 })();
+
+// ===== Calendar subscribe buttons: anonymous click totals (functions/api/count.js) =====
+// Only the label is sent; a failed count never blocks the subscription itself.
+document.querySelectorAll('a[data-subscribe]').forEach((a) => {
+  a.addEventListener('click', () => {
+    try { navigator.sendBeacon('/api/count', `subscribe:${a.dataset.subscribe}`); } catch { /* counting is optional */ }
+  });
+});
