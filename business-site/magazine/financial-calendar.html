@@ -57,42 +57,31 @@
   </div>
 </header>
 
-<!-- filled from the month tiles by js/calendar.js; hidden when scripting is off -->
-<section class="cal-now" aria-labelledby="now-title">
-  <div class="cal-now-board board">
-    <div class="tile tile-gold cal-now-main">
-      <p class="cal-kicker">החודש</p>
-      <h2 id="now-title" class="cal-now-month"></h2>
-      <p class="cal-now-focus"></p>
-      <ul class="cal-items"></ul>
-    </div>
-    <a class="tile tile-ink cal-next" href="#m1">
-      <span class="cal-kicker">בחודש הבא</span>
-      <strong class="cal-next-month"></strong>
-      <span class="cal-next-focus"></span>
-      <span class="cal-next-go">לפרטים <span class="arrow" aria-hidden="true">←</span></span>
-    </a>
-    <div class="tile tile-slate cal-ics">
-      <strong>תזכורות ביומן שלכם</strong>
-      <p>שש תזכורות שחוזרות כל שנה: תקרת קופת הגמל להשקעה בינואר, טופס 106 וטופס 867 במרץ, הדוחות השנתיים באפריל, עדכון מוטבים בספטמבר, ובנובמבר ובדצמבר ההפקדות של סוף השנה.</p>
-      <p>נרשמים פעם אחת. כשמשהו משתנה, למשל תקרה חדשה, העדכון מגיע ליומן מעצמו.</p>
-      <div class="cal-subscribe">
-        <a class="button" href="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fromanoinvest.co.il%2Fmagazine%2Ffinancial-calendar.ics" target="_blank" rel="noopener" data-subscribe="google">ליומן Google</a>
-        <a class="button button-line" href="webcal://romanoinvest.co.il/magazine/financial-calendar.ics" data-subscribe="apple">ליומן אייפון או Outlook</a>
-      </div>
-      <button type="button" class="cal-copy" data-subscribe="copy" data-feed="https://romanoinvest.co.il/magazine/financial-calendar.ics">יומן אחר? להעתקת כתובת הלוח</button>
-    </div>
-  </div>
-</section>
-
+<!-- js/calendar.js turns this into a wall calendar: one month at a time, opening on the current month.
+     Without scripting all twelve months show and the strip jumps between them. -->
 <section class="wrap cal-year-wrap" aria-labelledby="year-title">
-  <h2 id="year-title" class="h-1" data-reveal>השנה כולה</h2>
+  <h2 id="year-title" class="h-small">השנה כולה, חודש אחר חודש</h2>
   <div class="cal-filter" role="group" aria-label="סינון לפי קהל" data-reveal>
     <button type="button" data-filter="all" aria-pressed="true">הכול</button>
     <button type="button" data-filter="s" aria-pressed="false">שכירים</button>
     <button type="button" data-filter="e" aria-pressed="false">עצמאים</button>
     <button type="button" data-filter="i" aria-pressed="false">משקיעים</button>
   </div>
+
+  <nav class="cal-strip" aria-label="חודשי השנה">
+    <a href="#m1"><span class="full">ינואר</span><span class="short">ינו׳</span></a>
+    <a href="#m2"><span class="full">פברואר</span><span class="short">פבר׳</span></a>
+    <a href="#m3"><span class="full">מרץ</span><span class="short">מרץ</span></a>
+    <a href="#m4"><span class="full">אפריל</span><span class="short">אפר׳</span></a>
+    <a href="#m5"><span class="full">מאי</span><span class="short">מאי</span></a>
+    <a href="#m6"><span class="full">יוני</span><span class="short">יוני</span></a>
+    <a href="#m7"><span class="full">יולי</span><span class="short">יולי</span></a>
+    <a href="#m8"><span class="full">אוגוסט</span><span class="short">אוג׳</span></a>
+    <a href="#m9"><span class="full">ספטמבר</span><span class="short">ספט׳</span></a>
+    <a href="#m10"><span class="full">אוקטובר</span><span class="short">אוק׳</span></a>
+    <a href="#m11"><span class="full">נובמבר</span><span class="short">נוב׳</span></a>
+    <a href="#m12"><span class="full">דצמבר</span><span class="short">דצמ׳</span></a>
+  </nav>
 
   <div class="cal-year board">
     <div class="tile cal-month" id="m1">
@@ -219,7 +208,26 @@
       <p class="cal-empty" hidden>אין החודש משימה מיוחדת לקבוצה הזו.</p>
     </div>
   </div>
+
+  <div class="cal-pager" hidden>
+    <button type="button" data-turn="-1"><span class="cal-pager-k"><span aria-hidden="true">→</span> החודש הקודם</span><strong class="cal-pager-name"></strong></button>
+    <button type="button" data-turn="1"><span class="cal-pager-k">החודש הבא <span aria-hidden="true">←</span></span><strong class="cal-pager-name"></strong></button>
+  </div>
 </section>
+
+<aside class="wrap remind-wrap" aria-label="תזכורות ליומן">
+  <div class="tile tile-slate remind">
+    <div>
+      <strong>תזכורות ביומן שלכם</strong>
+      <p>שש תזכורות שחוזרות כל שנה: תקרת קופת הגמל להשקעה בינואר, טופס 106 וטופס 867 במרץ, הדוחות השנתיים באפריל, עדכון מוטבים בספטמבר, ובנובמבר ובדצמבר ההפקדות של סוף השנה. נרשמים פעם אחת, וכשמשהו משתנה העדכון מגיע ליומן מעצמו.</p>
+    </div>
+    <div class="remind-go">
+      <a class="button" href="https://calendar.google.com/calendar/render?cid=webcal%3A%2F%2Fromanoinvest.co.il%2Fmagazine%2Ffinancial-calendar.ics" target="_blank" rel="noopener" data-subscribe="google">ליומן Google</a>
+      <a class="button button-line" href="webcal://romanoinvest.co.il/magazine/financial-calendar.ics" data-subscribe="apple">ליומן אייפון או Outlook</a>
+      <button type="button" class="cal-copy" data-subscribe="copy" data-feed="https://romanoinvest.co.il/magazine/financial-calendar.ics">יומן אחר? להעתקת כתובת הלוח</button>
+    </div>
+  </div>
+</aside>
 
 <section class="wrap cal-always" aria-labelledby="always-title">
   <h2 id="always-title" class="h-small" data-reveal>לאורך כל השנה</h2>
