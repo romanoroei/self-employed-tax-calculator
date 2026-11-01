@@ -600,6 +600,32 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
   .to-top{left:12px;bottom:12px;width:44px;height:44px}
   .advisor-service-details{padding:0 16px}
 }
+/* ----- November notes, second set ----- */
+/* 2. the context line centred over the gold tile */
+#results .result-head{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:8px var(--gap);align-items:end}
+#result-meta{text-align:center}
+/* 3. the income basis on its own, between the heading and the table */
+#benefit-breakdown .income-basis{margin-top:24px;border:0}
+#benefit-breakdown .income-basis>summary{min-height:0;padding:0 0 10px;font-size:16px}
+#benefit-breakdown .income-basis dl{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+#benefit-breakdown .income-basis dl div{display:flex;flex-direction:column;gap:2px;background:var(--paper-2);padding:16px 20px}
+#benefit-breakdown .income-basis dt{font-size:17px}
+#benefit-breakdown .income-basis dd{font-size:15px}
+#benefit-table-view{margin-top:24px}
+/* 4. the shekel sign right beside the amount, the amount on the right */
+.mine-slot .table-input-wrap,.benefit-detail-table .detail-deposits .table-input-wrap{direction:rtl;flex-direction:row;justify-content:flex-start;gap:6px;cursor:text}
+.mine-slot .table-input-wrap input,.benefit-detail-table .detail-deposits input{flex:0 1 auto;width:auto;min-width:2ch;field-sizing:content;text-align:right}
+/* 6. gold tiles in what the service includes */
+.advisor-service-scope div{background:var(--gold)}
+.advisor-service-scope dt,.advisor-service-scope dd{color:var(--navy-deep)}
+@media(max-width:900px){
+  #results .result-head{grid-template-columns:minmax(0,1fr)}
+  #result-meta{text-align:start}
+}
+@media(max-width:700px){
+  #benefit-breakdown .income-basis dl{grid-template-columns:minmax(0,1fr);gap:6px}
+  #benefit-breakdown .income-basis dl div{padding:12px 16px}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -627,7 +653,7 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
 
 
 
-<section class="benefit-breakdown-section" id="benefit-breakdown" aria-labelledby="breakdown-title"><div class="result-head"><div><h2 class="section-title" id="breakdown-title">מאיפה מגיעה ההטבה</h2><p class="result-context">כמה כל קופה חוסכת לכם בשנה, ואיך זה מחושב.</p></div><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מיצוי ההטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">המינימום לפי החוק</button></div></div><div id="benefit-table-view"><p class="detail-custom-status" id="detail-custom-status" role="status" hidden></p><details class="income-basis"><summary>בסיס ההכנסה לחישוב</summary><dl><div><dt>קרן השתלמות</dt><dd id="study-income"></dd></div><div><dt>פנסיה</dt><dd id="pension-income"></dd></div></dl></details><div class="benefit-table-scroll"><table class="benefit-detail-table"><caption class="sr-only">פירוט הטבות המס השנתיות בקרן השתלמות ובפנסיה</caption><colgroup><col class="benefit-label-column"><col><col><col></colgroup><thead><tr><th scope="col">ההטבה</th><th scope="col"><h3 class="fund-heading study-heading" id="study-title">קרן השתלמות</h3></th><th scope="col"><h3 class="fund-heading pension-heading" id="pension-title">פנסיה</h3></th><th scope="col" class="benefit-summary-heading">סיכום</th></tr></thead><tbody><tr class="detail-deposits" id="detail-deposit-row" hidden><th scope="row">ההפקדה השנתית שלי</th><td><label class="sr-only" for="detail-custom-study">ההפקדה השנתית שלי לקרן השתלמות</label><div class="table-input-wrap"><input id="detail-custom-study" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" placeholder="סכום או 0" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td><label class="sr-only" for="detail-custom-pension">ההפקדה השנתית שלי לפנסיה</label><div class="table-input-wrap"><input id="detail-custom-pension" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" placeholder="סכום או 0" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td class="benefit-summary"><bdi id="detail-paid-total"></bdi></td></tr>
+<section class="benefit-breakdown-section" id="benefit-breakdown" aria-labelledby="breakdown-title"><div class="result-head"><div><h2 class="section-title" id="breakdown-title">מאיפה מגיעה ההטבה</h2></div><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מיצוי ההטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">המינימום לפי החוק</button></div></div><details class="income-basis"><summary>בסיס ההכנסה לחישוב</summary><dl><div><dt>קרן השתלמות</dt><dd id="study-income"></dd></div><div><dt>פנסיה</dt><dd id="pension-income"></dd></div></dl></details><div id="benefit-table-view"><p class="detail-custom-status" id="detail-custom-status" role="status" hidden></p><div class="benefit-table-scroll"><table class="benefit-detail-table"><caption class="sr-only">פירוט הטבות המס השנתיות בקרן השתלמות ובפנסיה</caption><colgroup><col class="benefit-label-column"><col><col><col></colgroup><thead><tr><th scope="col">ההטבה</th><th scope="col"><h3 class="fund-heading study-heading" id="study-title">קרן השתלמות</h3></th><th scope="col"><h3 class="fund-heading pension-heading" id="pension-title">פנסיה</h3></th><th scope="col" class="benefit-summary-heading">סיכום</th></tr></thead><tbody><tr class="detail-deposits" id="detail-deposit-row" hidden><th scope="row">ההפקדה השנתית שלי</th><td><label class="sr-only" for="detail-custom-study">ההפקדה השנתית שלי לקרן השתלמות</label><div class="table-input-wrap"><input id="detail-custom-study" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td><label class="sr-only" for="detail-custom-pension">ההפקדה השנתית שלי לפנסיה</label><div class="table-input-wrap"><input id="detail-custom-pension" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td class="benefit-summary"><bdi id="detail-paid-total"></bdi></td></tr>
 <tr><th scope="row">הוצאה מוכרת (ניכוי מההכנסה)</th><td><bdi id="study-deduction"></bdi></td><td><bdi id="deduction"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-deduction"></bdi></td></tr>
 <tr class="detail-tax-benefit"><th scope="row">שווי הניכוי</th><td><bdi id="study-tax"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="study-tax-multiplication"></bdi></small></td><td><bdi id="deduction-saving"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="pension-tax-multiplication"></bdi></small></td><td class="benefit-summary"><bdi id="detail-sum-deduction-saving"></bdi></td></tr>
 <tr class="detail-tax-benefit"><th scope="row">שווי הזיכוי ממס</th><td><span class="not-applicable">—</span></td><td><bdi id="credit-saving"></bdi><small><bdi id="credit"></bdi> × 35%</small></td><td class="benefit-summary"><bdi id="detail-sum-credit-saving"></bdi></td></tr>
@@ -1075,7 +1101,7 @@ function renderComparison(r,mode){
         if(plan==='custom'&&(key==='pension'||key==='study')){
           td.className='editable-deposit';
           const wrap=document.createElement('div'),input=document.createElement('input'),currency=document.createElement('span'),fieldLabel=document.createElement('label');
-          wrap.className='table-input-wrap';input.id='custom-'+key;input.type='text';input.inputMode='decimal';input.dataset.maxAmount=String(MAX_ANNUAL_DEPOSIT);input.autocomplete='off';input.placeholder='סכום או 0';input.value=customDepositText(key);input.setAttribute('aria-describedby','custom-help custom-error');
+          wrap.className='table-input-wrap';input.id='custom-'+key;input.type='text';input.inputMode='decimal';input.dataset.maxAmount=String(MAX_ANNUAL_DEPOSIT);input.autocomplete='off';input.value=customDepositText(key);input.setAttribute('aria-describedby','custom-help custom-error');
           fieldLabel.className='sr-only';fieldLabel.htmlFor=input.id;fieldLabel.textContent=key==='pension'?'הפקדה שנתית לפנסיה':'הפקדה שנתית לקרן השתלמות';currency.className='table-currency';currency.setAttribute('aria-hidden','true');currency.textContent='₪';
           input.addEventListener('input',()=>{formatIncomeInput(input);updateCustomCalculation();});
           input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();updateCustomCalculation();}});
@@ -1242,28 +1268,43 @@ startAtIncome();
   el('calculator').addEventListener('reset',()=>{el('mine-slot-pension').replaceChildren();el('mine-slot-study').replaceChildren();});
   syncYear();
 })();
-// ===== Back to the top, and a short hint when the page goes on below the screen =====
+// ===== Back to the top, and a hint that returns while the page goes on below the screen =====
 (()=>{
   const up=el('to-top'),hint=el('scroll-hint');
   const still=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const more=()=>window.scrollY+window.innerHeight<document.documentElement.scrollHeight-80;
-  // the hint shows from a resting point until the visitor scrolls on, or for a few seconds
-  let armed=false,base=0,timer=0;
+  // shown from a resting point; it goes as soon as the visitor scrolls on, or after a few seconds
+  let armed=false,base=0,hideTimer=0,restTimer=0;
   const paint=()=>hint.classList.toggle('is-on',armed&&more());
-  const arm=()=>{base=window.scrollY;armed=true;paint();clearTimeout(timer);timer=setTimeout(()=>{armed=false;paint();},7000);};
+  const arm=ms=>{base=window.scrollY;armed=true;paint();clearTimeout(hideTimer);hideTimer=setTimeout(()=>{armed=false;paint();},ms);};
   window.addEventListener('scroll',()=>{
     up.hidden=window.scrollY<500;
-    if(armed&&Math.abs(window.scrollY-base)>60){armed=false;}
+    if(armed&&Math.abs(window.scrollY-base)>60)armed=false;
     paint();
+    // after a pause in scrolling, remind again if there is still more below
+    clearTimeout(restTimer);restTimer=setTimeout(()=>{if(more())arm(4000);},2500);
   },{passive:true});
   window.addEventListener('resize',paint);
   // after a calculation the page scrolls to the results first; arm once it has settled
-  document.addEventListener('pension:calculated',()=>{armed=false;paint();setTimeout(arm,900);});
+  document.addEventListener('pension:calculated',()=>{armed=false;paint();setTimeout(()=>arm(7000),900);});
   up.addEventListener('click',()=>{
     window.scrollTo({top:0,behavior:still()?'auto':'smooth'});
     el('income').focus({preventScroll:true});
   });
-  setTimeout(arm,600);
+  setTimeout(()=>arm(7000),600);
+})();
+// ===== Deposit fields: the shekel sign sits right beside the amount =====
+(()=>{
+  const ids=['custom-pension','custom-study','detail-custom-pension','detail-custom-study'];
+  // browsers without field-sizing get a width from the length of the value
+  const fit=()=>ids.forEach(id=>{const input=el(id);if(input)input.size=Math.max(input.value.length,2);});
+  document.addEventListener('input',event=>{if(ids.includes(event.target.id))fit();});
+  document.addEventListener('pension:calculated',fit);
+  // the field is narrow, so a click anywhere on its line puts the cursor in it
+  document.addEventListener('click',event=>{
+    const wrap=event.target.closest('.mine-slot .table-input-wrap, .detail-deposits .table-input-wrap');
+    if(wrap&&event.target.tagName!=='INPUT')wrap.querySelector('input').focus();
+  });
 })();
 </script>
 <script src="analytics.js?v=20261027-3"></script>
