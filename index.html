@@ -627,6 +627,36 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
   #benefit-breakdown .income-basis dl{grid-template-columns:minmax(0,1fr);gap:6px}
   #benefit-breakdown .income-basis dl div{padding:12px 16px}
 }
+/* ----- the income basis, compact; room for the deposit amounts on phones ----- */
+#benefit-breakdown .income-basis{margin-top:18px}
+#benefit-breakdown .income-basis>summary{padding:0 0 6px;font-size:14px}
+#benefit-breakdown .income-basis dl{gap:4px}
+#benefit-breakdown .income-basis dl div{padding:8px 14px;gap:0}
+#benefit-breakdown .income-basis dt{font-size:14px}
+#benefit-breakdown .income-basis dd{font-size:13px;line-height:1.45}
+#benefit-table-view{margin-top:16px}
+@media(max-width:700px){
+  #benefit-breakdown .income-basis{margin-top:14px}
+  #benefit-breakdown .income-basis>summary{font-size:13px;padding-bottom:4px}
+  #benefit-breakdown .income-basis dl{gap:3px}
+  #benefit-breakdown .income-basis dl div{padding:6px 10px}
+  #benefit-breakdown .income-basis dt{font-size:13px}
+  #benefit-breakdown .income-basis dd{font-size:12px;line-height:1.4}
+  #benefit-table-view{margin-top:12px}
+  /* the two fund columns take the room from the label and summary columns */
+  .benefit-detail-table{font-size:13px}
+  .benefit-label-column{width:23%}
+  .benefit-detail-table col:nth-child(2),.benefit-detail-table col:nth-child(3){width:27%}
+  .benefit-detail-table col:nth-child(4){width:23%}
+  .benefit-detail-table th,.benefit-detail-table td,.benefit-detail-table th:first-child{padding:9px 4px}
+  .benefit-detail-table thead th{font-size:12px}
+  .fund-heading{font-size:12px}
+  .benefit-detail-table .detail-total>*{font-size:14px}
+  .benefit-detail-table .detail-deposits .table-input-wrap{max-width:none;gap:3px;padding:2px 4px}
+  .benefit-detail-table .detail-deposits input{font-size:13px}
+  .benefit-detail-table .detail-deposits .table-currency{font-size:11px}
+  .benefit-detail-table .calculation-details summary{font-size:12px;gap:4px}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -654,7 +684,7 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
 
 
 
-<section class="benefit-breakdown-section" id="benefit-breakdown" aria-labelledby="breakdown-title"><div class="result-head"><div><h2 class="section-title" id="breakdown-title">מאיפה מגיעה ההטבה</h2></div><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מיצוי ההטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">המינימום לפי החוק</button></div></div><details class="income-basis"><summary>בסיס ההכנסה לחישוב</summary><dl><div><dt>קרן השתלמות</dt><dd id="study-income"></dd></div><div><dt>פנסיה</dt><dd id="pension-income"></dd></div></dl></details><div id="benefit-table-view"><p class="detail-custom-status" id="detail-custom-status" role="status" hidden></p><div class="benefit-table-scroll"><table class="benefit-detail-table"><caption class="sr-only">פירוט הטבות המס השנתיות בקרן השתלמות ובפנסיה</caption><colgroup><col class="benefit-label-column"><col><col><col></colgroup><thead><tr><th scope="col">ההטבה</th><th scope="col"><h3 class="fund-heading study-heading" id="study-title">קרן השתלמות</h3></th><th scope="col"><h3 class="fund-heading pension-heading" id="pension-title">פנסיה</h3></th><th scope="col" class="benefit-summary-heading">סיכום</th></tr></thead><tbody><tr class="detail-deposits" id="detail-deposit-row" hidden><th scope="row">ההפקדה השנתית שלי</th><td><label class="sr-only" for="detail-custom-study">ההפקדה השנתית שלי לקרן השתלמות</label><div class="table-input-wrap"><input id="detail-custom-study" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td><label class="sr-only" for="detail-custom-pension">ההפקדה השנתית שלי לפנסיה</label><div class="table-input-wrap"><input id="detail-custom-pension" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td class="benefit-summary"><bdi id="detail-paid-total"></bdi></td></tr>
+<section class="benefit-breakdown-section" id="benefit-breakdown" aria-labelledby="breakdown-title"><div class="result-head"><div><h2 class="section-title" id="breakdown-title">מאיפה מגיעה ההטבה</h2></div><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מיצוי ההטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">המינימום לפי החוק</button></div></div><details class="income-basis"><summary>בסיס ההכנסה לחישוב</summary><dl><div><dt>קרן השתלמות</dt><dd id="study-income"></dd></div><div><dt>פנסיה</dt><dd id="pension-income"></dd></div></dl></details><div id="benefit-table-view"><p class="detail-custom-status" id="detail-custom-status" role="status" hidden></p><div class="benefit-table-scroll"><table class="benefit-detail-table"><caption class="sr-only">פירוט הטבות המס השנתיות בקרן השתלמות ובפנסיה</caption><colgroup><col class="benefit-label-column"><col><col><col></colgroup><thead><tr><th scope="col">ההטבה</th><th scope="col"><h3 class="fund-heading study-heading" id="study-title">השתלמות</h3></th><th scope="col"><h3 class="fund-heading pension-heading" id="pension-title">פנסיה</h3></th><th scope="col" class="benefit-summary-heading">סיכום</th></tr></thead><tbody><tr class="detail-deposits" id="detail-deposit-row" hidden><th scope="row">ההפקדה השנתית שלי</th><td><label class="sr-only" for="detail-custom-study">ההפקדה השנתית שלי לקרן השתלמות</label><div class="table-input-wrap"><input id="detail-custom-study" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td><label class="sr-only" for="detail-custom-pension">ההפקדה השנתית שלי לפנסיה</label><div class="table-input-wrap"><input id="detail-custom-pension" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div></td><td class="benefit-summary"><bdi id="detail-paid-total"></bdi></td></tr>
 <tr><th scope="row">הוצאה מוכרת (ניכוי מההכנסה)</th><td><bdi id="study-deduction"></bdi></td><td><bdi id="deduction"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-deduction"></bdi></td></tr>
 <tr class="detail-tax-benefit"><th scope="row">שווי הניכוי</th><td><bdi id="study-tax"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="study-tax-multiplication"></bdi></small></td><td><bdi id="deduction-saving"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="pension-tax-multiplication"></bdi></small></td><td class="benefit-summary"><bdi id="detail-sum-deduction-saving"></bdi></td></tr>
 <tr class="detail-tax-benefit"><th scope="row">שווי הזיכוי ממס</th><td><span class="not-applicable">—</span></td><td><bdi id="credit-saving"></bdi><small><bdi id="credit"></bdi> × 35%</small></td><td class="benefit-summary"><bdi id="detail-sum-credit-saving"></bdi></td></tr>
