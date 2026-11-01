@@ -12,7 +12,8 @@ const calc = path.join(output, 'self-employed-tax-calculator');
 const oldUrl = 'https://romanoroei.github.io/self-employed-tax-calculator/';
 const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Publish an explicit file list so source, tests and working files stay private.
-const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg'];
+// v2 stays published so earlier shared links keep their preview; v3 is the current share image.
+const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg'];
 const publicSiteEntries = ['index.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
 const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml',...publicSiteEntries];
 await mkdir(calc, { recursive: true });

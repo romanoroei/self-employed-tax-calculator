@@ -4,6 +4,7 @@
 !.gitignore
 !.nojekyll
 !brand-logo.png
+!whatsapp-share-v3.jpg
 !tests/
 !tests/pension.test.cjs
 
