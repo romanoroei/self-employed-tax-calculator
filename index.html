@@ -125,7 +125,7 @@ label{display:block;font-size:16px;font-weight:700}
 .has-calculation .intro-site-info{display:none}
 
 /* ----- results ----- */
-.results{padding-top:104px}
+.results{margin-top:104px}
 .results.animate{animation:rise 420ms var(--ease)}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
 .result-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -394,7 +394,8 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
   .scope-options{grid-template-columns:minmax(0,1fr)}
   .scope-options label{place-items:center start;padding-inline:16px;min-height:48px}
   .primary{min-height:64px;padding:0 22px;font-size:19px}
-  .results,.benefit-breakdown-section{padding-top:64px}
+  .results{margin-top:64px}
+  .benefit-breakdown-section{padding-top:64px}
   .result-summary{margin-top:18px;gap:6px}
   .sum-tile{padding:26px 22px 24px}
   .sum-big{font-size:64px}
@@ -523,6 +524,52 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
   .contact-num{display:none}
   .notes-title{font-size:24px}
 }
+/* ----- Roei's notes, November 2026 ----- */
+/* the income figure: room above and below the digits so nothing is clipped */
+#income{line-height:1.5;height:auto;padding:0;overflow:hidden}
+#result-meta{font-size:20px;font-weight:500;color:var(--ink)}
+/* chevrons from physical borders, so right-to-left text does not flip them: down when closed, up when open */
+summary::after{border:0;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translate(-2px,-2px)}
+details[open]>summary::after{transform:rotate(225deg) translate(-2px,-2px)}
+/* where the benefit comes from: smaller, right-aligned, fixed columns so an open formula cannot reshape it */
+#benefit-table-view{padding:4px 24px 20px}
+.benefit-detail-table{table-layout:fixed;font-size:16px}
+.benefit-label-column{width:28%}
+.benefit-detail-table th,.benefit-detail-table td,.benefit-detail-table th:first-child{padding:12px 16px;text-align:start}
+.benefit-detail-table thead th{padding-block:14px 10px}
+.benefit-detail-table .detail-total>*{background:var(--navy);color:var(--gold);border-top:0;font-size:19px}
+.benefit-detail-table .detail-total th{color:var(--on-dark)}
+.benefit-detail-table .detail-total .benefit-summary{background:var(--gold);color:var(--navy-deep)}
+.benefit-detail-table .detail-future>*{background:var(--paper);border-top:8px solid var(--paper-2);border-bottom:8px solid var(--paper-2);color:var(--ink)}
+.benefit-detail-table .detail-future th{font-weight:700}
+.benefit-detail-table .future-note{font-size:13px;font-weight:400;color:var(--ink-soft)}
+.benefit-detail-table .detail-deposits td{padding-block:8px}
+.benefit-detail-table .table-input-wrap{max-width:180px;padding:2px 8px}
+.benefit-detail-table .table-input-wrap input{font-size:16px;padding:2px 0}
+.calculation-details summary{gap:10px}
+.income-basis>summary{pointer-events:none;cursor:default;min-height:40px}
+.income-basis>summary::after{display:none}
+/* the notes run the full width, one after the other, with the legal notes last */
+.notes-cols{display:block}
+.notes-cols>div+div{margin-top:56px}
+#calculation-notes p,.calculation-explanations>p,.legal-footer p{max-width:none}
+/* what I already deposited: right-aligned fields, larger results, a clear instruction */
+.sum-mine .helper{margin-top:-6px;font-size:17px;font-weight:700;color:var(--ink)}
+.mine-slot .table-input-wrap{direction:rtl;flex-direction:row-reverse;justify-content:flex-end}
+.mine-slot .table-input-wrap input{text-align:right}
+.mine-result{font-size:18px}
+.mine-result span{display:flex;align-items:baseline;gap:10px}
+.mine-result strong{font-size:26px;font-weight:800}
+@media(max-width:700px){
+  #result-meta{font-size:17px}
+  #benefit-table-view{padding:4px 10px 14px}
+  .benefit-detail-table{font-size:14px}
+  .benefit-label-column{width:30%}
+  .benefit-detail-table th,.benefit-detail-table td,.benefit-detail-table th:first-child{padding:10px 6px}
+  .benefit-detail-table .detail-total>*{font-size:16px}
+  .benefit-detail-table .table-input-wrap input{font-size:14px}
+  .mine-result strong{font-size:22px}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -557,7 +604,7 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 <tr><th scope="row">חיסכון בביטוח לאומי</th><td><bdi id="study-national"></bdi></td><td><bdi id="national-saving"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-national"></bdi></td></tr>
 <tr><th scope="row">חיסכון בביטוח בריאות</th><td><bdi id="study-health"></bdi></td><td><bdi id="health-saving"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-health"></bdi></td></tr>
 <tr class="detail-total"><th scope="row">החיסכון השנתי המשוער</th><td><bdi id="study-total"></bdi></td><td><bdi id="total"></bdi></td><td class="benefit-summary"><bdi id="detail-grand-total"></bdi></td></tr>
-<tr class="detail-future"><th scope="row">שווי הפטור ממס רווח הון (תחזית)<sup><a class="capital-note-link" href="#capital-assumption" aria-label="הסבר על תחזית שווי הפטור ממס רווח הון">*</a></sup></th><td><bdi id="study-capital"></bdi></td><td><span class="not-applicable">—</span></td><td class="benefit-summary"><bdi id="detail-sum-capital"></bdi><small>לא כלול בסיכום השנתי</small></td></tr>
+<tr class="detail-future"><th scope="row">שווי הפטור ממס רווח הון (תחזית)<sup><a class="capital-note-link" href="#capital-assumption" aria-label="הסבר על תחזית שווי הפטור ממס רווח הון">*</a></sup><small class="future-note">רווח עתידי משוער מהפטור על קרן ההשתלמות. לא נכלל בחיסכון השנתי.</small></th><td><bdi id="study-capital"></bdi></td><td><span class="not-applicable">—</span></td><td class="benefit-summary"><bdi id="detail-sum-capital"></bdi><small>לא כלול בסיכום השנתי</small></td></tr>
 <tr class="detail-formulas"><th scope="row">פירוט החישוב</th><td><details class="calculation-details"><summary>איך חישבנו?</summary><p class="formula" id="study-formula"></p><p class="helper">תחזית הרווחים מהמודל הקיים: תשואה שנתית של 8%, למשך 6 שנים, והשוואה למס של 25% על הרווח. המחשה בלבד, ללא דמי ניהול ואינפלציה; תשואה ופטור אינם מובטחים. הפטור כפוף לתנאי המשיכה בדין.</p></details></td><td><details class="calculation-details"><summary>איך חישבנו?</summary><h4>ניכוי מההכנסה</h4><p class="formula" id="deduction-formula"></p><h4>זיכוי במס</h4><p class="formula" id="credit-formula"></p><h4>ביטוח לאומי ובריאות</h4><p class="formula" id="insurance-formula"></p><h4>החיסכון המשולב</h4><p class="formula" id="total-formula"></p><p class="helper" id="btl-note"></p></details></td><td class="benefit-summary"><details class="calculation-details"><summary>איך סיכמנו?</summary><p class="formula" id="detail-sum-formula"></p></details></td></tr>
 </tbody></table></div><p class="capital-assumption" id="capital-assumption" tabindex="-1"><span aria-hidden="true">* </span><strong>שווי הפטור ממס רווח הון: </strong>לפי ההפקדה בחישוב זה, עד תקרת הפטור: <bdi id="study-exempt-ceiling"></bdi>. בהנחת תשואה שנתית של 8% למשך 6 שנים. המחשה בלבד; תשואה ופטור אינם מובטחים.</p></div>
 </section>
@@ -571,7 +618,7 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 <p>פרסומי רשות המסים: <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2025.pdf" target="_blank" rel="noopener noreferrer">תקרות קרן ההשתלמות לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-guide-knowyourright/he/Guides_IncomeTax_da-2025.pdf" target="_blank" rel="noopener noreferrer">מדריך הניכויים והזיכויים לשנת 2025</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-annual-deductions-booklet/he/generalInformation_income-tax-yearly-deductions-booklet_yearly-deductions-booklet-2024.pdf" target="_blank" rel="noopener noreferrer">תקרות לשנת 2024</a> · <a href="https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf" target="_blank" rel="noopener noreferrer">תקרות וסף עמית מוטב לשנת 2026</a> · <a href="https://www.gov.il/BlobFolder/dynamiccollectorresultitem/employers-info-300326-1/he/IncomeTax_IncomeTaxEmployersInfo_employers-info-300326-1.pdf" target="_blank" rel="noopener noreferrer">מדרגות המס המעודכנות לשנת 2026</a>. הנתונים נבדקו ב־10.10.2026. לפני הפקדה יש לבדוק זכאות אישית עם רואה חשבון או יועץ מס.</p>
 </details>
 <p class="helper">נתוני הביטוח: <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/rates.aspx" target="_blank" rel="noopener noreferrer">שיעורי ביטוח לאומי ובריאות</a> · <a href="https://www.btl.gov.il/Insurance/National%20Insurance/type_list/Self_Employed/Pages/hishov.dmey.bituach.aspx" target="_blank" rel="noopener noreferrer">שיטת חישוב בסיס דמי הביטוח</a>.</p>
-<section class="calculation-explanations" aria-labelledby="explanations-title"><h2 id="explanations-title">מידע על החישוב וההפקדות</h2><p class="helper">כל הסכומים בטבלה שנתיים. בשורות ההפקדה מוצג מתחתם ממוצע חודשי, בחלוקה ל־12.</p><p class="helper">הבחירה קובעת את יעד המקסימום. תוכלו להשוות אליו את ההפקדה האישית ואת המינימום לפי החוק.</p><p id="maximum-plan-note" class="maximum-plan-note"></p><p class="helper" id="custom-help">הזינו את ההפקדות שכבר בוצעו מתחילת השנה בעמודת ״ההפקדה שלי״, או באפשרות ״ההפקדה שלי״ בפירוט סל ההטבות. הנתונים מסונכרנים והחישוב מתעדכן מיד. שדה ריק נחשב כאפס.</p><p class="helper" id="custom-benefit-summary"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p><p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p><details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p></section>
+<section class="calculation-explanations" aria-labelledby="explanations-title"><h2 id="explanations-title">מידע על החישוב וההפקדות</h2><p class="helper">כל הסכומים בטבלה שנתיים. בשורות ההפקדה מוצג מתחתם ממוצע חודשי, בחלוקה ל־12.</p><p class="helper">הבחירה קובעת את יעד המקסימום. תוכלו להשוות אליו את ההפקדה האישית ואת המינימום לפי החוק.</p><p id="maximum-plan-note" class="maximum-plan-note"></p><p class="helper" id="custom-help">הזינו את ההפקדות שכבר בוצעו מתחילת השנה בקובייה ״כמה כבר הפקדתם השנה?״, או באפשרות ״ההפקדה שלי״ בפירוט ההטבות. הנתונים מסונכרנים והחישוב מתעדכן מיד. שדה ריק נחשב כאפס.</p><p class="helper" id="custom-benefit-summary"></p><p class="helper" id="comparison-difference"></p><p class="helper">המינימום לפי החוק מתייחס לפנסיה בלבד, בהנחה שחלה עליכם חובת הפקדה. אין חובת הפקדה לקרן השתלמות.</p><p class="planning-note" id="potential-tax-note" tabindex="-1"><span aria-hidden="true">* </span><strong>הטבת המס המוצגת היא פוטנציאלית.</strong> מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. אם אין מס הכנסה לתשלום, לא ייווצר חיסכון נוסף במס הכנסה.</p><details class="helper law-notice"><summary>תנאי חובת ההפקדה לפי החוק</summary><div id="law-notice"><strong>החישוב מניח שחלה עליכם חובת הפקדה.</strong> החובה חלה מגיל 21 ועד לפני גיל 60 בתום שנת המס, לאחר שחלפו לפחות 6 חודשים מהרישום הראשון כעוסק; מי שהיה בן 55 ומעלה ב־1.1.2017 פטור. המחשבון מיועד לעצמאי בלבד ואינו מקזז הפקדות כשכיר. אין חובת הפקדה לקרן השתלמות. <a href="https://haotzarsheli.mof.gov.il/Subject/Pages/Mandatory-Pension-for-Self-Employed.aspx" target="_blank" rel="noopener">כללי פנסיה חובה</a><p id="law-formula"></p></div></details><p class="planning-note" id="deposit-planning-note">יעד הפנסיה מחושב בשקלים שלמים לפי הנחות המחשבון ואינו חובת ההפקדה לפי החוק.</p></section>
 </div><div class="notes-side"><section class="legal-footer" aria-labelledby="legal-notes-title"><h2 id="legal-notes-title">הערות משפטיות</h2><p>המחשבון הוא כלי המחשה ותכנון ראשוני לעצמאי בעל הכנסה מעסק בלבד. הוא אינו ייעוץ מס, ייעוץ השקעות או ייעוץ/שיווק פנסיוני אישי, ואינו המלצה לביצוע הפקדה או בחירת מוצר. החישוב לפי שנת המס שנבחרה, לפני נקודות זיכוי והטבות אישיות, ובכפוף לתנאי הזכאות. הדין, הוראות הרשויות ותנאי המוצרים גוברים על תוצאות המחשבון.</p><p>החיסכון מחושב לפי מדרגות מס ובהנחות המפורטות לעיל. אומדני הביטוח הלאומי והבריאות אינם חישוב שומה סופי; הסיכום אינו כולל את ההשפעה המשנית של שינוי הניכוי בגין דמי הביטוח. תחזית הרווחים היא המחשה בלבד, ללא דמי ניהול ואינפלציה, ואינה מבטיחה תשואה או פטור. יש לבדוק את הנתונים והזכאות עם בעל מקצוע לפני פעולה; חבות המס תיקבע בידי הרשויות.</p><nav class="legal-links" aria-label="מידע משפטי ופרטיות"><button type="button" data-legal="disclosure">גילוי נאות</button><button type="button" data-legal="privacy">מדיניות פרטיות</button><button type="button" data-legal="accessibility">הצהרת נגישות</button><button type="button" id="cookie-settings">עוגיות</button></nav></section></div></div><footer><p class="provider-identification">רועי רומנו · סוכן פנסיוני · רישיון <bdi>00117164</bdi></p>תכנון פנסיה וקרן השתלמות · שנות מס 2024–2026 · כל הסכומים בש״ח</footer>
 </div>
 </main>
@@ -858,7 +905,7 @@ function renderResult(r,mode='target',animate=true) {
   set('study-income',`מחושב לפי הכנסה של ${n(r.originalIncome)} ש"ח`);
   set('study-exempt-ceiling',money(study.data.ceiling));
   renderEquationLines('study-formula',[{equation:`min(${n(study.deposit)}, ${n(study.baseIncome)} × 4.5%, ${n(study.data.maxDeductible)}) = ${money(study.deduction)}`,explanation:`ניכוי מההכנסה, עד תקרת הכנסה של ${money(study.data.taxableIncome)}.`},{equation:`${n(incomeTax(r.originalIncome,r.data))} − ${n(incomeTax(r.income,r.data))} = ${money(study.deductionSaving)}`,explanation:'החיסכון במס הוא ההפרש לפני הניכוי ואחריו, לפי מדרגות המס.'},{equation:`${n(study.deductionSaving)} + ${n(study.insurance.national)} + ${n(study.insurance.health)} = ${money(study.total)}`,explanation:'מס הכנסה + ביטוח לאומי + ביטוח בריאות.'},{equation:`${n(Math.min(study.deposit,study.targetDeposit))} × (1.08⁶ − 1) × 25% = ${money(study.capitalBenefit)}`,explanation:'תחזית הטבת הפטור על רווחי הפקדת השנה, לאחר 6 שנים.'}]);
-  set('result-meta',`הכנסה שנתית: ${money(r.originalIncome)} · שנת ${r.year} · מס שולי ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}`);
+  set('result-meta',`הכנסה שנתית חייבת: ${money(r.originalIncome)} · מס שולי ${percent(r.data.brackets.find(([upper])=>r.originalIncome<=upper)[1])}${r.originalIncome>721560?' (כולל מס יסף)':''}`);
 
   for(const [id,value] of Object.entries({deduction:r.deduction,'deduction-saving':r.deductionSaving,credit:r.credit,'credit-saving':r.creditSaving,'national-saving':insurance.national,'health-saving':insurance.health,total:combined}))set(id,money(value));
   const first=Math.min(r.income,r.data.firstTier),second=Math.min(Math.max(0,r.income-r.data.firstTier),r.data.firstTier);
@@ -1040,6 +1087,7 @@ function renderComparison(r,mode){
   set('sum-health',money(targetPlan.pensionInsurance.health+targetPlan.study.insurance.health));
   // the year in the heading, what I already deposited, and the legal minimum
   set('result-year',' ב־'+targetPlan.year);
+  document.querySelectorAll('.income-basis').forEach(details=>{details.open=true;details.querySelector('summary').tabIndex=-1;});
   for(const key of ['pension','study']){
     const fresh=el('comparison-body').querySelector('#custom-'+key);
     if(fresh){const slot=el('mine-slot-'+key);slot.replaceChildren(fresh.closest('.table-input-wrap'));}
