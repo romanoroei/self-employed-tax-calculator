@@ -209,43 +209,6 @@
     .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 })();
 
-// ===== From an article back to the same spot on the home page =====
-// The home page remembers where the reader was when they opened an article;
-// "back" links on the article return there (or to the magazine section if nothing was saved).
-(() => {
-  const SPOT = 'rr-return-y', RESTORE = 'rr-restore';
-  const ss = {
-    get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
-    set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* private mode: links fall back to their href */ } },
-    del(k) { try { sessionStorage.removeItem(k); } catch { /* ignore */ } },
-  };
-  const backLinks = document.querySelectorAll('[data-back-home]');
-
-  if (!backLinks.length) {
-    // home page: remember the spot when an article link is followed
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('a[href^="/magazine/"], a[href^="magazine/"]')) ss.set(SPOT, String(Math.round(window.scrollY)));
-    });
-    if (ss.get(RESTORE)) {
-      ss.del(RESTORE);
-      const y = parseInt(ss.get(SPOT), 10) || 0;
-      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-      const go = () => window.scrollTo({ top: y, left: 0, behavior: 'instant' });
-      go();
-      window.addEventListener('load', go);
-    }
-    return;
-  }
-
-  // article page: go back to the remembered spot
-  backLinks.forEach((a) => a.addEventListener('click', (e) => {
-    if (ss.get(SPOT) === null) return; // nothing saved: follow the link to the magazine section
-    e.preventDefault();
-    ss.set(RESTORE, '1');
-    window.location.href = a.getAttribute('href').split('#')[0];
-  }));
-})();
-
 // ===== Audience tabs: one panel at a time (all panels show when scripting is off) =====
 (() => {
   const tabs = [...document.querySelectorAll('[role="tab"]')];
