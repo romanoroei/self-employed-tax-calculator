@@ -556,6 +556,11 @@ details[open]>summary::after{transform:rotate(225deg) translate(-2px,-2px)}
 .benefit-detail-table .detail-total>*{background:var(--navy);color:var(--gold);border-top:0;font-size:19px}
 .benefit-detail-table .detail-total th{color:var(--on-dark)}
 .benefit-detail-table .detail-total .benefit-summary{background:var(--gold);color:var(--navy-deep)}
+.benefit-detail-table .detail-gap>*{background:var(--navy);color:var(--gold);font-weight:800}
+.benefit-detail-table .detail-gap th{color:var(--on-dark)}
+.benefit-detail-table .detail-gap .benefit-summary{background:var(--gold);color:var(--navy-deep)}
+.benefit-detail-table .detail-gap+.detail-gap>*{border-top:1px solid rgba(241,241,238,.16)}
+.benefit-detail-table .detail-gap+.detail-gap .benefit-summary{border-top-color:rgba(8,24,38,.2)}
 .benefit-detail-table .detail-future>*{background:var(--paper);border-top:8px solid var(--paper-2);border-bottom:8px solid var(--paper-2);color:var(--ink)}
 .benefit-detail-table .detail-future th{font-weight:700}
 .benefit-detail-table .future-note{font-size:13px;font-weight:400;color:var(--ink-soft)}
@@ -1149,7 +1154,7 @@ function renderDetailDepositState(mode,r){
     set('gap-deposit-pension',money(leftP));set('gap-deposit-study',money(leftS));set('gap-deposit-sum',money(leftP+leftS));
     set('gap-benefit-pension',money(moreP));set('gap-benefit-sum',money(moreP+moreS));
     const studyCell=el('gap-benefit-study');
-    if(Math.round(moreS)===0&&leftS>0)studyCell.replaceChildren(Object.assign(document.createElement('span'),{className:'gap-exempt',textContent:'+ פטור ממס רווח הון'}));
+    if(Math.round(moreS)===0&&leftS>0)studyCell.replaceChildren(Object.assign(document.createElement('span'),{className:'gap-exempt',textContent:'פטור ממס רווח הון'}));
     else set('gap-benefit-study',money(moreS));
   }
   el('benefit-breakdown').querySelector('.detail-formulas').hidden=pending;
