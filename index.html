@@ -132,32 +132,32 @@ label{display:block;font-size:16px;font-weight:700}
 .result-head h2{margin:0;font-size:var(--t-2);font-weight:800;line-height:1.15;letter-spacing:-.01em}
 .result-head h2:focus{outline:none}
 .result-context{margin:8px 0 0;font-size:16px;color:var(--ink-soft)}
-.result-summary{margin-top:32px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--gap)}
-.sum-tile{padding:44px 48px 40px;display:flex;flex-direction:column}
+.result-summary{margin-top:20px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--gap)}
+.sum-tile{padding:28px 40px 26px;display:flex;flex-direction:column}
 .sum-tile p{margin:0}
 .sum-deposit{background:var(--navy);color:var(--on-dark)}
 .sum-worth{background:var(--gold);color:var(--navy-deep)}
-.sum-label{font-size:18px}
+.sum-label{font-size:17px}
 .sum-deposit .sum-label{color:var(--on-dark-soft)}
-.sum-big{margin-top:10px!important;font-size:clamp(56px,7.4vw,108px);font-weight:800;line-height:1;letter-spacing:-.035em}
+.sum-big{margin-top:6px!important;font-size:clamp(56px,6.2vw,92px);font-weight:800;line-height:1;letter-spacing:-.035em}
 .sum-deposit .sum-big{color:var(--gold)}
 .sum-cur{font-size:.5em;font-weight:600;letter-spacing:0}
-.sum-month{margin-top:10px!important;font-size:20px}
-.sum-bar{margin-top:34px;display:flex;gap:4px;height:16px}
+.sum-month{margin-top:6px!important;font-size:18px}
+.sum-bar{margin-top:20px;display:flex;gap:4px;height:12px}
 .sum-bar span{min-width:0}
 .sum-bar span:first-child{background:var(--gold)}
 .sum-bar span:last-child{background:var(--on-dark)}
-.sum-split{margin:18px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.sum-split{margin:14px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
 .sum-split dt{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--on-dark-soft)}
 .sum-split i{flex:none;width:12px;height:12px;background:var(--gold)}
 .sum-split div+div i{background:var(--on-dark)}
 .sum-split dd{margin:0;font-size:28px;font-weight:800;line-height:1.3}
 .sum-split small{display:block;font-size:15px;font-weight:400;color:var(--on-dark-soft)}
-.sum-lines{margin:30px 0 0}
-.sum-lines div{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid rgba(8,24,38,.25);font-size:17px}
+.sum-lines{margin:16px 0 0}
+.sum-lines div{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-top:1px solid rgba(8,24,38,.25);font-size:17px}
 .sum-lines div:last-child{border-bottom:1px solid rgba(8,24,38,.25)}
 .sum-lines dd{margin:0;font-weight:800}
-.sum-note{margin-top:auto!important;padding-top:22px;font-size:14px;line-height:1.55}
+.sum-note{margin-top:auto!important;padding-top:14px;font-size:14px;line-height:1.55}
 .sum-note a{color:var(--navy-deep)}
 
 /* ----- three ways to deposit: a ledger ----- */
@@ -397,11 +397,11 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
   .results{margin-top:64px}
   .benefit-breakdown-section{padding-top:64px}
   .result-summary{margin-top:18px;gap:6px}
-  .sum-tile{padding:26px 22px 24px}
-  .sum-big{font-size:64px}
+  .sum-tile{padding:20px 20px 18px}
+  .sum-big{font-size:56px}
   .sum-month{font-size:17px}
-  .sum-bar{margin-top:22px;height:12px}
-  .sum-split{grid-template-columns:minmax(0,1fr);gap:12px}
+  .sum-bar{margin-top:16px;height:10px}
+  .sum-split{gap:12px}
   .sum-split dd{font-size:22px}
   #scenario-comparison{margin-top:40px}
   .comparison-scroll,#benefit-table-view{padding:4px 10px 14px;margin-inline:-6px}
@@ -695,7 +695,7 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
 <div class="intro-site-info"><p>רועי רומנו · סוכן פנסיוני · רישיון <bdi>00117164</bdi></p><nav aria-label="פרטיות, גילוי נאות ונגישות"><button type="button" data-legal="disclosure">גילוי נאות</button><button type="button" data-legal="privacy">פרטיות</button><button type="button" data-legal="accessibility">נגישות</button><button type="button" id="cookie-settings-intro">עוגיות</button></nav></div>
 <section id="results" class="results" aria-labelledby="result-title" hidden>
 <div class="result-head"><h2 class="section-title" id="result-title" tabindex="-1">כך ממצים את ההטבה<span id="result-year"></span></h2><p class="result-context" id="result-meta"></p></div>
-<div class="result-summary"><div class="sum-tile sum-deposit"><p class="sum-label">ההפקדה השנתית שממצה את הטבות המס</p><p class="sum-big"><bdi id="sum-deposit"></bdi></p><p class="sum-month" id="sum-deposit-monthly"></p><div class="sum-bar" id="sum-bar" role="img" aria-label="חלוקת ההפקדה"><span id="sum-bar-pension"></span><span id="sum-bar-study"></span></div><dl class="sum-split"><div id="sum-pension-row"><dt><i aria-hidden="true"></i>לפנסיה</dt><dd><bdi id="sum-pension"></bdi><small id="sum-pension-monthly"></small></dd></div><div id="sum-study-row"><dt><i aria-hidden="true"></i>לקרן השתלמות</dt><dd><bdi id="sum-study"></bdi><small id="sum-study-monthly"></small></dd></div></dl></div><div class="sum-tile sum-worth"><p class="sum-label">כמה זה שווה לכם בשנה</p><p class="sum-big"><bdi id="sum-benefit"></bdi></p><dl class="sum-lines"><div><dt>הטבה במס הכנסה</dt><dd><bdi id="sum-tax"></bdi></dd></div><div><dt>חיסכון בביטוח לאומי</dt><dd><bdi id="sum-national"></bdi></dd></div><div><dt>חיסכון בביטוח בריאות</dt><dd><bdi id="sum-health"></bdi></dd></div></dl><p class="sum-note">הטבה פוטנציאלית: מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. <a href="#potential-tax-note">להבהרה המלאה</a></p></div></div><div id="scenario-comparison" class="result-more"><div class="sum-tile sum-mine"><h3>כמה כבר הפקדתם השנה?</h3><p class="helper">כתבו כמה הופקד מתחילת השנה, ונראה כמה הטבה כבר יש לכם וכמה עוד אפשר לקבל.</p><div class="mine-fields"><div class="mine-field"><span class="mine-label" aria-hidden="true">לפנסיה</span><div class="mine-slot" id="mine-slot-pension"></div></div><div class="mine-field"><span class="mine-label" aria-hidden="true">לקרן השתלמות</span><div class="mine-slot" id="mine-slot-study"></div></div></div><div class="mine-result"><span>ההטבה שכבר יש לכם: <strong><bdi id="mine-benefit"></bdi></strong></span><span>עוד אפשר לקבל: <strong><bdi id="mine-gap"></bdi></strong></span></div><p class="error" id="custom-error" role="alert"></p></div><div class="sum-tile sum-law"><h3>המינימום לפי החוק</h3><p class="law-duty">חובת ההפקדה חלה על פנסיה בלבד, ולקרן השתלמות אין חובה.</p><dl class="law-lines"><div><dt>הפקדה לפנסיה</dt><dd><bdi id="law-deposit"></bdi><small id="law-deposit-monthly"></small></dd></div><div><dt>הטבות המס בהפקדה הזו</dt><dd><bdi id="law-benefit"></bdi></dd></div></dl><p class="law-note"><a href="#law-notice">מתי חלה עליכם החובה</a></p></div><div class="comparison-scroll" hidden><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מיקסום<br>הטבות מס<small class="editable-hint" id="maximum-scope-label">פנסיה + השתלמות</small></th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
+<div class="result-summary"><div class="sum-tile sum-deposit"><p class="sum-label">ההפקדה השנתית שממצה את הטבות המס</p><p class="sum-big"><bdi id="sum-deposit"></bdi></p><p class="sum-month" id="sum-deposit-monthly"></p><div class="sum-bar" id="sum-bar" role="img" aria-label="חלוקת ההפקדה"><span id="sum-bar-pension"></span><span id="sum-bar-study"></span></div><dl class="sum-split"><div id="sum-pension-row"><dt><i aria-hidden="true"></i>לפנסיה</dt><dd><bdi id="sum-pension"></bdi><small id="sum-pension-monthly"></small></dd></div><div id="sum-study-row"><dt><i aria-hidden="true"></i>לקרן השתלמות</dt><dd><bdi id="sum-study"></bdi><small id="sum-study-monthly"></small></dd></div></dl></div><div class="sum-tile sum-worth"><p class="sum-label">כמה זה שווה לכם בשנה</p><p class="sum-big"><bdi id="sum-benefit"></bdi></p><dl class="sum-lines"><div><dt>הטבה במס הכנסה</dt><dd><bdi id="sum-tax"></bdi></dd></div><div><dt>חיסכון בביטוח לאומי</dt><dd><bdi id="sum-national"></bdi></dd></div><div><dt>חיסכון בביטוח בריאות</dt><dd><bdi id="sum-health"></bdi></dd></div></dl><p class="sum-note">הטבה פוטנציאלית: מימושה תלוי בחבות המס בפועל ובנתונים האישיים שלכם. <a href="#potential-tax-note">להבהרה המלאה</a></p></div></div><div id="scenario-comparison" class="result-more"><div class="sum-tile sum-mine"><h3>כמה כבר הפקדתם השנה?</h3><p class="helper">כתבו כמה הופקד מתחילת השנה, ונראה כמה הטבה כבר יש לכם וכמה עוד אפשר לקבל.</p><div class="mine-fields"><div class="mine-field"><span class="mine-label" aria-hidden="true">לפנסיה</span><div class="mine-slot" id="mine-slot-pension"></div></div><div class="mine-field"><span class="mine-label" aria-hidden="true">לקרן השתלמות</span><div class="mine-slot" id="mine-slot-study"></div></div></div><div class="mine-result"><span>ההטבה שכבר יש לכם: <strong><bdi id="mine-benefit"></bdi></strong></span><span id="mine-gap-line">עוד אפשר לקבל: <strong><bdi id="mine-gap"></bdi></strong></span></div><p class="error" id="custom-error" role="alert"></p></div><div class="sum-tile sum-law"><h3>המינימום לפי החוק</h3><p class="law-duty">חובת ההפקדה חלה על פנסיה בלבד, ולקרן השתלמות אין חובה.</p><dl class="law-lines"><div><dt>הפקדה לפנסיה</dt><dd><bdi id="law-deposit"></bdi><small id="law-deposit-monthly"></small></dd></div><div><dt>הטבות המס בהפקדה הזו</dt><dd><bdi id="law-benefit"></bdi></dd></div></dl><p class="law-note"><a href="#law-notice">מתי חלה עליכם החובה</a></p></div><div class="comparison-scroll" hidden><table class="comparison-table main-comparison"><caption class="sr-only">השוואת הפקדות והטבות מס שנתיות בשלוש אפשרויות</caption><thead><tr><th scope="col">פירוט שנתי</th><th scope="col" data-plan="target">מיקסום<br>הטבות מס<small class="editable-hint" id="maximum-scope-label">פנסיה + השתלמות</small></th><th scope="col" data-plan="custom">ההפקדה<br>שלי<small class="editable-hint">הזינו בטבלה</small></th><th scope="col" data-plan="law">המינימום<br>לפי החוק</th></tr></thead><tbody id="comparison-body"></tbody></table></div><p class="sr-only" id="comparison-status" role="status" aria-live="polite" aria-atomic="true"></p></div>
 
 
 
@@ -1236,7 +1236,16 @@ function renderComparison(r,mode){
   }
   const mineGap=customPlan?targetPlan.grandTotal-customPlan.grandTotal:null;
   set('mine-benefit',customPlan?money(customPlan.grandTotal):'—');
-  set('mine-gap',mineGap===null?'—':money(Math.max(mineGap,0)));
+  // Tax benefits used up but the study fund is below its exempt ceiling: point at the capital-gains room instead of a zero.
+  const exemptRoom=customPlan&&targetPlan.scope!=='pension'?targetPlan.study.data.ceiling-customPlan.study.deposit:0;
+  const gapLine=el('mine-gap-line');
+  if(mineGap!==null&&Math.round(mineGap)<=0&&exemptRoom>0){
+    gapLine.replaceChildren('יש לך עוד יתרה של ',Object.assign(document.createElement('strong'),{innerHTML:'<bdi id="mine-gap"></bdi>'}),' לפטור ממס רווח הון');
+    set('mine-gap',money(exemptRoom));
+  }else{
+    gapLine.replaceChildren('עוד אפשר לקבל: ',Object.assign(document.createElement('strong'),{innerHTML:'<bdi id="mine-gap"></bdi>'}));
+    set('mine-gap',mineGap===null?'—':money(Math.max(mineGap,0)));
+  }
   set('law-deposit',lawPlan?money(lawPlan.minimumDeposit):'—');
   set('law-deposit-monthly',lawPlan?'כ־'+money(lawPlan.minimumDeposit/12)+' בחודש':'');
   set('law-benefit',lawPlan?money(lawPlan.grandTotal):'—');
