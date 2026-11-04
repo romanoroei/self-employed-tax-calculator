@@ -466,6 +466,7 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 .sum-mine .helper{margin-top:-10px}
 .mine-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
 .mine-field{background:var(--paper);padding:16px 20px;display:flex;flex-direction:column;gap:8px}
+.mine-field[hidden],.table-input-wrap[hidden]{display:none}
 .mine-label{font-size:15px;font-weight:700}
 .mine-slot .table-input-wrap{background:transparent;padding:4px 0}
 .mine-slot .table-input-wrap input{font-size:26px}
@@ -1036,9 +1037,11 @@ function moveToElement(target,block='start') {
   target.scrollIntoView({behavior,block});
 }
 function customDepositText(key){return (el('custom-'+key)?.value ?? '').trim();}
+// A study-fund-only plan asks only what went to the study fund: a pension amount would read as a benefit already used.
+function isStudyOnly(){return targetPlan?.scope==='study';}
 function readCustomDeposits(){
   const read=key=>customDepositText(key)?parseIncome(customDepositText(key)):0;
-  return {pension:read('pension'),study:read('study')};
+  return {pension:isStudyOnly()?0:read('pension'),study:read('study')};
 }
 function customDepositsAreValid(deposits){
   const validPension=isAmountWithinLimit(deposits.pension,MAX_ANNUAL_DEPOSIT);
@@ -1184,6 +1187,8 @@ function renderComparison(r,mode){
     const fresh=el('comparison-body').querySelector('#custom-'+key);
     if(fresh){const slot=el('mine-slot-'+key);slot.replaceChildren(fresh.closest('.table-input-wrap'));}
   }
+  el('mine-slot-pension').closest('.mine-field').hidden=isStudyOnly();
+  el('detail-custom-pension').closest('.table-input-wrap').hidden=isStudyOnly();
   const mineGap=customPlan?targetPlan.grandTotal-customPlan.grandTotal:null;
   set('mine-benefit',customPlan?money(customPlan.grandTotal):'—');
   set('mine-gap',mineGap===null?'—':money(Math.max(mineGap,0)));
