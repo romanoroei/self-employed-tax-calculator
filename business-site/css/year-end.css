@@ -21,11 +21,12 @@
 .ye-title em { font-style: normal; background: linear-gradient(transparent 62%, #E3D6A3 62%); }
 .ye-sub { margin: 0; font-size: 15px; line-height: 1.45; color: #46586A; }
 .ye-cta {
-  flex: none; display: flex; align-items: center; justify-content: center;
+  flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   background: #0C2134; color: #C9B772; font-weight: 800; font-size: 17px;
   text-decoration: none; padding: 0 28px; white-space: nowrap;
 }
 .ye-cta:hover { background: #081826; }
+.ye-cta small { font-size: 12px; font-weight: 500; color: #C1CEDB; }
 /* the whole card opens the calculator: the button's link stretches over it */
 .ye-cta::after { content: ""; position: absolute; inset: -4px 0 0; }
 .ye:hover { box-shadow: 0 12px 44px rgba(0, 0, 0, .5), 0 0 0 1px rgba(201, 183, 114, .6); }
@@ -53,3 +54,10 @@
 }
 @media (prefers-reduced-motion: reduce) { .ye { animation: none; } }
 html.a11y-still .ye { animation: none; }
+
+/* the calculator leads the "כלים וידע" menu until 31.12 */
+.tools-menu a.is-yearend { background: #2B3947; box-shadow: inset -4px 0 0 #C9B772; }
+.ye-tag {
+  display: inline-block; margin-inline-start: 6px; padding: 1px 8px;
+  background: #C9B772; color: #081826; font-size: 12px; font-weight: 800; line-height: 1.5; vertical-align: 1px;
+}

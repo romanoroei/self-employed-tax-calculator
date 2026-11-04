@@ -6,6 +6,16 @@
   const now = new Date();
   if (now >= END) return;
   const days = Math.max(1, Math.ceil((END - now) / 86400000));
+
+  // Until the year ends the calculator leads the "כלים וידע" menu, with a year-end tag.
+  const menu = document.getElementById('tools-menu');
+  const calcItem = menu && menu.querySelector('a[href^="/self-employed-tax-calculator/"]');
+  if (calcItem) {
+    menu.prepend(calcItem);
+    calcItem.classList.add('is-yearend');
+    const k = calcItem.querySelector('.k');
+    if (k) k.insertAdjacentHTML('beforeend', ' <span class="ye-tag">סוף שנה</span>');
+  }
   const KEY = 'rr-yearend-2026';
   const store = {
     get() { try { return Number(localStorage.getItem(KEY)) || 0; } catch { return 0; } },
@@ -28,7 +38,7 @@
   card.innerHTML = `
     <div class="ye-cal" aria-hidden="true"><small>עד 31.12</small><strong>${days}</strong><span>${days === 1 ? 'יום' : 'ימים'}</span></div>
     <div class="ye-txt"><p class="ye-title">${text.title}</p><p class="ye-sub">${text.sub}</p></div>
-    <a class="ye-cta" href="/self-employed-tax-calculator/?utm_source=site&amp;utm_medium=banner&amp;utm_campaign=yearend2026">${text.cta}</a>
+    <a class="ye-cta" href="/self-employed-tax-calculator/?utm_source=site&amp;utm_medium=banner&amp;utm_campaign=yearend2026"><span>${text.cta}</span><small>המחשבון תמיד זמין גם ב"כלים וידע"</small></a>
     <button type="button" class="ye-x" aria-label="סגירת התזכורת">×</button>`;
   card.querySelector('.ye-x').addEventListener('click', () => { card.hidden = true; card.dataset.closed = '1'; store.set(Date.now()); });
   document.body.append(card);
