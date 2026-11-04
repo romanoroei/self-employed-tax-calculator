@@ -26,9 +26,13 @@
   text-decoration: none; padding: 0 28px; white-space: nowrap;
 }
 .ye-cta:hover { background: #081826; }
+/* the whole card opens the calculator: the button's link stretches over it */
+.ye-cta::after { content: ""; position: absolute; inset: -4px 0 0; }
+.ye:hover { box-shadow: 0 12px 44px rgba(0, 0, 0, .5), 0 0 0 1px rgba(201, 183, 114, .6); }
+.ye:hover .ye-cta { background: #081826; }
 /* the close button sits on the card's corner, on a light disc, so it shows over any section */
 .ye-x {
-  position: absolute; top: -16px; left: -12px; width: 34px; height: 34px;
+  position: absolute; top: -16px; left: -12px; z-index: 1; width: 34px; height: 34px;
   display: grid; place-items: center; padding: 0; cursor: pointer;
   background: #F1F1EE; color: #0C2134; border: 2px solid #C9B772; border-radius: 50%;
   font: 700 20px/1 "Heebo", Arial, sans-serif; box-shadow: 0 2px 8px rgba(8, 24, 38, .3);
