@@ -468,11 +468,14 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 .mine-field{background:var(--paper);padding:16px 20px;display:flex;flex-direction:column;gap:8px}
 .mine-field[hidden],.table-input-wrap[hidden],.income-basis dl div[hidden],.capital-assumption[hidden]{display:none}
 /* one-product plan: the last column holds only what is left to deposit */
-.benefit-detail-table.remaining-view tbody tr:not(.detail-deposits) .benefit-summary>*{visibility:hidden}
-.benefit-detail-table.remaining-view .detail-total .benefit-summary{background:transparent}
+/* one-product plan: columns that do not apply in the current view are removed */
+.benefit-detail-table.hide-col-2 :is(th,td):nth-child(2),.benefit-detail-table.hide-col-2 col:nth-child(2),
+.benefit-detail-table.hide-col-3 :is(th,td):nth-child(3),.benefit-detail-table.hide-col-3 col:nth-child(3),
+.benefit-detail-table.hide-col-4 :is(th,td):nth-child(4),.benefit-detail-table.hide-col-4 col:nth-child(4){display:none}
+.benefit-detail-table.remaining-view .detail-formulas .benefit-summary>*{visibility:hidden}
 .plan-deposit[hidden]{display:none}
 /* the product left out of the chosen plan: its column stays, with empty cells */
-.benefit-detail-table.omit-study tbody td:nth-child(2)>*,.benefit-detail-table.omit-pension tbody td:nth-child(3)>*{visibility:hidden}
+
 .mine-label{font-size:15px;font-weight:700}
 .mine-slot .table-input-wrap{background:transparent;padding:4px 0}
 .mine-slot .table-input-wrap input{font-size:26px}
@@ -480,13 +483,13 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 .mine-result{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;padding-top:16px;border-top:1px solid rgba(12,33,52,.18);font-size:17px}
 .sum-law{background:var(--slate);color:var(--on-dark);padding:36px 40px;gap:14px}
 .sum-law h3{color:var(--gold)}
-.law-lines{margin:0}
+.law-lines{margin:auto 0}
 .law-lines div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0}
 .law-lines div+div{border-top:1px solid rgba(241,241,238,.16)}
 .law-lines dd{margin:0;text-align:end;font-size:20px;font-weight:800}
 .law-lines small{display:block;font-size:14px;font-weight:400;color:var(--on-dark-soft)}
 .law-duty{margin:0;font-size:15px;line-height:1.55;color:var(--on-dark-soft)}
-.law-note{margin:auto 0 0!important;font-size:15px;line-height:1.55;color:var(--on-dark-soft)}
+.law-note{margin:0!important;font-size:15px;line-height:1.55;color:var(--on-dark-soft)}
 .law-note a{color:var(--on-dark)}
 #benefit-breakdown .result-head{align-items:end}
 #benefit-breakdown .result-head .result-context{max-width:60ch}
@@ -1039,7 +1042,6 @@ function renderResult(r,mode='target',animate=true) {
   const omitted=mode==='law'?null:omittedProduct();
   for(const key of ['pension','study']){
     el(key+'-income').closest('div').hidden=key===(mode==='law'?'study':omitted);
-    document.querySelector('.benefit-detail-table').classList.toggle('omit-'+key,key===omitted);
   }
   el('capital-assumption').hidden=omitted==='study';
   el('results').hidden=false;el('benefit-breakdown').hidden=false;
@@ -1107,13 +1109,21 @@ function renderDetailDepositState(mode,r){
   const pending=editing&&!customPlan;
   el('detail-custom-status').hidden=!editing||valid;
   set('detail-custom-status',!valid?'יש להזין סכומי הפקדה תקינים, חיוביים או אפס.':'');
-  // One product outside the legal-minimum view: the last column shows what is left to deposit toward the maximum.
-  const chosen={study:'study',pension:'pension'}[mode==='law'?null:targetPlan?.scope];
-  el('benefit-summary-heading').textContent=chosen?'נשאר להפקיד':'סיכום';
-  document.querySelector('.benefit-detail-table').classList.toggle('remaining-view',Boolean(chosen));
-  if(chosen){
-    const target=chosen==='pension'?targetPlan.minimumDeposit:targetPlan.study.deposit,paid=valid?deposits[chosen]:0;
-    set('detail-paid-total',money(Math.max(0,target-paid)));
+  // One product: the maximum view drops the other product and the summary; the legal minimum drops the summary;
+  // "my deposit" drops the other product and its last column shows what the deposit still missing is worth.
+  const chosen={study:'study',pension:'pension'}[targetPlan?.scope],remaining=Boolean(chosen)&&editing;
+  const table=document.querySelector('.benefit-detail-table');
+  table.classList.toggle('hide-col-2',chosen==='pension'&&mode!=='law');
+  table.classList.toggle('hide-col-3',chosen==='study'&&mode!=='law');
+  table.classList.toggle('hide-col-4',Boolean(chosen)&&!editing);
+  table.classList.toggle('remaining-view',remaining);
+  el('benefit-summary-heading').textContent=remaining?'נשאר להפקיד':'סיכום';
+  if(remaining&&!pending){
+    const values=plan=>chosen==='pension'
+      ?{deposit:plan.minimumDeposit,deduction:plan.deduction,tax:plan.deductionSaving,credit:plan.creditSaving,national:plan.pensionInsurance.national,health:plan.pensionInsurance.health,total:plan.pensionTotal,capital:0}
+      :{deposit:plan.study.deposit,deduction:plan.study.deduction,tax:plan.study.deductionSaving,credit:0,national:plan.study.insurance.national,health:plan.study.insurance.health,total:plan.study.total,capital:plan.study.capitalBenefit};
+    const full=values(targetPlan),mine=values(customPlan),left=key=>(key==='capital'&&chosen==='pension')||(key==='credit'&&chosen==='study')?'—':money(Math.max(0,full[key]-mine[key]));
+    for(const [id,key] of Object.entries({'detail-paid-total':'deposit','detail-sum-deduction':'deduction','detail-sum-deduction-saving':'tax','detail-sum-credit-saving':'credit','detail-sum-national':'national','detail-sum-health':'health','detail-grand-total':'total','detail-sum-capital':'capital'}))set(id,left(key));
   }else set('detail-paid-total',!editing?money(planDeposits.pension+planDeposits.study):customPlan?money(deposits.pension+deposits.study):'—');
   el('benefit-breakdown').querySelector('.detail-formulas').hidden=pending;
   if(pending){
