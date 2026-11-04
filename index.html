@@ -474,6 +474,9 @@ body:has(#analytics-consent:not([hidden])){padding-bottom:200px}
 .benefit-detail-table.hide-col-4 :is(th,td):nth-child(4),.benefit-detail-table.hide-col-4 col:nth-child(4),
 .benefit-detail-table:not(.remaining-view) :is(th,td):nth-child(5),.benefit-detail-table:not(.remaining-view) col:nth-child(5){display:none}
 .benefit-detail-table tr.detail-future[hidden]{display:none}
+.benefit-detail-table .detail-gap-first>*{border-top:2px solid var(--navy-deep)}
+.benefit-detail-table .detail-gap>*{font-weight:700}
+.benefit-detail-table .detail-gap .gap-exempt{font-size:14px;font-weight:700}
 .benefit-detail-table.remaining-view .detail-formulas .benefit-summary>*{visibility:hidden}
 .plan-deposit[hidden]{display:none}
 /* the product left out of the chosen plan: its column stays, with empty cells */
@@ -712,6 +715,8 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
 <tr><th scope="row">חיסכון בביטוח בריאות</th><td><bdi id="study-health"></bdi></td><td><bdi id="health-saving"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-health"></bdi></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-health"></bdi></td></tr>
 <tr class="detail-total"><th scope="row">החיסכון השנתי המשוער</th><td><bdi id="study-total"></bdi></td><td><bdi id="total"></bdi></td><td class="benefit-summary"><bdi id="detail-grand-total"></bdi></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-grand-total"></bdi></td></tr>
 <tr class="detail-future"><th scope="row">שווי הפטור ממס רווח הון (תחזית)<sup><a class="capital-note-link" href="#capital-assumption" aria-label="הסבר על תחזית שווי הפטור ממס רווח הון">*</a></sup></th><td><bdi id="study-capital"></bdi></td><td><span class="not-applicable">—</span></td><td class="benefit-summary"><bdi id="detail-sum-capital"></bdi><small>לא כלול בסיכום השנתי</small></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-capital"></bdi><small>לא כלול בסיכום השנתי</small></td></tr>
+<tr class="detail-gap detail-gap-first" hidden><th scope="row">נשאר להפקיד</th><td><bdi id="gap-deposit-study"></bdi></td><td><bdi id="gap-deposit-pension"></bdi></td><td class="benefit-summary"><bdi id="gap-deposit-sum"></bdi></td><td class="benefit-summary benefit-overall"></td></tr>
+<tr class="detail-gap" hidden><th scope="row">הטבת מס נוספת אם תשלימו</th><td><bdi id="gap-benefit-study"></bdi></td><td><bdi id="gap-benefit-pension"></bdi></td><td class="benefit-summary"><bdi id="gap-benefit-sum"></bdi></td><td class="benefit-summary benefit-overall"></td></tr>
 <tr class="detail-formulas"><th scope="row">פירוט החישוב</th><td><details class="calculation-details"><summary>איך חישבתי?</summary><p class="formula" id="study-formula"></p><p class="helper">תחזית הרווחים מהמודל הקיים: תשואה שנתית של 8%, למשך 6 שנים, והשוואה למס של 25% על הרווח. המחשה בלבד, ללא דמי ניהול ואינפלציה; תשואה ופטור אינם מובטחים. הפטור כפוף לתנאי המשיכה בדין.</p></details></td><td><details class="calculation-details"><summary>איך חישבתי?</summary><h4>ניכוי מההכנסה</h4><p class="formula" id="deduction-formula"></p><h4>זיכוי במס</h4><p class="formula" id="credit-formula"></p><h4>ביטוח לאומי ובריאות</h4><p class="formula" id="insurance-formula"></p><h4>החיסכון המשולב</h4><p class="formula" id="total-formula"></p><p class="helper" id="btl-note"></p></details></td><td class="benefit-summary"><details class="calculation-details"><summary>איך סיכמתי?</summary><p class="formula" id="detail-sum-formula"></p></details></td><td class="benefit-summary benefit-overall"></td></tr>
 </tbody></table></div><p class="capital-assumption" id="capital-assumption" tabindex="-1"><span aria-hidden="true">* </span><strong>שווי הפטור ממס רווח הון: </strong>לפי ההפקדה בחישוב זה, עד תקרת הפטור: <bdi id="study-exempt-ceiling"></bdi>. בהנחת תשואה שנתית של 8% למשך 6 שנים. המחשה בלבד; תשואה ופטור אינם מובטחים.</p></div>
 </section>
@@ -1135,6 +1140,18 @@ function renderDetailDepositState(mode,r){
     const both=key=>(key==='capital'&&chosen==='pension')||(key==='credit'&&chosen==='study')?'—':money(mine[key]+Math.max(0,full[key]-mine[key]));
     for(const [id,key] of Object.entries({'detail-paid-total':'deposit','detail-sum-deduction':'deduction','detail-sum-deduction-saving':'tax','detail-sum-credit-saving':'credit','detail-sum-national':'national','detail-sum-health':'health','detail-grand-total':'total','detail-sum-capital':'capital'})){set(id,left(key));set(id.replace('detail-','detail-all-').replace('all-sum-','all-'),both(key));}
   }else set('detail-paid-total',!editing?money(planDeposits.pension+planDeposits.study):customPlan?money(deposits.pension+deposits.study):'—');
+  // Both products in "my deposit": what is still left to deposit in each, and what completing it adds in tax benefits.
+  const gapRows=[...table.querySelectorAll('.detail-gap')],showGap=editing&&!chosen&&!pending&&Boolean(customPlan);
+  gapRows.forEach(row=>row.hidden=!showGap);
+  if(showGap){
+    const leftP=Math.max(0,targetPlan.minimumDeposit-customPlan.minimumDeposit),leftS=Math.max(0,targetPlan.study.deposit-customPlan.study.deposit);
+    const moreP=Math.max(0,targetPlan.pensionTotal-customPlan.pensionTotal),moreS=Math.max(0,targetPlan.study.total-customPlan.study.total);
+    set('gap-deposit-pension',money(leftP));set('gap-deposit-study',money(leftS));set('gap-deposit-sum',money(leftP+leftS));
+    set('gap-benefit-pension',money(moreP));set('gap-benefit-sum',money(moreP+moreS));
+    const studyCell=el('gap-benefit-study');
+    if(Math.round(moreS)===0&&leftS>0)studyCell.replaceChildren(Object.assign(document.createElement('span'),{className:'gap-exempt',textContent:'+ פטור ממס רווח הון'}));
+    else set('gap-benefit-study',money(moreS));
+  }
   el('benefit-breakdown').querySelector('.detail-formulas').hidden=pending;
   if(pending){
     document.querySelectorAll('.benefit-detail-table tbody tr:not(.detail-deposits) bdi').forEach(node=>node.textContent='—');
