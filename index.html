@@ -1126,7 +1126,15 @@ function submitCalculation(event,navigate=true){
   renderResult(targetPlan,'target');customDepositsAreValid(deposits);
   el('calculation-notes').hidden=false;el('contact-card').hidden=false;el('share-calculator').hidden=false;el('closing-cta').hidden=false;
   document.dispatchEvent(new Event('pension:calculated'));
-  if(navigate){el('result-title').focus({preventScroll:true});moveToElement(el('results'));}
+  if(navigate){
+    el('result-title').focus({preventScroll:true});
+    // leave clear room between the fixed top bar and the "כך ממצים את ההטבה" heading
+    const bar=document.querySelector('.topbar')?.getBoundingClientRect().bottom ?? 68;
+    // measured from the layout box, so the 14px rise animation doesn't shift the target
+    let node=el('results'),offset=0;while(node){offset+=node.offsetTop;node=node.offsetParent;}
+    const top=offset-bar-28;
+    window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  }
 }
 function renderDetailDepositState(mode,r){
   const editing=mode==='custom';
