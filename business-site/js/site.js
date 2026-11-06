@@ -243,8 +243,8 @@ function pageTop(element) {
   return y;
 }
 function landingPoint(section) {
-  // on phones and tablets the photo sits above "נעים להכיר", so the landing shows it too
-  if (section.id === 'about' && matchMedia('(max-width: 1100px)').matches) return section.querySelector('.about-text');
+  // the photo starts with this tile, above "נעים להכיר" on phones and beside it on desktop: show all of it
+  if (section.id === 'about') return section.querySelector('.about-text');
   return section.querySelector('h2') || section;
 }
 function sectionTop(section) {
