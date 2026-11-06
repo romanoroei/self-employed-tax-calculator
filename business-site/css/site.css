@@ -661,21 +661,19 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 /* ================= More areas ================= */
 .services { padding-block: var(--section); }
 .service-board { margin-top: 40px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.service { display: flex; flex-direction: column; padding-bottom: 26px; overflow: hidden; }
-.service img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: transform 700ms var(--ease-out); }
-.service h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; margin: 20px 22px 8px; }
-.service p { font-size: var(--t-5); line-height: 1.55; margin-inline: 22px; }
+/* compact tiles: text on the right, a narrow photo on the left */
+.service { position: relative; padding: 20px 22px; padding-inline-end: 118px; overflow: hidden; }
+.service img { position: absolute; inset-block: 0; inset-inline-end: 0; width: 96px; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: transform 700ms var(--ease-out); }
+.service h3 { font-size: var(--t-4); font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
+.service p { font-size: 14px; line-height: 1.5; }
 .tile-ink.service h3 { color: var(--gold); }
 .tile-ink.service p { color: var(--on-dark-soft); }
 @media (hover: hover) and (pointer: fine) { .service:hover img { transform: scale(1.04); } }
 @media (max-width: 1100px) { .service-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .service-board { grid-template-columns: minmax(0, 1fr); }
-  /* text on the right, photo on the left */
-  .service { display: grid; grid-template-columns: minmax(0, 1fr) 38%; padding: 0; align-items: start; }
-  .service img { grid-column: 2; grid-row: 1 / span 2; height: 100%; aspect-ratio: auto; min-height: 140px; }
-  .service h3 { grid-column: 1; grid-row: 1; margin: 16px 16px 4px; }
-  .service p { grid-column: 1; grid-row: 2; margin: 0 16px 16px; }
+  .service { padding: 14px 16px; padding-inline-end: 92px; }
+  .service img { width: 76px; }
 }
 
 /* ================= Wall Street ================= */
