@@ -259,8 +259,6 @@ html.menu-open { overflow: hidden; }
 .yield-tables thead button::after { content: ""; flex: none; border-inline: 3.5px solid transparent; border-top: 5px solid currentColor; opacity: .35; }
 .yield-tables th[aria-sort] button { font-weight: 700; color: var(--ink); }
 .yield-tables th[aria-sort] button::after { opacity: 1; }
-.yield-co { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; }
-.yield-co .logo { flex: none; width: 44px; height: 20px; }
 .yield-tables tfoot th, .yield-tables tfoot td { border-top: 2px solid var(--navy); border-bottom: 0; font-weight: 500; }
 .yield-tables tfoot th { font-weight: 700; }
 .yield-note { margin-top: auto; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }

@@ -29,8 +29,6 @@ const POLICY_EXCLUDES = {
 
 const COMPANIES = ['ישיר', 'איי. די. איי', 'אלטשולר', 'ילין לפידות', 'מנורה', 'הפניקס', 'אינפיניטי', 'אנליסט', 'איילון', 'הכשרה', 'פסגות', 'מיטב', 'מגדל', 'הראל', 'כלל', 'מור'];
 const COMPANY_LABELS = { 'איי. די. איי': 'ישיר', 'אלטשולר': 'אלטשולר שחם', 'מנורה': 'מנורה מבטחים' };
-// Classes from css/logos.css. A company without one simply shows its name.
-const COMPANY_LOGOS = { 'הראל': 'harel', 'מגדל': 'migdal', 'כלל': 'clal', 'הפניקס': 'fnx-color', 'מנורה מבטחים': 'menora', 'מיטב': 'meitav', 'אלטשולר שחם': 'altshuler', 'מור': 'more', 'אנליסט': 'analyst', 'איילון': 'ayalon', 'הכשרה': 'hachshara', 'ילין לפידות': 'yelin', 'אינפיניטי': 'infinity' };
 
 export function companyOf(record) {
   const texts = [record.CONTROLLING_CORPORATION, record.MANAGING_CORPORATION, record.PARENT_COMPANY_NAME, record.FUND_NAME].map((t) => String(t || ''));
@@ -102,10 +100,6 @@ const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 
 export const periodLabel = (period) => `${MONTHS[period % 100 - 1]} ${Math.floor(period / 100)}`;
 const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</span>' : `<span dir="ltr">${v.toFixed(2)}%</span>`);
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-const company = (name) => {
-  const logo = COMPANY_LOGOS[name];
-  return `<span class="yield-co">${logo ? `<span class="logo logo-${logo}"></span>` : ''}<span>${escape(name)}</span></span>`;
-};
 
 export function renderYields({ period, views }) {
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
@@ -118,7 +112,7 @@ export function renderYields({ period, views }) {
     const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
-      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${company(r.company)}</th>${cells(r)}</tr>`).join('')
+      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${escape(r.company)}</th>${cells(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
