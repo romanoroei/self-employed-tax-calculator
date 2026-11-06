@@ -248,7 +248,15 @@ function landingPoint(section) {
   return section.querySelector('h2') || section;
 }
 function sectionTop(section) {
-  return pageTop(landingPoint(section)) - document.querySelector('.topbar').offsetHeight - 16;
+  const bar = document.querySelector('.topbar').offsetHeight;
+  if (section.id === 'contact') {
+    // the form is the destination: center it in the space under the bar, with its words when both fit
+    const room = window.innerHeight - bar;
+    const coupon = section.querySelector('.coupon');
+    const target = coupon.offsetHeight <= room ? coupon : section.querySelector('.coupon-form');
+    return pageTop(target) - bar - Math.max(16, (room - target.offsetHeight) / 2);
+  }
+  return pageTop(landingPoint(section)) - bar - 16;
 }
 function goToSection(section, instant) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
@@ -280,11 +288,11 @@ document.addEventListener('click', (e) => {
   if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
 });
 // arriving from another page: the browser makes the jump itself, and repeats it until the page has loaded,
-// so tell it where the heading is (scroll-padding on html already leaves room for the top bar)
+// so tell it where to land (scroll-padding on html already leaves room for the top bar)
 if (sectionOf(location.hash)) {
   const land = () => {
     const section = sectionOf(location.hash);
-    if (section) section.style.scrollMarginTop = `${pageTop(section) - pageTop(landingPoint(section))}px`;
+    if (section) section.style.scrollMarginTop = `${pageTop(section) - document.querySelector('.topbar').offsetHeight - 16 - sectionTop(section)}px`;
   };
   land();
   window.addEventListener('load', land);
