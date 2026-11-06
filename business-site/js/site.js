@@ -138,9 +138,8 @@
     if (!target) return;
     e.preventDefault();
     history.pushState(null, '', hash);
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
     // wait a frame: the page is still locked from the open menu until the next layout
-    requestAnimationFrame(() => target.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' }));
+    requestAnimationFrame(() => goToSection(target));
   });
   panel.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { e.preventDefault(); close(true); return; }
@@ -234,6 +233,57 @@
   });
   select(tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]);
 })();
+
+// ===== Links to a section land with its heading right under the top bar =====
+// The sections have generous top padding, so the browser's own jump leaves the heading far down the screen.
+function pageTop(element) {
+  let y = 0;
+  // layout offsets: a heading that has not faded in yet is still moved by a transform
+  for (let node = element; node; node = node.offsetParent) y += node.offsetTop;
+  return y;
+}
+function sectionTop(section) {
+  return pageTop(section.querySelector('h2') || section) - document.querySelector('.topbar').offsetHeight - 16;
+}
+function goToSection(section, instant) {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
+  const top = sectionTop(section);
+  if (Math.abs(window.scrollY - top) < 2) return;
+  window.scrollTo({ top, behavior: instant || still ? 'instant' : 'smooth' });
+  if (instant || still) return;
+  // images loading on the way can move the page; a visitor who scrolled away on their own stays where they are
+  const settle = () => {
+    const off = window.scrollY - sectionTop(section);
+    if (Math.abs(off) > 2 && Math.abs(off) < 400) window.scrollTo({ top: sectionTop(section), behavior: 'instant' });
+  };
+  if ('onscrollend' in window) window.addEventListener('scrollend', settle, { once: true });
+  else setTimeout(settle, 1200);
+}
+const sectionOf = (hash) => {
+  const target = hash.length > 1 && document.getElementById(hash.slice(1));
+  return target && target.tagName === 'SECTION' ? target : null;
+};
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  const section = link && !e.defaultPrevented && sectionOf(link.getAttribute('href'));
+  if (!section) return;
+  e.preventDefault();
+  history.pushState(null, '', link.getAttribute('href'));
+  goToSection(section);
+  // keyboard users continue from the section they chose
+  const heading = section.querySelector('h2');
+  if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
+});
+// arriving from another page: the browser makes the jump itself, and repeats it until the page has loaded,
+// so tell it where the heading is (scroll-padding on html already leaves room for the top bar)
+if (sectionOf(location.hash)) {
+  const land = () => {
+    const section = sectionOf(location.hash);
+    if (section) section.style.scrollMarginTop = `${pageTop(section) - pageTop(section.querySelector('h2') || section)}px`;
+  };
+  land();
+  window.addEventListener('load', land);
+}
 
 // Anonymous totals (functions/api/count.js). Only the label is sent; a failed count never blocks anything.
 const countClick = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };

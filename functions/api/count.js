@@ -4,7 +4,7 @@
 // Stores only the label and a number (no IP, cookie or identifier), in the KV namespace bound as STATS.
 // Without that binding it accepts the request and stores nothing, so the page never depends on it.
 
-const LABEL = /^(?:subscribe:(?:google|apple|outlook|copy)|return:m(?:[1-9]|1[0-2])|contact:(?:whatsapp|phone|email|form|summary)|strip:(?:calculator|calendar|draw))$/;
+const LABEL = /^(?:subscribe:(?:google|apple|outlook|copy)|return:m(?:[1-9]|1[0-2])|contact:(?:whatsapp|phone|email|form|summary)|strip:(?:calculator|calendar|study))$/;
 
 export async function onRequestPost({ request, env }) {
   const label = (await request.text()).trim();

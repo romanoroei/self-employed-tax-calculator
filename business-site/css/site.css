@@ -263,6 +263,7 @@ html.menu-open { overflow: hidden; }
 .now-tool { display: flex; flex-direction: column; gap: 4px; padding: 16px 28px; }
 .now-tool strong { font-size: var(--t-4); font-weight: 700; line-height: 1.3; }
 .now-tool small { font-size: var(--t-5); color: var(--on-dark-soft); }
+section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 @media (hover: hover) and (pointer: fine) {
   .now-tile:hover .now-go { background: var(--slate); }
   .now-tile:hover .arrow { transform: translateX(-6px); }
