@@ -670,11 +670,13 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .tile-ink.service h3 { color: var(--gold); }
 .tile-ink.service p { color: var(--on-dark-soft); }
 .service-buy { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
-.service-buy span { flex-basis: 100%; font-size: 13px; font-weight: 700; color: var(--gold); }
+.service-buy > span { flex-basis: 100%; font-size: 13px; font-weight: 700; color: var(--gold); }
 /* the same navy silhouette on paper as the institutions board; the logo's own colors replace it on hover */
-.service-buy a { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); width: 84px; height: 44px; padding: 7px 10px; background: var(--paper-2); }
+.service-buy a { flex: 1 1 72px; max-width: 84px; display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); height: 44px; padding: 7px 10px; background: var(--paper-2); }
+.service-buy a[data-count="buy:fnx"] { padding: 6px; }
 .service-buy a > * { grid-area: 1 / 1; transition: opacity 200ms ease; }
 .service-buy img { width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.service .service-buy p { flex-basis: 100%; margin-top: 2px; font-size: 12px; line-height: 1.45; }
 .service-buy a:active img, .service-buy a:focus-visible img { opacity: 1; }
 .service-buy a:active .logo, .service-buy a:focus-visible .logo { opacity: 0; }
 @media (hover: hover) and (pointer: fine) { .service:hover > img { transform: scale(1.04); }
