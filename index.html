@@ -1433,7 +1433,7 @@ startAtIncome();
       'כמה זה שווה בשנה: '+shown('sum-benefit'),
       paid?'כבר הפקדתי השנה: '+paid:'',
       'אשמח לתאם שיחת התאמה ללא עלות וללא התחייבות.',
-    ].filter(Boolean).join('\n');
+    ].filter(Boolean).join('\n').replace(/[\u2066-\u2069]/g,'');
     const address='https://wa.me/972528089808?text='+encodeURIComponent(message);
     const opened=window.open(address,'_blank');
     if(opened)opened.opener=null;else window.location.href=address;
