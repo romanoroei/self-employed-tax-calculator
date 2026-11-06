@@ -414,3 +414,17 @@ document.addEventListener('click', (e) => {
   });
 })();
 
+
+// The yields tile: the build writes every view as a table, this only picks which one shows.
+(() => {
+  const tile = document.querySelector('.hero-yields');
+  if (!tile) return;
+  const picked = (group) => tile.querySelector(`[data-yield-${group}][aria-pressed="true"]`).dataset[`yield${group[0].toUpperCase()}${group.slice(1)}`];
+  tile.addEventListener('click', (e) => {
+    const button = e.target.closest('.yield-picks button');
+    if (!button) return;
+    button.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+    const view = `${picked('product')}-${picked('track')}`;
+    tile.querySelectorAll('[data-yield-view]').forEach((table) => { table.hidden = table.dataset.yieldView !== view; });
+  });
+})();

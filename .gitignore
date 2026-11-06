@@ -20,6 +20,13 @@
 !business-site/**
 !scripts/check-site.mjs
 !scripts/calendar-feed.mjs
+!scripts/yields.mjs
+!scripts/update-yields.mjs
+!scripts/yields-data.json
+
+!.github/
+!.github/workflows/
+!.github/workflows/update-yields.yml
 
 !functions/
 !functions/**

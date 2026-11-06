@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { calendarFeed } from './calendar-feed.mjs';
+import { renderYields } from './yields.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'dist');
@@ -35,6 +36,11 @@ for (const asset of assets) await cp(path.join(root, asset), path.join(calc, ass
 for (const entry of publicSiteEntries) await cp(path.join(root, 'business-site', entry), path.join(output, entry), {recursive:true});
 // Calendar apps subscribe to this address, so it must keep its name.
 await writeFile(path.join(output, 'magazine', 'financial-calendar.ics'), calendarFeed());
+// The yields tile is plain HTML, written from the figures that scripts/update-yields.mjs refreshes.
+const homeFile = path.join(output, 'index.html');
+const homeSource = await readFile(homeFile, 'utf8');
+assert(homeSource.includes('<!-- yields-tile -->'), 'Missing yields tile slot');
+await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', renderYields(JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8')))));
 // Content versions ensure browsers pick up stylesheet and script updates together.
 const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html', 'magazine/financial-calendar.html');
 for (const page of businessPages) {

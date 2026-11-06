@@ -1,0 +1,45 @@
+name: Update yields tile
+
+# Checks daily for new Finance Ministry figures, as synced by GemelHub, an hour after
+# its second daily sync. Commits only when the numbers changed, which deploys the site.
+# When anything looks wrong the job fails and the site keeps its last good numbers.
+"on":
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-yields
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh the figures
+        run: node scripts/update-yields.mjs
+
+      - name: Check the site still builds
+        run: node scripts/build-cloudflare.mjs
+
+      - name: Commit changed figures
+        run: |
+          git add scripts/yields-data.json
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update yields tile figures"
+          git pull --rebase origin main
+          git push origin main
