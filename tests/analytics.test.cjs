@@ -113,6 +113,14 @@ test('direct privacy and accessibility mail links report only channel and locati
   assert.deepEqual(event[2],{send_to:ID,cta_location:'footer',contact_channel:'email'});
 });
 
+test('sending the summary reports only channel and location, and nothing without consent', () => {
+  const env=setup();const send=()=>{const target=env.get('summary-send-button');target.location='#summary-send';env.document.emit('click',{target});};
+  send();assert.equal(env.events().length,0);
+  env.allow();send();
+  const event=env.events().find(e=>e[1]==='contact_summary_send');
+  assert.deepEqual(event[2],{send_to:ID,cta_location:'comparison',contact_channel:'whatsapp'});
+});
+
 test('always-open breakdown is counted only when visible and consented, once per calculation', () => {
   const env=setup({observer:true});env.calculate();env.showBreakdown(0.3);
   assert.equal(env.events().length,0);env.allow();
