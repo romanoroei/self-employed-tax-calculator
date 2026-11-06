@@ -671,10 +671,15 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .tile-ink.service p { color: var(--on-dark-soft); }
 .service-buy { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
 .service-buy span { flex-basis: 100%; font-size: 13px; font-weight: 700; color: var(--gold); }
-.service-buy a { display: flex; align-items: center; justify-content: center; width: 104px; height: 52px; padding: 6px 10px; background: #fff; transition: box-shadow 180ms ease; }
-.service-buy img { width: 100%; height: 100%; object-fit: contain; }
+/* the same navy silhouette on paper as the institutions board; the logo's own colors replace it on hover */
+.service-buy a { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); width: 84px; height: 44px; padding: 7px 10px; background: var(--paper-2); }
+.service-buy a > * { grid-area: 1 / 1; transition: opacity 200ms ease; }
+.service-buy img { width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.service-buy a:active img, .service-buy a:focus-visible img { opacity: 1; }
+.service-buy a:active .logo, .service-buy a:focus-visible .logo { opacity: 0; }
 @media (hover: hover) and (pointer: fine) { .service:hover > img { transform: scale(1.04); }
-  .service-buy a:hover { box-shadow: 0 0 0 3px var(--gold); } }
+  .service-buy a:hover img { opacity: 1; }
+  .service-buy a:hover .logo { opacity: 0; } }
 @media (max-width: 1100px) { .service-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .service-board { grid-template-columns: minmax(0, 1fr); }
