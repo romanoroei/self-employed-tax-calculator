@@ -566,7 +566,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-cta { padding-inline: 14px; }
   .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
   .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
-  .hero-main { padding: 22px; min-height: 390px; }
+  .hero-main { padding: 22px; min-height: 490px; }
   .hero-bg { object-position: 50% 0; }
   .hero-lead { margin-block: 16px 0; }
   .hero-idea, .hero-facts { padding: 20px; }
@@ -624,6 +624,11 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 }
 /* tablets hide the portrait tile too: same photo behind the text, kept at portrait size
    in the middle, with its sides faded so the edges of the picture do not show */
+/* tablets: the portrait keeps its own side, so the text never crosses the face */
+@media (min-width: 701px) and (max-width: 900px) {
+  .hero-bg { width: 50%; opacity: .6; object-position: 50% 12%; -webkit-mask-image: linear-gradient(to right, #000 45%, transparent 100%); mask-image: linear-gradient(to right, #000 45%, transparent 100%); }
+  .hero-copy { max-width: 54%; }
+}
 @media (min-width: 701px) and (max-width: 1100px) {
   .about-text {
     padding-top: 290px;
