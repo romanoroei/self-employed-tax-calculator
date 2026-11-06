@@ -247,51 +247,60 @@ document.addEventListener('click', (e) => {
   else countClick('contact:whatsapp');
 });
 
-// ===== What matters now: this month's focus from the financial calendar, worked out from today's date =====
-// Without scripting the home page tile stays a plain link to the calendar. A countdown shows only where the
-// calendar states a hard date, on that tile and on the month's page in the calendar.
+// ===== Home page strip and the calendar's countdown, worked out from today's date =====
+// The main tile teases the calculator, and in November and December counts down to 31.12. Today counts as a day.
+// The side tile names this month's focus from the financial calendar. Without scripting both stay plain links.
 (() => {
   const MONTHS = [
-    ['קובעים את הקצב לשנה', 'טופס 101 למעסיק, הוראת קבע לפנסיה ולקרן ההשתלמות, ותקרה חדשה בקופת הגמל להשקעה.'],
-    ['בדיקה שדוחים כל השנה', 'התלוש הראשון של השנה, וכפל ביטוחים באתר הר הביטוח.'],
-    ['אוספים את המסמכים של השנה שעברה', 'טופס 106 מכל מעסיק, וטופס 867 מכל בנק ובית השקעות.', [3, 31]],
-    ['קוראים את הדוחות השנתיים', 'בכל דוח בודקים שלושה דברים: דמי הניהול, מסלול ההשקעה והכיסויים הביטוחיים.'],
-    ['דוח שנתי או בקשת החזר', 'עצמאים ומי שחייבים בהגשה מגישים דוח. שכירים יכולים לבקש החזר על עד שש שנות מס אחורה.'],
-    ['חצי שנה עברה: בדיקת ביניים', 'הכנסות מול הפקדות, וכמה החלוקה בין מניות, אג"ח ומזומן זזה.'],
-    ['לפני החופשה', 'מה כבר כלול בביטוח הנסיעות ומה חסר, ומה עושים עם קרן השתלמות שנעשתה נזילה.'],
-    ['לפני שנת הלימודים', 'חיסכון לכל ילד, ובדיקה של מקדמות המס לעצמאים.'],
-    ['מעדכנים את מי שחשוב לכם', 'מוטבים בקרנות ובביטוחי החיים, צוואה ויפוי כוח מתמשך.'],
-    ['אחרי החגים: חוזרים לתיק', 'מסלול ההשקעה מול הגיל, וכסף שיושב בעו"ש.'],
-    ['כמה עוד להפקיד השנה', 'מחשבים כמה חסר כדי לנצל את הטבות המס על ההפקדות לפנסיה ולקרן ההשתלמות.', [12, 31]],
-    ['השנה נסגרת', 'הפקדות לפנסיה ולקרן ההשתלמות, קופת גמל להשקעה, תרומות והחזר מס על השנה הוותיקה בחלון.', [12, 31]],
+    ['קובעים את הקצב לשנה'],
+    ['בדיקה שדוחים כל השנה'],
+    ['אוספים את המסמכים של השנה שעברה', [3, 31]],
+    ['קוראים את הדוחות השנתיים'],
+    ['דוח שנתי או בקשת החזר'],
+    ['חצי שנה עברה: בדיקת ביניים'],
+    ['לפני החופשה'],
+    ['לפני שנת הלימודים'],
+    ['מעדכנים את מי שחשוב לכם'],
+    ['אחרי החגים: חוזרים לתיק'],
+    ['כמה עוד להפקיד השנה', [12, 31]],
+    ['השנה נסגרת', [12, 31]],
   ];
   const today = new Date();
+  const year = today.getFullYear();
   const month = today.getMonth();
-  const [title, text, until] = MONTHS[month];
-  const start = new Date(today.getFullYear(), month, today.getDate());
-  // today counts as a day, the same as the year-end card in js/year-end.js, so the two always show one number
-  const days = until ? Math.round((new Date(today.getFullYear(), until[0] - 1, until[1]) - start) / 86400000) + 1 : 0;
+  const [focus, until] = MONTHS[month];
+  const start = new Date(year, month, today.getDate());
+  const days = until ? Math.round((new Date(year, until[0] - 1, until[1]) - start) / 86400000) + 1 : 0;
   const left = days === 1 ? 'יום אחרון' : days === 2 ? 'עוד יומיים' : `עוד ${days} ימים`;
   const date = until ? `${until[1]}.${until[0]}` : '';
 
   const tile = document.querySelector('[data-now]');
-  if (tile) {
-    tile.href = `/magazine/financial-calendar#m${month + 1}`;
-    tile.querySelector('[data-now-title]').textContent = title;
-    tile.querySelector('[data-now-text]').textContent = text;
-    if (until) {
-      tile.querySelector('[data-now-left]').textContent = left;
-      tile.querySelector('[data-now-date]').textContent = `עד ${date}`;
-      tile.querySelector('[data-now-when]').hidden = false;
-    }
+  if (tile && month >= 10) {
+    const text = days <= 7
+      ? { title: 'שבוע אחרון. <em>מה שלא תפקידו עד 31.12, מס הכנסה ישמח לקחת.</em>', sub: 'חלק מהקופות סוגרות הפקדות כמה ימים לפני סוף השנה. בדיקה של דקה, עכשיו.', go: 'בודק עכשיו' }
+      : days <= 21
+      ? { title: `עצמאי? <em>${days} ימים</em> להחליט אם הכסף הולך לחיסכון שלך או למס הכנסה.`, sub: 'המחשבון מראה בדקה כמה מס חוסכים בהפקדה עד סוף השנה.', go: 'תראו לי את המספר' }
+      : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', sub: `הפקדה לפנסיה ולקרן השתלמות לפני סוף השנה מקטינה את המס של ${year}. בדקו בדקה כמה זה אצלכם.`, go: 'כמה אחסוך?' };
+    tile.querySelector('[data-now-title]').innerHTML = text.title;
+    tile.querySelector('[data-now-text]').textContent = text.sub;
+    tile.querySelector('[data-now-go]').textContent = text.go;
+    tile.querySelector('[data-now-days]').textContent = days;
+    tile.querySelector('[data-now-unit]').textContent = days === 1 ? 'יום' : 'ימים';
+    tile.querySelector('[data-now-when]').hidden = false;
   }
 
-  const focus = document.querySelector(`#m${month + 1} .cal-focus`);
-  if (focus && until) {
+  const side = document.querySelector('[data-now-cal]');
+  if (side) {
+    side.href = `/magazine/financial-calendar#m${month + 1}`;
+    side.querySelector('small').textContent = `החודש: ${focus}`;
+  }
+
+  const monthFocus = document.querySelector(`#m${month + 1} .cal-focus`);
+  if (monthFocus && until) {
     const badge = document.createElement('span');
     badge.className = 'cal-until';
     badge.textContent = `${left}, עד ${date}`;
-    focus.append(' ', badge);
+    monthFocus.append(' ', badge);
   }
 })();
 
