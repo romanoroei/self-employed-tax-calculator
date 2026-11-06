@@ -235,6 +235,66 @@
   select(tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]);
 })();
 
+// Anonymous totals (functions/api/count.js). Only the label is sent; a failed count never blocks anything.
+const countClick = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[href*="wa.me/"], a[data-count], a[data-subscribe]');
+  if (!a) return;
+  if (a.dataset.subscribe) countClick(`subscribe:${a.dataset.subscribe}`);
+  else if (a.dataset.count) countClick(a.dataset.count);
+  else if (a.href.startsWith('tel:')) countClick('contact:phone');
+  else if (a.href.startsWith('mailto:')) countClick('contact:email');
+  else countClick('contact:whatsapp');
+});
+
+// ===== What matters now: this month's focus from the financial calendar, worked out from today's date =====
+// Without scripting the home page tile stays a plain link to the calendar. A countdown shows only where the
+// calendar states a hard date, on that tile and on the month's page in the calendar.
+(() => {
+  const MONTHS = [
+    ['קובעים את הקצב לשנה', 'טופס 101 למעסיק, הוראת קבע לפנסיה ולקרן ההשתלמות, ותקרה חדשה בקופת הגמל להשקעה.'],
+    ['בדיקה שדוחים כל השנה', 'התלוש הראשון של השנה, וכפל ביטוחים באתר הר הביטוח.'],
+    ['אוספים את המסמכים של השנה שעברה', 'טופס 106 מכל מעסיק, וטופס 867 מכל בנק ובית השקעות.', [3, 31]],
+    ['קוראים את הדוחות השנתיים', 'בכל דוח בודקים שלושה דברים: דמי הניהול, מסלול ההשקעה והכיסויים הביטוחיים.'],
+    ['דוח שנתי או בקשת החזר', 'עצמאים ומי שחייבים בהגשה מגישים דוח. שכירים יכולים לבקש החזר על עד שש שנות מס אחורה.'],
+    ['חצי שנה עברה: בדיקת ביניים', 'הכנסות מול הפקדות, וכמה החלוקה בין מניות, אג"ח ומזומן זזה.'],
+    ['לפני החופשה', 'מה כבר כלול בביטוח הנסיעות ומה חסר, ומה עושים עם קרן השתלמות שנעשתה נזילה.'],
+    ['לפני שנת הלימודים', 'חיסכון לכל ילד, ובדיקה של מקדמות המס לעצמאים.'],
+    ['מעדכנים את מי שחשוב לכם', 'מוטבים בקרנות ובביטוחי החיים, צוואה ויפוי כוח מתמשך.'],
+    ['אחרי החגים: חוזרים לתיק', 'מסלול ההשקעה מול הגיל, וכסף שיושב בעו"ש.'],
+    ['כמה עוד להפקיד השנה', 'מחשבים כמה חסר כדי לנצל את הטבות המס על ההפקדות לפנסיה ולקרן ההשתלמות.', [12, 31]],
+    ['השנה נסגרת', 'הפקדות לפנסיה ולקרן ההשתלמות, קופת גמל להשקעה, תרומות והחזר מס על השנה הוותיקה בחלון.', [12, 31]],
+  ];
+  const today = new Date();
+  const month = today.getMonth();
+  const [title, text, until] = MONTHS[month];
+  const start = new Date(today.getFullYear(), month, today.getDate());
+  // today counts as a day, the same as the year-end card in js/year-end.js, so the two always show one number
+  const days = until ? Math.round((new Date(today.getFullYear(), until[0] - 1, until[1]) - start) / 86400000) + 1 : 0;
+  const left = days === 1 ? 'יום אחרון' : days === 2 ? 'עוד יומיים' : `עוד ${days} ימים`;
+  const date = until ? `${until[1]}.${until[0]}` : '';
+
+  const tile = document.querySelector('[data-now]');
+  if (tile) {
+    tile.href = `/magazine/financial-calendar#m${month + 1}`;
+    tile.querySelector('[data-now-title]').textContent = title;
+    tile.querySelector('[data-now-text]').textContent = text;
+    if (until) {
+      tile.querySelector('[data-now-left]').textContent = left;
+      tile.querySelector('[data-now-date]').textContent = `עד ${date}`;
+      tile.querySelector('[data-now-when]').hidden = false;
+    }
+  }
+
+  const focus = document.querySelector(`#m${month + 1} .cal-focus`);
+  if (focus && until) {
+    const badge = document.createElement('span');
+    badge.className = 'cal-until';
+    badge.textContent = `${left}, עד ${date}`;
+    focus.append(' ', badge);
+  }
+})();
+
 // ===== Lead form: Google Sheets copy + Formspree email (same endpoints as the landing page) =====
 (() => {
   const form = document.getElementById('lead-form');
@@ -263,6 +323,7 @@
         form.reset();
         status.className = 'form-status success';
         status.textContent = 'הפרטים נשלחו. אחזור אליכם בהקדם.';
+        countClick('contact:form');
       })
       .catch(() => { status.className = 'form-status error'; status.textContent = ERROR; })
       .finally(() => { button.disabled = false; button.textContent = 'לשליחת הפרטים'; });
@@ -289,9 +350,3 @@
   });
 })();
 
-// Anonymous click totals (functions/api/count.js). Only the label is sent; a failed count never blocks the subscription.
-document.querySelectorAll('a[data-subscribe]').forEach((a) => {
-  a.addEventListener('click', () => {
-    try { navigator.sendBeacon('/api/count', `subscribe:${a.dataset.subscribe}`); } catch { /* counting is optional */ }
-  });
-});

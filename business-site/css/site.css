@@ -238,6 +238,38 @@ html.menu-open { overflow: hidden; }
 .hero-idea > span { font-size: var(--t-4); line-height: 1.5; color: var(--on-dark-soft); max-width: 34ch; }
 .hero-facts { padding: 28px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; }
 .hero-facts strong { font-size: var(--t-2); font-weight: 800; line-height: 1.25; max-width: 18ch; }
+/* the strip continues the hero board on the same two columns */
+.now-strip {
+  background: var(--navy-deep);
+  padding: 0 var(--gap) var(--gap);
+  grid-template-columns: 8fr 4fr;
+}
+.now-tile { grid-row: span 2; display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.now-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 28px 40px; }
+.now-k { font-size: 13px; font-weight: 700; }
+.now-tile .now-k { color: var(--ink-soft); }
+.now-tool .now-k { color: var(--gold); }
+.now-copy strong { font-size: var(--t-2); font-weight: 800; line-height: 1.2; }
+.now-text { font-size: var(--t-5); line-height: 1.5; max-width: 62ch; color: var(--ink-soft); }
+.now-go { margin-top: 4px; font-size: var(--t-5); font-weight: 700; }
+.now-when { display: grid; align-content: center; justify-items: center; gap: 2px; padding-inline: 36px; background: var(--navy); color: var(--on-dark); text-align: center; white-space: nowrap; }
+.now-when[hidden] { display: none; }
+.now-when b { font-size: var(--t-2); font-weight: 800; color: var(--gold); }
+.now-when small { font-size: var(--t-5); color: var(--on-dark-soft); }
+.now-tool { display: flex; flex-direction: column; gap: 4px; padding: 16px 28px; }
+.now-tool strong { font-size: var(--t-4); font-weight: 700; line-height: 1.3; }
+.now-tool small { font-size: var(--t-5); color: var(--on-dark-soft); }
+@media (max-width: 900px) {
+  .now-strip { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .now-tile { grid-column: 1 / -1; grid-row: auto; }
+  .now-copy { padding: 24px 28px; }
+}
+@media (max-width: 700px) {
+  .now-strip, .now-tile { grid-template-columns: minmax(0, 1fr); }
+  .now-copy { padding: 20px 22px; }
+  .now-when { display: flex; align-items: baseline; gap: 10px; padding: 12px 22px; }
+  .now-tool { padding: 14px 22px; }
+}
 .hero-facts-list { display: grid; gap: 4px; padding-top: 14px; border-top: 1px solid rgba(8, 24, 38, .22); font-size: var(--t-5); font-weight: 500; }
 
 /* ================= Approach ================= */

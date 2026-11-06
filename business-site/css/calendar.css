@@ -64,6 +64,7 @@ html:not(.js) .cal-filter { display: none; }
 .cal-month .cal-items p { color: var(--soft); }
 .cal-month .cal-tag { background: var(--chip); color: var(--chip-fg); }
 .cal-month .link { color: var(--fg); }
+.cal-until { display: inline-block; padding: 2px 10px; background: var(--navy-deep); color: var(--gold); font-size: 13px; font-weight: 700; white-space: nowrap; }
 .cal-badge { display: inline-block; margin-inline-start: 10px; padding: 2px 10px; background: var(--navy-deep); color: var(--gold); font-size: 13px; font-weight: 700; vertical-align: middle; }
 .cal-empty { font-size: var(--t-5); color: var(--soft); }
 

@@ -40,6 +40,7 @@ assert(home.includes('href="/self-employed-tax-calculator/"'),'Missing calculato
 assert(home.includes('action="https://formspree.io/f/mvzjeykj"'),'Incorrect lead endpoint');
 for(const name of ['שם מלא','טלפון','אימייל','מטרה'])assert(home.includes('name="'+name+'"'),'Incorrect form field '+name);
 const js=await readFile(path.join(root,'js/site.js'),'utf8');
+assert(home.includes('data-now-title')&&js.includes("querySelector('[data-now]')"),'Missing what-matters-now tile');
 assert(!js.includes('Preview only:')&&!js.includes('הטופס אינו פעיל'),'Preview guard must not reach production');
 assert(js.includes('button.disabled || !form.reportValidity()'),'Prevent repeated submits while pending');
 const feed=await readFile(path.join(root,'magazine/financial-calendar.ics'),'utf8');
