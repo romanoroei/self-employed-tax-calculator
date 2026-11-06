@@ -664,17 +664,22 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .service-board { margin-top: 40px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 /* compact tiles: text on the right, a narrow photo on the left */
 .service { position: relative; padding: 20px 22px; padding-inline-end: 118px; overflow: hidden; }
-.service img { position: absolute; inset-block: 0; inset-inline-end: 0; width: 96px; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: transform 700ms var(--ease-out); }
+.service > img { position: absolute; inset-block: 0; inset-inline-end: 0; width: 96px; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); transition: transform 700ms var(--ease-out); }
 .service h3 { font-size: var(--t-4); font-weight: 800; line-height: 1.25; margin-bottom: 6px; }
 .service p { font-size: 14px; line-height: 1.5; }
 .tile-ink.service h3 { color: var(--gold); }
 .tile-ink.service p { color: var(--on-dark-soft); }
-@media (hover: hover) and (pointer: fine) { .service:hover img { transform: scale(1.04); } }
+.service-buy { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.service-buy span { flex-basis: 100%; font-size: 13px; font-weight: 700; color: var(--gold); }
+.service-buy a { display: flex; align-items: center; justify-content: center; width: 104px; height: 52px; padding: 6px 10px; background: #fff; transition: box-shadow 180ms ease; }
+.service-buy img { width: 100%; height: 100%; object-fit: contain; }
+@media (hover: hover) and (pointer: fine) { .service:hover > img { transform: scale(1.04); }
+  .service-buy a:hover { box-shadow: 0 0 0 3px var(--gold); } }
 @media (max-width: 1100px) { .service-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .service-board { grid-template-columns: minmax(0, 1fr); }
   .service { padding: 14px 16px; padding-inline-end: 92px; }
-  .service img { width: 76px; }
+  .service > img { width: 76px; }
 }
 
 /* ================= Wall Street ================= */
