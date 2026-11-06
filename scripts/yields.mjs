@@ -1,16 +1,24 @@
-// The home page's yields tile. Picks the leaders from the Finance Ministry data
-// that GemelHub syncs, and renders them as plain HTML at build time.
-// Track rules follow GemelHub's js/config.js, so both sites agree on a track.
+// The home page's yields tile. Ranks the companies in each track from the Finance
+// Ministry data that GemelHub syncs, and renders them as plain HTML at build time.
+// Group rules and the simple average follow GemelHub's js/config.js and js/api.js,
+// so both sites agree on a track and on its average.
 
 export const PRODUCTS = [
   { id: 'invest', label: 'גמל להשקעה', classification: 'קופת גמל להשקעה', source: 'gemel' },
   { id: 'study', label: 'השתלמות', classification: 'קרנות השתלמות', source: 'gemel', excluded: ['1290'] },
-  { id: 'policy', label: 'פוליסת חיסכון', classification: 'פוליסות שהונפקו החל משנת 2004', source: 'polisa', excluded: ['14385', '14386', '15207', '14291'] },
+  // ישיר stays out of the policies view at Roei's request.
+  { id: 'policy', label: 'פוליסת חיסכון', classification: 'פוליסות שהונפקו החל משנת 2004', source: 'polisa', excluded: ['14385', '14386', '15207', '14291', '90'], excludedNames: ['אקסלנס', 'משתתף', 'מקבלי קצבה'], excludedCompanies: ['ישיר'] },
 ];
 export const TRACKS = [
   { id: 'general', label: 'כללי', sub: 'כללי', policyName: 'כללי', policyIds: ['18013'] },
   { id: 'stocks', label: 'מניות', sub: 'מניות', policyName: 'מניות' },
 ];
+export const COLUMNS = [
+  { id: 'ytd', label: 'מתחילת השנה' },
+  { id: 'y3', label: '3 שנים' },
+  { id: 'y7', label: '7 שנים' },
+];
+export const DEFAULT_COLUMN = 'y3';
 export const ROWS = 3;
 
 // Policy tracks have no SUB_SPECIALIZATION, so GemelHub matches them by name.
@@ -19,13 +27,15 @@ const POLICY_EXCLUDES = {
   stocks: ['BlackRock', 'fidelity', 'State Street', 'Apollo', 'סחיר', 'עוקב', 'למקבלי', 'S&P', 'אג"ח', '25%', 'ממשלות', 'ממשלת', 'קצבה'],
 };
 
-// Longest names first, so "הכשרה" never swallows a more exact match.
 const COMPANIES = ['ישיר', 'איי. די. איי', 'אלטשולר', 'ילין לפידות', 'מנורה', 'הפניקס', 'אינפיניטי', 'אנליסט', 'איילון', 'הכשרה', 'פסגות', 'מיטב', 'מגדל', 'הראל', 'כלל', 'מור'];
 const COMPANY_LABELS = { 'איי. די. איי': 'ישיר', 'אלטשולר': 'אלטשולר שחם', 'מנורה': 'מנורה מבטחים' };
+// Classes from css/logos.css. A company without one simply shows its name.
+const COMPANY_LOGOS = { 'הראל': 'harel', 'מגדל': 'migdal', 'כלל': 'clal', 'הפניקס': 'fnx-color', 'מנורה מבטחים': 'menora', 'מיטב': 'meitav', 'אלטשולר שחם': 'altshuler', 'מור': 'more', 'אנליסט': 'analyst', 'איילון': 'ayalon', 'הכשרה': 'hachshara', 'ילין לפידות': 'yelin', 'אינפיניטי': 'infinity' };
+
 export function companyOf(record) {
   const texts = [record.CONTROLLING_CORPORATION, record.MANAGING_CORPORATION, record.PARENT_COMPANY_NAME, record.FUND_NAME].map((t) => String(t || ''));
   for (const text of texts) {
-    const hit = COMPANIES.filter((c) => new RegExp(`(^|[\\s"'-])${c.replace(/[.]/g, '\\.')}`).test(text)).sort((a, b) => text.search(a) - text.search(b))[0];
+    const hit = COMPANIES.filter((c) => new RegExp(`(^|[\\s"'-])${c.replace(/[.]/g, '\\.')}(?![א-ת])`).test(text)).sort((a, b) => text.search(a) - text.search(b))[0];
     if (hit) return COMPANY_LABELS[hit] || hit;
   }
   return null;
@@ -42,6 +52,9 @@ const inTrack = (record, product, track) => {
 };
 
 const isNumber = (v) => typeof v === 'number' && Number.isFinite(v);
+const rounded = (v) => Math.round(v * 100) / 100;
+// A multi-year yield of exactly zero in these files means the fund has no such figure.
+const figure = (v) => (isNumber(v) && v !== 0 ? v : null);
 
 export function computeYields({ gemel, polisa, trailing7y }) {
   const sources = { gemel, polisa };
@@ -50,27 +63,36 @@ export function computeYields({ gemel, polisa, trailing7y }) {
   for (const family of ['gemel', 'polisa']) {
     if (trailing7y.families[family].reportPeriod !== period) throw new Error(`7-year figures are for ${trailing7y.families[family].reportPeriod}, not ${period}`);
   }
-  // Absent for a fund without seven full years of monthly yields.
-  const sevenYears = (product, record) => {
-    const value = trailing7y.families[product.source].values[String(record.FUND_ID)];
-    return isNumber(value) ? Math.round(value * 100) / 100 : null;
-  };
   const views = {};
   for (const product of PRODUCTS) {
     const rows = sources[product.source].records.filter((r) => r.REPORT_PERIOD === period
       && String(r.FUND_CLASSIFICATION || '').trim() === product.classification
-      && !product.excluded?.includes(String(r.FUND_ID)));
+      && !String(r.FUND_NAME || '').includes('בניהול אישי')
+      && !product.excluded?.includes(String(r.FUND_ID))
+      && !product.excludedNames?.some((word) => String(r.FUND_NAME || '').includes(word)));
     for (const track of TRACKS) {
-      const candidates = rows
-        .filter((r) => inTrack(r, product, track) && isNumber(r.YIELD_TRAILING_3_YRS) && isNumber(r.YEAR_TO_DATE_YIELD) && r.YIELD_TRAILING_3_YRS !== 0)
-        .map((r) => ({ company: companyOf(r), name: String(r.FUND_NAME).trim(), ytd: r.YEAR_TO_DATE_YIELD, y3: r.YIELD_TRAILING_3_YRS, y7: sevenYears(product, r) }))
-        .filter((r) => r.company)
-        .sort((a, b) => b.y3 - a.y3);
-      // One row per company: the tile compares companies inside a track.
-      const seen = new Set();
-      const top = candidates.filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
-      if (top.length < ROWS) throw new Error(`Only ${top.length} rows for ${product.id}/${track.id}`);
-      views[`${product.id}-${track.id}`] = top;
+      const group = rows.filter((r) => inTrack(r, product, track))
+        .map((r) => ({
+          company: companyOf(r),
+          name: String(r.FUND_NAME).trim(),
+          ytd: isNumber(r.YEAR_TO_DATE_YIELD) ? r.YEAR_TO_DATE_YIELD : null,
+          y3: figure(r.YIELD_TRAILING_3_YRS),
+          y7: (() => { const v = figure(trailing7y.families[product.source].values[String(r.FUND_ID)]); return v === null ? null : rounded(v); })(),
+        }))
+        .filter((r) => r.company && !product.excludedCompanies?.includes(r.company) && COLUMNS.some((c) => r[c.id] !== null));
+      const average = { count: group.length };
+      const rank = {};
+      for (const { id } of COLUMNS) {
+        const values = group.map((r) => r[id]).filter((v) => v !== null);
+        if (!values.length) throw new Error(`No ${id} figures for ${product.id}/${track.id}`);
+        average[id] = rounded(values.reduce((sum, v) => sum + v, 0) / values.length);
+        // One row per company: the tile compares companies inside a track.
+        const seen = new Set();
+        rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
+          .filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+        if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
+      }
+      views[`${product.id}-${track.id}`] = { average, rank };
     }
   }
   return { period, views };
@@ -80,18 +102,26 @@ const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 
 export const periodLabel = (period) => `${MONTHS[period % 100 - 1]} ${Math.floor(period / 100)}`;
 const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</span>' : `<span dir="ltr">${v.toFixed(2)}%</span>`);
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const company = (name) => {
+  const logo = COMPANY_LOGOS[name];
+  return `<span class="yield-co">${logo ? `<span class="logo logo-${logo}"></span>` : ''}<span>${escape(name)}</span></span>`;
+};
 
 export function renderYields({ period, views }) {
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
-  const tables = Object.entries(views).map(([key, rows], index) => {
+  const firstView = `${PRODUCTS[0].id}-${TRACKS[0].id}-${DEFAULT_COLUMN}`;
+  const tables = Object.entries(views).flatMap(([key, { average, rank }]) => COLUMNS.map(({ id: sort }) => {
     const [productId, trackId] = key.split('-');
-    const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}`;
-    return `<table data-yield-view="${key}"${index ? ' hidden' : ''}><caption class="visually-hidden">${caption}</caption>`
-      + '<thead><tr><th scope="col">חברה</th><th scope="col">מתחילת השנה</th><th scope="col">3 שנים</th><th scope="col">7 שנים</th></tr></thead><tbody>'
-      + rows.map((r) => `<tr><th scope="row" title="${escape(r.name)}">${escape(r.company)}</th><td>${percent(r.ytd)}</td><td>${percent(r.y3)}</td><td>${percent(r.y7)}</td></tr>`).join('')
-      + '</tbody></table>';
-  }).join('');
+    const view = `${key}-${sort}`;
+    const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${COLUMNS.find((c) => c.id === sort).label}`;
+    const heads = COLUMNS.map((c) => `<th scope="col"${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${c.label}</button></th>`).join('');
+    const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
+    return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
+      + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
+      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${company(r.company)}</th>${cells(r)}</tr>`).join('')
+      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
+  })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
     + `<div class="yield-tables">${tables}</div>`
-    + `<p class="yield-note">נתוני משרד האוצר עד ${periodLabel(period)}, לפי הדירוג ב־3 שנים. תשואה מצטברת לפני דמי ניהול. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
+    + `<p class="yield-note">נתוני משרד האוצר עד ${periodLabel(period)}. תשואה מצטברת לפני דמי ניהול. לחיצה על כותרת מדרגת לפיה. ממוצע הקבוצה: כל הקופות במסלול. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }

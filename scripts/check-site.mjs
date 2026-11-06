@@ -37,7 +37,7 @@ for(const file of published){
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
 assert(home.includes('href="/self-employed-tax-calculator/"'),'Missing calculator entry');
-assert((home.match(/<table data-yield-view=/g)||[]).length===6,'The yields tile needs all six views');
+assert((home.match(/<table data-yield-view=/g)||[]).length===18,'The yields tile needs all six views in all three rankings');
 assert(!/gemelhub/i.test(home),'The home page must not mention GemelHub');
 assert(home.includes('action="https://formspree.io/f/mvzjeykj"'),'Incorrect lead endpoint');
 for(const name of ['שם מלא','טלפון','אימייל','מטרה'])assert(home.includes('name="'+name+'"'),'Incorrect form field '+name);
