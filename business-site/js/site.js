@@ -242,8 +242,13 @@ function pageTop(element) {
   for (let node = element; node; node = node.offsetParent) y += node.offsetTop;
   return y;
 }
+function landingPoint(section) {
+  // on phones and tablets the photo sits above "נעים להכיר", so the landing shows it too
+  if (section.id === 'about' && matchMedia('(max-width: 1100px)').matches) return section.querySelector('.about-text');
+  return section.querySelector('h2') || section;
+}
 function sectionTop(section) {
-  return pageTop(section.querySelector('h2') || section) - document.querySelector('.topbar').offsetHeight - 16;
+  return pageTop(landingPoint(section)) - document.querySelector('.topbar').offsetHeight - 16;
 }
 function goToSection(section, instant) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
@@ -279,7 +284,7 @@ document.addEventListener('click', (e) => {
 if (sectionOf(location.hash)) {
   const land = () => {
     const section = sectionOf(location.hash);
-    if (section) section.style.scrollMarginTop = `${pageTop(section) - pageTop(section.querySelector('h2') || section)}px`;
+    if (section) section.style.scrollMarginTop = `${pageTop(section) - pageTop(landingPoint(section))}px`;
   };
   land();
   window.addEventListener('load', land);
