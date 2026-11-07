@@ -20,6 +20,8 @@ export const COLUMNS = [
 ];
 export const DEFAULT_COLUMN = 'y7';
 export const ROWS = 3;
+// The chart's ranges, in months; 0 is the whole history.
+const FUND_RANGES = [[12, 'שנה'], [36, '3 שנים'], [60, '5 שנים'], [84, '7 שנים'], [120, '10 שנים'], [0, 'מקס׳']];
 
 // Policy tracks have no SUB_SPECIALIZATION, so GemelHub matches them by name.
 const POLICY_EXCLUDES = {
@@ -77,8 +79,9 @@ function yearBack(records, period) {
   return values;
 }
 
-// The chart of a fund: its cumulative yield, month by month, back to the first month it is missing.
-function cumulative(records, id, period) {
+// The chart of a fund: its monthly yields, back to the first month it is missing.
+// The page compounds them over whatever period the visitor picks.
+function monthly(records, id, period) {
   const yields = new Map(records.filter((r) => String(r.FUND_ID) === id && isNumber(r.MONTHLY_YIELD)).map((r) => [r.REPORT_PERIOD, r.MONTHLY_YIELD]));
   const months = [];
   for (let t = Math.floor(period / 100) * 12 + (period % 100 - 1); ; t -= 1) {
@@ -87,8 +90,21 @@ function cumulative(records, id, period) {
     months.unshift(month);
   }
   if (months.length < 2) return null;
-  let total = 1;
-  return { start: months[0], label: periodLabel(months[0]), values: months.map((m) => { total *= 1 + yields.get(m) / 100; return rounded((total - 1) * 100); }) };
+  return { start: months[0], m: months.map((m) => rounded(yields.get(m))) };
+}
+
+// Which funds the tile ranks, so the updater can fetch just their history.
+export const rankedFunds = ({ views }) => [...new Map(Object.values(views).flatMap((v) => Object.values(v.rank).flat()).map((r) => [r.key, r.id])).entries()];
+
+// Adds each ranked fund's monthly history. history: { gemel: records, polisa: records }, older and current months together.
+export function addHistory(data, history) {
+  const series = {};
+  for (const [key, id] of rankedFunds(data)) {
+    const records = key.startsWith('g') ? history.gemel : history.polisa;
+    series[key] = monthly(records, id, data.period);
+    if (!series[key]) throw new Error(`No history for fund ${id}`);
+  }
+  return { ...data, series };
 }
 
 export function computeYields({ gemel, polisa, trailing7y }) {
@@ -99,7 +115,6 @@ export function computeYields({ gemel, polisa, trailing7y }) {
     if (trailing7y.families[family].reportPeriod !== period) throw new Error(`7-year figures are for ${trailing7y.families[family].reportPeriod}, not ${period}`);
   }
   const views = {};
-  const series = {};
   for (const product of PRODUCTS) {
     const y1 = yearBack(sources[product.source].records, period);
     const rows = sources[product.source].records.filter((r) => r.REPORT_PERIOD === period
@@ -134,15 +149,11 @@ export function computeYields({ gemel, polisa, trailing7y }) {
         rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
           .filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
         if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
-        for (const row of rank[id]) {
-          series[row.key] ??= cumulative(sources[product.source].records, row.id, period);
-          if (!series[row.key]) throw new Error(`No chart for ${row.name}`);
-        }
       }
       views[`${product.id}-${track.id}`] = { average, rank };
     }
   }
-  return { period, views, series };
+  return { period, views };
 }
 
 const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -173,6 +184,7 @@ export function renderYields({ period, views, series }) {
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
+    + `<div class="market-ranges" role="group" aria-label="טווח זמן">${FUND_RANGES.map(([months, label]) => `<button type="button" data-range="${months}" aria-pressed="false">${label}</button>`).join('')}</div>`
     + `<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>`
     + `<script type="application/json" id="yield-series">${JSON.stringify(series)}</script>`
     + `<div class="yield-tables">${tables}</div>`

@@ -5,7 +5,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { computeYields } from './yields.mjs';
+import { computeYields, rankedFunds, addHistory } from './yields.mjs';
 
 const RAW = 'https://raw.githubusercontent.com/romanoroei/GemelHub/main/data/ckan/';
 const localDir = process.argv[2];
@@ -17,7 +17,18 @@ const load = async (name) => {
 };
 
 const file = path.join(path.dirname(fileURLToPath(import.meta.url)), 'yields-data.json');
-const next = computeYields({ gemel: await load('gemel-current.json'), polisa: await load('polisa-current.json'), trailing7y: await load('trailing-7y.json') });
+const gemel = await load('gemel-current.json');
+const polisa = await load('polisa-current.json');
+const ranked = computeYields({ gemel, polisa, trailing7y: await load('trailing-7y.json') });
+// The chart needs each ranked fund's whole history: 2023 and the years before it sit in separate files,
+// and the gemel years before 2023 are split into a file per fund.
+const records = (file) => file.records ?? file;
+const gemelIds = rankedFunds(ranked).filter(([key]) => key.startsWith('g')).map(([, id]) => id);
+const gemelOld = (await Promise.all(gemelIds.map((id) => load(`gemel-1999-2022/${id}.json`).catch(() => [])))).flatMap(records);
+const next = addHistory(ranked, {
+  gemel: [...gemelOld, ...records(await load('gemel-2023.json')), ...gemel.records],
+  polisa: [...records(await load('polisa-1999-2022.json')), ...records(await load('polisa-2023.json')), ...polisa.records],
+});
 const current = await readFile(file, 'utf8').then(JSON.parse).catch(() => null);
 if (current && next.period < current.period) throw new Error(`Refusing older data: ${next.period} < ${current.period}`);
 // A one-month move this large means a broken source, not a market.

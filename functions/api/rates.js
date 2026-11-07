@@ -3,7 +3,7 @@
 // The answer is held at the edge for hours, since these rates change a few times a year.
 
 const SECONDS = 21600;
-const YEARS = 5;
+const YEARS = 25;
 const HEADERS = { 'User-Agent': 'romanoinvest.co.il rates', Accept: '*/*' };
 
 async function source(url) {

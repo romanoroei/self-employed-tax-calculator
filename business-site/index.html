@@ -70,8 +70,10 @@
     <a class="now-go" href="/self-employed-tax-calculator/" data-count="strip:calculator"><span><span data-now-go>כמה אחסוך?</span> <span class="arrow" aria-hidden="true">←</span></span><small>למחשבון הטבות המס</small></a>
   </div>
   <div class="tile tile-paper hero-yields" data-market>
-    <div class="market-tabs" role="tablist" aria-label="תשואות וריביות">
+    <div class="market-tabs" role="tablist" aria-label="תשואות ונתוני שוק">
       <button type="button" role="tab" id="tab-funds" aria-controls="panel-funds" aria-selected="true" data-market-tab="funds">קופות</button>
+      <button type="button" role="tab" id="tab-indices" aria-controls="panel-indices" aria-selected="false" tabindex="-1" data-market-tab="indices">מדדים</button>
+      <button type="button" role="tab" id="tab-fx" aria-controls="panel-fx" aria-selected="false" tabindex="-1" data-market-tab="fx">מט"ח</button>
       <button type="button" role="tab" id="tab-rates" aria-controls="panel-rates" aria-selected="false" tabindex="-1" data-market-tab="rates">ריביות</button>
     </div>
     <div class="market-panels">
@@ -82,6 +84,11 @@
         </div>
         <!-- yields-tile -->
       </div>
+      <div class="yield-body" id="panel-indices" role="tabpanel" aria-labelledby="tab-indices" data-market-panel="indices" hidden>
+        <div class="tv-box" data-tv></div>
+        <p class="yield-note">מדדי תל אביב בעיכוב. S&amp;P 500, נאסדק 100 ודאקס לפי חוזי הפרשים (CFD) שעוקבים אחרי המדדים. המידע אינו המלצה.</p>
+      </div>
+      <div class="yield-body" id="panel-fx" role="tabpanel" aria-labelledby="tab-fx" data-market-panel="fx" hidden></div>
       <div class="yield-body" id="panel-rates" role="tabpanel" aria-labelledby="tab-rates" data-market-panel="rates" hidden></div>
     </div>
     <a class="yield-cta" href="#contact">איפה הקופה שלכם עומדת? <span class="arrow" aria-hidden="true">←</span></a>
