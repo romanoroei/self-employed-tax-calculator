@@ -53,6 +53,12 @@
 .se-table th { width: 52%; padding-inline-end: 24px; font-weight: 500; color: var(--on-dark-soft); }
 .se-table td { font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
 
+/* share with a friend: every article ends with this, and scripts/check-site.mjs enforces it */
+.art-share { margin-top: 32px; padding-top: 28px; border-top: 1px solid rgba(12, 33, 52, .18); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; }
+.art-share p { margin: 0; font-size: var(--t-4); font-weight: 700; line-height: 1.4; }
+.art-share .button { gap: 10px; padding-inline: 22px; }
+.art-share svg { width: 22px; height: 22px; flex: none; fill: currentColor; }
+
 .art-cta { background: var(--paper-2); padding-block: 96px; margin-top: 80px; }
 .art-cta .statement { margin-top: 0; }
 .art-cta .button { margin-top: 28px; }

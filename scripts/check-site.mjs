@@ -33,6 +33,7 @@ for(const file of published){
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
   assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
+  if(/^(?:self-employed|magazine\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
