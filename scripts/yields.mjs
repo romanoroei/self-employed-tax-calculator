@@ -120,9 +120,9 @@ export function renderYields({ period, views }) {
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
       + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${escape(r.company)}</th>${cells(r)}</tr>`).join('')
-      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה <small>(${makers})</small></th>${cells(average)}</tr></tfoot></table>`;
+      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון. המספר בסוגריים הוא לעמודה שנבחרה.">ממוצע הקבוצה <small>(${makers})</small></th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
     + `<div class="yield-tables">${tables}</div>`
-    + `<p class="yield-note">נתוני משרד האוצר עד ${periodLabel(period)}. תשואה מצטברת לפני דמי ניהול. לחיצה על כותרת מדרגת לפיה. ממוצע הקבוצה: כל הקופות במסלול שיש להן נתון, והמספר בסוגריים הוא לעמודה שנבחרה. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
+    + `<p class="yield-note">תשואה מצטברת לפי נתוני משרד האוצר עד ${periodLabel(period)}, לפני דמי ניהול. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }

@@ -218,9 +218,8 @@ html.menu-open { overflow: hidden; }
   padding: 0 var(--gap) var(--gap);
   min-height: clamp(460px, 58svh, 580px);
   grid-template-columns: 8fr 4fr;
-  grid-template-rows: auto 1fr;
 }
-.hero-main { grid-row: span 2; position: relative; overflow: hidden; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; background: var(--navy-deep); }
+.hero-main { position: relative; overflow: hidden; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; background: var(--navy-deep); }
 .hero-bg {
   position: absolute; inset-block: 0; inset-inline-end: 0; width: 58%; height: 100%;
   object-fit: cover; object-position: 50% 12%;
@@ -236,9 +235,6 @@ html.menu-open { overflow: hidden; }
 .hero-promise span { display: block; text-wrap: balance; }
 .hero-promise + .hero-lead { margin-top: 10px; font-size: var(--t-4); text-wrap: balance; }
 .hero-lead { margin-block: 18px 0; font-size: var(--t-3); line-height: 1.55; max-width: 40ch; color: var(--on-dark-soft); }
-.hero-idea { padding: 18px 24px; display: flex; flex-direction: column; gap: 4px; }
-.hero-idea strong { font-size: var(--t-3); font-weight: 800; color: var(--gold); line-height: 1.25; }
-.hero-idea > span { font-size: var(--t-5); line-height: 1.45; color: var(--on-dark-soft); }
 /* the yields tile: the same table in every view, so switching never moves the page */
 .hero-yields { display: flex; flex-direction: column; }
 .yield-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 18px 24px 16px; }
@@ -275,42 +271,35 @@ html.menu-open { overflow: hidden; }
   .yield-cta:hover { background: var(--gold-soft); }
   .yield-cta:hover .arrow { transform: translateX(-6px); }
 }
-/* the strip continues the hero board on the same two columns */
+/* the strip continues the hero board, one tile the full width */
 .now-strip {
   background: var(--navy-deep);
   padding: 0 var(--gap) var(--gap);
-  grid-template-columns: 8fr 4fr;
+  grid-template-columns: minmax(0, 1fr);
 }
-.now-tile { position: relative; grid-row: span 2; display: flex; align-items: stretch; }
+.now-tile { position: relative; display: flex; align-items: stretch; }
 /* the whole tile still opens the calculator; only the guide link sits above that */
 .now-go::after { content: ""; position: absolute; inset: 0; }
 .now-guide { position: relative; z-index: 1; align-self: flex-start; padding-block: 2px; font-size: var(--t-5); font-weight: 700; }
-.now-when { flex: none; width: 112px; display: grid; place-content: center; text-align: center; background: var(--navy); color: var(--gold); }
+.now-when { flex: none; width: 112px; display: grid; place-content: center; text-align: center; background: var(--gold); color: var(--navy-deep); }
 .now-when[hidden] { display: none; }
-.now-when small { font-size: 13px; font-weight: 500; color: var(--on-dark-soft); }
+.now-when small { font-size: 13px; font-weight: 700; }
 .now-when b { font-size: 44px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
-.now-when span { font-size: 14px; font-weight: 700; color: var(--gold-soft); }
+.now-when span { font-size: 14px; font-weight: 700; }
 .now-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 24px 32px; }
 .now-copy strong { font-size: var(--t-2); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .now-copy em { font-style: normal; background: linear-gradient(transparent 62%, var(--gold-soft) 62%); }
 .now-text { font-size: var(--t-5); line-height: 1.5; max-width: 62ch; color: var(--ink-soft); }
 .now-go { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-inline: 28px; background: var(--navy); color: var(--gold); font-size: var(--t-4); font-weight: 800; white-space: nowrap; text-decoration: none; transition: background-color 180ms ease; }
 .now-go small { font-size: 13px; font-weight: 500; color: var(--on-dark-soft); }
-.now-k { font-size: 13px; font-weight: 700; color: var(--gold); }
-.now-tool { display: flex; flex-direction: column; gap: 4px; padding: 16px 28px; }
-.now-tool strong { font-size: var(--t-4); font-weight: 700; line-height: 1.3; }
-.now-tool small { font-size: var(--t-5); color: var(--on-dark-soft); }
 section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 @media (hover: hover) and (pointer: fine) {
   .now-tile:hover .now-go { background: var(--slate); }
   .now-tile:hover .arrow { transform: translateX(-6px); }
 }
 @media (max-width: 900px) {
-  .now-strip { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .now-tile { grid-column: 1 / -1; grid-row: auto; }
 }
 @media (max-width: 700px) {
-  .now-strip { grid-template-columns: minmax(0, 1fr); }
   .now-tile { flex-wrap: wrap; }
   .now-when { width: 76px; padding-block: 10px; }
   .now-when small { font-size: 11px; }
@@ -318,7 +307,6 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
   .now-when span { font-size: 12px; }
   .now-copy { flex-basis: 0; padding: 16px 18px; }
   .now-go { flex-basis: 100%; padding: 12px 18px; }
-  .now-tool { padding: 14px 22px; }
 }
 
 /* ================= Approach ================= */
@@ -568,7 +556,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 @media (max-width: 900px) {
   .topbar { grid-template-columns: minmax(0, 1fr) auto auto; }
   .bar-nav { display: none; }
-  .hero { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; }
+  .hero { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   .hero-main { grid-column: 1 / -1; grid-row: auto; padding: 28px; min-height: 420px; }
   .hero-bg { width: 100%; opacity: .4; -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%); mask-image: linear-gradient(to top, transparent 0%, #000 70%); }
   .hero-copy { max-width: none; }
@@ -607,7 +595,6 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .hero-main { padding: 22px; min-height: 490px; }
   .hero-bg { object-position: 50% 0; }
   .hero-lead { margin-block: 16px 0; }
-  .hero-idea { padding: 16px 20px; }
   .yield-body { padding: 16px 20px 14px; }
   .yield-cta { padding-inline: 20px; }
   .yield-picks button { padding: 8px 10px; }

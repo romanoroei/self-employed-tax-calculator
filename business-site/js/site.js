@@ -327,26 +327,13 @@ document.addEventListener('click', (e) => {
 
 // ===== Home page strip and the calendar's countdown, worked out from today's date =====
 // The main tile teases the calculator, and in November and December counts down to 31.12. Today counts as a day.
-// The side tile names this month's focus from the financial calendar. Without scripting both stay plain links.
+// Without scripting it stays a plain link.
 (() => {
-  const MONTHS = [
-    ['קובעים את הקצב לשנה'],
-    ['בדיקה שדוחים כל השנה'],
-    ['אוספים את המסמכים של השנה שעברה', [3, 31]],
-    ['קוראים את הדוחות השנתיים'],
-    ['דוח שנתי או בקשת החזר'],
-    ['חצי שנה עברה: בדיקת ביניים'],
-    ['לפני החופשה'],
-    ['לפני שנת הלימודים'],
-    ['מעדכנים את מי שחשוב לכם'],
-    ['אחרי החגים: חוזרים לתיק'],
-    ['כמה עוד להפקיד השנה', [12, 31]],
-    ['השנה נסגרת', [12, 31]],
-  ];
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
-  const [focus, until] = MONTHS[month];
+  // the months with a deadline: March for the year's documents, November and December for deposits
+  const until = month === 2 ? [3, 31] : month >= 10 ? [12, 31] : null;
   const start = new Date(year, month, today.getDate());
   const days = until ? Math.round((new Date(year, until[0] - 1, until[1]) - start) / 86400000) + 1 : 0;
   const left = days === 1 ? 'יום אחרון' : days === 2 ? 'עוד יומיים' : `עוד ${days} ימים`;
@@ -358,19 +345,13 @@ document.addEventListener('click', (e) => {
       ? { title: 'שבוע אחרון. <em>מה שלא תפקידו עד 31.12, מס הכנסה ישמח לקחת.</em>', sub: 'חלק מהקופות סוגרות הפקדות כמה ימים לפני סוף השנה. בדיקה של דקה, עכשיו.', go: 'בודק עכשיו' }
       : days <= 21
       ? { title: `עצמאי? <em>${days} ימים</em> להחליט אם הכסף הולך לחיסכון שלך או למס הכנסה.`, sub: 'המחשבון מראה בדקה כמה מס חוסכים בהפקדה עד סוף השנה.', go: 'תראו לי את המספר' }
-      : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', sub: `הפקדה לפנסיה ולקרן השתלמות לפני סוף השנה מקטינה את המס של ${year}. בדקו בדקה כמה זה אצלכם.`, go: 'כמה אחסוך?' };
+      : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', sub: `הפקדה לפנסיה ולקרן השתלמות לפני סוף השנה מקטינה את המס.`, go: 'כמה אחסוך?' };
     tile.querySelector('[data-now-title]').innerHTML = text.title;
     tile.querySelector('[data-now-text]').textContent = text.sub;
     tile.querySelector('[data-now-go]').textContent = text.go;
     tile.querySelector('[data-now-days]').textContent = days;
     tile.querySelector('[data-now-unit]').textContent = days === 1 ? 'יום' : 'ימים';
     tile.querySelector('[data-now-when]').hidden = false;
-  }
-
-  const side = document.querySelector('[data-now-cal]');
-  if (side) {
-    side.href = `/magazine/financial-calendar#m${month + 1}`;
-    side.querySelector('small').textContent = `החודש: ${focus}`;
   }
 
   const monthFocus = document.querySelector(`#m${month + 1} .cal-focus`);
