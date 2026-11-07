@@ -186,6 +186,8 @@
         place(el, x(spot.t));
       });
       readEl.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first) && !range);
+      // a chosen period names itself in the title; anything else keeps the chart's own title
+      titleEl.textContent = two && options.periodTitle ? options.periodTitle(ends[0], ends[1]) : options.title;
     }
 
     function rest() {
@@ -193,6 +195,7 @@
       svg.querySelector('.chart-over')?.setAttribute('hidden', '');
       edges.forEach((el) => { el.hidden = true; });
       readEl.innerHTML = options ? options.tip(latest(), false) : '';
+      if (options) titleEl.textContent = options.title;
     }
 
     function reset() {
@@ -303,6 +306,13 @@
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
   const COLUMN_RANGE = { y1: 12, y3: 36, y7: 84 };
+  // "ל־18 החודשים שנבחרו (1.5 שנים)": a point's time is the first day after its month, so the count is the gap in months
+  const monthNumber = (t) => { const d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); };
+  const yearsWord = (months) => (months === 12 ? 'שנה' : months === 24 ? 'שנתיים' : `${number(months / 12, months % 12 ? 1 : 0)} שנים`);
+  function chosenMonths(from, to) {
+    const months = monthNumber(to) - monthNumber(from);
+    return months === 1 ? 'לחודש שנבחר' : `ל־${months} החודשים שנבחרו (${yearsWord(months)})`;
+  }
   let [product, track, sort] = fundsPanel.querySelector('table[data-yield-view]:not([hidden])').dataset.yieldView.split('-');
   let picked = [];
   const colorOf = new Map();
@@ -353,6 +363,7 @@
     const rangeStart = lines[0].points[0][0];
     fundsChart.set({
       title: `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`,
+      periodTitle: (a, b) => `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${chosenMonths(a.t, b.t)}`,
       hint: '',
       lines, base: 0,
       axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
