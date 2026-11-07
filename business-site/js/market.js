@@ -425,7 +425,7 @@
 
   function buildFx() {
     const element = tile.querySelector('[data-market-panel="fx"]');
-    element.innerHTML = `${rangeButtons(FX_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">שערי מטבע</caption><thead><tr><th scope="col">צמד</th><th scope="col">שער</th><th scope="col">שינוי</th><th scope="col">שינוי %</th></tr></thead><tbody>`
+    element.innerHTML = `<div class="yield-head"><h2 class="yield-title">שערי מטבע</h2><p class="yield-sub">שער יציג ושערי הבנק המרכזי האירופי, פעם ביום</p></div>${rangeButtons(FX_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">שערי מטבע</caption><thead><tr><th scope="col">צמד</th><th scope="col">שער</th><th scope="col">שינוי</th><th scope="col">שינוי %</th></tr></thead><tbody>`
       + FX.map(([id, label], i) => `<tr data-row="${id}"${i ? '' : ' class="is-picked"'}><th scope="row"><button type="button" aria-pressed="${!i}">${label}</button></th><td data-price>—</td><td data-change>—</td><td data-percent>—</td></tr>`).join('')
       + `</tbody></table></div>${noteBlock}`;
     fx.element = element;
@@ -496,7 +496,7 @@
 
   function buildRates() {
     const element = tile.querySelector('[data-market-panel="rates"]');
-    element.innerHTML = `${rangeButtons(RATE_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">ריביות בנקים מרכזיים</caption><thead><tr><th scope="col">בנק מרכזי</th><th scope="col">ריבית</th><th scope="col">שינוי אחרון</th><th scope="col">מתאריך</th></tr></thead><tbody>`
+    element.innerHTML = `<div class="yield-head"><h2 class="yield-title">ריביות בנקים מרכזיים</h2><p class="yield-sub">ישראל, ארה"ב, אירופה ואנגליה</p></div>${rangeButtons(RATE_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">ריביות בנקים מרכזיים</caption><thead><tr><th scope="col">בנק מרכזי</th><th scope="col">ריבית</th><th scope="col">שינוי אחרון</th><th scope="col">מתאריך</th></tr></thead><tbody>`
       + RATES.map(([id, label], i) => `<tr data-row="${id}"${i ? '' : ' class="is-picked"'}><th scope="row"><button type="button" aria-pressed="${!i}">${label}</button></th><td data-price>—</td><td data-change>—</td><td data-date>—</td></tr>`).join('')
       + `</tbody></table></div>${noteBlock}`;
     rates.element = element;

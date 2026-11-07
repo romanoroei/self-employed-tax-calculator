@@ -255,13 +255,13 @@ html:not(.js) .market-tabs { display: none; }
 .yield-body > * { order: 5; }
 .yield-body > .market-ranges { order: 1; }
 .yield-body > .market-chart { order: 2; }
-.yield-body > .yield-head { order: 3; }
+.yield-body > .yield-head { order: 0; }
 .yield-body > .yield-picks { order: 4; }
 .market-ranges { display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .market-ranges button { padding: 2px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; color: var(--ink-soft); font: inherit; font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; }
 .market-ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 800; border-bottom-color: var(--navy); }
 .market-ranges button:disabled { opacity: .35; cursor: default; }
-.market-chart { flex: 1 1 220px; min-height: 220px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.market-chart { flex: 1 1 200px; min-height: 200px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
 /* the caption: title, how to use the chart, and the readout, each in rows of fixed pixel height */
 .market-chart figcaption { display: flex; flex-direction: column; gap: 1px; color: var(--ink); }
 .chart-title { height: 19px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; font-weight: 700; line-height: 19px; }
@@ -303,8 +303,9 @@ p.chart-hint { margin: -4px 0 0; }
 .market-table td, .market-table thead th + th { width: auto; }
 .market-table tbody th, .market-table td { white-space: nowrap; }
 .yield-body { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 12px; }
-.yield-title { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
-.yield-sub { margin-top: 2px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--ink-soft); }
+.yield-title { height: 26px; overflow: hidden; white-space: nowrap; font-size: var(--t-3); font-weight: 800; line-height: 26px; }
+.yield-sub { height: 18px; overflow: hidden; margin-top: 2px; font-size: 13px; font-weight: 500; line-height: 18px; color: var(--ink-soft); }
+@media (max-width: 380px) { .yield-sub { height: 36px; } }
 .yield-picks { display: flex; flex-direction: column; gap: 4px; }
 .yield-picks > div { display: flex; flex-wrap: wrap; gap: 2px; }
 .yield-picks button { padding: 5px 10px; border: 0; border-radius: 0; background: var(--paper-2); color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
@@ -674,10 +675,10 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
   .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
   /* the words start at the chin: the photo scales with the width, and padding in percent follows it */
-  .hero-main { padding: 50% 48px 22px 22px; min-height: 0; justify-content: flex-start; }
+  .hero-main { padding: 50% 22px 22px; min-height: 0; justify-content: flex-start; }
   /* the face sits to the left as on a computer, fading out on the right and under the words */
   .hero-bg {
-    object-position: 50% 0; transform: translateX(-14%);
+    object-position: 50% 0; transform: translateX(-24%);
     -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%), linear-gradient(to right, #000 60%, transparent 100%);
             mask-image: linear-gradient(to top, transparent 0%, #000 70%), linear-gradient(to right, #000 60%, transparent 100%);
     -webkit-mask-composite: source-in; mask-composite: intersect;
