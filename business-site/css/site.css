@@ -252,19 +252,27 @@ html:not(.js) .market-tabs { display: none; }
 .market-panels { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); }
 .market-panels > * { grid-area: 1 / 1; min-width: 0; }
 .market-panels > [hidden] { display: flex; visibility: hidden; }
+.yield-body > * { order: 5; }
+.yield-body > .market-ranges { order: 1; }
+.yield-body > .market-chart { order: 2; }
+.yield-body > .yield-head { order: 3; }
+.yield-body > .yield-picks { order: 4; }
 .market-ranges { display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .market-ranges button { padding: 2px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; color: var(--ink-soft); font: inherit; font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; }
 .market-ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 800; border-bottom-color: var(--navy); }
 .market-ranges button:disabled { opacity: .35; cursor: default; }
-.market-chart { flex: 1 1 190px; min-height: 190px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
-/* the caption holds the chart's name, and the readout while pointing: room for three lines, so nothing moves */
-.market-chart figcaption { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 10px; height: calc(3 * 1.45em); overflow: hidden; font-size: 13px; font-weight: 700; line-height: 1.45; color: var(--ink); }
-.market-chart figcaption.is-reading { font-size: 12px; font-weight: 500; }
+.market-chart { flex: 1 1 220px; min-height: 220px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+/* the caption: title, how to use the chart, and the readout, each in rows of fixed pixel height */
+.market-chart figcaption { display: flex; flex-direction: column; gap: 1px; color: var(--ink); }
+.chart-title { height: 19px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 13px; font-weight: 700; line-height: 19px; }
+.chart-help { height: 34px; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 17px; color: var(--ink-soft); }
+.chart-read { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 10px; height: 34px; overflow: hidden; font-size: 12px; font-weight: 500; line-height: 17px; }
+.chart-read small { font-size: 12px; color: var(--ink-soft); }
+@media (max-width: 480px) { .chart-read { height: 51px; } }
 .chart-read-head { font-weight: 700; }
 .chart-read-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .chart-read-item b { font-weight: 800; }
-.market-chart figcaption small { flex-basis: 100%; color: var(--ink-soft); font-size: 12px; font-weight: 500; line-height: 1.4; }
-.chart-title { flex-basis: 100%; }
+
 .market-plot { position: relative; flex: 1; min-height: 0; }
 .market-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; direction: ltr; touch-action: pan-y; cursor: crosshair; user-select: none; -webkit-user-select: none; }
 .chart-dot { display: inline-block; width: 8px; height: 8px; flex: none; }
@@ -666,7 +674,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
   .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
   /* the words start at the chin: the photo scales with the width, and padding in percent follows it */
-  .hero-main { padding: 60% 22px 22px; min-height: 0; justify-content: flex-start; }
+  .hero-main { padding: 50% 48px 22px 22px; min-height: 0; justify-content: flex-start; }
   /* the face sits to the left as on a computer, fading out on the right and under the words */
   .hero-bg {
     object-position: 50% 0; transform: translateX(-14%);

@@ -52,24 +52,29 @@
     return t - points[lo][0] <= points[hi][0] - t ? points[lo][1] : points[hi][1];
   }
 
-  // options: { title, lines: [{ points: [[time, value]], color, name }], step, base, axis(v),
+  // options: { title, hint, lines: [{ points: [[time, value]], color, name }], step, base, axis(v),
   //            tip(spot, waiting), measure(a, b), edge(t, isStart) }
   // A spot is { t, values }: one value per line, at the time nearest the pointer.
+  // The caption keeps three fixed rows: the title, how to use the chart, and the readout.
+  // At rest the readout shows the latest point, so nothing in it ever appears, vanishes or moves.
   function makeChart(figure) {
     const svg = figure.querySelector('svg');
     const plot = figure.querySelector('.market-plot');
     const caption = figure.querySelector('figcaption');
-    const edges = [0, 1].map(() => { const el = document.createElement('div'); el.className = 'chart-edge'; return el; });
+    caption.innerHTML = '<span class="chart-title"></span><span class="chart-help"></span><span class="chart-read" aria-live="polite"></span>';
+    const [titleEl, helpEl, readEl] = caption.children;
+    const edges = [0, 1].map(() => { const el = document.createElement('div'); el.className = 'chart-edge'; el.hidden = true; return el; });
     plot.append(...edges);
     let options = null;
     let geometry = null;
-    let anchor = null;
-    let first = null;
-    let pinned = false;
+    let anchor = null; // where a press began
     let moved = false;
+    let first = null; // the first of two clicks
+    let range = null; // a measured period: [spot, spot]
+    let grab = -1; // which end of the period is being dragged
 
     function render() {
-      hide();
+      geometry = null;
       const width = svg.clientWidth;
       const height = svg.clientHeight;
       if (!options || !width || !height) return;
@@ -114,6 +119,13 @@
       geometry = { x, y, start, span, right, bottom };
     }
 
+    // what the chart shows when nobody is pointing at it
+    function settle() {
+      if (range) show(range[0], range[1]);
+      else if (first) show(first);
+      else rest();
+    }
+
     function spotAt(clientX) {
       const { lines, step } = options;
       const { start, span, right } = geometry;
@@ -131,15 +143,20 @@
       return { t, values: lines.map((l) => valueAt(l.points, t, step)) };
     }
 
+    function latest() {
+      const t = Math.max(...options.lines.map((l) => l.points[l.points.length - 1][0]));
+      return { t, values: options.lines.map((l) => valueAt(l.points, t, options.step)) };
+    }
+
     function place(el, middle) {
       const room = plot.clientWidth - el.offsetWidth - 2;
       el.style.left = `${Math.max(2, Math.min(room, middle - el.offsetWidth / 2))}px`;
     }
 
     function show(a, b) {
+      if (!geometry) return;
       const marks = svg.querySelector('.chart-marks');
       const over = svg.querySelector('.chart-over');
-      if (!marks) return;
       const { x, y, bottom } = geometry;
       const two = Boolean(b) && b.t !== a.t;
       const ends = two ? [a, b].sort((p, q) => p.t - q.t) : [a];
@@ -162,63 +179,101 @@
       // the period's two ends, written on the time axis under each rule
       edges.forEach((el, n) => {
         const spot = ends[n];
-        el.hidden = !spot || (!two && !pinned && !first);
+        el.hidden = !spot || (!two && !first);
         if (el.hidden) return;
         el.textContent = options.edge(spot.t, two && n === 0);
         el.style.top = `${bottom + 1}px`;
         place(el, x(spot.t));
       });
-      caption.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first));
-      caption.classList.add('is-reading');
+      readEl.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first) && !range);
     }
 
-    function hide() {
+    function rest() {
       svg.querySelector('.chart-marks')?.setAttribute('hidden', '');
       svg.querySelector('.chart-over')?.setAttribute('hidden', '');
-      if (options) caption.innerHTML = `<span class="chart-title">${options.title}</span><small>${options.hint || HINT_SHORT}</small>`;
-      caption.classList.remove('is-reading');
       edges.forEach((el) => { el.hidden = true; });
+      readEl.innerHTML = options ? options.tip(latest(), false) : '';
     }
 
-    new ResizeObserver(() => { pinned = false; first = null; render(); }).observe(svg);
+    function reset() {
+      range = null; first = null; anchor = null; grab = -1;
+      if (options) rest();
+    }
+
+    // an end of the measured period under the pointer, to drag it wider or narrower
+    function endAt(clientX, pointerType) {
+      if (!range || !geometry) return -1;
+      const px = clientX - svg.getBoundingClientRect().left;
+      const gaps = range.map((s) => Math.abs(geometry.x(s.t) - px));
+      const n = gaps[0] <= gaps[1] ? 0 : 1;
+      return gaps[n] <= (pointerType === 'mouse' ? 10 : 22) ? n : -1;
+    }
+
+    new ResizeObserver(() => { render(); settle(); }).observe(svg);
     svg.addEventListener('pointerdown', (e) => {
       if (!geometry) return;
+      svg.setPointerCapture(e.pointerId);
+      grab = endAt(e.clientX, e.pointerType);
+      if (grab >= 0) return;
       anchor = spotAt(e.clientX);
       moved = false;
-      svg.setPointerCapture(e.pointerId);
-      if (!first) { pinned = false; show(anchor); }
+      if (!first) { range = null; show(anchor); }
     });
     svg.addEventListener('pointermove', (e) => {
       if (!geometry) return;
       const spot = spotAt(e.clientX);
+      if (grab >= 0) { range[grab] = spot; show(range[0], range[1]); return; }
       if (anchor) {
         if (spot.t !== anchor.t) moved = true;
         if (moved) { first = null; show(anchor, spot); }
-      } else if (first) show(first, spot);
-      else if (!pinned) show(spot);
+        return;
+      }
+      svg.style.cursor = endAt(e.clientX, e.pointerType) >= 0 ? 'ew-resize' : '';
+      if (range) return;
+      if (first) show(first, spot);
+      else show(spot);
     });
     svg.addEventListener('pointerup', (e) => {
+      if (grab >= 0) { grab = -1; return; }
       if (!anchor) return;
       const spot = spotAt(e.clientX);
       if (moved) {
         // dragged from one point to another
-        pinned = true; first = null; show(anchor, spot);
+        range = [anchor, spot]; first = null;
       } else if (first && spot.t !== first.t) {
         // the second click of a pair
-        pinned = true; show(first, spot); first = null;
+        range = [first, spot]; first = null;
       } else {
         // the first click: hold this point and wait for the second
-        pinned = false; first = spot; show(spot);
+        first = spot; range = null;
       }
       anchor = null;
+      settle();
     });
     svg.addEventListener('pointerleave', () => {
-      if (anchor || pinned || first) return;
-      hide();
+      if (anchor || grab >= 0) return;
+      settle();
+    });
+    // a click anywhere else clears the measurement
+    document.addEventListener('pointerdown', (e) => {
+      if (svg.contains(e.target)) return;
+      if (range || first) reset();
     });
     return {
-      set(next) { options = next; pinned = false; first = null; anchor = null; render(); },
-      clear(title) { options = null; geometry = null; svg.replaceChildren(); hide(); caption.innerHTML = `<span class="chart-title">${title || ''}</span>`; },
+      set(next) {
+        options = next;
+        range = null; first = null; anchor = null; grab = -1;
+        titleEl.textContent = options.title;
+        helpEl.textContent = options.hint || HINT_SHORT;
+        render();
+        rest();
+      },
+      clear(title) {
+        options = null; geometry = null; svg.replaceChildren();
+        edges.forEach((el) => { el.hidden = true; });
+        titleEl.textContent = title || '';
+        readEl.textContent = '';
+      },
     };
   }
 
@@ -237,9 +292,8 @@
   }
   const rangeButtons = (list) => `<div class="market-ranges" role="group" aria-label="טווח זמן">${list.map(([id, label]) => `<button type="button" data-range="${id}" aria-pressed="false">${label}</button>`).join('')}</div>`;
   const chartBlock = '<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>';
-  const HINT = '';
   const HINT_SHORT = 'לחצו על שתי נקודות בגרף, או גררו ביניהן, כדי למדוד תקופה.';
-  const PICK_SECOND = '<small>לחצו על נקודה נוספת כדי למדוד</small>';
+  const PICK_SECOND = '<small>עכשיו לחצו על נקודה נוספת</small>';
   const tipLines = (lines, values, show, named = lines.length > 1) => lines.map((l, n) => `<span class="chart-read-item">${named ? `${lines.length > 1 ? swatch(l.color) : ''}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
 
   // ---------- the funds tab ----------
@@ -379,7 +433,7 @@
     fx.title = element.querySelector('figcaption');
     fx.ranges = ranges(element.querySelector('.market-ranges'), (value) => { fx.range = Number(value); drawFx(); });
     fx.ranges.pick(fx.range);
-    element.querySelector('[data-source]').innerHTML = `שער יציג של בנק ישראל לצמדים מול השקל, ושערי הבנק המרכזי האירופי לשאר. מתעדכן פעם ביום. המידע אינו המלצה. ${HINT}`;
+    element.querySelector('[data-source]').innerHTML = `שער יציג של בנק ישראל לצמדים מול השקל, ושערי הבנק המרכזי האירופי לשאר. מתעדכן פעם ביום. המידע אינו המלצה.`;
     element.addEventListener('click', (e) => {
       const row = e.target.closest('tbody tr');
       if (!row) return;
@@ -391,7 +445,7 @@
 
   async function drawFx() {
     const [, label, digits] = FX.find(([id]) => id === fx.picked);
-    fx.title.textContent = label;
+    fx.title.querySelector('.chart-title').textContent = label;
     const id = fx.picked;
     try {
       if (!fx.history.has(id)) fx.history.set(id, (await getJson(`/api/fx?id=${id}`)).points.map(([d, v]) => [isoTime(d), v]));
@@ -450,7 +504,7 @@
     rates.title = element.querySelector('figcaption');
     rates.ranges = ranges(element.querySelector('.market-ranges'), (value) => { rates.range = Number(value); drawRate(); });
     rates.ranges.pick(rates.range);
-    element.querySelector('[data-source]').innerHTML = `לפי בנק ישראל, הבנק הפדרלי של ניו יורק, הבנק המרכזי האירופי ובנק אנגליה. המידע אינו המלצה. ${HINT}`;
+    element.querySelector('[data-source]').innerHTML = `לפי בנק ישראל, הבנק הפדרלי של ניו יורק, הבנק המרכזי האירופי ובנק אנגליה. המידע אינו המלצה.`;
     element.addEventListener('click', (e) => {
       const row = e.target.closest('tbody tr');
       if (!row) return;
@@ -463,7 +517,7 @@
   function drawRate() {
     const [, label, title] = RATES.find(([id]) => id === rates.picked);
     const item = rates.items?.find((i) => i.id === rates.picked);
-    rates.title.textContent = title;
+    rates.title.querySelector('.chart-title').textContent = title;
     if (!item) { rates.chart.clear(title); return; }
     const all = item.history.map(([date, value]) => [isoTime(date), value]);
     const now = Date.now();
