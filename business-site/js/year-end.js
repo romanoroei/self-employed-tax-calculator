@@ -1,4 +1,4 @@
-// Until 31.12 the calculator leads the "כלים וידע" menu, with a year-end tag.
+// Until 31.12 the calculator leads the "ארביטראז' של ידע" menu, with a year-end tag.
 (() => {
   if (new Date() >= new Date('2027-01-01T00:00:00+02:00')) return;
   const menu = document.getElementById('tools-menu');

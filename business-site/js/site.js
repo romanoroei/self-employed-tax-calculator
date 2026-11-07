@@ -342,12 +342,11 @@ document.addEventListener('click', (e) => {
   const tile = document.querySelector('[data-now]');
   if (tile && month >= 10) {
     const text = days <= 7
-      ? { title: 'שבוע אחרון. <em>מה שלא תפקידו עד 31.12, מס הכנסה ישמח לקחת.</em>', sub: 'חלק מהקופות סוגרות הפקדות כמה ימים לפני סוף השנה. בדיקה של דקה, עכשיו.', go: 'בודק עכשיו' }
+      ? { title: 'שבוע אחרון. <em>מה שלא תפקידו עד 31.12, מס הכנסה ישמח לקחת.</em>', go: 'בודק עכשיו' }
       : days <= 21
-      ? { title: `עצמאי? <em>${days} ימים</em> להחליט אם הכסף הולך לחיסכון שלך או למס הכנסה.`, sub: 'המחשבון מראה בדקה כמה מס חוסכים בהפקדה עד סוף השנה.', go: 'תראו לי את המספר' }
-      : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', sub: `הפקדה לפנסיה ולקרן השתלמות לפני סוף השנה מקטינה את המס.`, go: 'כמה אחסוך?' };
+      ? { title: `עצמאי? <em>${days} ימים</em> להחליט אם הכסף הולך לחיסכון שלך או למס הכנסה.`, go: 'תראו לי את המספר' }
+      : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', go: 'כמה אחסוך?' };
     tile.querySelector('[data-now-title]').innerHTML = text.title;
-    tile.querySelector('[data-now-text]').textContent = text.sub;
     tile.querySelector('[data-now-go]').textContent = text.go;
     tile.querySelector('[data-now-days]').textContent = days;
     tile.querySelector('[data-now-unit]').textContent = days === 1 ? 'יום' : 'ימים';

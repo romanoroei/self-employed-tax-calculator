@@ -169,6 +169,9 @@ html:not(.js) .bar-tools { display: none; }
 }
 /* the tools tile takes room from the links: the last two go earlier than before */
 @media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
+/* just above the phone layout the bar is tight: keep the links on one line */
+@media (min-width: 901px) and (max-width: 1000px) { .bar-brand span { display: none; } }
+@media (max-width: 960px) { .bar-nav a:nth-child(n+4) { display: none; } }
 
 /* ----- side menu: up to 900px the brand tile opens the page's sections (js/site.js) ----- */
 .site-menu { position: fixed; inset: 0; z-index: 120; }
@@ -216,10 +219,12 @@ html.menu-open { overflow: hidden; }
 .hero {
   background: var(--navy-deep);
   padding: 0 var(--gap) var(--gap);
-  min-height: clamp(460px, 58svh, 580px);
+  min-height: clamp(560px, 74svh, 720px);
+  /* the photo above the self-employed tile on one side, the yields tile the full height on the other */
   grid-template-columns: 8fr 4fr;
+  grid-template-rows: 1fr auto;
 }
-.hero-main { position: relative; overflow: hidden; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; background: var(--navy-deep); }
+.hero-main { grid-column: 1; grid-row: 1; position: relative; overflow: hidden; padding: 40px; display: flex; flex-direction: column; justify-content: flex-end; background: var(--navy-deep); }
 .hero-bg {
   position: absolute; inset-block: 0; inset-inline-end: 0; width: 58%; height: 100%;
   object-fit: cover; object-position: 50% 12%;
@@ -236,16 +241,17 @@ html.menu-open { overflow: hidden; }
 .hero-promise + .hero-lead { margin-top: 10px; font-size: var(--t-4); text-wrap: balance; }
 .hero-lead { margin-block: 18px 0; font-size: var(--t-3); line-height: 1.55; max-width: 40ch; color: var(--on-dark-soft); }
 /* the yields tile: the same table in every view, so switching never moves the page */
-.hero-yields { display: flex; flex-direction: column; }
+.hero-yields { grid-column: 2; grid-row: 1 / span 2; display: flex; flex-direction: column; }
 .yield-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 18px 24px 16px; }
 .yield-title { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .yield-sub { margin-top: 2px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--ink-soft); }
-.yield-picks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.yield-picks { display: flex; flex-direction: column; gap: 4px; }
 .yield-picks > div { display: flex; flex-wrap: wrap; gap: 2px; }
 .yield-picks button { padding: 5px 10px; border: 0; border-radius: 0; background: var(--paper-2); color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
 .yield-picks button[aria-pressed="true"] { background: var(--navy); color: var(--gold); font-weight: 700; }
 .yield-tables { flex: 1; }
 .yield-tables table { width: 100%; height: 100%; border-collapse: collapse; font-size: 14px; }
+@media (min-width: 1280px) { .yield-tables table { font-size: 15px; } }
 .yield-tables table[hidden] { display: none; }
 .yield-tables th, .yield-tables td { padding: 5px 0; text-align: start; border-bottom: 1px solid rgba(12, 33, 52, .14); }
 .yield-tables thead th { padding-top: 0; font-size: 13px; font-weight: 800; color: var(--ink); border-bottom: 2px solid var(--navy); }
@@ -271,13 +277,7 @@ html.menu-open { overflow: hidden; }
   .yield-cta:hover { background: var(--gold-soft); }
   .yield-cta:hover .arrow { transform: translateX(-6px); }
 }
-/* the strip continues the hero board, one tile the full width */
-.now-strip {
-  background: var(--navy-deep);
-  padding: 0 var(--gap) var(--gap);
-  grid-template-columns: minmax(0, 1fr);
-}
-.now-tile { position: relative; display: flex; align-items: stretch; }
+.now-tile { grid-column: 1; grid-row: 2; position: relative; display: flex; align-items: stretch; }
 /* the whole tile still opens the calculator; only the guide link sits above that */
 .now-go::after { content: ""; position: absolute; inset: 0; }
 .now-guide { position: relative; z-index: 1; align-self: flex-start; padding-block: 2px; font-size: var(--t-5); font-weight: 700; }
@@ -289,7 +289,6 @@ html.menu-open { overflow: hidden; }
 .now-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 24px 32px; }
 .now-copy strong { font-size: var(--t-2); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .now-copy em { font-style: normal; background: linear-gradient(transparent 62%, var(--gold-soft) 62%); }
-.now-text { font-size: var(--t-5); line-height: 1.5; max-width: 62ch; color: var(--ink-soft); }
 .now-go { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-inline: 28px; background: var(--navy); color: var(--gold); font-size: var(--t-4); font-weight: 800; white-space: nowrap; text-decoration: none; transition: background-color 180ms ease; }
 .now-go small { font-size: 13px; font-weight: 500; color: var(--on-dark-soft); }
 section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
@@ -558,6 +557,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-nav { display: none; }
   .hero { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   .hero-main { grid-column: 1 / -1; grid-row: auto; padding: 28px; min-height: 420px; }
+  .hero-yields, .now-tile { grid-column: auto; grid-row: auto; }
   .hero-bg { width: 100%; opacity: .4; -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%); mask-image: linear-gradient(to top, transparent 0%, #000 70%); }
   .hero-copy { max-width: none; }
   .pillars { grid-template-columns: minmax(0, 1fr); }
@@ -669,7 +669,11 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   }
 }
 /* narrow phones: the brand drops its subtitle so the tools tile fits beside it */
-@media (max-width: 520px) { .bar-brand span { display: none; } }
+@media (max-width: 600px) { .bar-brand span { display: none; } }
+/* the menu's name is long: on phones it takes two lines, so the name beside it still fits */
+@media (max-width: 520px) {
+  .bar-tools-toggle { width: 96px; padding-inline: 8px; gap: 4px; font-size: 13px; line-height: 1.15; white-space: normal; text-align: start; }
+}
 @media (max-width: 400px) {
   .bar-brand, .bar-cta { padding-inline: 10px; }
   .bar-brand { gap: 8px; }
