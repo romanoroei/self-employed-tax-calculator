@@ -38,6 +38,21 @@
 .mosaic img { height: 240px; width: auto; filter: grayscale(1) contrast(1.05); }
 .mosaic figcaption { flex-basis: 100%; margin-top: 8px; font-size: var(--t-5); color: var(--ink-soft); }
 
+.prose ul { display: grid; gap: 10px; margin-bottom: 20px; }
+.prose li { position: relative; padding-inline-start: 22px; font-size: 19px; line-height: 1.6; }
+.prose li::before { content: ""; position: absolute; inset-inline-start: 0; top: .62em; width: 8px; height: 8px; background: var(--gold-deep); }
+.se-go { margin-block: 28px 8px; }
+.button-line-ink { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--navy); transition: background-color 160ms ease; }
+@media (hover: hover) and (pointer: fine) { .button-line-ink:hover { background: var(--paper-2); } }
+
+/* the year's figures: one table, so a visitor from a search finds the number at once */
+.se-figure { margin-block: 0 56px; }
+.se-table { margin-top: 28px; width: 100%; max-width: 900px; border-collapse: collapse; font-size: var(--t-4); }
+.se-table th, .se-table td { padding: 14px 0; text-align: start; vertical-align: baseline; border-bottom: 1px solid rgba(241, 241, 238, .18); }
+.se-table tr:last-child th, .se-table tr:last-child td { border-bottom: 0; }
+.se-table th { width: 52%; padding-inline-end: 24px; font-weight: 500; color: var(--on-dark-soft); }
+.se-table td { font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+
 .art-cta { background: var(--paper-2); padding-block: 96px; margin-top: 80px; }
 .art-cta .statement { margin-top: 0; }
 .art-cta .button { margin-top: 28px; }
@@ -51,7 +66,13 @@
 
 @media (max-width: 700px) {
   .art-head { padding-block: 32px 40px; }
-  .prose p { font-size: 17px; }
+  .prose p, .prose li { font-size: 17px; }
+  .se-table { font-size: var(--t-5); }
+  .se-table, .se-table tbody, .se-table tr, .se-table th, .se-table td { display: block; width: auto; }
+  .se-table tr { padding-block: 12px; border-bottom: 1px solid rgba(241, 241, 238, .18); }
+  .se-table tr:last-child { border-bottom: 0; }
+  .se-table th, .se-table td { padding: 0; border-bottom: 0; }
+  .se-table th { padding-inline-end: 0; margin-bottom: 2px; }
   .art-figure { padding-block: 56px; }
   .bars { height: 280px; gap: 6px; }
   .bar { padding: 10px; min-height: 90px; }

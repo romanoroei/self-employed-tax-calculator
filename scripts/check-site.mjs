@@ -52,5 +52,5 @@ assert(feed.split('\r\n').every(l=>Buffer.byteLength(l)<=75),'Calendar feed line
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,8,'Sitemap must include all eight canonical pages');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,9,'Sitemap must include all nine canonical pages');
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);

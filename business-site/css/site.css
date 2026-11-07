@@ -352,6 +352,7 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 .tab[aria-selected="true"] { background: var(--navy); color: var(--on-dark); }
 @media (hover: hover) and (pointer: fine) { .tab[aria-selected="false"]:hover { background: var(--gold-soft); } }
 .panel { margin-top: var(--gap); grid-template-columns: minmax(0, 1fr) auto; }
+.panel-more { margin-top: 20px; font-size: var(--t-5); font-weight: 700; }
 .panel-text { padding: 40px; }
 .panel-text h3 { font-size: var(--t-2); font-weight: 800; color: var(--gold); margin-bottom: 20px; }
 .panel-text ul { display: grid; gap: 12px; }
