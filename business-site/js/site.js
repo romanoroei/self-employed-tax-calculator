@@ -134,6 +134,7 @@
     close(false);
     // a section on this page: the link was hidden mid-click, so scroll there ourselves
     const hash = link.getAttribute('href');
+    if (hash === '#top') { e.preventDefault(); requestAnimationFrame(goToPageTop); return; }
     const target = hash.startsWith('#') && document.getElementById(hash.slice(1));
     if (!target) return;
     e.preventDefault();
@@ -258,6 +259,12 @@ function sectionTop(section) {
   }
   return pageTop(landingPoint(section)) - bar - 16;
 }
+// The #top target is the sticky bar itself, which is always on screen, so the browser's jump would not move the page.
+function goToPageTop() {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
+  window.scrollTo({ top: 0, behavior: still ? 'instant' : 'smooth' });
+  if (location.hash) history.pushState(null, '', location.pathname + location.search);
+}
 function goToSection(section, instant) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
   const top = sectionTop(section);
@@ -276,6 +283,14 @@ const sectionOf = (hash) => {
   const target = hash.length > 1 && document.getElementById(hash.slice(1));
   return target && target.tagName === 'SECTION' ? target : null;
 };
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href="#top"]');
+  if (!link || e.defaultPrevented) return;
+  e.preventDefault();
+  goToPageTop();
+  // keyboard users continue from the top, not from a link far down the page
+  document.querySelector('.bar-brand')?.focus({ preventScroll: true });
+});
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[href^="#"]');
   const section = link && !e.defaultPrevented && sectionOf(link.getAttribute('href'));

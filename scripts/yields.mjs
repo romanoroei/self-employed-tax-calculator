@@ -18,7 +18,7 @@ export const COLUMNS = [
   { id: 'y3', label: '3 שנים' },
   { id: 'y7', label: '7 שנים' },
 ];
-export const DEFAULT_COLUMN = 'y3';
+export const DEFAULT_COLUMN = 'y7';
 export const ROWS = 3;
 
 // Policy tracks have no SUB_SPECIALIZATION, so GemelHub matches them by name.
@@ -78,12 +78,16 @@ export function computeYields({ gemel, polisa, trailing7y }) {
           y7: (() => { const v = figure(trailing7y.families[product.source].values[String(r.FUND_ID)]); return v === null ? null : rounded(v); })(),
         }))
         .filter((r) => r.company && !product.excludedCompanies?.includes(r.company) && COLUMNS.some((c) => r[c.id] !== null));
-      const average = { count: group.length };
+      // How many stand behind each column's average: a company can hold several funds in a track.
+      const average = { count: group.length, funds: {}, companies: {} };
       const rank = {};
       for (const { id } of COLUMNS) {
-        const values = group.map((r) => r[id]).filter((v) => v !== null);
+        const holders = group.filter((r) => r[id] !== null);
+        const values = holders.map((r) => r[id]);
         if (!values.length) throw new Error(`No ${id} figures for ${product.id}/${track.id}`);
         average[id] = rounded(values.reduce((sum, v) => sum + v, 0) / values.length);
+        average.funds[id] = holders.length;
+        average.companies[id] = new Set(holders.map((r) => r.company)).size;
         // One row per company: the tile compares companies inside a track.
         const seen = new Set();
         rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
@@ -109,13 +113,16 @@ export function renderYields({ period, views }) {
     const view = `${key}-${sort}`;
     const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${COLUMNS.find((c) => c.id === sort).label}`;
     const heads = COLUMNS.map((c) => `<th scope="col"${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${c.label}</button></th>`).join('');
+    const makers = average.companies[sort] === average.funds[sort]
+      ? `${average.companies[sort]} חברות`
+      : `${average.companies[sort]} חברות, ${average.funds[sort]} קופות`;
     const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
       + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${escape(r.company)}</th>${cells(r)}</tr>`).join('')
-      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
+      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה <small>(${makers})</small></th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
     + `<div class="yield-tables">${tables}</div>`
-    + `<p class="yield-note">נתוני משרד האוצר עד ${periodLabel(period)}. תשואה מצטברת לפני דמי ניהול. לחיצה על כותרת מדרגת לפיה. ממוצע הקבוצה: כל הקופות במסלול. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
+    + `<p class="yield-note">נתוני משרד האוצר עד ${periodLabel(period)}. תשואה מצטברת לפני דמי ניהול. לחיצה על כותרת מדרגת לפיה. ממוצע הקבוצה: כל הקופות במסלול שיש להן נתון, והמספר בסוגריים הוא לעמודה שנבחרה. מקף: אין נתון ל־7 שנים מלאות. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }

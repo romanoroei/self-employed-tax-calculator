@@ -243,6 +243,7 @@ html.menu-open { overflow: hidden; }
 .hero-yields { display: flex; flex-direction: column; }
 .yield-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 18px 24px 16px; }
 .yield-title { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
+.yield-sub { margin-top: 2px; font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--ink-soft); }
 .yield-picks { display: flex; flex-wrap: wrap; gap: 6px 14px; }
 .yield-picks > div { display: flex; flex-wrap: wrap; gap: 2px; }
 .yield-picks button { padding: 5px 10px; border: 0; border-radius: 0; background: var(--paper-2); color: var(--ink); font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
@@ -259,8 +260,13 @@ html.menu-open { overflow: hidden; }
 .yield-tables thead button::after { content: ""; flex: none; border-inline: 3.5px solid transparent; border-top: 5px solid currentColor; opacity: .35; }
 .yield-tables th[aria-sort] button { font-weight: 700; color: var(--ink); }
 .yield-tables th[aria-sort] button::after { opacity: 1; }
-.yield-tables tfoot th, .yield-tables tfoot td { border-top: 2px solid var(--navy); border-bottom: 0; font-weight: 500; }
-.yield-tables tfoot th { font-weight: 700; }
+.yield-tables tr > :first-child { padding-inline-start: 10px; }
+.yield-tables tr > :last-child { padding-inline-end: 10px; }
+/* the group's average is not one of the leaders: navy, like the calculator's total row */
+.yield-tables tfoot th, .yield-tables tfoot td { padding-block: 7px; border-bottom: 0; background: var(--navy); }
+.yield-tables tfoot th { font-weight: 700; color: var(--on-dark); }
+.yield-tables tfoot td { font-weight: 700; color: var(--gold); }
+.yield-tables tfoot small { display: block; font-size: 12px; font-weight: 500; color: var(--on-dark-soft); }
 .yield-note { margin-top: auto; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
 .yield-cta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 24px; background: var(--gold); color: var(--navy-deep); font-size: var(--t-5); font-weight: 800; text-decoration: none; transition: background-color 180ms ease; }
 @media (hover: hover) and (pointer: fine) {
