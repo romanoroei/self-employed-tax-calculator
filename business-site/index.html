@@ -69,13 +69,20 @@
     </span>
     <a class="now-go" href="/self-employed-tax-calculator/" data-count="strip:calculator"><span><span data-now-go>כמה אחסוך?</span> <span class="arrow" aria-hidden="true">←</span></span><small>למחשבון הטבות המס</small></a>
   </div>
-  <div class="tile tile-paper hero-yields">
-    <div class="yield-body">
-      <div>
-        <h2 class="yield-title">מי הוביל בתשואות</h2>
-        <p class="yield-sub">מוצגות רק 3 החברות המובילות בכל קטגוריה</p>
+  <div class="tile tile-paper hero-yields" data-market>
+    <div class="market-tabs" role="tablist" aria-label="תשואות וריביות">
+      <button type="button" role="tab" id="tab-funds" aria-controls="panel-funds" aria-selected="true" data-market-tab="funds">קופות</button>
+      <button type="button" role="tab" id="tab-rates" aria-controls="panel-rates" aria-selected="false" tabindex="-1" data-market-tab="rates">ריביות</button>
+    </div>
+    <div class="market-panels">
+      <div class="yield-body" id="panel-funds" role="tabpanel" aria-labelledby="tab-funds" data-market-panel="funds">
+        <div>
+          <h2 class="yield-title">מי הוביל בתשואות</h2>
+          <p class="yield-sub">מוצגות רק 3 החברות המובילות בכל קטגוריה</p>
+        </div>
+        <!-- yields-tile -->
       </div>
-      <!-- yields-tile -->
+      <div class="yield-body" id="panel-rates" role="tabpanel" aria-labelledby="tab-rates" data-market-panel="rates" hidden></div>
     </div>
     <a class="yield-cta" href="#contact">איפה הקופה שלכם עומדת? <span class="arrow" aria-hidden="true">←</span></a>
   </div>
@@ -496,6 +503,7 @@
 </footer>
 
 <script src="js/site.js" defer></script>
+<script src="js/market.js" defer></script>
 <script src="js/consent.js" data-root="" defer></script>
 <script src="js/year-end.js" defer></script>
 </body>

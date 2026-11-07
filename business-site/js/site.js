@@ -416,24 +416,3 @@ document.addEventListener('click', (e) => {
     a.dataset.subscribe = 'outlook';
   });
 })();
-
-
-// The yields tile: the build writes every view and ranking as a table, this only picks which one shows.
-(() => {
-  const tile = document.querySelector('.hero-yields');
-  if (!tile) return;
-  let [product, track, sort] = tile.querySelector('[data-yield-view]:not([hidden])').dataset.yieldView.split('-');
-  tile.addEventListener('click', (e) => {
-    const button = e.target.closest('button');
-    if (!button) return;
-    const { yieldProduct, yieldTrack, yieldSort } = button.dataset;
-    product = yieldProduct || product;
-    track = yieldTrack || track;
-    sort = yieldSort || sort;
-    if (!yieldSort) button.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-    const view = `${product}-${track}-${sort}`;
-    tile.querySelectorAll('[data-yield-view]').forEach((table) => { table.hidden = table.dataset.yieldView !== view; });
-    // the clicked heading belonged to a table that just hid: keep the focus on its twin
-    if (yieldSort) tile.querySelector(`[data-yield-view="${view}"] [data-yield-sort="${yieldSort}"]`).focus();
-  });
-})();

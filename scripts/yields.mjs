@@ -14,7 +14,7 @@ export const TRACKS = [
   { id: 'stocks', label: 'מניות', sub: 'מניות', policyName: 'מניות' },
 ];
 export const COLUMNS = [
-  { id: 'y1', label: 'שנה אחורה' },
+  { id: 'y1', label: 'שנה' },
   { id: 'y3', label: '3 שנים' },
   { id: 'y7', label: '7 שנים' },
 ];
@@ -54,7 +54,7 @@ const rounded = (v) => Math.round(v * 100) / 100;
 // A multi-year yield of exactly zero in these files means the fund has no such figure.
 const figure = (v) => (isNumber(v) && v !== 0 ? v : null);
 
-// The ministry publishes no 12-month figure, so it is compounded from the monthly yields.
+// The ministry publishes no 12-month figure, so it is compounded from the monthly yields, as GemelHub does.
 // Compounding the same months back to January reproduces YEAR_TO_DATE_YIELD on every fund checked.
 // A fund missing any of the twelve months has no figure.
 const lastTwelve = (period) => Array.from({ length: 12 }, (_, i) => {
@@ -77,6 +77,20 @@ function yearBack(records, period) {
   return values;
 }
 
+// The chart of a fund: its cumulative yield, month by month, back to the first month it is missing.
+function cumulative(records, id, period) {
+  const yields = new Map(records.filter((r) => String(r.FUND_ID) === id && isNumber(r.MONTHLY_YIELD)).map((r) => [r.REPORT_PERIOD, r.MONTHLY_YIELD]));
+  const months = [];
+  for (let t = Math.floor(period / 100) * 12 + (period % 100 - 1); ; t -= 1) {
+    const month = Math.floor(t / 12) * 100 + (t % 12) + 1;
+    if (!yields.has(month)) break;
+    months.unshift(month);
+  }
+  if (months.length < 2) return null;
+  let total = 1;
+  return { start: months[0], label: periodLabel(months[0]), values: months.map((m) => { total *= 1 + yields.get(m) / 100; return rounded((total - 1) * 100); }) };
+}
+
 export function computeYields({ gemel, polisa, trailing7y }) {
   const sources = { gemel, polisa };
   if (gemel.report_period !== polisa.report_period) throw new Error(`Report periods differ: ${gemel.report_period} / ${polisa.report_period}`);
@@ -85,6 +99,7 @@ export function computeYields({ gemel, polisa, trailing7y }) {
     if (trailing7y.families[family].reportPeriod !== period) throw new Error(`7-year figures are for ${trailing7y.families[family].reportPeriod}, not ${period}`);
   }
   const views = {};
+  const series = {};
   for (const product of PRODUCTS) {
     const y1 = yearBack(sources[product.source].records, period);
     const rows = sources[product.source].records.filter((r) => r.REPORT_PERIOD === period
@@ -96,6 +111,8 @@ export function computeYields({ gemel, polisa, trailing7y }) {
       const group = rows.filter((r) => inTrack(r, product, track))
         .map((r) => ({
           company: companyOf(r),
+          id: String(r.FUND_ID),
+          key: `${product.source[0]}${r.FUND_ID}`,
           name: String(r.FUND_NAME).trim(),
           y1: y1.get(String(r.FUND_ID)) ?? null,
           y3: figure(r.YIELD_TRAILING_3_YRS),
@@ -117,11 +134,15 @@ export function computeYields({ gemel, polisa, trailing7y }) {
         rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
           .filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
         if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
+        for (const row of rank[id]) {
+          series[row.key] ??= cumulative(sources[product.source].records, row.id, period);
+          if (!series[row.key]) throw new Error(`No chart for ${row.name}`);
+        }
       }
       views[`${product.id}-${track.id}`] = { average, rank };
     }
   }
-  return { period, views };
+  return { period, views, series };
 }
 
 const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -129,7 +150,7 @@ export const periodLabel = (period) => `${MONTHS[period % 100 - 1]} ${Math.floor
 const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</span>' : `<span dir="ltr">${v.toFixed(2)}%</span>`);
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
-export function renderYields({ period, views }) {
+export function renderYields({ period, views, series }) {
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
   const firstView = `${PRODUCTS[0].id}-${TRACKS[0].id}-${DEFAULT_COLUMN}`;
   // How many stand behind the average differs by view and column, so the note carries one line per table.
@@ -148,10 +169,12 @@ export function renderYields({ period, views }) {
     const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
-      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}">${escape(r.company)}</th>${cells(r)}</tr>`).join('')
+      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${escape(r.company)}</button></th>${cells(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
+    + `<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>`
+    + `<script type="application/json" id="yield-series">${JSON.stringify(series)}</script>`
     + `<div class="yield-tables">${tables}</div>`
     + `<p class="yield-note"><strong>תשואה מצטברת עד ${periodLabel(period)}</strong> ${counts}לפי נתוני משרד האוצר, לפני דמי ניהול. מקף: אין נתון לתקופה המלאה. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }
