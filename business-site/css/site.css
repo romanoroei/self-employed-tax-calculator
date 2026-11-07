@@ -256,21 +256,22 @@ html:not(.js) .market-tabs { display: none; }
 .market-ranges button { padding: 2px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; color: var(--ink-soft); font: inherit; font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; }
 .market-ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 800; border-bottom-color: var(--navy); }
 .market-ranges button:disabled { opacity: .35; cursor: default; }
-.market-chart { flex: 1 1 150px; min-height: 150px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
-.market-chart figcaption { font-size: 13px; font-weight: 700; line-height: 1.35; color: var(--ink); min-height: 1.35em; }
+.market-chart { flex: 1 1 190px; min-height: 190px; margin: 0; display: flex; flex-direction: column; gap: 2px; }
+/* the caption holds the chart's name, and the readout while pointing: room for three lines, so nothing moves */
+.market-chart figcaption { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 10px; height: calc(3 * 1.45em); overflow: hidden; font-size: 13px; font-weight: 700; line-height: 1.45; color: var(--ink); }
+.market-chart figcaption.is-reading { font-size: 12px; font-weight: 500; }
+.chart-read-head { font-weight: 700; }
+.chart-read-item { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.chart-read-item b { font-weight: 800; }
+.market-chart figcaption small { flex-basis: 100%; color: var(--ink-soft); font-size: 12px; font-weight: 500; line-height: 1.4; }
+.chart-title { flex-basis: 100%; }
 .market-plot { position: relative; flex: 1; min-height: 0; }
 .market-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; direction: ltr; touch-action: pan-y; cursor: crosshair; user-select: none; -webkit-user-select: none; }
-.chart-tip { position: absolute; top: 0; z-index: 1; display: flex; flex-direction: column; max-width: calc(100% - 4px); padding: 4px 8px; background: var(--navy); color: var(--on-dark); font-size: 12px; line-height: 1.45; white-space: nowrap; pointer-events: none; }
-.chart-tip b { color: var(--gold); font-weight: 800; }
-.chart-tip small { color: var(--on-dark-soft); font-size: 11px; }
-.chart-tip-head { color: var(--on-dark-soft); }
-.chart-tip-line { display: flex; align-items: center; gap: 5px; }
 .chart-dot { display: inline-block; width: 8px; height: 8px; flex: none; }
 .chart-edge { position: absolute; z-index: 1; padding: 1px 5px; background: var(--navy); color: var(--gold); font-size: 11px; font-weight: 700; line-height: 1.5; white-space: nowrap; pointer-events: none; }
 .chart-edge[hidden] { display: none; }
 .chart-marks[hidden] { display: none; }
 .chart-marks circle { stroke: var(--paper); stroke-width: 1.5; }
-.chart-tip[hidden] { display: none; }
 .chart-band { fill: rgba(201, 183, 114, .32); }
 .chart-rule { stroke: var(--navy); stroke-width: 1.5; }
 .chart-over[hidden] { display: none; }
@@ -279,7 +280,9 @@ p.chart-hint { margin: -4px 0 0; }
 @media (hover: none) { .chart-hint { display: none; } }
 .is-up { color: #0B7A4B; }
 .is-down { color: #B3261E; }
-.tv-box { flex: 1; display: flex; flex-direction: column; gap: 6px; margin-inline: -14px; }
+.tv-box { flex: 1; display: flex; flex-direction: column; min-height: 420px; margin-inline: -14px; }
+.tv-box .tradingview-widget-container { flex: 1 1 0; position: relative; min-height: 0; }
+.tv-box .tradingview-widget-container__widget { position: absolute; inset: 0; }
 .tv-box .tradingview-widget-copyright { padding-inline: 14px; }
 .tv-box .tradingview-widget-copyright { font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
 .tv-box .tradingview-widget-copyright a { color: inherit; }

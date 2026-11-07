@@ -3,8 +3,8 @@
 //   Rows toggle on and off, and every fund that is on gets its own line.
 // - Indices: TradingView's widgets, loaded only when the tab is opened.
 // - Currencies and rates: /api/fx and /api/rates, official daily figures, read when their tab is opened.
-// Every chart here takes a time range and shows the values under the pointer. Clicking two points,
-// or dragging from one to the other, marks that period on the chart and measures the change.
+// Every chart here takes a time range and shows the values under the pointer in its caption, above
+// the plot. Clicking two points, or dragging from one to the other, marks that period and measures it.
 (() => {
   const tile = document.querySelector('[data-market]');
   if (!tile) return;
@@ -17,7 +17,8 @@
   const tone = (v) => (v > 0 ? 'is-up' : v < 0 ? 'is-down' : '');
   const ltr = (text) => `<span dir="ltr">${text}</span>`;
   const day = (t) => { const d = new Date(t); return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`; };
-  const month = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getFullYear()}`; };
+  const DAY_MS = 86400000;
+  const monthYear = (t) => { const d = new Date(t); return `${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(2)}`; };
   const isoTime = (iso) => new Date(`${iso}T00:00:00Z`).getTime();
   const swatch = (color) => `<i class="chart-dot" style="background:${color}"></i>`;
 
@@ -51,16 +52,15 @@
     return t - points[lo][0] <= points[hi][0] - t ? points[lo][1] : points[hi][1];
   }
 
-  // options: { lines: [{ points: [[time, value]], color, name }], step, base, axis(v),
-  //            tip(spot), measure(a, b), edge(t) }
+  // options: { title, lines: [{ points: [[time, value]], color, name }], step, base, axis(v),
+  //            tip(spot, waiting), measure(a, b), edge(t, isStart) }
   // A spot is { t, values }: one value per line, at the time nearest the pointer.
   function makeChart(figure) {
     const svg = figure.querySelector('svg');
     const plot = figure.querySelector('.market-plot');
-    const tip = document.createElement('div');
-    tip.className = 'chart-tip';
+    const caption = figure.querySelector('figcaption');
     const edges = [0, 1].map(() => { const el = document.createElement('div'); el.className = 'chart-edge'; return el; });
-    plot.append(tip, ...edges);
+    plot.append(...edges);
     let options = null;
     let geometry = null;
     let anchor = null;
@@ -164,19 +164,19 @@
         const spot = ends[n];
         el.hidden = !spot || (!two && !pinned && !first);
         if (el.hidden) return;
-        el.textContent = options.edge(spot.t);
+        el.textContent = options.edge(spot.t, two && n === 0);
         el.style.top = `${bottom + 1}px`;
         place(el, x(spot.t));
       });
-      tip.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first));
-      tip.hidden = false;
-      place(tip, two ? (x(ends[0].t) + x(ends[1].t)) / 2 : x(a.t));
+      caption.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first));
+      caption.classList.add('is-reading');
     }
 
     function hide() {
       svg.querySelector('.chart-marks')?.setAttribute('hidden', '');
       svg.querySelector('.chart-over')?.setAttribute('hidden', '');
-      tip.hidden = true;
+      if (options) caption.innerHTML = `<span class="chart-title">${options.title}</span><small>${options.hint || HINT_SHORT}</small>`;
+      caption.classList.remove('is-reading');
       edges.forEach((el) => { el.hidden = true; });
     }
 
@@ -218,7 +218,7 @@
     });
     return {
       set(next) { options = next; pinned = false; first = null; anchor = null; render(); },
-      clear() { options = null; geometry = null; svg.replaceChildren(); hide(); },
+      clear(title) { options = null; geometry = null; svg.replaceChildren(); hide(); caption.innerHTML = `<span class="chart-title">${title || ''}</span>`; },
     };
   }
 
@@ -237,19 +237,15 @@
   }
   const rangeButtons = (list) => `<div class="market-ranges" role="group" aria-label="טווח זמן">${list.map(([id, label]) => `<button type="button" data-range="${id}" aria-pressed="false">${label}</button>`).join('')}</div>`;
   const chartBlock = '<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>';
-  const HINT = '<span class="chart-hint">לחצו על שתי נקודות בגרף, או גררו ביניהן, כדי למדוד תקופה.</span>';
+  const HINT = '';
+  const HINT_SHORT = 'לחצו על שתי נקודות בגרף, או גררו ביניהן, כדי למדוד תקופה.';
   const PICK_SECOND = '<small>לחצו על נקודה נוספת כדי למדוד</small>';
-  const tipLines = (lines, values, show) => lines.map((l, n) => `<span class="chart-tip-line">${lines.length > 1 ? `${swatch(l.color)}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
+  const tipLines = (lines, values, show, named = lines.length > 1) => lines.map((l, n) => `<span class="chart-read-item">${named ? `${lines.length > 1 ? swatch(l.color) : ''}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
 
   // ---------- the funds tab ----------
   const fundsPanel = tile.querySelector('[data-market-panel="funds"]');
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
-  const fundsTitle = fundsPanel.querySelector('.market-chart figcaption');
-  const fundsHint = document.createElement('p');
-  fundsHint.className = 'chart-hint';
-  fundsHint.innerHTML = 'לחצו על חברה בטבלה כדי להוסיף אותה לגרף או להסיר אותה. לחצו על שתי נקודות בגרף כדי למדוד תקופה.';
-  fundsPanel.querySelector('.yield-tables').after(fundsHint);
   const COLUMN_RANGE = { y1: 12, y3: 36, y7: 84 };
   let [product, track, sort] = fundsPanel.querySelector('table[data-yield-view]:not([hidden])').dataset.yieldView.split('-');
   let picked = [];
@@ -294,14 +290,19 @@
     });
     const startName = `${MONTHS[from % 12]} ${Math.floor(from / 12)}`;
     const when = fundRange === 12 ? 'בשנה האחרונה' : fundRange ? `ב־${fundRange / 12} השנים האחרונות` : `מ${startName}`;
-    fundsTitle.textContent = `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`;
-    const ended = (t) => month(t - 86400000);
+    // a point's time is the first day after its month: the period after it starts there,
+    // and the month it closes is the one before
+    const startOf = (t) => monthYear(t);
+    const endOf = (t) => monthYear(t - DAY_MS);
+    const rangeStart = lines[0].points[0][0];
     fundsChart.set({
+      title: `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`,
+      hint: 'לחצו על חברה בטבלה כדי להוסיף או להסיר אותה, ועל שתי נקודות בגרף כדי למדוד תקופה.',
       lines, base: 0,
       axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
-      edge: (t) => ended(t),
-      tip: (s, waiting) => `<span class="chart-tip-head">מתחילת התקופה עד סוף ${ended(s.t)}</span>${tipLines(lines, s.values, (v) => `${signed(v)}%`)}${waiting ? PICK_SECOND : ''}`,
-      measure: (a, b) => `<span class="chart-tip-head">מסוף ${ended(a.t)} עד סוף ${ended(b.t)}</span>${tipLines(lines, a.values.map((v, n) => ((1 + b.values[n] / 100) / (1 + v / 100) - 1) * 100), (v) => `${signed(v)}%`)}`,
+      edge: (t, isStart) => (isStart ? startOf(t) : endOf(t)),
+      tip: (s, waiting) => `<span class="chart-read-head">מ־${startOf(rangeStart)} עד סוף ${endOf(s.t)}:</span>${tipLines(lines, s.values, (v) => `${signed(v)}%`, true)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-read-head">מ־${startOf(a.t)} עד סוף ${endOf(b.t)}:</span>${tipLines(lines, a.values.map((v, n) => ((1 + b.values[n] / 100) / (1 + v / 100) - 1) * 100), (v) => `${signed(v)}%`, true)}`,
     });
   }
 
@@ -399,14 +400,15 @@
       const from = all[all.length - 1][0] - fx.range * (YEAR_MS / 12);
       const lines = [{ points: all.filter(([t]) => t >= from), color: COLORS[0], name: label }];
       fx.chart.set({
+        title: label,
         lines,
         axis: (v) => number(v, digits === 4 ? 2 : 0),
         edge: day,
-        tip: (s, waiting) => `<span class="chart-tip-head">${day(s.t)}</span>${tipLines(lines, s.values, (v) => number(v, digits))}${waiting ? PICK_SECOND : ''}`,
-        measure: (a, b) => `<span class="chart-tip-head">מ־${day(a.t)} עד ${day(b.t)}</span>${tipLines(lines, [(b.values[0] / a.values[0] - 1) * 100], (v) => `${signed(v)}%`)}`,
+        tip: (s, waiting) => `<span class="chart-read-head">${label}, ${day(s.t)}:</span>${tipLines(lines, s.values, (v) => number(v, digits))}${waiting ? PICK_SECOND : ''}`,
+        measure: (a, b) => `<span class="chart-read-head">${label}, מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [(b.values[0] / a.values[0] - 1) * 100], (v) => `${signed(v)}%`)}`,
       });
     } catch {
-      fx.chart.clear();
+      fx.chart.clear(label);
     }
   }
 
@@ -462,7 +464,7 @@
     const [, label, title] = RATES.find(([id]) => id === rates.picked);
     const item = rates.items?.find((i) => i.id === rates.picked);
     rates.title.textContent = title;
-    if (!item) { rates.chart.clear(); return; }
+    if (!item) { rates.chart.clear(title); return; }
     const all = item.history.map(([date, value]) => [isoTime(date), value]);
     const now = Date.now();
     const from = rates.range ? now - rates.range * YEAR_MS : all[0][0];
@@ -473,11 +475,12 @@
     rates.ranges.allow((r) => Number(r) === 0 || now - Number(r) * YEAR_MS >= oldest - 31 * 86400000);
     const lines = [{ points, color: COLORS[0], name: label }];
     rates.chart.set({
+      title,
       lines, step: true,
       axis: (v) => `${number(v, 2)}%`,
       edge: day,
-      tip: (s, waiting) => `<span class="chart-tip-head">${day(s.t)}</span>${tipLines(lines, s.values, (v) => `${number(v, 2)}%`)}${waiting ? PICK_SECOND : ''}`,
-      measure: (a, b) => `<span class="chart-tip-head">מ־${day(a.t)} עד ${day(b.t)}</span>${tipLines(lines, [b.values[0] - a.values[0]], (v) => `${signed(v)} נק׳ אחוז`)}`,
+      tip: (s, waiting) => `<span class="chart-read-head">${title}, ${day(s.t)}:</span>${tipLines(lines, s.values, (v) => `${number(v, 2)}%`)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-read-head">${title}, מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [b.values[0] - a.values[0]], (v) => `${signed(v)} נק׳ אחוז`)}`,
     });
   }
 
@@ -501,7 +504,9 @@
   }
 
   // ---------- the indices tab: TradingView's widgets ----------
-  // A chart with its price axis and a switch between the indices, then a table with column titles.
+  // One tall chart with its title, value, change and price axis, and a switch between the indices.
+  // Its only link out is TradingView's own mark, which its terms require. (Their quotes table linked
+  // every row to their site and scrolled sideways, so it is gone.)
   const INDICES = [['TASE:TA35', 'ת"א 35'], ['TASE:TA125', 'ת"א 125'], ['FOREXCOM:SPXUSD', 'S&P 500'], ['FOREXCOM:NSXUSD', 'נאסדק 100'], ['FOREXCOM:GRXEUR', 'דאקס']];
   function widget(box, name, height, config) {
     const holder = document.createElement('div');
@@ -510,23 +515,19 @@
     const script = document.createElement('script');
     script.src = `https://s3.tradingview.com/external-embedding/embed-widget-${name}.js`;
     script.async = true;
-    script.textContent = JSON.stringify({ width: '100%', height, locale: 'he_IL', colorTheme: 'light', isTransparent: true, ...config });
+    script.textContent = JSON.stringify({ autosize: true, width: '100%', height: '100%', locale: 'he_IL', colorTheme: 'light', isTransparent: true, ...config });
     holder.append(script);
     box.append(holder);
   }
   function loadIndices() {
     const box = tile.querySelector('[data-market-panel="indices"] [data-tv]');
-    widget(box, 'symbol-overview', 316, {
+    widget(box, 'symbol-overview', '100%', {
       symbols: INDICES.map(([s, d]) => [d, `${s}|12M`]),
       chartOnly: false, showVolume: false, showMA: false, hideDateRanges: false, hideMarketStatus: false, hideSymbolLogo: true,
       scalePosition: 'right', scaleMode: 'Normal', fontSize: '10', noTimeScale: false, valuesTracking: '1', changeMode: 'price-and-percent',
       chartType: 'area', lineColor: 'rgba(58, 110, 165, 1)', topColor: 'rgba(58, 110, 165, 0.25)', bottomColor: 'rgba(58, 110, 165, 0)',
       lineWidth: 2, lineType: 0, gridLineColor: 'rgba(12, 33, 52, 0.06)',
       dateRanges: ['1d|1', '1m|30', '3m|60', '12m|1D', '60m|1W', 'all|1M'],
-    });
-    widget(box, 'market-quotes', 222, {
-      showSymbolLogo: false,
-      symbolsGroups: [{ name: 'מדדים', symbols: INDICES.map(([s, d]) => ({ name: s, displayName: d })) }],
     });
     box.insertAdjacentHTML('beforeend', '<div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>');
   }
