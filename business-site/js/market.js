@@ -264,7 +264,9 @@
         options = next;
         range = null; first = null; anchor = null; grab = -1;
         titleEl.textContent = options.title;
-        helpEl.textContent = options.hint || HINT_SHORT;
+        const help = options.hint ?? HINT_SHORT;
+        helpEl.textContent = help;
+        helpEl.hidden = !help;
         render();
         rest();
       },
@@ -351,7 +353,7 @@
     const rangeStart = lines[0].points[0][0];
     fundsChart.set({
       title: `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`,
-      hint: 'לחצו על חברה בטבלה כדי להוסיף או להסיר אותה, ועל שתי נקודות בגרף כדי למדוד תקופה.',
+      hint: '',
       lines, base: 0,
       axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
       edge: (t, isStart) => (isStart ? startOf(t) : endOf(t)),

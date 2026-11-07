@@ -257,6 +257,11 @@ html:not(.js) .market-tabs { display: none; }
 .yield-body > .market-chart { order: 2; }
 .yield-body > .yield-head { order: 0; }
 .yield-body > .yield-picks { order: 4; }
+/* the funds: heading, product and track, chart, its ranges, then the table */
+[data-market-panel="funds"] > .yield-picks { order: 1; }
+[data-market-panel="funds"] > .market-chart { order: 2; }
+[data-market-panel="funds"] > .market-ranges { order: 3; }
+.chart-help[hidden] { display: none; }
 .market-ranges { display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .market-ranges button { padding: 2px 0; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: none; color: var(--ink-soft); font: inherit; font-size: 13px; font-weight: 500; line-height: 1.4; cursor: pointer; }
 .market-ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 800; border-bottom-color: var(--navy); }
