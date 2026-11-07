@@ -252,6 +252,9 @@ html.menu-open { overflow: hidden; }
 .yield-tables { flex: 1; }
 .yield-tables table { width: 100%; height: 100%; border-collapse: collapse; font-size: 14px; }
 @media (min-width: 1280px) { .yield-tables table { font-size: 15px; } }
+/* a narrow yields tile: give it more of the board, and smaller figures on the smallest phones */
+@media (min-width: 901px) and (max-width: 1100px) { .hero { grid-template-columns: 7fr 5fr; } }
+@media (max-width: 360px) { .yield-tables table { font-size: 13px; } }
 .yield-tables table[hidden] { display: none; }
 .yield-tables th, .yield-tables td { padding: 5px 0; text-align: start; border-bottom: 1px solid rgba(12, 33, 52, .14); }
 .yield-tables thead th { padding-top: 0; font-size: 13px; font-weight: 800; color: var(--ink); border-bottom: 2px solid var(--navy); }
@@ -265,11 +268,12 @@ html.menu-open { overflow: hidden; }
 .yield-tables tr > :first-child { padding-inline-start: 10px; }
 .yield-tables tr > :last-child { padding-inline-end: 10px; }
 /* the group's average is not one of the leaders: navy, like the calculator's total row */
-.yield-tables tfoot th, .yield-tables tfoot td { padding-block: 7px; border-bottom: 0; background: var(--navy); }
-.yield-tables tfoot th { font-weight: 700; color: var(--on-dark); }
+.yield-tables thead tr, .yield-tables tfoot tr { height: 1px; }
+.yield-tables tfoot th, .yield-tables tfoot td { padding-block: 5px; border-bottom: 0; background: var(--navy); }
+.yield-tables tfoot th { font-weight: 700; color: var(--on-dark); white-space: nowrap; }
 .yield-tables tfoot td { font-weight: 700; color: var(--gold); }
-.yield-tables tfoot small { display: block; font-size: 12px; font-weight: 500; color: var(--on-dark-soft); }
 .yield-note { margin-top: auto; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
+.yield-note strong { display: block; margin-bottom: 2px; font-size: 14px; font-weight: 800; color: var(--ink); }
 .yield-cta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 11px 24px; background: var(--gold); color: var(--navy-deep); font-size: var(--t-5); font-weight: 800; text-decoration: none; transition: background-color 180ms ease; }
 @media (hover: hover) and (pointer: fine) {
   .yield-picks button[aria-pressed="false"]:hover { background: var(--gold-soft); }
@@ -592,8 +596,15 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-cta { padding-inline: 14px; }
   .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
   .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
-  .hero-main { padding: 22px; min-height: 490px; }
-  .hero-bg { object-position: 50% 0; }
+  /* the words start at the chin: the photo scales with the width, and padding in percent follows it */
+  .hero-main { padding: 60% 22px 22px; min-height: 0; justify-content: flex-start; }
+  /* the face sits to the left as on a computer, fading out on the right and under the words */
+  .hero-bg {
+    object-position: 50% 0; transform: translateX(-14%);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%), linear-gradient(to right, #000 60%, transparent 100%);
+            mask-image: linear-gradient(to top, transparent 0%, #000 70%), linear-gradient(to right, #000 60%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-composite: intersect;
+  }
   .hero-lead { margin-block: 16px 0; }
   .yield-body { padding: 16px 20px 14px; }
   .yield-cta { padding-inline: 20px; }
