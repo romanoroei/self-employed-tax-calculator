@@ -71,7 +71,8 @@ async function rates() {
 
 export async function onRequestGet({ request, waitUntil }) {
   const cache = globalThis.caches?.default;
-  const key = new Request(new URL(request.url).origin + '/api/rates');
+  // the version in the key drops answers held from an older shape of the data
+  const key = new Request(`${new URL(request.url).origin}/api/rates?years=${YEARS}`);
   const held = cache && await cache.match(key);
   if (held) return held;
   try {
