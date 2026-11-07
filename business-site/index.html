@@ -466,16 +466,17 @@
         <input id="f-phone" name="טלפון" placeholder="טלפון" required inputmode="tel" autocomplete="tel">
         <label class="visually-hidden" for="email">אימייל</label>
         <input id="email" name="אימייל" type="email" placeholder="אימייל" autocomplete="email">
-        <label class="visually-hidden" for="f-goal">מה תרצו לבדוק</label>
-        <select id="f-goal" name="מטרה" required>
-          <option value="" disabled selected>מה תרצו לבדוק?</option>
-          <option>פתרון לכסף פנוי</option>
-          <option>פנסיה</option>
-          <option>קרן השתלמות</option>
-          <option>ביטוחים</option>
-          <option>הסדר פנסיוני לעובדים</option>
-          <option>תמונה מלאה של הכול</option>
-        </select>
+        <fieldset class="coupon-goals" id="f-goal">
+          <legend>מה תרצו לבדוק? אפשר לסמן כמה</legend>
+          <div class="coupon-goal-grid">
+          <label><input type="checkbox" name="מטרה" value="פתרון לכסף פנוי"> פתרון לכסף פנוי</label>
+          <label><input type="checkbox" name="מטרה" value="פנסיה"> פנסיה</label>
+          <label><input type="checkbox" name="מטרה" value="קרן השתלמות"> קרן השתלמות</label>
+          <label><input type="checkbox" name="מטרה" value="ביטוחים"> ביטוחים</label>
+          <label><input type="checkbox" name="מטרה" value="הסדר פנסיוני לעובדים"> הסדר פנסיוני לעובדים</label>
+          <label><input type="checkbox" name="מטרה" value="תמונה מלאה של הכול"> תמונה מלאה של הכול</label>
+          </div>
+        </fieldset>
         <label class="coupon-consent"><input type="checkbox" name="הסכמה" value="כן" required> אני מאשר/ת יצירת קשר, וקראתי את <a class="link" href="/privacy">מדיניות הפרטיות</a> ואת <a class="link" href="/disclosure">הגילוי הנאות</a>.</label>
         <label class="coupon-consent"><input type="checkbox" name="הסכמה לדיוור" value="כן"> אשמח לקבל מדי פעם מאמרים ועדכונים במייל או בוואטסאפ (לא חובה, אפשר להסיר בכל עת).</label>
         <button type="submit" class="button">לשליחת הפרטים</button>

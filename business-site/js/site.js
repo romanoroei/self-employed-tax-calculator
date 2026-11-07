@@ -251,11 +251,13 @@ function landingPoint(section) {
 function sectionTop(section) {
   const bar = document.querySelector('.topbar').offsetHeight;
   if (section.id === 'contact') {
-    // the form is the destination: center it in the space under the bar, with its words when both fit
+    // the form is the destination: center it in the space under the bar, with its words, when both fit.
+    // When they do not (phones), the card starts just under the bar, its white edge showing above
+    // "בואו נעשה סדר, יחד", and the form follows on scrolling.
     const room = window.innerHeight - bar;
     const coupon = section.querySelector('.coupon');
-    const target = coupon.offsetHeight <= room ? coupon : section.querySelector('.coupon-form');
-    return pageTop(target) - bar - Math.max(16, (room - target.offsetHeight) / 2);
+    if (coupon.offsetHeight > room || window.innerWidth <= 700) return pageTop(coupon) - bar - 12;
+    return pageTop(coupon) - bar - Math.max(16, (room - coupon.offsetHeight) / 2);
   }
   return pageTop(landingPoint(section)) - bar - 16;
 }
@@ -370,9 +372,21 @@ document.addEventListener('click', (e) => {
   const status = document.getElementById('form-status');
   const button = form.querySelector('button[type="submit"]');
   const ERROR = 'אירעה שגיאה בשליחה. אפשר גם להתקשר ישירות: 052-8089808.';
+  // the topics are checkboxes, and at least one is needed
+  const goals = [...form.querySelectorAll('input[name="מטרה"]')];
+  const NO_GOAL = 'סמנו לפחות נושא אחד שתרצו לבדוק.';
+  goals.forEach((g) => g.addEventListener('change', () => {
+    if (goals.some((x) => x.checked) && status.textContent === NO_GOAL) { status.className = 'form-status'; status.textContent = ''; }
+  }));
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (!button.disabled && goals.length && !goals.some((g) => g.checked)) {
+      status.className = 'form-status error';
+      status.textContent = NO_GOAL;
+      goals[0].focus();
+      return;
+    }
     if (button.disabled || !form.reportValidity()) return;
     status.className = 'form-status';
     status.textContent = '';
@@ -383,6 +397,9 @@ document.addEventListener('click', (e) => {
     button.disabled = true;
     button.textContent = 'שולח...';
     const data = new FormData(form);
+    const topics = data.getAll('מטרה');
+    data.delete('מטרה');
+    data.append('מטרה', topics.join(', '));
     fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
     fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
       .then((res) => {

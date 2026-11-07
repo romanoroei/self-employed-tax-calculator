@@ -294,7 +294,7 @@
   }
   const rangeButtons = (list) => `<div class="market-ranges" role="group" aria-label="טווח זמן">${list.map(([id, label]) => `<button type="button" data-range="${id}" aria-pressed="false">${label}</button>`).join('')}</div>`;
   const chartBlock = '<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>';
-  const HINT_SHORT = 'לחצו על שתי נקודות בגרף, או גררו ביניהן, כדי למדוד תקופה.';
+  const HINT_SHORT = '';
   const PICK_SECOND = '<small>עכשיו לחצו על נקודה נוספת</small>';
   const tipLines = (lines, values, show, named = lines.length > 1) => lines.map((l, n) => `<span class="chart-read-item">${named ? `${lines.length > 1 ? swatch(l.color) : ''}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
 
@@ -460,8 +460,8 @@
         lines,
         axis: (v) => number(v, digits === 4 ? 2 : 0),
         edge: day,
-        tip: (s, waiting) => `<span class="chart-read-head">${label}, ${day(s.t)}:</span>${tipLines(lines, s.values, (v) => number(v, digits))}${waiting ? PICK_SECOND : ''}`,
-        measure: (a, b) => `<span class="chart-read-head">${label}, מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [(b.values[0] / a.values[0] - 1) * 100], (v) => `${signed(v)}%`)}`,
+        tip: (s, waiting) => `<span class="chart-read-head">${day(s.t)}:</span>${tipLines(lines, s.values, (v) => number(v, digits))}${waiting ? PICK_SECOND : ''}`,
+        measure: (a, b) => `<span class="chart-read-head">מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [(b.values[0] / a.values[0] - 1) * 100], (v) => `${signed(v)}%`)}`,
       });
     } catch {
       fx.chart.clear(label);
@@ -535,8 +535,8 @@
       lines, step: true,
       axis: (v) => `${number(v, 2)}%`,
       edge: day,
-      tip: (s, waiting) => `<span class="chart-read-head">${title}, ${day(s.t)}:</span>${tipLines(lines, s.values, (v) => `${number(v, 2)}%`)}${waiting ? PICK_SECOND : ''}`,
-      measure: (a, b) => `<span class="chart-read-head">${title}, מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [b.values[0] - a.values[0]], (v) => `${signed(v)} נק׳ אחוז`)}`,
+      tip: (s, waiting) => `<span class="chart-read-head">${day(s.t)}:</span>${tipLines(lines, s.values, (v) => `${number(v, 2)}%`)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-read-head">מ־${day(a.t)} עד ${day(b.t)}:</span>${tipLines(lines, [b.values[0] - a.values[0]], (v) => `${signed(v)} נק׳ אחוז`)}`,
     });
   }
 
