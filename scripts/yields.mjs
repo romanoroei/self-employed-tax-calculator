@@ -19,7 +19,7 @@ export const COLUMNS = [
   { id: 'y7', label: '7 שנים' },
 ];
 export const DEFAULT_COLUMN = 'y7';
-export const ROWS = 3;
+export const ROWS = 5;
 // The chart's ranges, in months; 0 is the whole history.
 const FUND_RANGES = [[12, 'שנה'], [36, '3 שנים'], [60, '5 שנים'], [84, '7 שנים'], [120, '10 שנים'], [0, 'מקס׳']];
 

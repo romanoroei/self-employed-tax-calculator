@@ -1,14 +1,16 @@
 // The home page's markets tile.
 // - Funds: plain HTML from the build, with each ranked fund's monthly yields for the chart.
-// - Indices: TradingView's widget, loaded only when the tab is opened.
+//   Rows toggle on and off, and every fund that is on gets its own line.
+// - Indices: TradingView's widgets, loaded only when the tab is opened.
 // - Currencies and rates: /api/fx and /api/rates, official daily figures, read when their tab is opened.
-// Every chart here takes a time range, shows the value under the pointer,
-// and measures the change between two points when you drag across it.
+// Every chart here takes a time range and shows the values under the pointer. Clicking two points,
+// or dragging from one to the other, marks that period on the chart and measures the change.
 (() => {
   const tile = document.querySelector('[data-market]');
   if (!tile) return;
 
   const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  const COLORS = ['#3A6EA5', '#B8862B', '#0B7A4B', '#A23B5A', '#6B4E9B'];
   const YEAR_MS = 365.25 * 86400000;
   const number = (v, digits = 2) => v.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const signed = (v, digits = 2) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${number(Math.abs(v), digits)}`;
@@ -17,6 +19,7 @@
   const day = (t) => { const d = new Date(t); return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()}`; };
   const month = (t) => { const d = new Date(t); return `${d.getMonth() + 1}/${d.getFullYear()}`; };
   const isoTime = (iso) => new Date(`${iso}T00:00:00Z`).getTime();
+  const swatch = (color) => `<i class="chart-dot" style="background:${color}"></i>`;
 
   // ---------- the chart ----------
   const PAD = { left: 6, right: 56, top: 10, bottom: 20 };
@@ -37,138 +40,185 @@
     return String(d.getFullYear());
   }
 
-  // options: { points: [[time, value]], step, base, axis(v), tip(spot), measure(a, b) }
-  // A spot is { t, v, i }: on a step chart the value holds until the next change.
+  // The value of a line at time t: the nearest point, or on a step line the last change before it.
+  function valueAt(points, t, step) {
+    let lo = 0;
+    let hi = points.length - 1;
+    if (t <= points[0][0]) return points[0][1];
+    if (t >= points[hi][0]) return points[hi][1];
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (points[mid][0] <= t) lo = mid; else hi = mid; }
+    if (step) return points[lo][1];
+    return t - points[lo][0] <= points[hi][0] - t ? points[lo][1] : points[hi][1];
+  }
+
+  // options: { lines: [{ points: [[time, value]], color, name }], step, base, axis(v),
+  //            tip(spot), measure(a, b), edge(t) }
+  // A spot is { t, values }: one value per line, at the time nearest the pointer.
   function makeChart(figure) {
     const svg = figure.querySelector('svg');
     const plot = figure.querySelector('.market-plot');
     const tip = document.createElement('div');
     tip.className = 'chart-tip';
-    tip.hidden = true;
-    plot.append(tip);
+    const edges = [0, 1].map(() => { const el = document.createElement('div'); el.className = 'chart-edge'; return el; });
+    plot.append(tip, ...edges);
     let options = null;
     let geometry = null;
     let anchor = null;
+    let first = null;
     let pinned = false;
+    let moved = false;
 
     function render() {
-      tip.hidden = true;
+      hide();
       const width = svg.clientWidth;
       const height = svg.clientHeight;
       if (!options || !width || !height) return;
-      const { points, step, base, axis } = options;
-      const values = points.map((p) => p[1]);
+      const { lines, step, base, axis } = options;
+      const values = lines.flatMap((l) => l.points.map((p) => p[1]));
       if (base !== undefined && base !== null) values.push(base);
       let min = Math.min(...values);
       let max = Math.max(...values);
       const margin = (max - min) * 0.08 || Math.abs(max) * 0.02 || 1;
       min -= margin; max += margin;
-      const first = points[0][0];
-      const last = points[points.length - 1][0];
-      const span = last - first || 1;
+      const times = lines.flatMap((l) => [l.points[0][0], l.points[l.points.length - 1][0]]);
+      const start = Math.min(...times);
+      const end = Math.max(...times);
+      const span = end - start || 1;
       const right = width - PAD.right;
       const bottom = height - PAD.bottom;
-      const x = (t) => PAD.left + (right - PAD.left) * ((t - first) / span);
+      const x = (t) => PAD.left + (right - PAD.left) * ((t - start) / span);
       const y = (v) => PAD.top + (bottom - PAD.top) * (1 - (v - min) / (max - min));
-      let line = '';
-      points.forEach(([t, v], i) => {
+      const path = (points) => points.map(([t, v], i) => {
         const px = x(t).toFixed(1);
         const py = y(v).toFixed(1);
-        line += !i ? `M${px} ${py}` : step ? `H${px}V${py}` : `L${px} ${py}`;
-      });
-      const area = `${line}L${x(last).toFixed(1)} ${bottom}L${x(first).toFixed(1)} ${bottom}Z`;
+        return !i ? `M${px} ${py}` : step ? `H${px}V${py}` : `L${px} ${py}`;
+      }).join('');
       const grid = niceTicks(min, max).map((v) => `<line class="chart-grid" x1="${PAD.left}" x2="${right}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text class="chart-label" x="${right + 6}" y="${(y(v) + 4).toFixed(1)}">${axis(v)}</text>`).join('');
       const count = width < 360 ? 3 : 4;
       const seen = new Set();
       const ticks = Array.from({ length: count }, (_, n) => {
-        const t = first + span * ((n + 0.5) / count);
+        const t = start + span * ((n + 0.5) / count);
         const label = axisLabel(t, span);
         if (seen.has(label)) return '';
         seen.add(label);
         return `<text class="chart-label" text-anchor="middle" x="${x(t).toFixed(1)}" y="${height - 5}">${label}</text>`;
       }).join('');
       const baseLine = base === undefined || base === null ? '' : `<line class="chart-base" x1="${PAD.left}" x2="${right}" y1="${y(base).toFixed(1)}" y2="${y(base).toFixed(1)}"/>`;
-      svg.innerHTML = `${grid}${baseLine}<path class="chart-area" d="${area}"/><path class="chart-line" d="${line}"/>${ticks}`
-        + `<g class="chart-over" hidden><rect class="chart-band" y="${PAD.top}" height="${bottom - PAD.top}"/><line class="chart-rule" y1="${PAD.top}" y2="${bottom}"/><line class="chart-rule" y1="${PAD.top}" y2="${bottom}"/><circle r="3.5"/><circle r="3.5"/></g>`;
-      geometry = { x, y, first, span, right };
+      // one line gets the shaded area; several are told apart by colour alone
+      const only = lines.length === 1 ? lines[0] : null;
+      const area = only ? `<path class="chart-area" d="${path(only.points)}L${x(only.points[only.points.length - 1][0]).toFixed(1)} ${bottom}L${x(only.points[0][0]).toFixed(1)} ${bottom}Z" style="fill:${only.color}"/>` : '';
+      const drawn = lines.map((l) => `<path class="chart-line" d="${path(l.points)}" style="stroke:${l.color}"/>`).join('');
+      const dots = lines.map((l) => `<circle r="3.5" style="fill:${l.color}"/><circle r="3.5" style="fill:${l.color}"/>`).join('');
+      svg.innerHTML = `${grid}${baseLine}<g class="chart-over" hidden><rect class="chart-band" y="${PAD.top}" height="${bottom - PAD.top}"/></g>${area}${drawn}${ticks}`
+        + `<g class="chart-marks" hidden><line class="chart-rule" y1="${PAD.top}" y2="${bottom}"/><line class="chart-rule" y1="${PAD.top}" y2="${bottom}"/>${dots}</g>`;
+      geometry = { x, y, start, span, right, bottom };
     }
 
     function spotAt(clientX) {
-      const { points, step } = options;
-      const { first, span, right } = geometry;
+      const { lines, step } = options;
+      const { start, span, right } = geometry;
       const box = svg.getBoundingClientRect();
       const share = Math.min(1, Math.max(0, (clientX - box.left - PAD.left) / (right - PAD.left)));
-      const t = first + span * share;
-      let i = 0;
-      if (step) {
-        while (i + 1 < points.length && points[i + 1][0] <= t) i += 1;
-        return { t, v: points[i][1], i };
+      let t = start + span * share;
+      // a line chart snaps to its nearest point; a step chart keeps the exact day
+      if (!step) {
+        const points = lines[0].points;
+        let lo = 0;
+        let hi = points.length - 1;
+        while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (points[mid][0] <= t) lo = mid; else hi = mid; }
+        t = t - points[lo][0] <= points[hi][0] - t ? points[lo][0] : points[hi][0];
       }
-      let lo = 0;
-      let hi = points.length - 1;
-      while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (points[mid][0] <= t) lo = mid; else hi = mid; }
-      i = t - points[lo][0] <= points[hi][0] - t ? lo : hi;
-      return { t: points[i][0], v: points[i][1], i };
+      return { t, values: lines.map((l) => valueAt(l.points, t, step)) };
+    }
+
+    function place(el, middle) {
+      const room = plot.clientWidth - el.offsetWidth - 2;
+      el.style.left = `${Math.max(2, Math.min(room, middle - el.offsetWidth / 2))}px`;
     }
 
     function show(a, b) {
+      const marks = svg.querySelector('.chart-marks');
       const over = svg.querySelector('.chart-over');
-      if (!over) return;
-      const { x, y } = geometry;
-      const [band, ruleA, ruleB, dotA, dotB] = over.children;
-      const ends = b ? [a, b].sort((p, q) => p.t - q.t) : [a];
-      over.hidden = false;
-      ruleA.setAttribute('x1', x(ends[0].t)); ruleA.setAttribute('x2', x(ends[0].t));
-      dotA.setAttribute('cx', x(ends[0].t)); dotA.setAttribute('cy', y(ends[0].v));
+      if (!marks) return;
+      const { x, y, bottom } = geometry;
       const two = Boolean(b) && b.t !== a.t;
-      for (const el of [band, ruleB, dotB]) el.style.display = two ? '' : 'none';
+      const ends = two ? [a, b].sort((p, q) => p.t - q.t) : [a];
+      const [ruleA, ruleB, ...dots] = marks.children;
+      marks.removeAttribute('hidden');
+      ruleA.setAttribute('x1', x(ends[0].t)); ruleA.setAttribute('x2', x(ends[0].t));
+      ruleB.style.display = two ? '' : 'none';
+      if (two) { ruleB.setAttribute('x1', x(ends[1].t)); ruleB.setAttribute('x2', x(ends[1].t)); }
+      options.lines.forEach((_, n) => {
+        const [dotA, dotB] = [dots[n * 2], dots[n * 2 + 1]];
+        dotA.setAttribute('cx', x(ends[0].t)); dotA.setAttribute('cy', y(ends[0].values[n]));
+        dotB.style.display = two ? '' : 'none';
+        if (two) { dotB.setAttribute('cx', x(ends[1].t)); dotB.setAttribute('cy', y(ends[1].values[n])); }
+      });
+      over.toggleAttribute('hidden', !two);
       if (two) {
+        const band = over.firstElementChild;
         band.setAttribute('x', x(ends[0].t)); band.setAttribute('width', x(ends[1].t) - x(ends[0].t));
-        ruleB.setAttribute('x1', x(ends[1].t)); ruleB.setAttribute('x2', x(ends[1].t));
-        dotB.setAttribute('cx', x(ends[1].t)); dotB.setAttribute('cy', y(ends[1].v));
       }
-      tip.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a);
+      // the period's two ends, written on the time axis under each rule
+      edges.forEach((el, n) => {
+        const spot = ends[n];
+        el.hidden = !spot || (!two && !pinned && !first);
+        if (el.hidden) return;
+        el.textContent = options.edge(spot.t);
+        el.style.top = `${bottom + 1}px`;
+        place(el, x(spot.t));
+      });
+      tip.innerHTML = two ? options.measure(ends[0], ends[1]) : options.tip(a, Boolean(first));
       tip.hidden = false;
-      const middle = two ? (x(ends[0].t) + x(ends[1].t)) / 2 : x(a.t);
-      const room = plot.clientWidth - tip.offsetWidth - 4;
-      tip.style.left = `${Math.max(4, Math.min(room, middle - tip.offsetWidth / 2))}px`;
+      place(tip, two ? (x(ends[0].t) + x(ends[1].t)) / 2 : x(a.t));
     }
 
     function hide() {
-      const over = svg.querySelector('.chart-over');
-      if (over) over.hidden = true;
+      svg.querySelector('.chart-marks')?.setAttribute('hidden', '');
+      svg.querySelector('.chart-over')?.setAttribute('hidden', '');
       tip.hidden = true;
+      edges.forEach((el) => { el.hidden = true; });
     }
 
-    new ResizeObserver(render).observe(svg);
+    new ResizeObserver(() => { pinned = false; first = null; render(); }).observe(svg);
     svg.addEventListener('pointerdown', (e) => {
       if (!geometry) return;
-      pinned = false;
       anchor = spotAt(e.clientX);
+      moved = false;
       svg.setPointerCapture(e.pointerId);
-      show(anchor);
+      if (!first) { pinned = false; show(anchor); }
     });
     svg.addEventListener('pointermove', (e) => {
       if (!geometry) return;
       const spot = spotAt(e.clientX);
-      if (anchor) show(anchor, spot);
+      if (anchor) {
+        if (spot.t !== anchor.t) moved = true;
+        if (moved) { first = null; show(anchor, spot); }
+      } else if (first) show(first, spot);
       else if (!pinned) show(spot);
     });
     svg.addEventListener('pointerup', (e) => {
       if (!anchor) return;
       const spot = spotAt(e.clientX);
-      pinned = spot.t !== anchor.t;
-      if (pinned) show(anchor, spot);
+      if (moved) {
+        // dragged from one point to another
+        pinned = true; first = null; show(anchor, spot);
+      } else if (first && spot.t !== first.t) {
+        // the second click of a pair
+        pinned = true; show(first, spot); first = null;
+      } else {
+        // the first click: hold this point and wait for the second
+        pinned = false; first = spot; show(spot);
+      }
       anchor = null;
     });
-    svg.addEventListener('pointerleave', (e) => {
-      if (anchor || (pinned && e.pointerType !== 'mouse')) return;
-      pinned = false;
+    svg.addEventListener('pointerleave', () => {
+      if (anchor || pinned || first) return;
       hide();
     });
     return {
-      set(next) { options = next; pinned = false; anchor = null; render(); },
-      clear() { options = null; geometry = null; svg.replaceChildren(); tip.hidden = true; },
+      set(next) { options = next; pinned = false; first = null; anchor = null; render(); },
+      clear() { options = null; geometry = null; svg.replaceChildren(); hide(); },
     };
   }
 
@@ -187,70 +237,116 @@
   }
   const rangeButtons = (list) => `<div class="market-ranges" role="group" aria-label="טווח זמן">${list.map(([id, label]) => `<button type="button" data-range="${id}" aria-pressed="false">${label}</button>`).join('')}</div>`;
   const chartBlock = '<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>';
-  const HINT = '<span class="chart-hint">גררו על הגרף כדי למדוד תקופה</span>';
+  const HINT = '<span class="chart-hint">לחצו על שתי נקודות בגרף, או גררו ביניהן, כדי למדוד תקופה.</span>';
+  const PICK_SECOND = '<small>לחצו על נקודה נוספת כדי למדוד</small>';
+  const tipLines = (lines, values, show) => lines.map((l, n) => `<span class="chart-tip-line">${lines.length > 1 ? `${swatch(l.color)}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
 
   // ---------- the funds tab ----------
   const fundsPanel = tile.querySelector('[data-market-panel="funds"]');
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
   const fundsTitle = fundsPanel.querySelector('.market-chart figcaption');
+  const fundsHint = document.createElement('p');
+  fundsHint.className = 'chart-hint';
+  fundsHint.innerHTML = 'לחצו על חברה בטבלה כדי להוסיף אותה לגרף או להסיר אותה. לחצו על שתי נקודות בגרף כדי למדוד תקופה.';
+  fundsPanel.querySelector('.yield-tables').after(fundsHint);
   const COLUMN_RANGE = { y1: 12, y3: 36, y7: 84 };
   let [product, track, sort] = fundsPanel.querySelector('table[data-yield-view]:not([hidden])').dataset.yieldView.split('-');
-  let pickedFund = null;
+  let picked = [];
+  const colorOf = new Map();
   let fundRange = COLUMN_RANGE[sort];
-  const fundRanges = ranges(fundsPanel.querySelector('.market-ranges'), (value) => { fundRange = Number(value); drawFund(); });
-  // the month a report period ends, as a time: the first of the next month
-  const monthEnd = (period, plus) => new Date(Math.floor(period / 100), period % 100 + plus, 1).getTime();
+  const fundRanges = ranges(fundsPanel.querySelector('.market-ranges'), (value) => { fundRange = Number(value); drawFunds(); });
+  // a report period as a month count, and the moment that month ends
+  const absolute = (period) => Math.floor(period / 100) * 12 + (period % 100) - 1;
+  const monthEnd = (abs) => new Date(Math.floor(abs / 12), (abs % 12) + 1, 1).getTime();
+  const shownTable = () => fundsPanel.querySelector('table[data-yield-view]:not([hidden])');
+  const nameOf = (key) => shownTable().querySelector(`[data-yield-row="${key}"]`).textContent;
 
-  function drawFund() {
-    const button = fundsPanel.querySelector(`table:not([hidden]) [data-yield-row="${pickedFund}"]`);
-    const { start, m } = series[pickedFund];
-    fundRanges.allow((r) => Number(r) === 0 || Number(r) <= m.length);
-    if (fundRange && fundRange > m.length) fundRange = 0;
-    fundRanges.pick(fundRange);
-    const from = fundRange ? m.length - fundRange : 0;
-    const points = [[monthEnd(start, from - 1), 0]];
-    let total = 1;
-    for (let i = from; i < m.length; i += 1) { total *= 1 + m[i] / 100; points.push([monthEnd(start, i), (total - 1) * 100]); }
-    const shown = (t) => month(t - 86400000);
-    const when = fundRange === 12 ? 'בשנה האחרונה' : fundRange ? `ב־${fundRange / 12} השנים האחרונות` : `מ${MONTHS[(start % 100) - 1]} ${Math.floor(start / 100)}`;
-    fundsTitle.innerHTML = `${button.textContent}: תשואה מצטברת ${when}`;
-    fundsChart.set({
-      points, base: 0,
-      axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
-      tip: (s) => `<b>${ltr(`${signed(s.v)}%`)}</b> מתחילת התקופה ועד סוף ${shown(s.t)}`,
-      measure: (a, b) => `<b>${ltr(`${signed(((1 + b.v / 100) / (1 + a.v / 100) - 1) * 100)}%`)}</b> מסוף ${shown(a.t)} עד סוף ${shown(b.t)}`,
+  function paintRows() {
+    const table = shownTable();
+    fundsPanel.querySelectorAll('tbody tr').forEach((row) => row.classList.remove('is-picked'));
+    table.querySelectorAll('[data-yield-row]').forEach((b) => {
+      const on = picked.includes(b.dataset.yieldRow);
+      b.setAttribute('aria-pressed', String(on));
+      b.style.setProperty('--swatch', on ? colorOf.get(b.dataset.yieldRow) : 'transparent');
+      b.closest('tr').classList.toggle('is-picked', on);
     });
   }
 
-  function pickFund(table) {
-    const button = table.querySelector(`[data-yield-row="${pickedFund}"]`) || table.querySelector('[data-yield-row]');
-    pickedFund = button.dataset.yieldRow;
-    fundsPanel.querySelectorAll('tbody tr').forEach((row) => row.classList.remove('is-picked'));
-    table.querySelectorAll('[data-yield-row]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-    button.closest('tr').classList.add('is-picked');
-    drawFund();
+  function drawFunds() {
+    paintRows();
+    const funds = picked.map((key) => ({ key, ...series[key], last: absolute(series[key].start) + series[key].m.length - 1 }));
+    const last = Math.min(...funds.map((f) => f.last));
+    const earliest = Math.max(...funds.map((f) => absolute(f.start)));
+    const length = last - earliest + 1;
+    fundRanges.allow((r) => Number(r) === 0 || Number(r) <= length);
+    if (fundRange && fundRange > length) fundRange = 0;
+    fundRanges.pick(fundRange);
+    const from = fundRange ? last - fundRange + 1 : earliest;
+    const lines = funds.map((f) => {
+      const points = [[monthEnd(from - 1), 0]];
+      let total = 1;
+      for (let abs = from; abs <= last; abs += 1) {
+        total *= 1 + f.m[abs - absolute(f.start)] / 100;
+        points.push([monthEnd(abs), (total - 1) * 100]);
+      }
+      return { points, color: colorOf.get(f.key), name: nameOf(f.key) };
+    });
+    const startName = `${MONTHS[from % 12]} ${Math.floor(from / 12)}`;
+    const when = fundRange === 12 ? 'בשנה האחרונה' : fundRange ? `ב־${fundRange / 12} השנים האחרונות` : `מ${startName}`;
+    fundsTitle.textContent = `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`;
+    const ended = (t) => month(t - 86400000);
+    fundsChart.set({
+      lines, base: 0,
+      axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
+      edge: (t) => ended(t),
+      tip: (s, waiting) => `<span class="chart-tip-head">מתחילת התקופה עד סוף ${ended(s.t)}</span>${tipLines(lines, s.values, (v) => `${signed(v)}%`)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-tip-head">מסוף ${ended(a.t)} עד סוף ${ended(b.t)}</span>${tipLines(lines, a.values.map((v, n) => ((1 + b.values[n] / 100) / (1 + v / 100) - 1) * 100), (v) => `${signed(v)}%`)}`,
+    });
   }
+
+  function toggle(key) {
+    if (picked.includes(key)) {
+      if (picked.length === 1) return;
+      picked = picked.filter((k) => k !== key);
+      colorOf.delete(key);
+    } else {
+      if (picked.length === COLORS.length) return;
+      picked.push(key);
+      colorOf.set(key, COLORS.find((c) => ![...colorOf.values()].includes(c)));
+    }
+    drawFunds();
+  }
+
+  // On a new view, funds still in the table stay on; with none left, the leader comes on.
+  function keepPicks() {
+    const keys = [...shownTable().querySelectorAll('[data-yield-row]')].map((b) => b.dataset.yieldRow);
+    picked = picked.filter((k) => keys.includes(k));
+    for (const key of [...colorOf.keys()]) if (!picked.includes(key)) colorOf.delete(key);
+    if (!picked.length) { picked = [keys[0]]; colorOf.set(keys[0], COLORS[0]); }
+    drawFunds();
+  }
+
   fundsPanel.addEventListener('click', (e) => {
     if (e.target.closest('.market-ranges, .market-chart')) return;
-    const table = e.target.closest('table[data-yield-view]');
     const row = e.target.closest('tbody tr');
-    if (table && row) { pickedFund = row.querySelector('[data-yield-row]').dataset.yieldRow; pickFund(table); return; }
+    if (row && e.target.closest('table[data-yield-view]')) { toggle(row.querySelector('[data-yield-row]').dataset.yieldRow); return; }
     const button = e.target.closest('button');
     if (!button) return;
     const { yieldProduct, yieldTrack, yieldSort } = button.dataset;
+    if (!yieldProduct && !yieldTrack && !yieldSort) return;
     product = yieldProduct || product;
     track = yieldTrack || track;
     if (yieldSort) { sort = yieldSort; fundRange = COLUMN_RANGE[sort]; }
     if (!yieldSort) button.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
     const view = `${product}-${track}-${sort}`;
     fundsPanel.querySelectorAll('[data-yield-view]').forEach((el) => { el.hidden = el.dataset.yieldView !== view; });
-    const shownTable = fundsPanel.querySelector(`table[data-yield-view="${view}"]`);
-    pickFund(shownTable);
+    if (yieldProduct || yieldTrack) picked = [];
+    keepPicks();
     // the clicked heading belonged to a table that just hid: keep the focus on its twin
-    if (yieldSort) shownTable.querySelector(`[data-yield-sort="${yieldSort}"]`).focus();
+    if (yieldSort) shownTable().querySelector(`[data-yield-sort="${yieldSort}"]`).focus();
   });
-  pickFund(fundsPanel.querySelector('table[data-yield-view]:not([hidden])'));
+  keepPicks();
 
   // ---------- shared by the live tabs ----------
   const noteBlock = '<p class="yield-note"><strong data-updated>&nbsp;</strong><span data-source></span></p>';
@@ -270,7 +366,7 @@
   // ---------- the currencies tab ----------
   const FX = [['usdils', 'דולר/שקל', 4], ['eurils', 'אירו/שקל', 4], ['gbpils', 'ליש"ט/שקל', 4], ['eurusd', 'אירו/דולר', 4], ['gbpusd', 'ליש"ט/דולר', 4], ['usdjpy', 'דולר/ין יפני', 2], ['usdchf', 'דולר/פרנק', 4]];
   const FX_RANGES = [['1', 'חודש'], ['6', '6 ח׳'], ['12', 'שנה'], ['60', '5 שנים'], ['120', '10 שנים']];
-  const fx = { picked: 'usdils', range: 12, history: new Map(), loaded: false };
+  const fx = { picked: 'usdils', range: 12, history: new Map() };
 
   function buildFx() {
     const element = tile.querySelector('[data-market-panel="fx"]');
@@ -301,12 +397,13 @@
       if (id !== fx.picked) return;
       const all = fx.history.get(id);
       const from = all[all.length - 1][0] - fx.range * (YEAR_MS / 12);
-      const points = all.filter(([t]) => t >= from);
+      const lines = [{ points: all.filter(([t]) => t >= from), color: COLORS[0], name: label }];
       fx.chart.set({
-        points,
+        lines,
         axis: (v) => number(v, digits === 4 ? 2 : 0),
-        tip: (s) => `<b>${ltr(number(s.v, digits))}</b> ב־${day(s.t)}`,
-        measure: (a, b) => `<b>${ltr(`${signed((b.v / a.v - 1) * 100)}%`)}</b> מ־${day(a.t)} עד ${day(b.t)}`,
+        edge: day,
+        tip: (s, waiting) => `<span class="chart-tip-head">${day(s.t)}</span>${tipLines(lines, s.values, (v) => number(v, digits))}${waiting ? PICK_SECOND : ''}`,
+        measure: (a, b) => `<span class="chart-tip-head">מ־${day(a.t)} עד ${day(b.t)}</span>${tipLines(lines, [(b.values[0] / a.values[0] - 1) * 100], (v) => `${signed(v)}%`)}`,
       });
     } catch {
       fx.chart.clear();
@@ -337,9 +434,9 @@
   }
 
   // ---------- the rates tab ----------
-  const RATES = [['il', 'ישראל', 'ריבית בנק ישראל'], ['us', 'ארה"ב', 'ריבית הפד, הטווח העליון'], ['eu', 'אירופה', 'ריבית הפיקדון של הבנק האירופי'], ['uk', 'לונדון', 'ריבית בנק אנגליה']];
+  const RATES = [['il', 'ישראל', 'ריבית בנק ישראל'], ['us', 'ארה"ב', 'ריבית הפד, הטווח העליון'], ['eu', 'אירופה', 'ריבית הפיקדון של הבנק האירופי'], ['uk', 'אנגליה', 'ריבית בנק אנגליה']];
   const RATE_RANGES = [['1', 'שנה'], ['5', '5 שנים'], ['10', '10 שנים'], ['20', '20 שנים'], ['0', 'מקס׳']];
-  const rates = { picked: 'il', range: 5, items: null, loaded: false };
+  const rates = { picked: 'il', range: 5, items: null };
 
   function buildRates() {
     const element = tile.querySelector('[data-market-panel="rates"]');
@@ -362,7 +459,7 @@
   }
 
   function drawRate() {
-    const [, , title] = RATES.find(([id]) => id === rates.picked);
+    const [, label, title] = RATES.find(([id]) => id === rates.picked);
     const item = rates.items?.find((i) => i.id === rates.picked);
     rates.title.textContent = title;
     if (!item) { rates.chart.clear(); return; }
@@ -374,11 +471,13 @@
     const points = [[Math.max(from, all[0][0]), all[before][1]], ...all.slice(before + 1), [now, all[all.length - 1][1]]];
     const oldest = all[0][0];
     rates.ranges.allow((r) => Number(r) === 0 || now - Number(r) * YEAR_MS >= oldest - 31 * 86400000);
+    const lines = [{ points, color: COLORS[0], name: label }];
     rates.chart.set({
-      points, step: true,
+      lines, step: true,
       axis: (v) => `${number(v, 2)}%`,
-      tip: (s) => `<b>${ltr(`${number(s.v, 2)}%`)}</b> ב־${day(s.t)}`,
-      measure: (a, b) => `<b>${ltr(signed(b.v - a.v))}</b> נקודות אחוז מ־${day(a.t)} עד ${day(b.t)}`,
+      edge: day,
+      tip: (s, waiting) => `<span class="chart-tip-head">${day(s.t)}</span>${tipLines(lines, s.values, (v) => `${number(v, 2)}%`)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-tip-head">מ־${day(a.t)} עד ${day(b.t)}</span>${tipLines(lines, [b.values[0] - a.values[0]], (v) => `${signed(v)} נק׳ אחוז`)}`,
     });
   }
 
@@ -401,25 +500,35 @@
     drawRate();
   }
 
-  // ---------- the indices tab: TradingView's widget ----------
+  // ---------- the indices tab: TradingView's widgets ----------
+  // A chart with its price axis and a switch between the indices, then a table with column titles.
   const INDICES = [['TASE:TA35', 'ת"א 35'], ['TASE:TA125', 'ת"א 125'], ['FOREXCOM:SPXUSD', 'S&P 500'], ['FOREXCOM:NSXUSD', 'נאסדק 100'], ['FOREXCOM:GRXEUR', 'דאקס']];
+  function widget(box, name, height, config) {
+    const holder = document.createElement('div');
+    holder.className = 'tradingview-widget-container';
+    holder.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+    const script = document.createElement('script');
+    script.src = `https://s3.tradingview.com/external-embedding/embed-widget-${name}.js`;
+    script.async = true;
+    script.textContent = JSON.stringify({ width: '100%', height, locale: 'he_IL', colorTheme: 'light', isTransparent: true, ...config });
+    holder.append(script);
+    box.append(holder);
+  }
   function loadIndices() {
     const box = tile.querySelector('[data-market-panel="indices"] [data-tv]');
-    box.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div></div>';
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-    script.async = true;
-    script.textContent = JSON.stringify({
-      colorTheme: 'light', dateRange: '12M', showChart: true, locale: 'he_IL', width: '100%', height: '100%',
-      largeChartUrl: '', isTransparent: true, showSymbolLogo: false, showFloatingTooltip: true,
-      plotLineColorGrowing: 'rgba(58, 110, 165, 1)', plotLineColorFalling: 'rgba(58, 110, 165, 1)',
-      gridLineColor: 'rgba(12, 33, 52, 0.08)', scaleFontColor: 'rgba(70, 88, 106, 1)',
-      belowLineFillColorGrowing: 'rgba(58, 110, 165, 0.14)', belowLineFillColorFalling: 'rgba(58, 110, 165, 0.14)',
-      belowLineFillColorGrowingBottom: 'rgba(58, 110, 165, 0)', belowLineFillColorFallingBottom: 'rgba(58, 110, 165, 0)',
-      symbolActiveColor: 'rgba(58, 110, 165, 0.12)',
-      tabs: [{ title: 'מדדים', symbols: INDICES.map(([s, d]) => ({ s, d })) }],
+    widget(box, 'symbol-overview', 316, {
+      symbols: INDICES.map(([s, d]) => [d, `${s}|12M`]),
+      chartOnly: false, showVolume: false, showMA: false, hideDateRanges: false, hideMarketStatus: false, hideSymbolLogo: true,
+      scalePosition: 'right', scaleMode: 'Normal', fontSize: '10', noTimeScale: false, valuesTracking: '1', changeMode: 'price-and-percent',
+      chartType: 'area', lineColor: 'rgba(58, 110, 165, 1)', topColor: 'rgba(58, 110, 165, 0.25)', bottomColor: 'rgba(58, 110, 165, 0)',
+      lineWidth: 2, lineType: 0, gridLineColor: 'rgba(12, 33, 52, 0.06)',
+      dateRanges: ['1d|1', '1m|30', '3m|60', '12m|1D', '60m|1W', 'all|1M'],
     });
-    box.querySelector('.tradingview-widget-container').append(script);
+    widget(box, 'market-quotes', 222, {
+      showSymbolLogo: false,
+      symbolsGroups: [{ name: 'מדדים', symbols: INDICES.map(([s, d]) => ({ name: s, displayName: d })) }],
+    });
+    box.insertAdjacentHTML('beforeend', '<div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>');
   }
 
   // ---------- the tabs ----------
@@ -435,8 +544,8 @@
       tab.tabIndex = on ? 0 : -1;
     }
     tile.querySelectorAll('[data-market-panel]').forEach((el) => { el.hidden = el.dataset.marketPanel !== name; });
-    // "where does your fund stand" belongs to the funds only
-    if (cta) cta.hidden = name !== 'funds';
+    // "where does your fund stand" belongs to the funds only; its place stays, so the tile keeps its height
+    if (cta) cta.classList.toggle('is-away', name !== 'funds');
     if (!opened.has(name)) { opened.add(name); firstOpen[name](); }
   }
 

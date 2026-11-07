@@ -260,25 +260,32 @@ html:not(.js) .market-tabs { display: none; }
 .market-chart figcaption { font-size: 13px; font-weight: 700; line-height: 1.35; color: var(--ink); min-height: 1.35em; }
 .market-plot { position: relative; flex: 1; min-height: 0; }
 .market-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; direction: ltr; touch-action: pan-y; cursor: crosshair; user-select: none; -webkit-user-select: none; }
-.chart-tip { position: absolute; top: 0; z-index: 1; max-width: calc(100% - 8px); padding: 3px 8px; background: var(--navy); color: var(--on-dark); font-size: 12px; line-height: 1.4; white-space: nowrap; pointer-events: none; }
+.chart-tip { position: absolute; top: 0; z-index: 1; display: flex; flex-direction: column; max-width: calc(100% - 4px); padding: 4px 8px; background: var(--navy); color: var(--on-dark); font-size: 12px; line-height: 1.45; white-space: nowrap; pointer-events: none; }
 .chart-tip b { color: var(--gold); font-weight: 800; }
+.chart-tip small { color: var(--on-dark-soft); font-size: 11px; }
+.chart-tip-head { color: var(--on-dark-soft); }
+.chart-tip-line { display: flex; align-items: center; gap: 5px; }
+.chart-dot { display: inline-block; width: 8px; height: 8px; flex: none; }
+.chart-edge { position: absolute; z-index: 1; padding: 1px 5px; background: var(--navy); color: var(--gold); font-size: 11px; font-weight: 700; line-height: 1.5; white-space: nowrap; pointer-events: none; }
+.chart-edge[hidden] { display: none; }
+.chart-marks[hidden] { display: none; }
+.chart-marks circle { stroke: var(--paper); stroke-width: 1.5; }
 .chart-tip[hidden] { display: none; }
-.chart-band { fill: rgba(201, 183, 114, .22); }
-.chart-rule { stroke: rgba(12, 33, 52, .45); stroke-width: 1; }
-.chart-over circle { fill: #3A6EA5; stroke: var(--paper); stroke-width: 1.5; }
+.chart-band { fill: rgba(201, 183, 114, .32); }
+.chart-rule { stroke: var(--navy); stroke-width: 1.5; }
 .chart-over[hidden] { display: none; }
-.chart-hint { display: block; margin-top: 2px; }
+.chart-hint { display: block; margin-top: 2px; font-size: 12px; line-height: 1.45; color: var(--ink-soft); }
+p.chart-hint { margin: -4px 0 0; }
 @media (hover: none) { .chart-hint { display: none; } }
 .is-up { color: #0B7A4B; }
 .is-down { color: #B3261E; }
-.tv-box { flex: 1; min-height: 380px; display: flex; flex-direction: column; }
-.tv-box .tradingview-widget-container { flex: 1; display: flex; flex-direction: column; }
-.tv-box .tradingview-widget-container__widget { flex: 1; min-height: 0; }
+.tv-box { flex: 1; display: flex; flex-direction: column; gap: 6px; margin-inline: -14px; }
+.tv-box .tradingview-widget-copyright { padding-inline: 14px; }
 .tv-box .tradingview-widget-copyright { font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
 .tv-box .tradingview-widget-copyright a { color: inherit; }
-.yield-cta[hidden] { display: none; }
-.chart-line { fill: none; stroke: #3A6EA5; stroke-width: 1.5; stroke-linejoin: round; }
-.chart-area { fill: rgba(58, 110, 165, .14); }
+.yield-cta.is-away { visibility: hidden; }
+.chart-line { fill: none; stroke-width: 1.6; stroke-linejoin: round; }
+.chart-area { fill-opacity: .14; }
 .chart-grid { stroke: rgba(12, 33, 52, .1); stroke-width: 1; }
 .chart-base { stroke: rgba(12, 33, 52, .5); stroke-width: 1; stroke-dasharray: 3 3; }
 .chart-label { font-size: 11px; fill: var(--ink-soft); font-variant-numeric: tabular-nums; }
@@ -293,21 +300,23 @@ html:not(.js) .market-tabs { display: none; }
 .yield-picks button[aria-pressed="true"] { background: var(--navy); color: var(--gold); font-weight: 700; }
 .yield-tables { flex: none; }
 .yield-tables table { width: 100%; border-collapse: collapse; font-size: 14px; }
-@media (min-width: 901px) { .yield-tables table { font-size: 16px; } }
-@media (min-width: 1600px) { .yield-tables table { font-size: 17px; } }
+@media (min-width: 901px) { .yield-tables table { font-size: 15px; } }
+@media (min-width: 1600px) { .yield-tables table { font-size: 16px; } }
 /* a narrow yields tile: give it more of the board, and smaller figures on the smallest phones */
 @media (min-width: 901px) and (max-width: 1100px) {
   .hero { grid-template-columns: minmax(0, 1fr) 400px; }
-  .yield-tables table { font-size: 15px; }
+  .yield-tables table { font-size: 14px; }
 }
 @media (max-width: 360px) { .yield-tables table { font-size: 13px; } }
 .yield-tables table[hidden] { display: none; }
-.yield-tables th, .yield-tables td { padding: 5px 0; text-align: start; border-bottom: 1px solid rgba(12, 33, 52, .14); }
+.yield-tables th, .yield-tables td { padding: 4px 0; text-align: start; border-bottom: 1px solid rgba(12, 33, 52, .14); }
 .yield-tables thead th { padding-top: 0; font-size: 13px; font-weight: 800; color: var(--ink); border-bottom: 2px solid var(--navy); }
 .yield-tables tbody th { font-weight: 700; }
 .yield-tables tbody tr { cursor: pointer; }
 .yield-tables tbody th button { appearance: none; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .yield-tables tbody tr.is-picked > * { background: #DCE6F0; }
+[data-yield-row]::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-inline-end: 7px; vertical-align: 0; border: 1.5px solid rgba(12, 33, 52, .4); background: var(--swatch, transparent); }
+[data-yield-row][aria-pressed="true"]::before { border-color: var(--swatch); }
 .yield-tables td, .yield-tables thead th + th { width: 23%; text-align: end; font-variant-numeric: tabular-nums; }
 .yield-tables td.is-sorted { font-weight: 800; }
 .yield-tables thead button { appearance: none; display: inline-flex; align-items: center; gap: 4px; padding: 2px 0; border: 0; background: none; color: inherit; font: inherit; text-align: end; cursor: pointer; }
