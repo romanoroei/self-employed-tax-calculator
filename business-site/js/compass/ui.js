@@ -225,7 +225,7 @@
           h('span', { class: 'cp-map-name', id: `cp-area-${a}`, text: s[a].title }),
           h('span', { class: 'cp-map-score', 'aria-hidden': 'true', text: String(s[a].score) }),
           h('span', { class: 'cp-bar', role: 'img', 'aria-label': `${s[a].title}: רלוונטיות ${s[a].score} מתוך 100` }, bar),
-          reasons.length ? h('details', { class: 'cp-why' }, h('summary', { text: 'למה?' }), h('ul', {}, reasons.map((r) => h('li', { text: `${r.why} (${r.pts > 0 ? '+' : ''}${r.pts})` })))) : null);
+          reasons.length ? h('details', { class: 'cp-why' }, h('summary', { text: 'למה?' }), h('ul', {}, reasons.map((r) => h('li', { text: r.why })))) : null);
         requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = `${s[a].score}%`; }));
         return row;
       })));
