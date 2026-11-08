@@ -15,7 +15,7 @@ const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Publish an explicit file list so source, tests and working files stay private.
 // Earlier share images stay published so links shared before keep their preview; v5 is the current one.
 const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg', 'whatsapp-share-v4.jpg', 'whatsapp-share-v5.jpg'];
-const publicSiteEntries = ['index.html','self-employed.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
+const publicSiteEntries = ['index.html','self-employed.html','compass.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
 const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml',...publicSiteEntries];
 await mkdir(calc, { recursive: true });
 // Refuse an output tree containing unexpected files rather than uploading them.
@@ -57,13 +57,13 @@ for (const page of businessPages) {
 await writeFile(path.join(output,'_redirects'), '# Homepage is served directly; calculator retains its existing path.\n');
 await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>העמוד לא נמצא</title><h1>העמוד לא נמצא</h1><a href="/">חזרה לאתר</a></html>');
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
-const sitePages = ['', 'self-employed', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar','self-employed-tax-calculator/'];
+const sitePages = ['', 'self-employed', 'compass', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar','self-employed-tax-calculator/'];
 await writeFile(path.join(output,'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages.map(p=>`<url><loc>https://romanoinvest.co.il/${p}</loc></url>`).join('')}</urlset>`);
 const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:root,stdio:'inherit'});
 if (siteCheck.error) throw siteCheck.error;
 if (siteCheck.status !== 0) process.exit(siteCheck.status || 1);
-// A failed financial or consent test fails the build and prevents publication.
-const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs'], {
+// A failed financial, consent or compass test fails the build and prevents publication.
+const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs','tests/compass.test.cjs'], {
   cwd: root, stdio: 'inherit', env: {...process.env, CALCULATOR_TEST_ROOT: calc}
 });
 if (result.error) throw result.error;

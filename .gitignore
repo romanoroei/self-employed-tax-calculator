@@ -9,6 +9,7 @@
 !whatsapp-share-v5.jpg
 !tests/
 !tests/pension.test.cjs
+!tests/compass.test.cjs
 
 !analytics.js
 !tests/analytics.test.cjs

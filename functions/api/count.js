@@ -1,10 +1,10 @@
 // Cloudflare Pages Function: anonymous totals for the business pages.
 // Counts, per month: calendar subscribe clicks, visits from a calendar reminder, clicks on the contact links,
-// sent lead forms, clicks on the home page strip, clicks on the travel insurance purchase links, clicks on the article share buttons, and summaries sent from the calculator (the label only, never the amounts).
+// sent lead forms, the steps of the financial compass (starts, first choices, stages reached, finishes, time bands, sources from a fixed list), clicks on the home page strip, clicks on the travel insurance purchase links, clicks on the article share buttons, and summaries sent from the calculator (the label only, never the amounts).
 // Stores only the label and a number (no IP, cookie or identifier), in the KV namespace bound as STATS.
 // Without that binding it accepts the request and stores nothing, so the page never depends on it.
 
-const LABEL = /^(?:subscribe:(?:google|apple|outlook|copy)|return:m(?:[1-9]|1[0-2])|contact:(?:whatsapp|phone|email|form|summary)|strip:(?:calculator|calendar|study|guide)|buy:(?:passportcard|harel|fnx)|share:(?:self-employed|tides|calendar))$/;
+const LABEL = /^(?:subscribe:(?:google|apple|outlook|copy)|return:m(?:[1-9]|1[0-2])|contact:(?:whatsapp|phone|email|form|summary)|strip:(?:calculator|calendar|study|guide|compass)|buy:(?:passportcard|harel|fnx)|share:(?:self-employed|tides|calendar)|compass:(?:start|resume|pick-[1-6]|primary-[1-6]|stage-[2-5]|done|limited|whatsapp|calculator|share|form|time-(?:fast|mid|slow)|utm-(?:tiktok|instagram|facebook|google|whatsapp|email|youtube|other)))$/;
 
 export async function onRequestPost({ request, env }) {
   const label = (await request.text()).trim();
