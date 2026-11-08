@@ -69,25 +69,25 @@ test('regulatory figures: an unverified figure or an unknown year is never used'
   assert.equal(R.figure(2026, 'no.such.figure'), null);
 });
 
-test('income ranges follow the 2026 legal thresholds, and fall back to plain ranges without verified data', () => {
+test('income: three simple ranges with borders at the 2026 thresholds, plain round numbers without verified data', () => {
   const b = E.incomeBands(2026);
   assert.equal(b.verified, true);
-  assert.deepEqual(b.options.map((o) => o.value), ['b1', 'b2', 'b3', 'b4', 'b5', 'unknown']);
-  assert.match(b.options[0].label, /82,600/); // half the average wage, 13,769 x 6
-  assert.match(b.options[1].label, /165,200/); // the average wage, 13,769 x 12
-  assert.match(b.options[2].label, /232,800/);
-  assert.match(b.options[3].label, /293,400/);
+  assert.deepEqual(b.options.map((o) => o.value), ['b1', 'b2', 'b3', 'unknown']);
+  assert.match(b.options[0].label, /165,000/); // the average wage, 13,769 x 12, rounded
+  assert.match(b.options[2].label, /290,000/); // the study fund deduction cap, 293,397, rounded
+  assert.ok(b.options.every((o) => !o.note), 'no explanations under the options');
   const f = E.incomeBands(2031);
   assert.equal(f.verified, false);
-  assert.match(f.options[0].label, /100,000/);
+  assert.match(f.options[0].label, /150,000/);
+  assert.ok(!f.options[0].label.includes('כ־'));
 });
 
 test('a figure-dependent rule is dropped when its figure is not verified', () => {
   const Rx = { ...R, figure: (y, p) => (p === 'eligibilityRules.obligationMaxAge' ? null : R.figure(y, p)) };
   const Ex = require(path.join(dir, 'engine.js')).make(C, Rx);
   let s = Ex.newState(NOW);
-  for (const [q, v] of [['priorities', ['minimum']], ['minReason', 'cantAfford'], ['obligationKnown', 'no'], ['deposits', 'none'], ['employee', 'no'], ['coverageImpact', 'no'], ['otherSavings', ['none']], ['age', '60p'], ['income', 'b2']]) s = Ex.answer(s, q, v, opts);
-  const withFigure = run({ priorities: ['minimum'], minReason: 'cantAfford', obligationKnown: 'no', deposits: 'none', employee: 'no', coverageImpact: 'no', otherSavings: ['none'], age: '60p', income: 'b2' });
+  for (const [q, v] of [['priorities', ['minimum']], ['minReason', 'cantAfford'], ['obligationKnown', 'no'], ['deposits', 'none'], ['employee', 'no'], ['coverageImpact', 'no'], ['otherSavings', ['none']], ['age', '60p'], ['income', 'b1']]) s = Ex.answer(s, q, v, opts);
+  const withFigure = run({ priorities: ['minimum'], minReason: 'cantAfford', obligationKnown: 'no', deposits: 'none', employee: 'no', coverageImpact: 'no', otherSavings: ['none'], age: '60p', income: 'b1' });
   assert.equal(scores(withFigure.result).D, 40 + 35 + 20 - 25, 'from 60 the obligation usually no longer applies');
   const res = Ex.result(s, opts);
   assert.equal(res.relevanceScores.D.score, Math.min(100, 40 + 35 + 20));
@@ -107,7 +107,7 @@ test('scoring is additive, explained and capped: every point has a reason', () =
 });
 
 test('multi-select: a follow-up asks what matters most now, and the other choices are kept and used', () => {
-  const r = run({ priorities: ['tax', 'liquidity', 'protection'], primary: 'tax', income: 'b4', employee: 'no', deposits: 'monthly', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', taxVsLiquidity: 'both', dependents: 'yes', coverageKnown: 'partial', liqReason: 'business', horizon: 'y1to3', age: '40s', family: 'partner' });
+  const r = run({ priorities: ['tax', 'liquidity', 'protection'], primary: 'tax', income: 'b3', employee: 'no', deposits: 'monthly', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', taxVsLiquidity: 'both', dependents: 'yes', coverageKnown: 'partial', liqReason: 'business', horizon: 'y1to3', age: '40s', family: 'partner' });
   assert.equal(r.asked[1], 'primary');
   const primaryView = E.view(E.answer(E.newState(NOW), 'priorities', ['tax', 'liquidity', 'protection'], opts), opts);
   assert.deepEqual(primaryView.question.options.map((o) => o.value), ['protection', 'tax', 'liquidity']);
@@ -146,14 +146,14 @@ test('optional questions can be skipped, required ones cannot', () => {
 test('a known fact is never asked twice: a derived answer skips its question', () => {
   const r = run({ priorities: ['protection'], worry: 'unknownCover', family: 'partner', dependents: 'yes', altIncome: 'no', age: '40s' });
   assert.ok(!r.asked.includes('coverageKnown'), '"I do not know which insurance I have" already answers it');
-  const all = run({ priorities: ['pension', 'tax'], primary: 'pension', age: '40s', deposits: 'annual', expectedPension: 'low', pensionVsLiquidity: 'maxRetirement', otherSavings: ['studyFund'], income: 'b3', taxReviewed: 'no', employee: 'no' });
+  const all = run({ priorities: ['pension', 'tax'], primary: 'pension', age: '40s', deposits: 'annual', expectedPension: 'low', pensionVsLiquidity: 'maxRetirement', otherSavings: ['studyFund'], income: 'b2', taxReviewed: 'no', employee: 'no' });
   assert.equal(all.asked.filter((x) => x === 'deposits').length, 1);
   assert.ok(all.asked.indexOf('income') > 0);
 });
 
 test('stage-based progress only moves forward and ends at the result', () => {
   let s = E.newState(NOW);
-  const script = { priorities: ['liquidity', 'tax'], primary: 'liquidity', liqReason: 'bigExpense', horizon: 'y1to3', liquidSavings: 'yes', liquidAmount: '150to400', studyFundLiquid: 'locked', deposits: 'irregular', taxVsLiquidity: 'liquid', income: 'b3', taxReviewed: 'unknown', employee: 'no', yearsActive: 'gt10y', age: '30s' };
+  const script = { priorities: ['liquidity', 'tax'], primary: 'liquidity', liqReason: 'bigExpense', horizon: 'y1to3', liquidSavings: 'yes', liquidAmount: '150to400', studyFundLiquid: 'locked', deposits: 'irregular', taxVsLiquidity: 'liquid', income: 'b2', taxReviewed: 'unknown', employee: 'no', yearsActive: 'gt10y', age: '30s' };
   let last = 0;
   for (;;) {
     const v = E.view(s, opts);
@@ -183,7 +183,7 @@ test('scenario 1: 30, prefers liquidity, no pension, invests on his own -> oblig
 });
 
 test('scenario 2: 47, high income, study fund, irregular pension deposits -> deposits, tax benefits and pension planning', () => {
-  const r = run({ priorities: ['tax'], income: 'b4', employee: 'no', deposits: 'irregular', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', age: '40s' });
+  const r = run({ priorities: ['tax'], income: 'b3', employee: 'no', deposits: 'irregular', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', age: '40s' });
   const s = scores(r.result);
   assert.equal(r.result.primaryNeed.area, 'C');
   assert.ok(s.C >= 80);
@@ -215,7 +215,7 @@ test('scenario 4: a family that does not know its cover -> protection check, nev
 });
 
 test('scenario 5: liquidity and tax benefits -> a question that weighs the two', () => {
-  const r = run({ priorities: ['liquidity', 'tax'], primary: 'tax', income: 'b3', employee: 'no', deposits: 'annual', studyFund: 'notDepositing', taxReviewed: 'unknown', extraDeposit: 'yes', taxVsLiquidity: 'both', liqReason: 'business', horizon: 'y1to3', age: '30s' });
+  const r = run({ priorities: ['liquidity', 'tax'], primary: 'tax', income: 'b2', employee: 'no', deposits: 'annual', studyFund: 'notDepositing', taxReviewed: 'unknown', extraDeposit: 'yes', taxVsLiquidity: 'both', liqReason: 'business', horizon: 'y1to3', age: '30s' });
   assert.ok(r.asked.includes('taxVsLiquidity'));
   assert.ok(r.asked.indexOf('taxVsLiquidity') < r.asked.indexOf('liqReason'), 'the bridge comes before the secondary path');
   assert.ok(shownAreas(r.result).includes('E'));
@@ -223,7 +223,7 @@ test('scenario 5: liquidity and tax benefits -> a question that weighs the two',
 });
 
 test('scenario 6: also an employee -> taken into account for the obligation and the tax benefits', () => {
-  const tax = run({ priorities: ['tax'], income: 'b3', employee: 'yes', deposits: 'monthly', studyFund: 'no', taxReviewed: 'no', extraDeposit: 'no', age: '40s' });
+  const tax = run({ priorities: ['tax'], income: 'b2', employee: 'yes', deposits: 'monthly', studyFund: 'no', taxReviewed: 'no', extraDeposit: 'no', age: '40s' });
   assert.ok(tax.result.primaryNeed.explain.some((t) => t.includes('משכורת')));
   assert.ok(tax.result.recommendedChecks.some((t) => t.includes('המשכורת')));
   const min = run({ priorities: ['minimum'], minReason: 'business', businessNeed: 'temporary', obligationKnown: 'unsure', deposits: 'irregular', employee: 'yes', coverageImpact: 'unaware', otherSavings: ['none'], age: '30s', yearsActive: '6m3y' });
@@ -275,7 +275,7 @@ test('scenario 8b: a changed answer that removes a branch removes its follow-up 
 
 test('scenario 9: leaving and coming back on the same device restores the progress, never the contact details', () => {
   let s = E.newState(NOW);
-  for (const [q, v] of [['priorities', ['tax', 'pension']], ['primary', 'tax'], ['income', 'b2']]) s = E.answer(s, q, v, opts);
+  for (const [q, v] of [['priorities', ['tax', 'pension']], ['primary', 'tax'], ['income', 'b1']]) s = E.answer(s, q, v, opts);
   const saved = E.serialize(s, NOW);
   assert.ok(!/phone|טלפון|name/.test(saved));
   const later = new Date(NOW.getTime() + 2 * 86400000);
@@ -302,7 +302,7 @@ test('scenario 10: without the AI layer (or when it fails) the built-in engine c
 });
 
 test('WhatsApp: the message names topics only, with no amounts, ages or family details', () => {
-  const r = run({ priorities: ['liquidity', 'tax'], primary: 'liquidity', liqReason: 'bigExpense', horizon: 'y1to3', liquidSavings: 'yes', liquidAmount: 'gt1m', studyFundLiquid: 'liquid', deposits: 'monthly', taxVsLiquidity: 'liquid', income: 'b5', taxReviewed: 'no', age: '50s' });
+  const r = run({ priorities: ['liquidity', 'tax'], primary: 'liquidity', liqReason: 'bigExpense', horizon: 'y1to3', liquidSavings: 'yes', liquidAmount: 'gt1m', studyFundLiquid: 'liquid', deposits: 'monthly', taxVsLiquidity: 'liquid', income: 'b3', taxReviewed: 'no', age: '50s' });
   const text = E.whatsappText(r.result);
   assert.ok(text.startsWith('שלום רועי, מילאתי את המצפן הפיננסי'));
   assert.ok(text.includes('נזילות וגמישות פיננסית'));
@@ -313,7 +313,7 @@ test('WhatsApp: the message names topics only, with no amounts, ages or family d
 });
 
 test('the internal summary: marked self-reported, with all ten parts, contact details only when given', () => {
-  const r = run({ priorities: ['tax', 'liquidity'], primary: 'tax', income: 'b4', employee: 'no', deposits: 'annual', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', taxVsLiquidity: 'both', liqReason: 'business', horizon: 'y1to3', age: '40s' });
+  const r = run({ priorities: ['tax', 'liquidity'], primary: 'tax', income: 'b3', employee: 'no', deposits: 'annual', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', taxVsLiquidity: 'both', liqReason: 'business', horizon: 'y1to3', age: '40s' });
   const s = E.summary(r.state, { name: 'ישראל', phone: '0501234567', time: 'בבוקר', source: 'tiktok / november' }, opts);
   for (const part of ['דיווח עצמי', 'שם: ישראל', 'טלפון: 0501234567', 'עדיפות ראשית: ניצול הטבות המס', 'עדיפויות משניות: נזילות', 'מסלול השאלון', 'התשובות', 'פערים אפשריים', 'מידע חסר', 'נושאים לבירור', 'דחיפות', 'שאלות פתיחה', 'מקור הגעה: tiktok / november']) {
     assert.ok(s.includes(part), part);

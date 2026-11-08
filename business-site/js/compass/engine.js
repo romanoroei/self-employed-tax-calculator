@@ -36,7 +36,6 @@
     // ---------- small helpers ----------
     const taxYearOf = (now) => (now || new Date()).getFullYear();
     const fmt = (n) => Math.round(n).toLocaleString('en-US');
-    const round100 = (n) => Math.round(n / 100) * 100;
     const figureOk = (paths, year) => (paths || []).every((p) => regulatory.figure(year, p) !== null);
     function fill(text, year) {
       return text.replace(/\{(\w+)\}/g, (m, k) => {
@@ -46,31 +45,21 @@
       });
     }
 
-    // Income ranges follow the legal thresholds of the tax year, so the answer means something.
-    // Without verified figures for the year they fall back to plain round ranges.
+    // Three income ranges, kept simple for the visitor (Roei, 2026-11-08), with borders at legal thresholds:
+    // b1 up to the average wage (where the mandatory deposit ends), b2 up to the study fund deduction cap, b3 above it.
+    // The borders are rounded for reading. Without verified figures for the year they fall back to round numbers.
     function incomeBands(year) {
       const avg = regulatory.figure(year, 'averageWageMonthly');
-      const pensionCap = regulatory.figure(year, 'pensionContributionThresholds.taxBenefitIncomeCap');
       const fundCap = regulatory.figure(year, 'studyFundThresholds.deductionIncomeCap');
-      const unknown = { value: 'unknown', label: 'לא יודע/ת', gap: true };
-      if (avg === null || pensionCap === null || fundCap === null) {
-        return { verified: false, options: [
-          { value: 'b1', label: 'עד 100,000 ₪' }, { value: 'b2', label: '100,000–200,000 ₪' },
-          { value: 'b3', label: '200,000–300,000 ₪' }, { value: 'b4', label: '300,000–500,000 ₪' },
-          { value: 'b5', label: 'מעל 500,000 ₪' }, unknown,
-        ] };
-      }
-      const half = round100(avg * 6);
-      const full = round100(avg * 12);
-      const p = round100(pensionCap);
-      const f = round100(fundCap);
-      return { verified: true, options: [
-        { value: 'b1', label: `עד כ־${fmt(half)} ₪ בשנה`, note: 'עד מחצית השכר הממוצע במשק' },
-        { value: 'b2', label: `כ־${fmt(half)} עד ${fmt(full)} ₪`, note: 'עד השכר הממוצע במשק' },
-        { value: 'b3', label: `כ־${fmt(full)} עד ${fmt(p)} ₪`, note: 'עד תקרת ההכנסה להטבת המס על פנסיה' },
-        { value: 'b4', label: `כ־${fmt(p)} עד ${fmt(f)} ₪`, note: 'עד תקרת ההכנסה לניכוי בקרן השתלמות' },
-        { value: 'b5', label: `מעל ${fmt(f)} ₪`, note: 'מעל התקרות' },
-        unknown,
+      const verified = avg !== null && fundCap !== null;
+      const low = verified ? Math.round((avg * 12) / 1000) * 1000 : 150000;
+      const high = verified ? Math.round(fundCap / 10000) * 10000 : 300000;
+      const about = verified ? 'כ־' : '';
+      return { verified, options: [
+        { value: 'b1', label: `עד ${about}${fmt(low)} ₪ בשנה` },
+        { value: 'b2', label: `${about}${fmt(low)} עד ${fmt(high)} ₪` },
+        { value: 'b3', label: `מעל ${about}${fmt(high)} ₪` },
+        { value: 'unknown', label: 'לא יודע/ת', gap: true },
       ] };
     }
 

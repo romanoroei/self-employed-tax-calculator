@@ -222,7 +222,7 @@
       extraDeposit: {
         stage: 3, category: 'C', type: 'single', required: false,
         text: 'אם יתברר שיש הטבות מס נוספות שאפשר לנצל, תוכלו להפקיד עוד השנה?', summaryLabel: 'יכולת להפקדה נוספת השנה',
-        when: { any: [{ fact: 'taxReviewed', in: ['no', 'unknown'] }, { fact: 'income', in: ['b3', 'b4', 'b5'] }] },
+        when: { any: [{ fact: 'taxReviewed', in: ['no', 'unknown'] }, { fact: 'income', in: ['b2', 'b3'] }] },
         options: [{ value: 'yes', label: 'כן' }, { value: 'maybe', label: 'אולי, תלוי בסכום' }, { value: 'no', label: 'לא כרגע' }],
       },
 
@@ -459,7 +459,7 @@
       { area: 'A', pts: 15, kind: 'gap', when: { fact: 'expectedPension', in: ['notChecked', 'noIdea'] }, why: 'הקצבה הצפויה עדיין לא ידועה לכם' },
       { area: 'A', pts: 15, kind: 'answer', when: { all: [{ fact: 'age', in: ['u30', '30s'] }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }, why: 'בגיל צעיר, לקצב החיסכון לאורך זמן יש השפעה גדולה' },
       { area: 'A', pts: 15, kind: 'answer', when: { all: [{ fact: 'age', in: ['40s', '50s'] }, { fact: 'deposits', in: ['irregular', 'annual'] }] }, why: 'ההפקדות אינן סדירות, וזה משפיע על הקצבה' },
-      { area: 'A', pts: 10, kind: 'unchecked', when: { all: [{ fact: 'income', in: ['b3', 'b4', 'b5'] }, { not: { fact: 'deposits', is: 'monthly' } }] }, why: 'ההכנסה מעל השכר הממוצע, וחובת ההפקדה מחושבת רק עד השכר הממוצע' },
+      { area: 'A', pts: 10, kind: 'unchecked', when: { all: [{ fact: 'income', in: ['b2', 'b3'] }, { not: { fact: 'deposits', is: 'monthly' } }] }, why: 'ההכנסה מעל השכר הממוצע, וחובת ההפקדה מחושבת רק עד השכר הממוצע' },
       { area: 'A', pts: 10, kind: 'answer', when: { fact: 'deposits', is: 'none' }, why: 'כרגע אין הפקדה לחיסכון פנסיוני' },
       { area: 'A', pts: 10, kind: 'horizon', when: { fact: 'age', in: ['50s', '60p'] }, why: 'הפרישה קרובה יותר' },
       { area: 'A', pts: 10, kind: 'answer', when: { fact: 'pensionVsLiquidity', is: 'maxRetirement' }, why: 'העדפתם להגדיל את ההכנסה בפרישה' },
@@ -482,7 +482,7 @@
       { area: 'B', pts: 10, kind: 'gap', when: { fact: 'lastReview', in: ['never', 'notRemember'] }, why: 'הביטוחים לא נבדקו לאחרונה' },
 
       // C: tax benefits
-      { area: 'C', pts: 25, kind: 'answer', when: { all: [{ fact: 'income', in: ['b3', 'b4', 'b5'] }, { fact: 'taxReviewed', in: ['no', 'unknown'] }] }, why: 'ההכנסה גבוהה, ועוד לא נבדק השנה אם ההטבות נוצלו' },
+      { area: 'C', pts: 25, kind: 'answer', when: { all: [{ fact: 'income', in: ['b2', 'b3'] }, { fact: 'taxReviewed', in: ['no', 'unknown'] }] }, why: 'ההכנסה גבוהה, ועוד לא נבדק השנה אם ההטבות נוצלו' },
       { area: 'C', pts: 15, kind: 'gap', when: { fact: 'taxReviewed', in: ['no', 'unknown'] }, why: 'עוד לא נבדק השנה אם ניצלתם את הטבות המס' },
       { area: 'C', pts: 10, kind: 'answer', when: { fact: 'deposits', in: ['irregular', 'annual'] }, why: 'ההפקדות אינן קבועות, ולכן כדאי לבדוק אותן מול שנת המס' },
       { area: 'C', pts: 15, kind: 'answer', when: { fact: 'studyFund', is: 'notDepositing' }, why: 'יש לכם קרן השתלמות שלא מפקידים אליה כרגע' },
