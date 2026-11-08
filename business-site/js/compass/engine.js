@@ -422,8 +422,10 @@
       lines.push(`עדיפויות משניות: ${others.length ? others.join(', ') : 'לא נבחרו'}`);
       lines.push(`מסלול השאלון: מסלול ${C.priorities[res.primaryPriority].n}, ${C.priorities[res.primaryPriority].short}${others.length ? ', עם התייחסות ל' + others.join(', ל') : ''}`);
       lines.push('');
-      lines.push('התשובות (דיווח עצמי):');
-      for (const a of answersList(state, opts)) if (a.questionId !== 'priorities' && a.questionId !== 'primary') lines.push(`- ${a.label}: ${a.value}`);
+      // the whole questionnaire as the visitor went through it: every question as shown, and the answer (Roei, 2026-11-08)
+      const flow = answersList(state, opts);
+      lines.push(`מהלך השאלון המלא, לפי הסדר (${flow.length} שאלות, דיווח עצמי):`);
+      flow.forEach((a, i) => { lines.push(`${i + 1}. ${a.question}`); lines.push(`   תשובה: ${a.value}`); });
       if (!res.incomeBandsVerified && w.facts.income) lines.push('  (טווחי ההכנסה הוצגו כטווחים כלליים, בלי נתוני שנת מס מאומתים)');
       lines.push('');
       lines.push('ציוני רלוונטיות (0–100, לא דירוג של המצב הכלכלי):');

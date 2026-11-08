@@ -190,7 +190,7 @@ test('scenario 2: 47, high income, study fund, irregular pension deposits -> dep
   assert.ok(s.A >= C.limits.relevantScore, 'pension planning');
   assert.ok(shownAreas(r.result).includes('A'));
   assert.ok(r.result.recommendedChecks.some((t) => t.includes('הפקדתם השנה')), 'a check of this year\'s deposits');
-  assert.ok(r.summary.includes('הכנסה חייבת מדווחת'));
+  assert.ok(r.summary.includes('מה ההכנסה השנתית החייבת המשוערת שלכם כעצמאים?'));
 });
 
 test('scenario 3: 55 and does not know the expected pension -> retirement readiness', () => {
@@ -315,9 +315,15 @@ test('WhatsApp: the message names topics only, with no amounts, ages or family d
 test('the internal summary: marked self-reported, with all ten parts, contact details only when given', () => {
   const r = run({ priorities: ['tax', 'liquidity'], primary: 'tax', income: 'b3', employee: 'no', deposits: 'annual', studyFund: 'depositing', taxReviewed: 'no', extraDeposit: 'maybe', taxVsLiquidity: 'both', liqReason: 'business', horizon: 'y1to3', age: '40s' });
   const s = E.summary(r.state, { name: 'ישראל', phone: '0501234567', time: 'בבוקר', source: 'tiktok / november' }, opts);
-  for (const part of ['דיווח עצמי', 'שם: ישראל', 'טלפון: 0501234567', 'עדיפות ראשית: ניצול הטבות המס', 'עדיפויות משניות: נזילות', 'מסלול השאלון', 'התשובות', 'פערים אפשריים', 'מידע חסר', 'נושאים לבירור', 'דחיפות', 'שאלות פתיחה', 'מקור הגעה: tiktok / november']) {
+  for (const part of ['דיווח עצמי', 'שם: ישראל', 'טלפון: 0501234567', 'עדיפות ראשית: ניצול הטבות המס', 'עדיפויות משניות: נזילות', 'מסלול השאלון', 'מהלך השאלון המלא', 'פערים אפשריים', 'מידע חסר', 'נושאים לבירור', 'דחיפות', 'שאלות פתיחה', 'מקור הגעה: tiktok / november']) {
     assert.ok(s.includes(part), part);
   }
+  // the whole flow: every question as it was shown, in order, with its answer
+  const flow = E.answersList(r.state, opts);
+  assert.equal(flow.length, r.asked.length);
+  let at = 0;
+  flow.forEach((a, i) => { const p = s.indexOf(`${i + 1}. ${a.question}`, at); assert.ok(p > at, a.question); at = p; assert.ok(s.includes(`תשובה: ${a.value}`)); });
+  assert.ok(s.includes('תשובה: לנצל כמה שיותר את הטבות המס שמגיעות לי'), 'the opening question too');
   assert.ok(s.includes('לפני סוף שנת המס'), 'November: tax deposits are checked against 31.12');
   assert.ok(s.includes('ראיתי שחשוב לכם לנצל את הטבות המס, אבל גם לשמור על נזילות'));
   assert.ok(!r.summary.includes('שם:'), 'no contact lines without contact details');
