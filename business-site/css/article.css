@@ -59,6 +59,33 @@
 .art-share .button { gap: 10px; padding-inline: 22px; }
 .art-share svg { width: 22px; height: 22px; flex: none; fill: currentColor; }
 
+/* savings policy: three products side by side, wider than the reading column */
+.sp-compare-wrap { max-width: 1000px; margin-block: 8px 36px; }
+.sp-compare { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--t-5); line-height: 1.5; }
+.sp-compare thead th { background: var(--navy); color: var(--on-dark); font-size: var(--t-4); font-weight: 800; padding: 14px 16px; text-align: start; }
+.sp-compare thead td { background: transparent; }
+.sp-compare tbody th { width: 19%; padding: 14px 16px 14px 12px; text-align: start; vertical-align: top; font-weight: 700; color: var(--ink-soft); }
+.sp-compare tbody td { padding: 14px 16px; vertical-align: top; border-inline-start: 8px solid var(--paper); background: var(--paper-2); }
+.sp-compare tbody tr + tr > * { border-top: 1px solid rgba(12, 33, 52, .12); }
+.sp-compare tbody td:first-of-type { font-weight: 700; color: var(--ink); }
+.sp-compare thead th { border-inline-start: 8px solid var(--paper); }
+
+/* digital joining: two insurer tiles, then the commission line */
+.sp-join { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-block: 8px 12px; }
+.sp-join a { display: grid; grid-template-columns: 112px minmax(0, 1fr) auto; align-items: center; gap: 16px; min-height: 92px; padding: 14px 18px 14px 14px; background: var(--paper-2); color: var(--ink); text-decoration: none; box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow 160ms ease, background-color 160ms ease; }
+.sp-join-logo { display: flex; align-items: center; justify-content: center; height: 64px; padding: 10px; background: #fff; }
+.sp-join-logo img { width: 100%; height: 100%; object-fit: contain; }
+.sp-join-text strong { display: block; font-size: var(--t-4); font-weight: 800; line-height: 1.25; }
+.sp-join-text small { display: block; margin-top: 2px; font-size: var(--t-5); color: var(--ink-soft); line-height: 1.4; }
+.sp-join-go { font-size: 20px; color: var(--gold-deep); transition: transform 200ms var(--ease-out); }
+.sp-join a:focus-visible { box-shadow: inset 0 0 0 2px var(--navy); }
+.sp-join a:active { background: var(--paper); }
+@media (hover: hover) and (pointer: fine) {
+  .sp-join a:hover { box-shadow: inset 0 0 0 1.5px var(--navy); }
+  .sp-join a:hover .sp-join-go { transform: translate(-3px, -3px); }
+}
+.sp-join p { grid-column: 1 / -1; margin: 4px 0 0; font-size: var(--t-5); line-height: 1.5; color: var(--ink-soft); }
+
 .art-cta { background: var(--paper-2); padding-block: 96px; margin-top: 80px; }
 .art-cta .statement { margin-top: 0; }
 .art-cta .button { margin-top: 28px; }
@@ -85,6 +112,22 @@
   .bar-fig { font-size: 24px; }
   .mosaic img { height: auto; width: calc(50% - 4px); }
   .art-cta { padding-block: 64px; }
+  /* the comparison becomes one card per question, each product labelled */
+  .sp-compare, .sp-compare tbody, .sp-compare tr, .sp-compare th, .sp-compare td { display: block; width: auto; }
+  .sp-compare thead { display: none; }
+  .sp-compare tbody tr { margin-bottom: 8px; background: var(--paper-2); }
+  .sp-compare tbody tr + tr > * { border-top: 0; }
+  .sp-compare tbody th { width: auto; padding: 12px 14px 4px; background: var(--navy); color: var(--on-dark); font-size: var(--t-5); padding-bottom: 10px; }
+  .sp-compare tbody td { border-inline-start: 0; padding: 10px 14px; display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 10px; }
+  .sp-compare tbody td + td { border-top: 1px solid rgba(12, 33, 52, .12); }
+  .sp-compare tbody td::before { content: attr(data-label); font-weight: 700; color: var(--ink-soft); }
+  .sp-compare tbody td:first-of-type { font-weight: 400; }
+}
+@media (max-width: 900px) { .sp-join { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) {
+  .sp-join a { grid-template-columns: 84px minmax(0, 1fr) auto; gap: 12px; padding: 12px 14px 12px 12px; }
+  .sp-join-logo { height: 52px; padding: 8px; }
+  .sp-compare tbody td { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
 
 /* floating way back to the top of the home page */

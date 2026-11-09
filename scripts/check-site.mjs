@@ -33,7 +33,7 @@ for(const file of published){
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
   assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
-  if(/^(?:self-employed|magazine\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
+  if(/^(?:self-employed|savings-policy|magazine\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
@@ -53,7 +53,7 @@ assert(feed.split('\r\n').every(l=>Buffer.byteLength(l)<=75),'Calendar feed line
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,10,'Sitemap must include all ten canonical pages');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,11,'Sitemap must include all eleven canonical pages');
 // The financial compass: the agreed lead pipeline, consents, counters, and no Google Analytics on the business site.
 const compass=await readFile(path.join(root,'compass.html'),'utf8');
 const cdir=path.join(root,'js','compass');

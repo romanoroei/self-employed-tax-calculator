@@ -415,6 +415,14 @@
     if (yieldSort) shownTable().querySelector(`[data-yield-sort="${yieldSort}"]`).focus();
   });
   keepPicks();
+  // /#policy-yields, the link from the savings policy guide, opens the tile on savings policies
+  if (location.hash === '#policy-yields') {
+    const policy = fundsPanel.querySelector('[data-yield-product="policy"]');
+    if (policy) {
+      policy.click();
+      tile.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+  }
 
   // ---------- shared by the live tabs ----------
   const noteBlock = '<p class="yield-note"><strong data-updated>&nbsp;</strong><span data-source></span></p>';
