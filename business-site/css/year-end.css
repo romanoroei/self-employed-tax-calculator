@@ -1,5 +1,4 @@
-/* the calculator leads the tools on /knowledge until 31.12 */
-.kn-card.is-yearend { box-shadow: inset -4px 0 0 #C9B772; }
+/* the calculator leads the tools on /knowledge until 31.12, marked only by its tag */
 .ye-tag {
   display: inline-block; margin-inline-start: 6px; padding: 1px 8px;
   background: #C9B772; color: #081826; font-size: 12px; font-weight: 800; line-height: 1.5; vertical-align: 1px;

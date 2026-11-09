@@ -153,14 +153,14 @@
 .kn-grid { display: grid; gap: var(--gap); }
 .kn-card {
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 18px;
-  padding: 16px 20px; background: var(--paper-2); color: var(--ink); text-decoration: none;
+  padding: 14px 18px; background: var(--paper-2); color: var(--ink); text-decoration: none;
   transition: background-color 180ms ease;
 }
-.kn-text { display: flex; flex-direction: column; gap: 4px; }
-.kn-k { font-size: 13px; font-weight: 800; color: var(--gold-deep); }
-.kn-text strong { font-size: var(--t-4); font-weight: 800; line-height: 1.3; }
-.kn-text small { font-size: var(--t-5); line-height: 1.5; color: var(--ink-soft); }
-.kn-go { font-size: 20px; color: var(--gold-deep); transition: transform 200ms var(--ease-out); }
+.kn-text { display: flex; flex-direction: column; gap: 3px; }
+.kn-k { font-size: 12px; font-weight: 800; color: var(--gold-deep); }
+.kn-text strong { font-size: 16px; font-weight: 800; line-height: 1.3; }
+.kn-text small { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.kn-go { font-size: 18px; color: var(--gold-deep); transition: transform 200ms var(--ease-out); }
 .kn-card:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
   .kn-card:hover { background: #D9DBD7; }
@@ -170,5 +170,7 @@
 /* phones and narrow tablets: the tools column goes under the guides */
 @media (max-width: 800px) {
   .kn-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 48px; }
-  .kn-card { padding: 14px 16px; gap: 0 12px; }
+  .kn-card { padding: 12px 14px; gap: 0 12px; }
+  .kn-text strong { font-size: 15px; }
+  .kn-text small { font-size: 13px; }
 }
