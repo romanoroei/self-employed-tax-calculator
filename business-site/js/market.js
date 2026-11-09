@@ -415,11 +415,12 @@
     if (yieldSort) shownTable().querySelector(`[data-yield-sort="${yieldSort}"]`).focus();
   });
   keepPicks();
-  // /#policy-yields, the link from the savings policy guide, opens the tile on savings policies
-  if (location.hash === '#policy-yields') {
-    const policy = fundsPanel.querySelector('[data-yield-product="policy"]');
-    if (policy) {
-      policy.click();
+  // /#policy-yields and /#invest-yields, the links from the guides, open the tile on that product
+  const linked = { '#policy-yields': 'policy', '#invest-yields': 'invest' }[location.hash];
+  if (linked) {
+    const product = fundsPanel.querySelector(`[data-yield-product="${linked}"]`);
+    if (product) {
+      product.click();
       tile.scrollIntoView({ block: 'start', behavior: 'instant' });
     }
   }
