@@ -13,8 +13,8 @@
 .art-byline strong { display: block; color: var(--ink); font-weight: 700; }
 
 .art-lead-photo { margin-top: 40px; }
-/* the opening paragraph sits where the lead photo used to be */
-.art-lead { margin-top: 32px; font-size: 19px; line-height: 1.7; }
+/* guides: the first section sits right under the byline, before the figures table */
+.art-intro + .se-figure { margin-top: 56px; }
 .art-lead-photo img { width: 100%; height: auto; filter: grayscale(1) contrast(1.05); }
 
 .prose h2 { font-size: var(--t-2); font-weight: 800; line-height: 1.25; margin-block: 48px 14px; }
@@ -106,7 +106,6 @@
 @media (max-width: 700px) {
   .art-head { padding-block: 32px 40px; }
   .prose p, .prose li { font-size: 17px; }
-  .art-lead { font-size: 17px; margin-top: 24px; }
   .se-table { font-size: var(--t-5); }
   .se-table, .se-table tbody, .se-table tr, .se-table th, .se-table td { display: block; width: auto; }
   .se-table tr { padding-block: 12px; border-bottom: 1px solid rgba(241, 241, 238, .18); }
