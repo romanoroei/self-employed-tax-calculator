@@ -2,7 +2,7 @@
 // Shekel pairs are the Bank of Israel representative rates; the others are worked out from the ECB reference rates.
 //   /api/fx              the latest rate of each pair and the one before it
 //   /api/fx?id=usdils    ten years of one pair, for the chart
-// The visitor's browser only ever talks to this site. Answers are held at the edge for an hour.
+// The visitor's browser only ever talks to this site. Complete answers are held at the edge for an hour.
 
 const SECONDS = 3600;
 const YEARS = 10;
@@ -64,31 +64,57 @@ function cross(byCurrency, [a, b]) {
 
 const sorted = (points) => points.sort((x, y) => x[0].localeCompare(y[0]));
 
-async function series(id, start) {
-  const pair = PAIRS[id];
-  if (pair.boi) return sorted((await boiSeries([pair.boi], start))[pair.boi]);
-  return sorted(cross(await ecbSeries([...new Set(pair.ecb)], start), pair.ecb));
+// Each source's last good answer is kept for a month. A source that fails for a moment then shows
+// its last figures instead of leaving its rows out, and the combined answer is held only briefly,
+// so the next visitor tries that source again.
+const KEEP = 30 * 86400;
+const SHORT = 300;
+async function lastGood(origin, name, fetcher, waitUntil) {
+  const cache = globalThis.caches?.default;
+  const key = new Request(`${origin}/api/last-good/${name}`);
+  try {
+    const value = await fetcher();
+    if (cache) waitUntil(cache.put(key, new Response(JSON.stringify(value), { headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${KEEP}` } })));
+    return { value, fresh: true };
+  } catch (error) {
+    console.error(name, error.message);
+    const held = cache && await cache.match(key);
+    if (held) return { value: await held.json(), fresh: false };
+    throw error;
+  }
 }
 
-async function latest() {
+// ECB rates per currency travel as plain lists, so they can be kept; maps are rebuilt for cross().
+const plain = (byCurrency) => Object.fromEntries(Object.entries(byCurrency).map(([c, m]) => [c, [...m.entries()]]));
+const maps = (lists) => Object.fromEntries(Object.entries(lists).map(([c, l]) => [c, new Map(l)]));
+
+async function series(id, start, origin, waitUntil) {
+  const pair = PAIRS[id];
+  return lastGood(origin, `fx-${id}`, async () => (pair.boi
+    ? sorted((await boiSeries([pair.boi], start))[pair.boi])
+    : sorted(cross(await ecbSeries([...new Set(pair.ecb)], start), pair.ecb))), waitUntil);
+}
+
+async function latest(origin, waitUntil) {
   const start = since(20);
   const ids = Object.keys(PAIRS);
   const [boi, ecb] = await Promise.allSettled([
-    boiSeries(ids.filter((id) => PAIRS[id].boi).map((id) => PAIRS[id].boi), start),
-    ecbSeries(['USD', 'GBP', 'JPY', 'CHF'], start),
+    lastGood(origin, 'fx-boi', () => boiSeries(ids.filter((id) => PAIRS[id].boi).map((id) => PAIRS[id].boi), start), waitUntil),
+    lastGood(origin, 'fx-ecb', async () => plain(await ecbSeries(['USD', 'GBP', 'JPY', 'CHF'], start)), waitUntil),
   ]);
   const items = [];
   for (const id of ids) {
     const pair = PAIRS[id];
     const source = pair.boi ? boi : ecb;
     if (source.status !== 'fulfilled') continue;
-    const points = sorted(pair.boi ? source.value[pair.boi] : cross(source.value, pair.ecb));
+    const points = sorted(pair.boi ? source.value.value[pair.boi] : cross(maps(source.value.value), pair.ecb));
     if (points.length < 2) continue;
     const [date, value] = points[points.length - 1];
     items.push({ id, date, value, previous: points[points.length - 2][1], source: pair.boi ? 'boi' : 'ecb' });
   }
   if (!items.length) throw new Error('No rates');
-  return { updated: Math.floor(Date.now() / 1000), items };
+  const complete = [boi, ecb].every((s) => s.status === 'fulfilled' && s.value.fresh);
+  return { body: { updated: Math.floor(Date.now() / 1000), items }, complete };
 }
 
 export async function onRequestGet({ request, waitUntil }) {
@@ -96,13 +122,22 @@ export async function onRequestGet({ request, waitUntil }) {
   const id = url.searchParams.get('id');
   if (id !== null && !Object.hasOwn(PAIRS, id)) return new Response(null, { status: 400 });
   const cache = globalThis.caches?.default;
-  const key = new Request(`${url.origin}/api/fx${id ? `?id=${id}` : ''}`);
+  // v2: answers held before the last-good fallback may be missing rows
+  const key = new Request(`${url.origin}/api/fx?v=2${id ? `&id=${id}` : ''}`);
   const held = cache && await cache.match(key);
   if (held) return held;
   try {
-    const body = id ? { id, points: await series(id, since(YEARS * 365)) } : await latest();
+    let body;
+    let complete;
+    if (id) {
+      const got = await series(id, since(YEARS * 365), url.origin, waitUntil);
+      body = { id, points: got.value };
+      complete = got.fresh;
+    } else {
+      ({ body, complete } = await latest(url.origin, waitUntil));
+    }
     const response = new Response(JSON.stringify(body), {
-      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${SECONDS}` },
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${complete ? SECONDS : SHORT}` },
     });
     if (cache) waitUntil(cache.put(key, response.clone()));
     return response;
