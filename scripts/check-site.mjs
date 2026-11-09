@@ -53,14 +53,17 @@ assert(feed.split('\r\n').every(l=>Buffer.byteLength(l)<=75),'Calendar feed line
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,11,'Sitemap must include all eleven canonical pages');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,12,'Sitemap must include all twelve canonical pages');
 // The financial compass: the agreed lead pipeline, consents, counters, and no Google Analytics on the business site.
 const compass=await readFile(path.join(root,'compass.html'),'utf8');
 const cdir=path.join(root,'js','compass');
 const cjs=Object.fromEntries(await Promise.all(['config','regulatory','content','engine','ui'].map(async n=>[n,await readFile(path.join(cdir,n+'.js'),'utf8')])));
 const order=['config','regulatory','content','engine','ui'].map(n=>compass.indexOf('src="js/compass/'+n+'.js'));
 assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing or out of order');
-assert(home.includes('href="/compass"')&&compass.includes('href="/compass"'),'The compass must be linked from the home page and the tools menu');
+const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
+assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
+// every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
+for(const page of ['index.html','compass.html','self-employed.html','savings-policy.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html'])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
 assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');

@@ -130,43 +130,15 @@ a.tile { transition: background-color 180ms ease; }
   .bar-brand:hover { background: var(--navy); }
 }
 
-/* tools and calculators: a menu that drops from the tile next to the brand */
-.bar-tools { position: relative; display: flex; }
-html:not(.js) .bar-tools { display: none; }
+/* "ארביטראז' של ידע": the tile next to the brand opens /knowledge, the page of guides and tools */
+.bar-tools { display: flex; }
 .bar-tools-toggle {
-  display: flex; align-items: center; gap: 10px; padding-inline: 20px; white-space: nowrap;
-  appearance: none; border: 0; border-radius: 0; cursor: pointer;
+  display: flex; align-items: center; padding-inline: 20px; white-space: nowrap; text-decoration: none;
   background: var(--navy); color: var(--gold); font-weight: 700; font-size: var(--t-5);
   transition: background-color 160ms ease;
 }
-.bar-tools-toggle svg { width: 12px; height: 12px; fill: currentColor; transition: transform 200ms var(--ease-out); }
-.bar-tools-toggle[aria-expanded="true"] { background: var(--slate); }
-.bar-tools-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.bar-tools-toggle[aria-current="page"] { background: var(--slate); box-shadow: inset 0 -3px 0 var(--gold); }
 @media (hover: hover) and (pointer: fine) { .bar-tools-toggle:hover { background: var(--slate); } }
-.tools-menu {
-  position: absolute; top: calc(100% + var(--gap)); inset-inline-start: 0; z-index: 60;
-  width: 380px; display: grid; gap: 4px; padding: var(--gap); background: var(--navy-deep);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, .28);
-}
-.tools-menu[hidden] { display: none; }
-.tools-menu a {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; align-items: center;
-  padding: 14px 18px; background: var(--navy); color: var(--on-dark); text-decoration: none;
-  transition: background-color 160ms ease;
-}
-.tools-menu .k { grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: var(--gold); }
-.tools-menu strong { font-size: var(--t-5); font-weight: 700; }
-.tools-menu .v { grid-row: 2 / span 2; grid-column: 2; color: var(--gold); transition: transform 200ms var(--ease-out); }
-.tools-menu small { font-size: 13px; color: var(--on-dark-soft); }
-.tools-menu a:focus-visible { outline-offset: -3px; }
-@media (hover: hover) and (pointer: fine) {
-  .tools-menu a:hover { background: var(--slate); }
-  .tools-menu a:hover .v { transform: translateX(-4px); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .tools-menu:not([hidden]) { animation: tools-in 200ms var(--ease-out); }
-  @keyframes tools-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
-}
 /* the tools tile takes room from the links: the last two go earlier than before */
 @media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
 /* just above the phone layout the bar is tight: keep the links on one line */
@@ -686,8 +658,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-brand strong { font-size: 17px; }
   .bar-brand span { font-size: 14px; }
   .bar-cta { padding-inline: 14px; }
-  .bar-tools-toggle { padding-inline: 12px; gap: 6px; }
-  .tools-menu { position: fixed; top: var(--bar); inset-inline: var(--gap); width: auto; }
+  .bar-tools-toggle { padding-inline: 12px; }
   /* the words start at the chin: the photo scales with the width, and padding in percent follows it */
   .hero-main { padding: 50% 22px 22px; min-height: 0; justify-content: flex-start; }
   /* the face sits to the left as on a computer, fading out on the right and under the words */
@@ -775,7 +746,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 @media (max-width: 600px) { .bar-brand span { display: none; } }
 /* the menu's name is long: on phones it takes two lines, so the name beside it still fits */
 @media (max-width: 520px) {
-  .bar-tools-toggle { width: 96px; padding-inline: 8px; gap: 4px; font-size: 13px; line-height: 1.15; white-space: normal; text-align: start; }
+  .bar-tools-toggle { width: 96px; padding-inline: 8px; font-size: 13px; line-height: 1.15; white-space: normal; text-align: start; }
 }
 @media (max-width: 400px) {
   .bar-brand, .bar-cta { padding-inline: 10px; }

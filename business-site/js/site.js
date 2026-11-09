@@ -19,38 +19,6 @@
   }, 2500));
 })();
 
-// ===== Tools and calculators menu in the top bar =====
-(() => {
-  const toggle = document.querySelector('.bar-tools-toggle');
-  if (!toggle) return;
-  const menu = document.getElementById(toggle.getAttribute('aria-controls'));
-  const links = [...menu.querySelectorAll('a')];
-  const open = (focusFirst) => {
-    menu.hidden = false;
-    toggle.setAttribute('aria-expanded', 'true');
-    if (focusFirst) links[0].focus();
-  };
-  const close = (focusToggle) => {
-    if (menu.hidden) return;
-    menu.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    if (focusToggle) toggle.focus();
-  };
-  toggle.addEventListener('click', () => (menu.hidden ? open(false) : close(false)));
-  toggle.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); open(true); } });
-  menu.addEventListener('keydown', (e) => {
-    const i = links.indexOf(document.activeElement);
-    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      links[(i + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length].focus();
-    }
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(true); });
-  document.addEventListener('click', (e) => { if (!e.target.closest('.bar-tools')) close(false); });
-  // leaving the menu with Tab closes it
-  menu.addEventListener('focusout', (e) => { if (!e.relatedTarget || !e.relatedTarget.closest('.bar-tools')) close(false); });
-})();
-
 // ===== Phones and tablets: the brand tile opens a side menu of the page's sections =====
 // The section links are hidden in the top bar up to 900px, so the brand (logo and name) opens them
 // in a panel from the right. Above 900px, or without scripting, the brand stays a plain link.
