@@ -85,6 +85,10 @@
   .sp-join a:hover .sp-join-go { transform: translate(-3px, -3px); }
 }
 .sp-join p { grid-column: 1 / -1; margin: 4px 0 0; font-size: var(--t-5); line-height: 1.5; color: var(--ink-soft); }
+/* another policy: joining goes through Roei directly, so it leads to the contact form */
+.sp-other { margin-top: 20px; padding: 18px 20px; background: var(--paper-2); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.sp-other p { margin: 0; flex: 1 1 280px; font-size: var(--t-4); line-height: 1.5; }
+.sp-other strong { font-weight: 800; }
 
 .art-cta { background: var(--paper-2); padding-block: 96px; margin-top: 80px; }
 .art-cta .statement { margin-top: 0; }
