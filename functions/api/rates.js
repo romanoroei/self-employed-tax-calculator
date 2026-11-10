@@ -37,6 +37,7 @@ function csvRows(text, series) {
   return lines.map((line) => line.split(',')).filter((cells) => !series || cells[0] === series).map((cells) => [cells[date], parseFloat(cells[value])]);
 }
 
+const isoDay = (date) => new Date(`${date}T00:00:00Z`).getTime();
 const startDate = () => { const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - YEARS); return d.toISOString().slice(0, 10); };
 
 const RATES = {
@@ -54,16 +55,36 @@ const RATES = {
     const url = `https://data-api.ecb.europa.eu/service/data/FM/D.U2.EUR.4F.KR.DFR.LEV?startPeriod=${startDate()}&format=csvdata`;
     return series(csvRows(await (await source(url)).text()));
   },
-  // The Bank of England's own database first. It sits behind Akamai, which turns away Cloudflare's servers
-  // (no answer ever reached the site), so the fallback is the BIS's daily series of the same Bank Rate.
-  // The BIS publishes it a few days late: asOf says how far it reaches.
-  async uk() {
+  // The Bank of England's own database first. It sits behind Akamai, which turns away Cloudflare's servers,
+  // so a GitHub job (scripts/update-boe.mjs) fetches the same series each weekday into a file of the site.
+  // Last comes the BIS's daily series of the same Bank Rate, which is published a week or so late.
+  // asOf says how far each answer reaches.
+  async uk({ origin, env } = {}) {
     try {
       return { ...(await RATES.boe()), source: 'boe' };
     } catch (error) {
       console.error('uk from the Bank of England', error.message);
+    }
+    let daily = null;
+    try {
+      const request = new Request(`${origin}/assets/data/boe-rate.json`);
+      const response = env?.ASSETS ? await env.ASSETS.fetch(request) : await fetch(request);
+      if (response.ok) {
+        const { asOf, history } = await response.json();
+        if (asOf && Array.isArray(history) && history.length) daily = { history, asOf, source: 'boe-daily' };
+      }
+    } catch (error) {
+      console.error('uk from the daily file', error.message);
+    }
+    const fresh = (asOf) => (Date.now() - isoDay(asOf)) / 86400000 <= 10;
+    if (daily && fresh(daily.asOf)) return daily;
+    try {
       const url = `https://stats.bis.org/api/v1/data/WS_CBPOL/D.GB?startPeriod=${startDate()}&format=csv&detail=dataonly`;
-      return { ...series(csvRows(await (await source(url)).text())), source: 'bis' };
+      const bis = { ...series(csvRows(await (await source(url)).text())), source: 'bis' };
+      return daily && daily.asOf >= bis.asOf ? daily : bis;
+    } catch (error) {
+      if (daily) return daily;
+      throw error;
     }
   },
   async boe() {
@@ -99,24 +120,24 @@ async function lastGood(origin, name, fetcher, waitUntil) {
   }
 }
 
-async function rates(origin, waitUntil) {
+async function rates(origin, waitUntil, env) {
   const ids = ['il', 'us', 'eu', 'uk'];
-  const settled = await Promise.allSettled(ids.map((id) => lastGood(origin, `rate-${id}`, () => RATES[id](), waitUntil)));
+  const settled = await Promise.allSettled(ids.map((id) => lastGood(origin, `rate-${id}`, () => RATES[id]({ origin, env }), waitUntil)));
   const items = settled.flatMap((s, i) => (s.status === 'fulfilled' ? [{ id: ids[i], ...s.value.value }] : []));
   if (!items.length) throw new Error(settled[0].reason?.message || 'No rates');
   const complete = settled.every((s) => s.status === 'fulfilled' && s.value.fresh);
   return { body: { updated: Math.floor(Date.now() / 1000), items }, complete };
 }
 
-export async function onRequestGet({ request, waitUntil }) {
+export async function onRequestGet({ request, waitUntil, env }) {
   const cache = globalThis.caches?.default;
   const origin = new URL(request.url).origin;
-  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback; v3: before asOf and the BIS fallback for the UK)
-  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=3`);
+  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback; v3: before asOf and the BIS fallback for the UK; v4: before the daily Bank of England file)
+  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=4`);
   const held = cache && await cache.match(key);
   if (held) return held;
   try {
-    const { body, complete } = await rates(origin, waitUntil);
+    const { body, complete } = await rates(origin, waitUntil, env);
     const response = new Response(JSON.stringify(body), {
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${complete ? SECONDS : SHORT}` },
     });

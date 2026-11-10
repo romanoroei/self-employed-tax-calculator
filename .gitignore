@@ -24,10 +24,12 @@
 !scripts/yields.mjs
 !scripts/update-yields.mjs
 !scripts/yields-data.json
+!scripts/update-boe.mjs
 
 !.github/
 !.github/workflows/
 !.github/workflows/update-yields.yml
+!.github/workflows/update-boe.yml
 
 !functions/
 !functions/**

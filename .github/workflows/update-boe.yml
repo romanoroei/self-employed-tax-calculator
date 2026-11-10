@@ -1,0 +1,43 @@
+name: Update Bank of England rate
+
+# The Bank of England's site turns away Cloudflare's servers, so this job fetches Bank Rate once
+# each weekday, after the 12:00 UK announcement time, and commits it for /api/rates to read.
+# It commits only when the rate changed or the stored day is a few days old, which deploys the site.
+# When anything looks wrong the job fails and the site keeps the last good figures.
+"on":
+  schedule:
+    - cron: '30 13 * * 1-5'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-boe
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Bank Rate
+        run: node scripts/update-boe.mjs
+
+      - name: Commit a changed rate
+        run: |
+          git add business-site/assets/data/boe-rate.json
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Bank of England rate"
+          git pull --rebase origin main
+          git push origin main

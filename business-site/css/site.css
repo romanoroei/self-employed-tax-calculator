@@ -373,20 +373,27 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
   .now-go { flex-basis: 100%; padding: 12px 18px; }
 }
 
-/* ----- the investment provident fund reminder: one slim row across the board, November and December only ----- */
-@media (min-width: 901px) { .hero:has(.invest-strip:not([hidden])) { grid-template-rows: 1fr auto auto; } }
-.invest-strip { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; gap: 18px; padding: 12px 24px; color: var(--on-dark); text-decoration: none; font-size: var(--t-5); line-height: 1.45; }
+/* ----- the investment provident fund reminder: a slim row between the photo and the self-employed tile,
+   November and December only (Roei, 2026-11-10). The photo gives up the room, so the name rises with it ----- */
+@media (min-width: 901px) {
+  .hero:has(.invest-strip:not([hidden])) { grid-template-rows: 1fr auto auto; }
+  .hero:has(.invest-strip:not([hidden])) .now-tile { grid-row: 3; }
+  .hero:has(.invest-strip:not([hidden])) .hero-yields { grid-row: 1 / span 3; }
+}
+.invest-strip { grid-column: 1; grid-row: 2; display: flex; align-items: center; gap: 16px; padding: 12px 22px; color: var(--on-dark); text-decoration: none; font-size: var(--t-5); line-height: 1.45; }
 .invest-strip[hidden] { display: none; }
 .invest-tag { flex: none; padding: 3px 10px; background: var(--gold); color: var(--navy-deep); font-size: 13px; font-weight: 800; }
 .invest-say { flex: 1; min-width: 0; color: var(--on-dark-soft); }
 .invest-say b { color: var(--on-dark); font-weight: 800; font-variant-numeric: tabular-nums; }
 .invest-go { flex: none; color: var(--gold); font-weight: 700; white-space: nowrap; }
 @media (hover: hover) and (pointer: fine) { .invest-strip:hover .invest-go { color: var(--gold-soft); } }
-@media (max-width: 900px) {
-  .invest-strip { grid-column: auto; grid-row: auto; flex-wrap: wrap; gap: 6px 12px; padding: 14px 18px; }
+/* half a board or a phone: the words take a line of their own */
+@media (max-width: 1100px) {
+  .invest-strip { flex-wrap: wrap; gap: 6px 12px; padding: 14px 18px; }
   .invest-say { flex-basis: 100%; order: 1; }
-  .invest-go { order: 2; }
+  .invest-go { margin-inline-start: auto; }
 }
+@media (max-width: 900px) { .invest-strip { grid-column: auto; grid-row: auto; } }
 
 /* ----- the events tab: the latest decisions and index, then what is scheduled ----- */
 .ev-h { margin-bottom: -10px; padding-bottom: 3px; border-bottom: 1px solid rgba(12, 33, 52, .25); font-size: 13px; font-weight: 800; color: var(--ink-soft); }
