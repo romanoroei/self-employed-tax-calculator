@@ -608,11 +608,92 @@
     box.insertAdjacentHTML('beforeend', '<div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>');
   }
 
+  // ---------- the events tab: what happened lately and what is coming ----------
+  // The dates come from each body's own published calendar (checked 2026-11-10): the Bank of Israel,
+  // the Fed's FOMC page, the ECB's meetings calendar and the Bank of England's MPC dates.
+  // Add the next year's dates once they are published (the Bank of Israel's usually in December).
+  // No outcome is typed in by hand: a decision's result is read from /api/rates, the index from /api/cpi.
+  const BANKS = { il: 'בנק ישראל', us: 'הפד האמריקאי', eu: 'הבנק המרכזי האירופי', uk: 'בנק אנגליה' };
+  const DECISIONS = [
+    ['il', '2026-10-21'], ['us', '2026-10-28'], ['eu', '2026-10-29'], ['uk', '2026-11-05'],
+    ['il', '2026-11-23'], ['us', '2026-12-09'], ['eu', '2026-12-17'], ['uk', '2026-12-17'],
+    ['us', '2027-01-27'], ['eu', '2027-02-04'], ['uk', '2027-02-04'],
+  ];
+  const EVENT_ROWS = 5;
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const shortDay = (date) => { const [, m, d] = date.split('-'); return `${Number(d)}.${Number(m)}`; };
+  const between = (a, b) => Math.round((isoTime(b) - isoTime(a)) / 86400000);
+  const addDays = (date, n) => new Date(isoTime(date) + n * 86400000).toISOString().slice(0, 10);
+  // The bureau publishes the index on the 15th at 18:30; when the 15th falls on a Friday or a Saturday,
+  // it comes out on the Friday at 14:00. (Holiday eves move it too; those few days are not worked out here.)
+  function cpiRelease(year, month) {
+    const d = new Date(year, month - 1, 15);
+    if (d.getDay() === 6) d.setDate(14);
+    return { date: iso(d), time: d.getDay() === 5 ? '14:00' : '18:30' };
+  }
+  // A decision's outcome: a change in the rate within a week of the decision day (the new rate
+  // takes effect a day or two later), or else the rate that held on that day.
+  function decisionResult(item, date) {
+    if (!item) return '';
+    const range = (v) => (item.id === 'us' ? `${number(v - 0.25, 2)}–${number(v, 2)}%` : `${number(v, 2)}%`);
+    const history = item.history;
+    const i = history.findIndex(([d]) => d >= addDays(date, -1) && d <= addDays(date, 7));
+    if (i > 0) {
+      const move = history[i][1] - history[i - 1][1];
+      return `${move < 0 ? 'הורדה' : 'הועלתה'} ב־${ltr(`${number(Math.abs(move), 2)}%`)} ל־${ltr(range(history[i][1]))}`;
+    }
+    const held = history.filter(([d]) => d <= date).pop();
+    return held ? `נותרה ללא שינוי, ${ltr(range(held[1]))}` : '';
+  }
+  const eventRow = ({ date, when, title, detail }) => `<li class="ev-row"><span class="ev-date"><b>${shortDay(date)}</b><small>${when}</small></span><span class="ev-text"><strong>${title}</strong>${detail ? `<small>${detail}</small>` : ''}</span></li>`;
+
+  async function loadEvents() {
+    const element = tile.querySelector('[data-market-panel="events"]');
+    const today = iso(new Date());
+    const [ratesAnswer, cpi] = await Promise.all([
+      rates.items ? Promise.resolve({ items: rates.items }) : getJson('/api/rates').catch(() => null),
+      getJson('/api/cpi').catch(() => null),
+    ]);
+    const items = ratesAnswer?.items || [];
+
+    // coming up: the scheduled decisions and the next indices (31.12 already has the countdown and the strip)
+    const coming = DECISIONS.filter(([, date]) => date >= today).map(([id, date]) => ({ date, title: `${BANKS[id]}: החלטת ריבית` }));
+    const now = new Date();
+    for (let k = 0; k < 3; k += 1) {
+      const month = new Date(now.getFullYear(), now.getMonth() + k, 1);
+      const release = cpiRelease(month.getFullYear(), month.getMonth() + 1);
+      const measured = MONTHS[(month.getMonth() + 11) % 12];
+      if (release.date >= today) coming.push({ date: release.date, title: `מדד המחירים לצרכן: ${measured}`, detail: `הלשכה המרכזית לסטטיסטיקה, ${release.time}` });
+    }
+    coming.sort((a, b) => a.date.localeCompare(b.date));
+    for (const e of coming) { const n = between(today, e.date); e.when = n === 0 ? 'היום' : n === 1 ? 'מחר' : `בעוד ${n} ימים`; }
+
+    // lately: each bank's latest decision, and the latest index
+    const lately = [];
+    for (const id of Object.keys(BANKS)) {
+      const last = DECISIONS.filter(([bank, date]) => bank === id && date < today).pop();
+      if (!last) continue;
+      const result = decisionResult(items.find((i) => i.id === id), last[1]);
+      lately.push({ date: last[1], title: `${BANKS[id]}: החלטת ריבית`, detail: result && `הריבית ${result}` });
+    }
+    if (cpi && Number.isFinite(cpi.percent)) {
+      const release = cpiRelease(cpi.month === 12 ? cpi.year + 1 : cpi.year, cpi.month === 12 ? 1 : cpi.month + 1);
+      lately.push({ date: release.date, title: `מדד המחירים לצרכן: ${MONTHS[cpi.month - 1]}`, detail: `${ltr(`${signed(cpi.percent, 1)}%`)} בחודש, ${ltr(`${number(cpi.percentYear, 1)}%`)} ב־12 החודשים האחרונים` });
+    }
+    lately.sort((a, b) => b.date.localeCompare(a.date));
+    for (const e of lately) { const n = between(e.date, today); e.when = n === 0 ? 'היום' : n === 1 ? 'אתמול' : `לפני ${n} ימים`; }
+
+    element.querySelector('[data-events="lately"]').innerHTML = lately.slice(0, EVENT_ROWS).map(eventRow).join('') || `<li class="ev-empty">${UNAVAILABLE}</li>`;
+    element.querySelector('[data-events="coming"]').innerHTML = coming.slice(0, EVENT_ROWS).map(eventRow).join('');
+    element.querySelector('[data-updated]').textContent = `עודכן ${day(Date.now())}`;
+    element.querySelector('[data-source]').innerHTML = 'לפי לוחות הזמנים והנתונים של בנק ישראל, הפד, הבנק המרכזי האירופי, בנק אנגליה והלשכה המרכזית לסטטיסטיקה. המידע אינו המלצה.';
+  }
+
   // ---------- the tabs ----------
   const tabs = [...tile.querySelectorAll('[data-market-tab]')];
   const cta = tile.querySelector('.yield-cta');
   const opened = new Set(['funds']);
-  const firstOpen = { indices: loadIndices, fx: loadFx, rates: loadRates };
+  const firstOpen = { indices: loadIndices, fx: loadFx, rates: loadRates, events: loadEvents };
 
   function show(name) {
     for (const tab of tabs) {

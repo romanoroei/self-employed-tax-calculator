@@ -60,12 +60,19 @@
     </span>
     <a class="now-go" href="/self-employed-tax-calculator/" data-count="strip:calculator"><span><span data-now-go>כמה אחסוך?</span> <span class="arrow" aria-hidden="true">←</span></span><small>למחשבון הטבות המס לעצמאים</small></a>
   </div>
+  <!-- a slim year-end reminder for the investment provident fund. js/site.js shows it in November and December 2026 only (83,641 is the 2026 ceiling) -->
+  <a class="tile tile-slate invest-strip" href="/investment-fund" data-count="strip:invest" data-invest-strip data-year="2026" hidden>
+    <span class="invest-tag">קופת גמל להשקעה</span>
+    <span class="invest-say">תקרת ההפקדה ל־2026 היא <b>83,641&nbsp;₪</b>, והמקום שלא תנצלו עד 31.12 לא עובר לשנה הבאה.</span>
+    <span class="invest-go">מה כדאי לדעת לפני שמפקידים <span class="arrow" aria-hidden="true">←</span></span>
+  </a>
   <div class="tile tile-paper hero-yields" data-market>
     <div class="market-tabs" role="tablist" aria-label="תשואות ונתוני שוק">
       <button type="button" role="tab" id="tab-funds" aria-controls="panel-funds" aria-selected="true" data-market-tab="funds">קופות</button>
       <button type="button" role="tab" id="tab-indices" aria-controls="panel-indices" aria-selected="false" tabindex="-1" data-market-tab="indices">מדדים</button>
       <button type="button" role="tab" id="tab-fx" aria-controls="panel-fx" aria-selected="false" tabindex="-1" data-market-tab="fx">מט"ח</button>
       <button type="button" role="tab" id="tab-rates" aria-controls="panel-rates" aria-selected="false" tabindex="-1" data-market-tab="rates">ריביות</button>
+      <button type="button" role="tab" id="tab-events" aria-controls="panel-events" aria-selected="false" tabindex="-1" data-market-tab="events">אירועים</button>
     </div>
     <div class="market-panels">
       <div class="yield-body" id="panel-funds" role="tabpanel" aria-labelledby="tab-funds" data-market-panel="funds">
@@ -82,6 +89,14 @@
       </div>
       <div class="yield-body" id="panel-fx" role="tabpanel" aria-labelledby="tab-fx" data-market-panel="fx" hidden></div>
       <div class="yield-body" id="panel-rates" role="tabpanel" aria-labelledby="tab-rates" data-market-panel="rates" hidden></div>
+      <div class="yield-body" id="panel-events" role="tabpanel" aria-labelledby="tab-events" data-market-panel="events" hidden>
+        <div class="yield-head"><h2 class="yield-title">אירועים כלכליים</h2><p class="yield-sub">מה קרה לאחרונה ומה צפוי בקרוב</p></div>
+        <h3 class="ev-h">לאחרונה</h3>
+        <ol class="ev-list" data-events="lately"></ol>
+        <h3 class="ev-h">בקרוב</h3>
+        <ol class="ev-list" data-events="coming"></ol>
+        <p class="yield-note"><strong data-updated>&nbsp;</strong><span data-source></span></p>
+      </div>
     </div>
     <a class="yield-cta" href="#contact">איפה הקופה שלכם עומדת? <span class="arrow" aria-hidden="true">←</span></a>
   </div>

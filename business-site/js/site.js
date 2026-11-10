@@ -323,6 +323,10 @@ document.addEventListener('click', (e) => {
     tile.querySelector('[data-now-when]').hidden = false;
   }
 
+  // the investment provident fund reminder: November and December of the year its ceiling belongs to
+  const investStrip = document.querySelector('[data-invest-strip]');
+  if (investStrip && month >= 10 && String(year) === investStrip.dataset.year) investStrip.hidden = false;
+
   const monthFocus = document.querySelector(`#m${month + 1} .cal-focus`);
   if (monthFocus && until) {
     const badge = document.createElement('span');
