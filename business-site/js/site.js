@@ -318,14 +318,15 @@ document.addEventListener('click', (e) => {
       : { title: 'עצמאים, אין לכם מעסיק שיפקיד בשבילכם. <em>יש לכם עד 31.12.</em>', go: 'כמה אחסוך?' };
     tile.querySelector('[data-now-title]').innerHTML = text.title;
     tile.querySelector('[data-now-go]').textContent = text.go;
-    tile.querySelector('[data-now-days]').textContent = days;
-    tile.querySelector('[data-now-unit]').textContent = days === 1 ? 'יום' : 'ימים';
-    tile.querySelector('[data-now-when]').hidden = false;
+    // the countdown sits beside both the fund strip and this tile, so it is found on the page, not in the tile
+    document.querySelector('[data-now-days]').textContent = days;
+    document.querySelector('[data-now-unit]').textContent = days === 1 ? 'יום' : 'ימים';
+    document.querySelector('[data-now-when]').hidden = false;
   }
 
-  // the investment provident fund reminder: November and December of the year its ceiling belongs to
+  // the investment provident fund reminder: November and December, while the year's ceiling can still be used
   const investStrip = document.querySelector('[data-invest-strip]');
-  if (investStrip && month >= 10 && String(year) === investStrip.dataset.year) investStrip.hidden = false;
+  if (investStrip && month >= 10) investStrip.hidden = false;
 
   const monthFocus = document.querySelector(`#m${month + 1} .cal-focus`);
   if (monthFocus && until) {

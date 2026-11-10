@@ -333,7 +333,13 @@ p.chart-hint { margin: -4px 0 0; }
   .yield-cta:hover { background: var(--gold-soft); }
   .yield-cta:hover .arrow { transform: translateX(-6px); }
 }
-.now-tile { grid-column: 1; grid-row: 2; position: relative; display: flex; align-items: stretch; }
+/* the year-end group under the photo: the countdown on the right, beside the fund strip and the self-employed tile */
+.now-group { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--gap); }
+.now-group > .now-when { grid-column: 1; grid-row: 1 / span 2; }
+.now-group > .invest-strip, .now-group > .now-tile { grid-column: 2; }
+.now-group:has(> .invest-strip[hidden]) > .now-when { grid-row: 1; }
+.now-group:has(> .now-when[hidden]) > * { grid-column: 1 / -1; }
+.now-tile { position: relative; display: flex; align-items: stretch; }
 /* the whole tile still opens the calculator; only the guide link sits above that */
 .now-go::after { content: ""; position: absolute; inset: 0; }
 .now-guide { position: relative; z-index: 1; align-self: flex-start; padding-block: 2px; font-size: var(--t-5); font-weight: 700; }
@@ -345,7 +351,7 @@ p.chart-hint { margin: -4px 0 0; }
 .now-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 24px 32px; }
 .now-copy strong { font-size: var(--t-2); font-weight: 800; line-height: 1.25; text-wrap: balance; }
 .now-copy em { font-style: normal; background: linear-gradient(transparent 62%, var(--gold-soft) 62%); }
-.now-go { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-inline: 28px; background: var(--gold); color: var(--navy-deep); font-size: var(--t-4); font-weight: 800; white-space: nowrap; text-decoration: none; transition: background-color 180ms ease; }
+.now-go { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-inline: 28px; background: var(--paper); color: var(--navy-deep); font-size: var(--t-4); font-weight: 800; white-space: nowrap; text-decoration: none; transition: background-color 180ms ease; }
 .now-go small { font-size: 13px; font-weight: 700; color: var(--navy-deep); }
 section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 @media (hover: hover) and (pointer: fine) {
@@ -375,25 +381,20 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 
 /* ----- the investment provident fund reminder: a slim row between the photo and the self-employed tile,
    November and December only (Roei, 2026-11-10). The photo gives up the room, so the name rises with it ----- */
-@media (min-width: 901px) {
-  .hero:has(.invest-strip:not([hidden])) { grid-template-rows: 1fr auto auto; }
-  .hero:has(.invest-strip:not([hidden])) .now-tile { grid-row: 3; }
-  .hero:has(.invest-strip:not([hidden])) .hero-yields { grid-row: 1 / span 3; }
-}
-.invest-strip { grid-column: 1; grid-row: 2; display: flex; align-items: center; gap: 16px; padding: 12px 22px; color: var(--on-dark); text-decoration: none; font-size: var(--t-5); line-height: 1.45; }
+.invest-strip { display: flex; align-items: center; gap: 16px; padding: 12px 22px; color: var(--on-dark); text-decoration: none; font-size: var(--t-5); line-height: 1.45; }
 .invest-strip[hidden] { display: none; }
-.invest-tag { flex: none; padding: 3px 10px; background: var(--gold); color: var(--navy-deep); font-size: 13px; font-weight: 800; }
-.invest-say { flex: 1; min-width: 0; color: var(--on-dark-soft); }
-.invest-say b { color: var(--on-dark); font-weight: 800; font-variant-numeric: tabular-nums; }
+.invest-say { flex: 1; min-width: 0; color: var(--on-dark); font-size: var(--t-4); font-weight: 700; text-wrap: balance; }
 .invest-go { flex: none; color: var(--gold); font-weight: 700; white-space: nowrap; }
 @media (hover: hover) and (pointer: fine) { .invest-strip:hover .invest-go { color: var(--gold-soft); } }
 /* half a board or a phone: the words take a line of their own */
 @media (max-width: 1100px) {
   .invest-strip { flex-wrap: wrap; gap: 6px 12px; padding: 14px 18px; }
-  .invest-say { flex-basis: 100%; order: 1; }
   .invest-go { margin-inline-start: auto; }
 }
-@media (max-width: 900px) { .invest-strip { grid-column: auto; grid-row: auto; } }
+/* phones: the sentence takes the strip's width, the link goes under it */
+@media (max-width: 700px) {
+  .invest-say { flex-basis: 100%; font-size: 16px; }
+}
 
 /* ----- the events tab: a flag, the date, the event, the actual figure and the one before it.
    The actual figure is coloured by its direction against the one before ----- */
@@ -699,7 +700,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-nav { display: none; }
   .hero { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   .hero-main { grid-column: 1 / -1; grid-row: auto; padding: 28px; min-height: 420px; }
-  .hero-yields, .now-tile { grid-column: auto; grid-row: auto; }
+  .hero-yields, .now-group { grid-column: auto; grid-row: auto; }
   .hero-bg { width: 100%; opacity: .4; -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%); mask-image: linear-gradient(to top, transparent 0%, #000 70%); }
   .hero-copy { max-width: none; }
   .pillars { grid-template-columns: minmax(0, 1fr); }

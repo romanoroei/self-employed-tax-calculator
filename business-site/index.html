@@ -50,21 +50,23 @@
       <p class="hero-lead">ליווי אישי ומקצועי למשקיעים, לשכירים, לעצמאים ולחברות.</p>
     </div>
   </div>
-  <!-- a slim year-end reminder for the investment provident fund, above the self-employed tile. js/site.js shows it in November and December 2026 only (83,641 is the 2026 ceiling) -->
-  <a class="tile tile-slate invest-strip" href="/investment-fund" data-count="strip:invest" data-invest-strip data-year="2026" hidden>
-    <span class="invest-tag">קופת גמל להשקעה</span>
-    <span class="invest-say">תקרת ההפקדה ל־2026 היא <b>83,641&nbsp;₪</b>, והמקום שלא תנצלו עד 31.12 לא עובר לשנה הבאה.</span>
+  <!-- the year-end group: the 31.12 countdown beside the investment fund strip and the self-employed tile.
+       js/site.js shows the countdown and the strip in November and December -->
+  <div class="now-group">
+  <span class="tile now-when" data-now-when hidden><small>עד 31.12</small><b data-now-days></b><span data-now-unit></span></span>
+  <a class="tile tile-slate invest-strip" href="/investment-fund" data-count="strip:invest" data-invest-strip hidden>
+    <span class="invest-say">משקיעים, נצלו את תקרת ההפקדה השנתית והפקידו לקופת גמל להשקעה.</span>
     <span class="invest-go">למדריך <span class="arrow" aria-hidden="true">←</span></span>
   </a>
   <!-- the calculator teaser and the guide. js/site.js adds the countdown -->
   <div class="tile tile-paper now-tile" data-now>
-    <span class="now-when" data-now-when hidden><small>עד 31.12</small><b data-now-days></b><span data-now-unit></span></span>
     <span class="now-copy">
       <strong data-now-title>עצמאים, אין לכם מעסיק שיפקיד בשבילכם.</strong>
       <a class="link now-guide" href="/self-employed" data-count="strip:guide">מדריך לעצמאים: כמה חובה להפקיד, אילו הטבות מס ומה לבדוק <span aria-hidden="true">←</span></a>
       <a class="link now-guide" href="/compass" data-count="strip:compass">לא בטוחים מה לבדוק? המצפן הפיננסי לעצמאים <span aria-hidden="true">←</span></a>
     </span>
     <a class="now-go" href="/self-employed-tax-calculator/" data-count="strip:calculator"><span><span data-now-go>כמה אחסוך?</span> <span class="arrow" aria-hidden="true">←</span></span><small>למחשבון הטבות המס לעצמאים</small></a>
+  </div>
   </div>
   <div class="tile tile-paper hero-yields" data-market>
     <div class="market-tabs" role="tablist" aria-label="תשואות ונתוני שוק">
