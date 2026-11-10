@@ -327,6 +327,9 @@ document.addEventListener('click', (e) => {
   // the investment provident fund reminder: November and December, while the year's ceiling can still be used
   const investStrip = document.querySelector('[data-invest-strip]');
   if (investStrip && month >= 10) investStrip.hidden = false;
+  // the ceiling shown beside it belongs to one year: from January it waits for the new figure
+  const investCap = investStrip?.querySelector('[data-cap-year]');
+  if (investCap && String(year) !== investCap.dataset.capYear) investCap.remove();
 
   const monthFocus = document.querySelector(`#m${month + 1} .cal-focus`);
   if (monthFocus && until) {
