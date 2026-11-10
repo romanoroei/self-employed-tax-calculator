@@ -42,12 +42,46 @@
 
 <!-- ===== Hero: a short board ===== -->
 <section class="hero board">
-  <div class="tile tile-ink hero-main">
-    <img class="hero-bg" src="assets/img/roei-3.jpg" width="1400" height="2100" alt="רועי רומנו בחליפה כחולה" fetchpriority="high">
-    <div class="hero-copy">
-      <h1><span>רועי רומנו</span> <span class="hero-role">מתכנן פיננסי</span></h1>
-      <p class="hero-promise"><span>לראות את התמונה המלאה.</span></p>
-      <p class="hero-lead">ליווי אישי ומקצועי למשקיעים, לשכירים, לעצמאים ולחברות.</p>
+  <!-- the photo tile is a slide show (js/site.js): the first slide is Roei, the others point to a guide or a tool.
+       Without scripting only the first slide shows. A slide with data-until leaves after that day -->
+  <div class="tile tile-ink hero-main" data-hero>
+    <div class="hero-track">
+      <div class="hero-slide" data-slide>
+        <img class="hero-bg" src="assets/img/roei-3.jpg" width="1400" height="2100" alt="רועי רומנו בחליפה כחולה" fetchpriority="high">
+        <div class="hero-copy">
+          <h1><span>רועי רומנו</span> <span class="hero-role">מתכנן פיננסי</span></h1>
+          <p class="hero-promise"><span>לראות את התמונה המלאה.</span></p>
+          <p class="hero-lead">ליווי אישי ומקצועי למשקיעים, לשכירים, לעצמאים ולחברות.</p>
+        </div>
+      </div>
+      <div class="hero-slide" data-slide data-until="2026-12-31" hidden>
+        <img class="hero-bg" src="assets/img/roei-2.jpg" width="720" height="853" alt="" loading="lazy">
+        <div class="hero-copy">
+          <p class="hero-kicker">עד 31.12</p>
+          <h2 class="hero-title">קופת גמל להשקעה</h2>
+          <p class="hero-figure"><b>83,641&nbsp;₪</b><span>תקרת ההפקדה השנתית ל־2026</span></p>
+          <p class="hero-lead">משקיעים, המקום שלא תנצלו עד סוף השנה לא עובר לשנה הבאה.</p>
+          <a class="button hero-go" href="/investment-fund" data-count="hero:invest">למדריך קופת גמל להשקעה <span class="arrow" aria-hidden="true">←</span></a>
+        </div>
+      </div>
+      <div class="hero-slide" data-slide hidden>
+        <svg class="hero-deco" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor"><circle cx="100" cy="100" r="92" stroke-width="1"/><circle cx="100" cy="100" r="70" stroke-width=".6"/><path d="M100 4v24M100 172v24M4 100h24M172 100h24" stroke-width="1.2"/></g><path d="M100 34l14 66h-28z" fill="currentColor"/><path d="M100 166l-14-66h28z" fill="currentColor" opacity=".35"/><circle cx="100" cy="100" r="5" fill="currentColor"/></svg>
+        <div class="hero-copy">
+          <p class="hero-kicker">כלי לעצמאים</p>
+          <h2 class="hero-title">המצפן הפיננסי</h2>
+          <p class="hero-lead">ענו על כמה שאלות קצרות וקבלו מפת צרכים אישית: מה כדאי לבדוק בפנסיה, בביטוחים, בהטבות המס ובנזילות. בלי להשאיר פרטים.</p>
+          <a class="button hero-go" href="/compass" data-count="hero:compass">להתחיל במצפן <span class="arrow" aria-hidden="true">←</span></a>
+        </div>
+      </div>
+      <div class="hero-slide" data-slide hidden>
+        <img class="hero-bg" src="assets/img/wall-street.jpg" width="1000" height="1564" alt="" loading="lazy">
+        <div class="hero-copy">
+          <p class="hero-kicker">ארביטראז' של ידע</p>
+          <h2 class="hero-title">מדריכים וכלים, בגובה העיניים</h2>
+          <p class="hero-lead">פנסיה לעצמאים, קופת גמל להשקעה, פוליסת חיסכון, לוח השנה הפיננסי ומחשבון הטבות המס, במקום אחד.</p>
+          <a class="button hero-go" href="/knowledge" data-count="hero:knowledge">לכל המדריכים והכלים <span class="arrow" aria-hidden="true">←</span></a>
+        </div>
+      </div>
     </div>
   </div>
   <!-- the year-end group: the 31.12 countdown beside the investment fund strip and the self-employed tile.

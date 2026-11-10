@@ -409,3 +409,122 @@ document.addEventListener('click', (e) => {
     a.dataset.subscribe = 'outlook';
   });
 })();
+
+// ===== Home page: the photo tile is a slide show =====
+// The first slide is Roei; the others point to a guide or a tool. Every 3 seconds (Roei, 2026-11-10) the slide moves to the
+// right and the next comes in from the left. It stops while the pointer or the keyboard focus is on the
+// tile, while the page is hidden, after the pause button, and never runs for visitors who asked their
+// device for less motion (they change slides by hand). Arrows, dots and a swipe on phones move it too.
+(() => {
+  const hero = document.querySelector('[data-hero]');
+  if (!hero) return;
+  const today = new Date();
+  const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  hero.querySelectorAll('[data-slide][data-until]').forEach((slide) => { if (slide.dataset.until < todayIso) slide.remove(); });
+  const slides = [...hero.querySelectorAll('[data-slide]')];
+  if (slides.length < 2) return;
+
+  const INTERVAL = 3000;
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  let current = 0;
+  let timer = 0;
+  let paused = still.matches;
+  let held = false;
+  let moving = null;
+
+  hero.setAttribute('role', 'region');
+  hero.setAttribute('aria-roledescription', 'מצגת');
+  hero.setAttribute('aria-label', 'רועי רומנו, ומה חדש באתר');
+  slides.forEach((slide, i) => {
+    slide.setAttribute('role', 'group');
+    slide.setAttribute('aria-roledescription', 'שקף');
+    slide.setAttribute('aria-label', `${i + 1} מתוך ${slides.length}`);
+    slide.hidden = i !== 0;
+    slide.inert = i !== 0;
+  });
+
+  const icon = (d) => `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${d}"/></svg>`;
+  const PLAY = 'M4 2.5v11l9-5.5z';
+  const PAUSE = 'M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z';
+  const nav = document.createElement('div');
+  nav.className = 'hero-nav';
+  nav.innerHTML = `<button type="button" class="hero-arrow" data-go="-1" aria-label="השקף הקודם">${icon('M5.6 1.6L4.2 3l5 5-5 5 1.4 1.4L12 8z')}</button>`
+    + `<div class="hero-dots">${slides.map((_, i) => `<button type="button" class="hero-dot" data-to="${i}" aria-label="שקף ${i + 1} מתוך ${slides.length}"${i ? '' : ' aria-current="true"'}></button>`).join('')}</div>`
+    + `<button type="button" class="hero-arrow" data-go="1" aria-label="השקף הבא">${icon('M10.4 1.6L11.8 3l-5 5 5 5-1.4 1.4L4 8z')}</button>`
+    + `<button type="button" class="hero-pause" aria-pressed="false"></button>`;
+  hero.append(nav);
+  const dots = [...nav.querySelectorAll('.hero-dot')];
+  const pauseButton = nav.querySelector('.hero-pause');
+  function drawPause() {
+    pauseButton.innerHTML = icon(paused ? PLAY : PAUSE);
+    pauseButton.setAttribute('aria-label', paused ? 'הפעלת המצגת' : 'עצירת המצגת');
+    pauseButton.setAttribute('aria-pressed', String(paused));
+  }
+  drawPause();
+
+  // dir 1: the slide leaves to the right and the next comes in from the left; -1 the other way
+  function show(next, dir) {
+    if (next === current) return;
+    if (moving) moving.forEach((a) => a.finish());
+    const from = slides[current];
+    const to = slides[next];
+    current = next;
+    dots.forEach((dot, i) => (i === next ? dot.setAttribute('aria-current', 'true') : dot.removeAttribute('aria-current')));
+    to.hidden = false;
+    to.inert = false;
+    from.inert = true;
+    const done = () => { from.hidden = true; from.classList.remove('is-moving'); to.classList.remove('is-moving'); moving = null; };
+    if (still.matches || !to.animate) { done(); return; }
+    from.classList.add('is-moving');
+    to.classList.add('is-moving');
+    const timing = { duration: 650, easing: 'cubic-bezier(.2, .7, .2, 1)' };
+    moving = [
+      from.animate([{ transform: 'none' }, { transform: `translateX(${dir * 100}%)` }], timing),
+      to.animate([{ transform: `translateX(${dir * -100}%)` }, { transform: 'none' }], timing),
+    ];
+    moving[1].finished.then(done, done);
+  }
+  const step = (dir) => show((current + (dir > 0 ? 1 : -1) + slides.length) % slides.length, dir);
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!paused && !held && !document.hidden) timer = setTimeout(() => { step(1); schedule(); }, INTERVAL);
+  }
+
+  nav.addEventListener('click', (e) => {
+    const button = e.target.closest('button');
+    if (!button) return;
+    if (button === pauseButton) { paused = !paused; drawPause(); schedule(); return; }
+    if (button.dataset.go) step(Number(button.dataset.go));
+    if (button.dataset.to) { const to = Number(button.dataset.to); show(to, to > current ? 1 : -1); }
+    schedule();
+  });
+  // hold while a mouse rests on the tile or the keyboard is inside it
+  hero.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { held = true; schedule(); } });
+  hero.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { held = false; schedule(); } });
+  hero.addEventListener('focusin', () => { held = true; schedule(); });
+  hero.addEventListener('focusout', (e) => { if (!hero.contains(e.relatedTarget)) { held = false; schedule(); } });
+  document.addEventListener('visibilitychange', schedule);
+  // arrow keys inside the tile: left is the next slide, as the slides come in from the left
+  hero.addEventListener('keydown', (e) => {
+    const dir = { ArrowLeft: 1, ArrowRight: -1 }[e.key];
+    if (!dir || !nav.contains(document.activeElement)) return;
+    e.preventDefault();
+    step(dir);
+    schedule();
+  });
+  // a swipe on a touch screen: pulling to the right brings the next slide in from the left
+  let startX = null;
+  let startY = 0;
+  hero.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
+  hero.addEventListener('touchend', (e) => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    startX = null;
+    if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    step(dx > 0 ? 1 : -1);
+    schedule();
+  });
+  schedule();
+})();
