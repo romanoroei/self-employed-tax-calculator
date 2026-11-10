@@ -926,3 +926,43 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .street-text { padding: 26px; }
 }
 
+
+/* ================= Phones: a compact first screen (Roei, 2026-11-11) =================
+   Kept last, so it wins over the rules above.
+   Slides: the words start at eye level on every slide, over the picture, and the drawn chart and compass
+   lie faintly behind them. The year-end group and the market tile get smaller type and padding, so the
+   market tile fits one phone screen under the bar. */
+@media (max-width: 700px) {
+  .hero-slide, .hero-slide:first-child { min-height: 470px; padding: 92px 22px 70px; justify-content: flex-start; }
+  .hero-deco { top: 52%; inset-inline-end: 50%; width: 88%; transform: translate(-50%, -50%); opacity: .2; }
+  /* the heading of every slide starts where Roei's name does: the gold label sits above that line */
+  .hero-slide:has(.hero-kicker) { padding-top: 54px; }
+  .hero-title { font-size: 30px; }
+  .hero-figure b { font-size: 34px; }
+  .hero-kicker { margin-bottom: 10px; }
+
+  .now-when { width: 64px; }
+  .now-when b { font-size: 26px; }
+  .now-when small, .now-when span { font-size: 11px; }
+  .invest-strip { gap: 4px 10px; padding: 10px 14px; }
+  .invest-say { font-size: 14.5px; line-height: 1.4; }
+  .invest-cap { padding-inline: 10px; }
+  .invest-cap b { font-size: 18px; }
+  .invest-cap small { font-size: 11px; }
+  .now-copy { gap: 6px; padding: 12px 14px; }
+  .now-copy strong { font-size: 17px; }
+  .now-guide { font-size: 13px; }
+  .now-go { padding: 9px 14px; font-size: 15px; }
+  .now-go small { font-size: 12px; }
+
+  .market-tabs { padding-inline: 8px; }
+  .market-tabs button { padding: 9px 8px 7px; font-size: 14px; }
+  .market-tabs button + button::before { top: 12px; }
+  .yield-body { gap: 8px; padding: 10px 16px 8px; }
+  .market-chart { flex-basis: 150px; min-height: 150px; }
+  [data-market-panel="rates"] > .market-chart { height: 180px; }
+  .yield-note { font-size: 11px; line-height: 1.35; }
+  .yield-cta { padding: 9px 18px; }
+  /* events: four that happened and three that are coming, so the tab keeps the tile's height */
+  .ev-table:not(.is-coming) tbody tr:nth-child(n+5), .ev-table.is-coming tbody tr:nth-child(n+4) { display: none; }
+}
