@@ -21,6 +21,12 @@ function changes(rows) {
   if (!kept.length) throw new Error('No rate');
   return kept;
 }
+// The changes, and the last day the source has a figure for, so a page can tell how far the data reach.
+function series(rows) {
+  const history = changes(rows);
+  const asOf = rows.filter(([, v]) => Number.isFinite(v)).reduce((a, [d]) => (d > a ? d : a), '');
+  return { history, asOf };
+}
 
 function csvRows(text, series) {
   const [head, ...lines] = text.trim().split(/\r?\n/);
@@ -36,19 +42,31 @@ const startDate = () => { const d = new Date(); d.setUTCFullYear(d.getUTCFullYea
 const RATES = {
   async il() {
     const url = `https://edge.boi.org.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/BR/1.0/?c%5BDATA_TYPE%5D=OF00&startperiod=${startDate()}&format=csv`;
-    return { history: changes(csvRows(await (await source(url)).text(), 'MNT_RIB_BOI_D')) };
+    return series(csvRows(await (await source(url)).text(), 'MNT_RIB_BOI_D'));
   },
   async us() {
     const today = new Date().toISOString().slice(0, 10);
     const { refRates } = await (await source(`https://markets.newyorkfed.org/api/rates/unsecured/effr/search.json?startDate=${startDate()}&endDate=${today}`)).json();
     const latest = refRates.reduce((a, b) => (a.effectiveDate > b.effectiveDate ? a : b));
-    return { history: changes(refRates.map((r) => [r.effectiveDate, r.targetRateTo])), from: latest.targetRateFrom };
+    return { ...series(refRates.map((r) => [r.effectiveDate, r.targetRateTo])), from: latest.targetRateFrom };
   },
   async eu() {
     const url = `https://data-api.ecb.europa.eu/service/data/FM/D.U2.EUR.4F.KR.DFR.LEV?startPeriod=${startDate()}&format=csvdata`;
-    return { history: changes(csvRows(await (await source(url)).text())) };
+    return series(csvRows(await (await source(url)).text()));
   },
+  // The Bank of England's own database first. It sits behind Akamai, which turns away Cloudflare's servers
+  // (no answer ever reached the site), so the fallback is the BIS's daily series of the same Bank Rate.
+  // The BIS publishes it a few days late: asOf says how far it reaches.
   async uk() {
+    try {
+      return { ...(await RATES.boe()), source: 'boe' };
+    } catch (error) {
+      console.error('uk from the Bank of England', error.message);
+      const url = `https://stats.bis.org/api/v1/data/WS_CBPOL/D.GB?startPeriod=${startDate()}&format=csv&detail=dataonly`;
+      return { ...series(csvRows(await (await source(url)).text())), source: 'bis' };
+    }
+  },
+  async boe() {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const [y, m, d] = startDate().split('-');
     const url = `https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=${d}/${months[m - 1]}/${y}&Dateto=now&SeriesCodes=IUDBEDR&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N`;
@@ -57,7 +75,7 @@ const RATES = {
       const [day, month, year] = date.split(' ');
       return [`${year}-${String(months.indexOf(month) + 1).padStart(2, '0')}-${day.padStart(2, '0')}`, parseFloat(value)];
     });
-    return { history: changes(rows) };
+    return series(rows);
   },
 };
 
@@ -82,7 +100,7 @@ async function lastGood(origin, name, fetcher, waitUntil) {
 }
 
 async function rates(origin, waitUntil) {
-  const ids = Object.keys(RATES);
+  const ids = ['il', 'us', 'eu', 'uk'];
   const settled = await Promise.allSettled(ids.map((id) => lastGood(origin, `rate-${id}`, () => RATES[id](), waitUntil)));
   const items = settled.flatMap((s, i) => (s.status === 'fulfilled' ? [{ id: ids[i], ...s.value.value }] : []));
   if (!items.length) throw new Error(settled[0].reason?.message || 'No rates');
@@ -93,8 +111,8 @@ async function rates(origin, waitUntil) {
 export async function onRequestGet({ request, waitUntil }) {
   const cache = globalThis.caches?.default;
   const origin = new URL(request.url).origin;
-  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback)
-  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=2`);
+  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback; v3: before asOf and the BIS fallback for the UK)
+  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=3`);
   const held = cache && await cache.match(key);
   if (held) return held;
   try {

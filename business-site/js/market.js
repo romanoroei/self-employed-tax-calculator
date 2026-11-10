@@ -573,6 +573,9 @@
         row.querySelector('[data-date]').innerHTML = ltr(day(isoTime(last[0])));
       }
       rates.element.querySelector('[data-updated]').textContent = `עודכן ${day(updated * 1000)}`;
+      // when the Bank of England's own data can't be reached, the UK row comes from the BIS, a few days late
+      const uk = items.find((i) => i.id === 'uk');
+      if (uk?.source === 'bis' && uk.asOf) rates.element.querySelector('[data-source]').insertAdjacentHTML('afterbegin', `נתוני אנגליה נכונים ל־${ltr(day(isoTime(uk.asOf)))}, לפי ה־BIS. `);
     } catch {
       rates.element.querySelector('[data-updated]').textContent = UNAVAILABLE;
     }
@@ -642,6 +645,9 @@
       const move = history[i][1] - history[i - 1][1];
       return `${move < 0 ? 'הורדה' : 'הועלתה'} ב־${ltr(`${number(Math.abs(move), 2)}%`)} ל־${ltr(range(history[i][1]))}`;
     }
+    // "unchanged" only once the source reaches past the days a new rate would take effect
+    // (the UK's fallback source publishes a week or more late)
+    if (!item.asOf || item.asOf < addDays(date, 4)) return '';
     const held = history.filter(([d]) => d <= date).pop();
     return held ? `נותרה ללא שינוי, ${ltr(range(held[1]))}` : '';
   }
