@@ -212,6 +212,9 @@ html.menu-open { overflow: hidden; }
 .hero-figure span { margin-top: 4px; font-size: 15px; font-weight: 700; color: var(--on-dark-soft); }
 .hero-go { align-self: flex-start; gap: 10px; margin-top: 22px; }
 .hero-deco { position: absolute; top: 50%; inset-inline-end: 7%; width: min(40%, 320px); transform: translateY(-50%); color: var(--gold); opacity: .5; }
+/* Wall Street: a narrower frame, so the whole front shows smaller, and a little of its colour (Roei) */
+/* on computers only: on a phone the words lie over the photo, and the colour would fight them */
+@media (min-width: 901px) { .hero-bg.hero-bg-street { width: 36%; filter: grayscale(.45) contrast(1.05); opacity: .8; } }
 /* the controls: previous, dots, next and pause, at the free corner of the tile */
 /* on a dark pill, so they read over a bright photo too */
 .hero-nav { position: absolute; z-index: 2; bottom: 18px; inset-inline-end: 22px; display: flex; align-items: center; gap: 6px; padding: 4px; border-radius: 22px; background: rgba(8, 24, 38, .72); }
@@ -235,7 +238,7 @@ html.menu-open { overflow: hidden; }
           mask-image: linear-gradient(to right, #000 45%, transparent 100%);
 }
 .hero-copy { position: relative; max-width: 56%; }
-@media (min-width: 901px) { .hero-slide { padding: 28px 32px; } .hero-main h1 { font-size: clamp(38px, 4vw, 60px); } }
+@media (min-width: 901px) { .hero-slide { padding: 28px 32px 76px; } .hero-main h1 { font-size: clamp(38px, 4vw, 60px); } }
 .hero-main h1 { font-size: var(--t-hero); font-weight: 800; line-height: 1.08; letter-spacing: -0.015em; color: var(--on-dark); }
 .hero-main h1 span { display: block; }
 .hero-role { font-weight: 400; color: var(--gold); }
@@ -733,7 +736,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .bar-nav { display: none; }
   .hero { min-height: 0; grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
   .hero-main { grid-column: 1 / -1; grid-row: auto; min-height: 420px; }
-  .hero-slide { padding: 28px; }
+  .hero-slide { padding: 28px 28px 72px; }
   .hero-yields, .now-group { grid-column: auto; grid-row: auto; }
   .hero-bg { width: 100%; opacity: .4; -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 70%); mask-image: linear-gradient(to top, transparent 0%, #000 70%); }
   .hero-copy { max-width: none; }

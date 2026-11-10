@@ -411,7 +411,7 @@ document.addEventListener('click', (e) => {
 })();
 
 // ===== Home page: the photo tile is a slide show =====
-// The first slide is Roei; the others point to a guide or a tool. Every 3 seconds (Roei, 2026-11-10) the slide moves to the
+// The first slide is Roei; the others point to a guide or a tool. Every 4 seconds (Roei, 2026-11-10) the slide moves to the
 // right and the next comes in from the left. It stops while the pointer or the keyboard focus is on the
 // tile, while the page is hidden, after the pause button, and never runs for visitors who asked their
 // device for less motion (they change slides by hand). Arrows, dots and a swipe on phones move it too.
@@ -424,7 +424,7 @@ document.addEventListener('click', (e) => {
   const slides = [...hero.querySelectorAll('[data-slide]')];
   if (slides.length < 2) return;
 
-  const INTERVAL = 3000;
+  const INTERVAL = 4000;
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
