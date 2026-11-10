@@ -933,12 +933,16 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
    lie faintly behind them. The year-end group and the market tile get smaller type and padding, so the
    market tile fits one phone screen under the bar. */
 @media (max-width: 700px) {
-  .hero-slide, .hero-slide:first-child { min-height: 470px; padding: 92px 22px 70px; justify-content: flex-start; }
+  /* the tallest slide sets the height; the controls need 56px at the bottom (Roei: words a little lower, the tile shorter) */
+  .hero-slide, .hero-slide:first-child { min-height: 0; padding: 116px 22px 64px; justify-content: flex-start; }
   .hero-deco { top: 52%; inset-inline-end: 50%; width: 88%; transform: translate(-50%, -50%); opacity: .2; }
   /* the heading of every slide starts where Roei's name does: the gold label sits above that line */
-  .hero-slide:has(.hero-kicker) { padding-top: 54px; }
+  .hero-slide:has(.hero-kicker) { padding-top: 78px; }
   .hero-title { font-size: 30px; }
-  .hero-figure b { font-size: 34px; }
+  .hero-figure { margin-top: 8px; }
+  .hero-figure b { font-size: 30px; }
+  .hero-slide .hero-lead { margin-top: 10px; }
+  .hero-go { margin-top: 14px; }
   .hero-kicker { margin-bottom: 10px; }
 
   .now-when { width: 64px; }
