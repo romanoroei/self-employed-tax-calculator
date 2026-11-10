@@ -612,16 +612,30 @@
   }
 
   // ---------- the events tab: what happened lately and what is coming ----------
+  // Each row: a flag, the date, the event, the actual figure and the one before it. Lately rows colour the
+  // actual by its direction against the one before (up green, down red, unchanged grey). There is no
+  // forecast column: consensus forecasts are sold by data vendors, and Investing's free widget brings
+  // trackers and ads, against the site's no-tracking promise (Roei chose this on 2026-11-10).
   // The dates come from each body's own published calendar (checked 2026-11-10): the Bank of Israel,
   // the Fed's FOMC page, the ECB's meetings calendar and the Bank of England's MPC dates.
   // Add the next year's dates once they are published (the Bank of Israel's usually in December).
-  // No outcome is typed in by hand: a decision's result is read from /api/rates, the index from /api/cpi.
-  const BANKS = { il: 'בנק ישראל', us: 'הפד האמריקאי', eu: 'הבנק המרכזי האירופי', uk: 'בנק אנגליה' };
+  // No figure is typed in by hand: a decision's result is read from /api/rates, the index from /api/cpi.
+  const BANKS = { il: 'ריבית בנק ישראל', us: 'ריבית הפד', eu: 'ריבית הבנק האירופי', uk: 'ריבית בנק אנגליה' };
   const DECISIONS = [
     ['il', '2026-10-21'], ['us', '2026-10-28'], ['eu', '2026-10-29'], ['uk', '2026-11-05'],
     ['il', '2026-11-23'], ['us', '2026-12-09'], ['eu', '2026-12-17'], ['uk', '2026-12-17'],
     ['us', '2027-01-27'], ['eu', '2027-02-04'], ['uk', '2027-02-04'],
   ];
+  const SHORT_MONTHS = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
+  // small flags drawn here, so nothing is fetched from elsewhere (Windows shows no flag emoji)
+  const FLAGS = {
+    il: ['ישראל', '<rect width="30" height="20" fill="#fff"/><rect y="2" width="30" height="3" fill="#0038b8"/><rect y="15" width="30" height="3" fill="#0038b8"/><path d="M15 6.2l3.3 5.7h-6.6zM15 13.8l-3.3-5.7h6.6z" fill="none" stroke="#0038b8" stroke-width=".9"/>'],
+    us: ['ארה"ב', `<rect width="30" height="20" fill="#fff"/>${[0, 2, 4, 6, 8, 10, 12].map((i) => `<rect y="${i * 20 / 13}" width="30" height="${20 / 13}" fill="#b22234"/>`).join('')}<rect width="13" height="${7 * 20 / 13}" fill="#3c3b6e"/>`],
+    eu: ['גוש האירו', `<rect width="30" height="20" fill="#039"/>${Array.from({ length: 12 }, (_, i) => `<circle cx="${(15 + 6 * Math.sin(i * Math.PI / 6)).toFixed(2)}" cy="${(10 - 6 * Math.cos(i * Math.PI / 6)).toFixed(2)}" r=".9" fill="#fc0"/>`).join('')}`],
+    uk: ['בריטניה', '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="3.4"/>'],
+  };
+  const flag = (id) => `<svg class="ev-flag" viewBox="0 0 30 20" role="img" aria-label="${FLAGS[id][0]}"><title>${FLAGS[id][0]}</title>${FLAGS[id][1]}</svg>`;
+  // five that happened, four that are coming: the tab keeps the tile's height
   const EVENT_ROWS = 5;
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const shortDay = (date) => { const [, m, d] = date.split('-'); return `${Number(d)}.${Number(m)}`; };
@@ -634,24 +648,30 @@
     if (d.getDay() === 6) d.setDate(14);
     return { date: iso(d), time: d.getDay() === 5 ? '14:00' : '18:30' };
   }
-  // A decision's outcome: a change in the rate within a week of the decision day (the new rate
-  // takes effect a day or two later), or else the rate that held on that day.
-  function decisionResult(item, date) {
-    if (!item) return '';
-    const range = (v) => (item.id === 'us' ? `${number(v - 0.25, 2)}–${number(v, 2)}%` : `${number(v, 2)}%`);
+  const rateText = (id, v) => (id === 'us' ? `${number(v - 0.25, 2)}–${number(v, 2)}%` : `${number(v, 2)}%`);
+  // A decision's rate and the one before it: a change within a week of the decision day (the new rate
+  // takes effect a day or two later), or else the rate that held, once the data reach past those days.
+  function decisionFigures(item, date) {
+    if (!item) return null;
     const history = item.history;
     const i = history.findIndex(([d]) => d >= addDays(date, -1) && d <= addDays(date, 7));
-    if (i > 0) {
-      const move = history[i][1] - history[i - 1][1];
-      return `${move < 0 ? 'הורדה' : 'הועלתה'} ב־${ltr(`${number(Math.abs(move), 2)}%`)} ל־${ltr(range(history[i][1]))}`;
-    }
-    // "unchanged" only once the source reaches past the days a new rate would take effect
-    // (the UK's fallback source publishes a week or more late)
-    if (!item.asOf || item.asOf < addDays(date, 4)) return '';
+    if (i > 0) return { actual: history[i][1], previous: history[i - 1][1] };
+    if (!item.asOf || item.asOf < addDays(date, 4)) return null;
     const held = history.filter(([d]) => d <= date).pop();
-    return held ? `נותרה ללא שינוי, ${ltr(range(held[1]))}` : '';
+    return held ? { actual: held[1], previous: held[1] } : null;
   }
-  const eventRow = ({ date, when, title, detail }) => `<li class="ev-row"><span class="ev-date"><b>${shortDay(date)}</b><small>${when}</small></span><span class="ev-text"><strong>${title}</strong>${detail ? `<small>${detail}</small>` : ''}</span></li>`;
+  const current = (item) => item?.history[item.history.length - 1][1];
+  const move = (actual, previous) => (actual > previous + 1e-9 ? 'up' : actual < previous - 1e-9 ? 'down' : 'same');
+  const MOVE_MARK = { up: ['▲', 'עלייה'], down: ['▼', 'ירידה'], same: ['●', 'ללא שינוי'] };
+  const figure = (text) => (text ? ltr(text) : '—');
+
+  function eventRow({ id, date, when, title, detail, actual, previous, dir }) {
+    const mark = dir ? `<span class="ev-mark" aria-hidden="true">${MOVE_MARK[dir][0]}</span><span class="visually-hidden">${MOVE_MARK[dir][1]}</span>` : '';
+    return `<tr${dir ? ` class="ev-${dir}"` : ''}><td class="ev-when">${flag(id)}<span><b>${shortDay(date)}</b><small>${when}</small></span></td>`
+      + `<th scope="row" class="ev-what">${title}${detail ? `<small>${detail}</small>` : ''}</th>`
+      + `${actual === undefined ? '' : `<td class="ev-actual">${mark}${figure(actual)}</td>`}<td class="ev-prev">${figure(previous)}</td></tr>`;
+  }
+  const eventTable = (caption, second, rows) => `<table class="ev-table${second ? '' : ' is-coming'}"><caption class="visually-hidden">${caption}</caption><thead><tr><th scope="col">מועד</th><th scope="col">אירוע</th>${second ? `<th scope="col">${second}</th>` : ''}<th scope="col">קודם</th></tr></thead><tbody>${rows}</tbody></table>`;
 
   async function loadEvents() {
     const element = tile.querySelector('[data-market-panel="events"]');
@@ -661,15 +681,17 @@
       getJson('/api/cpi').catch(() => null),
     ]);
     const items = ratesAnswer?.items || [];
+    const item = (id) => items.find((i) => i.id === id);
+    const cpiOk = cpi && Number.isFinite(cpi.percent);
 
-    // coming up: the scheduled decisions and the next indices (31.12 already has the countdown and the strip)
-    const coming = DECISIONS.filter(([, date]) => date >= today).map(([id, date]) => ({ date, title: `${BANKS[id]}: החלטת ריבית` }));
+    // coming up: the scheduled decisions and the next indices, each beside the figure it will replace
+    const coming = DECISIONS.filter(([, date]) => date >= today).map(([id, date]) => ({ id, date, title: BANKS[id], previous: current(item(id)) === undefined ? '' : rateText(id, current(item(id))) }));
     const now = new Date();
     for (let k = 0; k < 3; k += 1) {
       const month = new Date(now.getFullYear(), now.getMonth() + k, 1);
       const release = cpiRelease(month.getFullYear(), month.getMonth() + 1);
-      const measured = MONTHS[(month.getMonth() + 11) % 12];
-      if (release.date >= today) coming.push({ date: release.date, title: `מדד המחירים לצרכן: ${measured}`, detail: `הלשכה המרכזית לסטטיסטיקה, ${release.time}` });
+      const measured = SHORT_MONTHS[(month.getMonth() + 11) % 12];
+      if (release.date >= today) coming.push({ id: 'il', date: release.date, title: `מדד המחירים לצרכן (${measured})`, detail: `הלמ"ס, ${release.time}`, previous: cpiOk ? `${signed(cpi.percent, 1)}%` : '' });
     }
     coming.sort((a, b) => a.date.localeCompare(b.date));
     for (const e of coming) { const n = between(today, e.date); e.when = n === 0 ? 'היום' : n === 1 ? 'מחר' : `בעוד ${n} ימים`; }
@@ -679,20 +701,21 @@
     for (const id of Object.keys(BANKS)) {
       const last = DECISIONS.filter(([bank, date]) => bank === id && date < today).pop();
       if (!last) continue;
-      const result = decisionResult(items.find((i) => i.id === id), last[1]);
-      lately.push({ date: last[1], title: `${BANKS[id]}: החלטת ריבית`, detail: result && `הריבית ${result}` });
+      const f = decisionFigures(item(id), last[1]);
+      lately.push({ id, date: last[1], title: BANKS[id], actual: f ? rateText(id, f.actual) : '', previous: f ? rateText(id, f.previous) : '', dir: f && move(f.actual, f.previous) });
     }
-    if (cpi && Number.isFinite(cpi.percent)) {
+    if (cpiOk) {
       const release = cpiRelease(cpi.month === 12 ? cpi.year + 1 : cpi.year, cpi.month === 12 ? 1 : cpi.month + 1);
-      lately.push({ date: release.date, title: `מדד המחירים לצרכן: ${MONTHS[cpi.month - 1]}`, detail: `${ltr(`${signed(cpi.percent, 1)}%`)} בחודש, ${ltr(`${number(cpi.percentYear, 1)}%`)} ב־12 החודשים האחרונים` });
+      const hasPrevious = Number.isFinite(cpi.previous);
+      lately.push({ id: 'il', date: release.date, title: `מדד המחירים לצרכן (${SHORT_MONTHS[cpi.month - 1]})`, detail: `${ltr(`${number(cpi.percentYear, 1)}%`)} ב־12 חודשים`, actual: `${signed(cpi.percent, 1)}%`, previous: hasPrevious ? `${signed(cpi.previous, 1)}%` : '', dir: hasPrevious && move(cpi.percent, cpi.previous) });
     }
     lately.sort((a, b) => b.date.localeCompare(a.date));
     for (const e of lately) { const n = between(e.date, today); e.when = n === 0 ? 'היום' : n === 1 ? 'אתמול' : `לפני ${n} ימים`; }
 
-    element.querySelector('[data-events="lately"]').innerHTML = lately.slice(0, EVENT_ROWS).map(eventRow).join('') || `<li class="ev-empty">${UNAVAILABLE}</li>`;
-    element.querySelector('[data-events="coming"]').innerHTML = coming.slice(0, EVENT_ROWS).map(eventRow).join('');
+    element.querySelector('[data-events="lately"]').innerHTML = lately.length ? eventTable('אירועים אחרונים', 'בפועל', lately.slice(0, EVENT_ROWS).map(eventRow).join('')) : `<p class="ev-empty">${UNAVAILABLE}</p>`;
+    element.querySelector('[data-events="coming"]').innerHTML = eventTable('אירועים צפויים', '', coming.slice(0, EVENT_ROWS - 1).map((e) => eventRow({ ...e, actual: undefined })).join(''));
     element.querySelector('[data-updated]').textContent = `עודכן ${day(Date.now())}`;
-    element.querySelector('[data-source]').innerHTML = 'לפי לוחות הזמנים והנתונים של בנק ישראל, הפד, הבנק המרכזי האירופי, בנק אנגליה והלשכה המרכזית לסטטיסטיקה. המידע אינו המלצה.';
+    element.querySelector('[data-source]').innerHTML = '<span class="ev-key"><span class="is-up">▲ עלייה</span> <span class="is-down">▼ ירידה</span> <span class="ev-same">● ללא שינוי</span>, לעומת הקודם.</span> לפי בנק ישראל, הפד, הבנק המרכזי האירופי, בנק אנגליה והלשכה המרכזית לסטטיסטיקה. המידע אינו המלצה.';
   }
 
   // ---------- the tabs ----------

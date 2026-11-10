@@ -395,15 +395,52 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 }
 @media (max-width: 900px) { .invest-strip { grid-column: auto; grid-row: auto; } }
 
-/* ----- the events tab: the latest decisions and index, then what is scheduled ----- */
-.ev-h { margin-bottom: -10px; padding-bottom: 3px; border-bottom: 1px solid rgba(12, 33, 52, .25); font-size: 13px; font-weight: 800; color: var(--ink-soft); }
-.ev-list { list-style: none; margin: 0; padding: 0; }
-.ev-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 12px; align-items: baseline; padding-block: 5px; border-bottom: 1px solid rgba(12, 33, 52, .1); }
-.ev-date b { display: block; font-size: 16px; font-weight: 800; line-height: 1.25; font-variant-numeric: tabular-nums; }
-.ev-date small, .ev-text small { display: block; font-size: 12.5px; line-height: 1.3; color: var(--ink-soft); }
-.ev-text strong { display: block; font-size: 15px; font-weight: 700; line-height: 1.3; }
-.ev-text small { font-size: 13.5px; }
+/* ----- the events tab: a flag, the date, the event, the actual figure and the one before it.
+   The actual figure is coloured by its direction against the one before ----- */
+.ev-h { margin-bottom: -10px; padding-bottom: 3px; font-size: 13px; font-weight: 800; color: var(--ink-soft); }
+.ev-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13.5px; line-height: 1.3; }
+.ev-table thead th { padding: 4px; border-top: 1px solid rgba(12, 33, 52, .25); border-bottom: 1px solid rgba(12, 33, 52, .25); font-size: 12px; font-weight: 700; color: var(--ink-soft); text-align: start; }
+.ev-table th:first-child { width: 104px; }
+.ev-table th:nth-last-child(1), .ev-table th:nth-last-child(2):not(:nth-child(2)) { width: 96px; }
+.ev-table td, .ev-table tbody th { padding: 4px; border-bottom: 1px solid rgba(12, 33, 52, .1); vertical-align: middle; text-align: start; }
+.ev-when { white-space: nowrap; }
+.ev-when > span { display: inline-block; vertical-align: middle; }
+.ev-flag { display: inline-block; vertical-align: middle; width: 21px; height: 14px; margin-inline-end: 8px; box-shadow: 0 0 0 1px rgba(12, 33, 52, .15); }
+.ev-when b { display: block; font-size: 15px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.ev-when small, .ev-what small { display: block; font-size: 12px; font-weight: 400; line-height: 1.3; color: var(--ink-soft); }
+.ev-what { font-weight: 700; }
+.ev-actual { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ev-prev { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-soft); }
+.ev-mark { display: inline-block; width: 1.1em; font-size: 11px; }
+/* green up and red down, the same colours as the rest of the tile (.is-up, .is-down) */
+.ev-up .ev-actual { color: #0B7A4B; }
+.ev-down .ev-actual { color: #B3261E; }
+.ev-same .ev-actual, .ev-key .ev-same { color: var(--ink-soft); }
+.ev-key { display: block; margin-bottom: 2px; font-weight: 700; }
+.ev-key span { white-space: nowrap; }
 .ev-empty { padding-block: 10px; font-size: 14px; color: var(--ink-soft); }
+/* a narrow tile (up to 1100px): smaller type and tighter figures, so each event stays on one line */
+@media (max-width: 1100px) {
+  .ev-table { font-size: 12.5px; }
+  .ev-table th:first-child { width: 94px; }
+  .ev-table th:nth-last-child(2):not(:nth-child(2)) { width: 84px; }
+  .ev-table th:nth-last-child(1) { width: 76px; }
+  .ev-table td, .ev-table th { padding-inline: 3px; }
+  .ev-flag { width: 18px; height: 12px; margin-inline-end: 6px; }
+  .ev-when small { font-size: 11px; }
+  .ev-what small { font-size: 11.5px; }
+}
+/* phones: the flag sits above the date, so the event keeps a readable column */
+@media (max-width: 520px) {
+  .ev-table { font-size: 12.5px; }
+  .ev-table th:first-child { width: 70px; }
+  .ev-table td, .ev-table th { padding-inline: 3px; }
+  .ev-table th:nth-last-child(2):not(:nth-child(2)) { width: 84px; }
+  .ev-table th:nth-last-child(1) { width: 76px; }
+  .ev-flag { display: block; margin: 0 0 3px; width: 18px; height: 12px; }
+  .ev-when small { font-size: 11px; }
+  .ev-what small { font-size: 11.5px; }
+}
 
 /* ================= Approach ================= */
 .approach { padding-block: var(--section); }

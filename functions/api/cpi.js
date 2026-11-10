@@ -14,16 +14,19 @@ async function latest() {
   const data = await response.json();
   const rows = data?.month?.[0]?.date;
   if (!Array.isArray(rows) || !rows.length) throw new Error('No CPI');
-  const last = rows.reduce((a, b) => (a.year * 12 + a.month >= b.year * 12 + b.month ? a : b));
+  const sorted = [...rows].sort((a, b) => (b.year * 12 + b.month) - (a.year * 12 + a.month));
+  const [last, before] = sorted;
   if (!Number.isFinite(last.percent) || !Number.isFinite(last.percentYear)) throw new Error('No CPI figures');
-  // the month the index measures, its change in that month, and over the twelve months up to it
-  return { year: last.year, month: last.month, percent: last.percent, percentYear: last.percentYear };
+  // the month the index measures, its change in that month, over the twelve months up to it,
+  // and the month before's change, to compare with
+  return { year: last.year, month: last.month, percent: last.percent, percentYear: last.percentYear, previous: Number.isFinite(before?.percent) ? before.percent : null };
 }
 
 export async function onRequestGet({ request, waitUntil }) {
   const cache = globalThis.caches?.default;
   const origin = new URL(request.url).origin;
-  const key = new Request(`${origin}/api/cpi?v=1`);
+  // v2: with the month before's change
+  const key = new Request(`${origin}/api/cpi?v=2`);
   const held = cache && await cache.match(key);
   if (held) return held;
   // the last good answer is kept for a month, in case the bureau's API fails for a while
