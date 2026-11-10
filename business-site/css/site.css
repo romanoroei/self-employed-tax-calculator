@@ -305,6 +305,9 @@ p.chart-hint { margin: -4px 0 0; }
 .yield-tables tbody tr { cursor: pointer; }
 .yield-tables tbody th button { appearance: none; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .yield-tables tbody tr.is-picked > * { background: #DCE6F0; }
+.yield-join { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-start: 6px; vertical-align: -4px; border-radius: 50%; background: var(--gold); color: var(--navy); transition: background-color .15s, color .15s; }
+.yield-join:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+@media (hover: hover) { .yield-join:hover { background: var(--navy); color: var(--gold); } }
 [data-yield-row]::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-inline-end: 7px; vertical-align: 0; border: 1.5px solid rgba(12, 33, 52, .4); background: var(--swatch, transparent); }
 [data-yield-row][aria-pressed="true"]::before { border-color: var(--swatch); }
 .yield-tables td, .yield-tables thead th + th { width: 23%; text-align: end; font-variant-numeric: tabular-nums; }

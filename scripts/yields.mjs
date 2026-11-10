@@ -160,6 +160,12 @@ const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 
 export const periodLabel = (period) => `${MONTHS[period % 100 - 1]} ${Math.floor(period / 100)}`;
 const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</span>' : `<span dir="ltr">${v.toFixed(2)}%</span>`);
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+// Savings policies Roei can open digitally (the joining links in /savings-policy#join): a small icon beside the company leads there.
+const JOIN = { 'הפניקס': 'fnx', 'הכשרה': 'hachshara' };
+const joinIcon = (productId, company) => (productId === 'policy' && JOIN[company]
+  ? `<a class="yield-join" href="/savings-policy#join" data-count="join:tile-${JOIN[company]}" title="להצטרפות דיגיטלית דרכי" aria-label="הצטרפות דיגיטלית לפוליסת חיסכון ב${escape(company)}">`
+    + '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M19 8v6M16 11h6"/></svg></a>'
+  : '');
 
 export function renderYields({ period, views, series }) {
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
@@ -180,7 +186,7 @@ export function renderYields({ period, views, series }) {
     const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
-      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${escape(r.company)}</button></th>${cells(r)}</tr>`).join('')
+      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${escape(r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`

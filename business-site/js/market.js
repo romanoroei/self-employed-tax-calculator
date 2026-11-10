@@ -396,7 +396,7 @@
   }
 
   fundsPanel.addEventListener('click', (e) => {
-    if (e.target.closest('.market-ranges, .market-chart')) return;
+    if (e.target.closest('.market-ranges, .market-chart, .yield-join')) return;
     const row = e.target.closest('tbody tr');
     if (row && e.target.closest('table[data-yield-view]')) { toggle(row.querySelector('[data-yield-row]').dataset.yieldRow); return; }
     const button = e.target.closest('button');
