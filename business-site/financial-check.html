@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>בדיקת התאמה פיננסית | רועי רומנו מתכנן פיננסי</title>
+<!-- A campaign page reached by its own link: kept out of search results, the sitemap and the site's menus. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="כמה שאלות קצרות שמתאימות את עצמן לתשובות שלך, ותוצאה ראשונית מיד: השקעת סכום פנוי, חיסכון חודשי, פנסיה וביטוחים או הטבות מס לעצמאים.">
+<meta property="og:title" content="הכסף שלך עובד בשבילך? הגיע הזמן לבדוק.">
+<meta property="og:description" content="כמה שאלות קצרות יעזרו להבין מה יכול להתאים לך.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://romanoinvest.co.il/assets/img/share-home.jpg">
+<meta property="og:locale" content="he_IL">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/compass.css">
+<link rel="stylesheet" href="css/fcheck.css">
+<script>document.documentElement.classList.add('js')</script>
+<link rel="stylesheet" href="css/consent.css">
+<link rel="canonical" href="https://romanoinvest.co.il/financial-check">
+<meta property="og:url" content="https://romanoinvest.co.il/financial-check">
+</head>
+<body>
+
+<header class="topbar fc-top" id="top">
+  <a class="tile tile-ink bar-brand" href="/" target="_blank" rel="noopener" data-fc-site="top"><img src="assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
+  <a class="tile tile-slate fc-meet" href="/" target="_blank" rel="noopener" data-fc-site="top">רוצה להכיר את רועי רומנו? <span class="arrow" aria-hidden="true">←</span><span class="visually-hidden"> (נפתח בלשונית חדשה)</span></a>
+</header>
+
+<main class="cp fc" id="fcheck">
+  <!-- The intro is plain HTML; js/fcheck/ui.mjs runs the questions, the result and the form in the same place. -->
+  <section class="cp-wrap cp-screen fc-intro" data-screen="intro" aria-labelledby="fc-title">
+    <p class="fc-season" data-season hidden></p>
+    <div class="board cp-intro-board">
+      <div class="tile tile-ink cp-hero">
+        <p class="cp-kicker"><img src="assets/arbitrage-mark.png" width="44" height="28" alt="">בדיקת התאמה פיננסית</p>
+        <h1 id="fc-title">הכסף שלך עובד בשבילך? הגיע הזמן לבדוק.</h1>
+        <p class="cp-sub">יש לך סכום פנוי להשקעה? רוצה להתחיל לחסוך? או שפשוט הגיע הזמן לעשות סדר בפנסיה ובביטוחים? כמה שאלות קצרות יעזרו לנו להבין מה יכול להתאים לך.</p>
+        <div class="cp-start-row">
+          <button type="button" class="button cp-start" data-start>מתחילים בבדיקה</button>
+        </div>
+        <noscript><p class="cp-noscript">הבדיקה פועלת עם JavaScript. אפשר גם להתקשר ישירות: <a class="link" href="tel:0528089808">052-8089808</a>.</p></noscript>
+      </div>
+      <ul class="tile tile-paper2 cp-facts">
+        <li><strong>שאלון קצר וממוקד</strong><span>שאלה אחת בכל מסך, ואפשר לחזור ולשנות כל תשובה.</span></li>
+        <li><strong>שאלות מותאמות אישית</strong><span>כל תשובה קובעת את השאלה הבאה, כך שעונים רק על מה שרלוונטי.</span></li>
+        <li><strong>תוצאה ראשונית בהתאם לתשובות</strong><span>התוצאה מוצגת מיד, בלי להשאיר פרטים. הפרטים נשלחים לרועי רק אם תבחר/י בכך.</span></li>
+        <li class="cp-by"><img src="assets/img/roei-2.jpg" width="720" height="853" alt=""><span><strong>רועי רומנו, מתכנן פיננסי</strong> סוכן פנסיוני מורשה, רישיון 00117164. הבדיקה מציגה מיפוי ראשוני ואינה ייעוץ אישי.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="cp-wrap cp-screen fc-run" data-screen="run" hidden aria-label="שאלות הבדיקה">
+    <div class="fc-progress" data-progress></div>
+    <div class="cp-card">
+      <div class="cp-q" data-question></div>
+    </div>
+    <details class="cp-answers" data-answers hidden>
+      <summary>התשובות שלך עד עכשיו</summary>
+      <ul data-answers-list></ul>
+    </details>
+  </section>
+
+  <section class="cp-wrap cp-screen cp-result fc-result" data-screen="result" hidden aria-labelledby="fc-result-title"></section>
+  <section class="cp-wrap cp-screen fc-done" data-screen="done" hidden aria-labelledby="fc-done-title"></section>
+</main>
+
+<footer class="foot">
+  <div class="foot-board board">
+    <div class="tile tile-ink foot-name">
+      <p><strong>רועי רומנו</strong> <span>מתכנן פיננסי</span></p>
+      <p>שותף ב<a class="link" href="https://www.ar-fo.co.il" target="_blank" rel="noopener">ארביטראז'</a>, פירמת שותפים לניהול פיננסי · רישיון סוכן פנסיוני 00117164</p>
+      <p class="foot-disclaimer">המידע בדף אינו ייעוץ השקעות או ייעוץ פנסיוני אישי · 2026</p>
+    </div>
+    <a class="tile tile-gold foot-phone" href="tel:0528089808"><span dir="ltr">052-8089808</span><small>להתקשר</small></a>
+    <div class="tile tile-slate foot-links">
+      <a class="link fc-site-link" href="/" target="_blank" rel="noopener" data-fc-site="bottom">מעבר לאתר העסקי <span class="visually-hidden">(נפתח בלשונית חדשה)</span></a>
+      <a class="link" href="mailto:roeir@ar-fo.co.il">roeir@ar-fo.co.il</a>
+      <a class="link" href="https://wa.me/972528089808" target="_blank" rel="noopener">וואטסאפ</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <p class="foot-legal"><a class="link" href="/privacy" target="_blank" rel="noopener">מדיניות פרטיות</a> · <a class="link" href="/accessibility" target="_blank" rel="noopener">הצהרת נגישות</a> · <a class="link" href="/terms" target="_blank" rel="noopener">תנאי שימוש</a> · <a class="link" href="/disclosure" target="_blank" rel="noopener">גילוי נאות</a> · <a class="link" href="#" data-cookie-settings>הגדרות עוגיות</a> · <a class="link" href="#top">לראש הדף</a></p>
+  </div>
+</footer>
+
+<script src="js/consent.js" data-root="" defer></script>
+<script type="module" src="js/fcheck/ui.mjs"></script>
+</body>
+</html>

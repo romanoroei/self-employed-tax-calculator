@@ -16,7 +16,7 @@ const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Publish an explicit file list so source, tests and working files stay private.
 // Earlier share images stay published so links shared before keep their preview; v5 is the current one.
 const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg', 'whatsapp-share-v4.jpg', 'whatsapp-share-v5.jpg'];
-const publicSiteEntries = ['index.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','compass.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
+const publicSiteEntries = ['index.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','compass.html','financial-check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
 const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml','market-reviews.html','market-reviews',...publicSiteEntries];
 await mkdir(calc, { recursive: true });
 // Refuse an output tree containing unexpected files rather than uploading them.
@@ -67,7 +67,7 @@ const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:r
 if (siteCheck.error) throw siteCheck.error;
 if (siteCheck.status !== 0) process.exit(siteCheck.status || 1);
 // A failed financial, consent or compass test fails the build and prevents publication.
-const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs','tests/compass.test.cjs','tests/reviews.test.cjs'], {
+const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs','tests/compass.test.cjs','tests/reviews.test.cjs','tests/fcheck.test.cjs'], {
   cwd: root, stdio: 'inherit', env: {...process.env, CALCULATOR_TEST_ROOT: calc}
 });
 if (result.error) throw result.error;

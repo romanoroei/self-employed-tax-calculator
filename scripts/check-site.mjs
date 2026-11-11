@@ -31,7 +31,8 @@ for(const file of published){
   const expected='https://romanoinvest.co.il/'+(rel==='index.html'?'':rel.replace(/index\.html$/,'').replace(/\.html$/,''));
   assert(text.includes('rel="canonical" href="'+expected+'"'),'Incorrect canonical: '+rel);
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
-  assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
+  if(rel==='financial-check.html')assert(/<meta name="robots" content="noindex, nofollow">/.test(text)&&!/http-equiv="refresh"/.test(text),'The campaign page must stay out of search results');
+  else assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
   if(/^(?:self-employed|savings-policy|investment-fund|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
  }
@@ -57,6 +58,14 @@ const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.
 assert.equal([...sitemap.matchAll(/<loc>/g)].length,13+reviewPages.length,'Sitemap must include all thirteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
+// /financial-check is reached by its own campaign link only: not in the sitemap, linked from no other page, no Google Analytics
+assert(!sitemap.includes('financial-check'),'The campaign page stays out of the sitemap');
+for(const file of published.filter(p=>p.endsWith('.html')&&!p.endsWith('financial-check.html')))assert(!/href="[^"]*financial-check/.test(await readFile(file,'utf8')),'No page links to the campaign page: '+path.relative(root,file));
+{const fc=await readFile(path.join(root,'financial-check.html'),'utf8');const fdir=path.join(root,'js','fcheck');const fjs=await Promise.all((await readdir(fdir)).map(n=>readFile(path.join(fdir,n),'utf8')));
+for(const t of [fc,...fjs])assert(!/googletagmanager|gtag\(|google-analytics/i.test(t),'No Google Analytics on the campaign page');
+assert(fc.includes('href="/privacy"')&&fc.includes('href="/accessibility"')&&fc.includes('רישיון סוכן פנסיוני 00117164'),'The campaign page needs the license and the policy links');
+assert((fc.match(/href="\/" target="_blank"/g)||[]).length>=3,'The campaign page links to the business site at the top and the bottom, in a new tab');
+assert(!/formspree|script\.google/.test(fjs.join('')),'The campaign form posts only to its own function');}
 // the reviews name the Finance Ministry as the source of the fund figures, never GemelHub (Roei)
 for(const p of ['market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert(!/gemelhub|גמלהאב|גמל האב/i.test(await readFile(path.join(root,p),'utf8')),'A market review must not mention GemelHub: '+p);
 // every published review has five short links, each a 302 to its own measured address, and none hides a real page
@@ -89,7 +98,7 @@ assert(cjs.ui.includes('cfg.productionHosts.includes(location.hostname)'),'Compa
 for(const t of [compass,...Object.values(cjs)])assert(!/googletagmanager|gtag\(|G-9GFDYS61G9|google-analytics/i.test(t),'No Google Analytics on the compass');
 const countSrc=await readFile(path.resolve('functions/api/count.js'),'utf8');
 const LABEL=new RegExp(countSrc.match(/const LABEL = \/(.+)\/;/)[1]);
-const labels=['strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other','review:hub','review:view-2026-10','review:cta-2026-10','review:copy-2026-10','review:from-whatsapp-2026-10','review:from-other-2027-01','share:review-2026-10',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
+const labels=['strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other','review:hub','review:view-2026-10','review:cta-2026-10','review:copy-2026-10','review:from-whatsapp-2026-10','review:from-other-2027-01','share:review-2026-10','fc:view-direct','fc:view-partner01','fc:start-other','fc:sent-direct','fc:route-invest','fc:route-unsure','fc:exit-need','fc:exit-d_study_interest','fc:result-general','fc:form','fc:fail','fc:restart','fc:edit','fc:site-top','fc:site-success',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
 for(const l of labels)assert(LABEL.test(l),'Counter label not whitelisted: '+l);
-assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody')&&!LABEL.test('review:view-2026-13')&&!LABEL.test('review:from-roei-2026-10')&&!LABEL.test('review:view-972528089808'),'Counter whitelist too loose');
+assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody')&&!LABEL.test('review:view-2026-13')&&!LABEL.test('review:from-roei-2026-10')&&!LABEL.test('review:view-972528089808')&&!LABEL.test('fc:view-0528089808')&&!LABEL.test('fc:result-A')&&!LABEL.test('fc:exit-x'),'Counter whitelist too loose');
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);
