@@ -132,6 +132,7 @@ export function computeYields({ gemel, polisa, trailing7y }) {
           y1: y1.get(String(r.FUND_ID)) ?? null,
           y3: figure(r.YIELD_TRAILING_3_YRS),
           y7: (() => { const v = figure(trailing7y.families[product.source].values[String(r.FUND_ID)]); return v === null ? null : rounded(v); })(),
+          m1: isNumber(r.MONTHLY_YIELD) ? rounded(r.MONTHLY_YIELD) : null,
         }))
         .filter((r) => r.company && !product.excludedCompanies?.includes(r.company) && COLUMNS.some((c) => r[c.id] !== null));
       // How many stand behind each column's average: a company can hold several funds in a track.
@@ -149,6 +150,13 @@ export function computeYields({ gemel, polisa, trailing7y }) {
         rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
           .filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
         if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
+      }
+      // The month itself, for the monthly market reviews (not shown in the tile): the same simple average.
+      const monthly = group.filter((r) => r.m1 !== null);
+      if (monthly.length) {
+        average.m1 = rounded(monthly.reduce((sum, r) => sum + r.m1, 0) / monthly.length);
+        average.funds.m1 = monthly.length;
+        average.companies.m1 = new Set(monthly.map((r) => r.company)).size;
       }
       views[`${product.id}-${track.id}`] = { average, rank };
     }

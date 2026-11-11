@@ -2,7 +2,7 @@
 // Used by the build (scripts/build-cloudflare.mjs).
 // Every piece of review text goes through esc(); the only markup a review can produce is
 // paragraphs, lists and bold (see prose()).
-import { SITE, SECTION_KINDS, PRODUCTS, RELATED, monthLabel, reviewPath, reviewUrl, pageTitle, hebrewDate, readingMinutes, contactText, parseRows, parseNumber } from './model.mjs';
+import { SITE, SECTION_KINDS, PRODUCTS, RELATED, monthLabel, reviewPath, reviewUrl, pageTitle, hebrewDate, readingMinutes, contactText, parseRows, parseNumber, FUND_TRACKS, periodLabel } from './model.mjs';
 
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -136,6 +136,30 @@ function figure(f) {
 </figure>`;
 }
 
+// "מה עשו הקופות?": the frozen snapshot stored in the review (see FUND_TRACKS in the model).
+// It says plainly that the figures are historical, up to which month, and when they were taken.
+const pct = (v) => (v === null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + '%');
+function fundsBlock(r) {
+  const f = r.funds;
+  if (!f || !f.rows?.length) return '';
+  const month = periodLabel(f.period);
+  const counts = f.rows.map(x => `${FUND_TRACKS[x.key].name} ${x.companies === x.funds ? `${x.funds} קופות` : `${x.funds} מסלולים של ${x.companies} חברות`}`).join(', ');
+  return `
+      <section class="rv-funds" aria-labelledby="rv-funds-h">
+        <h2 id="rv-funds-h">מה עשו הקופות?</h2>
+        <p class="rv-snap"><span class="rv-snap-tag">נתונים היסטוריים</span> תמונת מצב נכונה לסוף ${esc(month)}, כפי שפורסמה במועד כתיבת הסקירה. הנתונים בטבלה נשמרו ואינם מתעדכנים.</p>
+        <figure class="rv-fig rv-funds-fig">
+          <figcaption class="rv-fig-cap">המסלול הכללי: תשואה ממוצעת עד סוף ${esc(month)}</figcaption>
+          <div class="rv-table-wrap" tabindex="0" role="region" aria-label="תשואת המסלול הכללי עד סוף ${esc(month)}"><table class="rv-table">
+            <thead><tr><th scope="col">מסלול כללי</th><th scope="col">${esc(month)}</th><th scope="col">12 חודשים</th><th scope="col">3 שנים (מצטבר)</th></tr></thead>
+            <tbody>${f.rows.map(x => `<tr><th scope="row">${esc(FUND_TRACKS[x.key].name)}</th>${['m1', 'y1', 'y3'].map(k => `<td dir="ltr">${pct(x[k])}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table></div>
+          <p class="rv-fig-src">נתוני משרד האוצר (גמל־נט וביטוח־נט) עד סוף ${esc(month)}, כפי שנשמרו ב־${esc(hebrewDate(f.takenAt))}. ממוצע פשוט של המסלולים הכלליים: ${esc(counts)}. לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד, והמידע אינו המלצה.</p>
+        </figure>
+        <p class="rv-funds-why">משרד האוצר מפרסם את תשואות הקופות כחודש וחצי אחרי סוף החודש, ולכן הטבלה מציגה את החודש האחרון שפורסם כשנכתבה הסקירה. <a class="link" href="/#invest-yields">לתשואות העדכניות ולדירוג החברות</a></p>
+      </section>`;
+}
+
 function shareBlock(r) {
   const url = reviewUrl(r.id);
   const text = `${pageTitle(r)}: ${r.title}\n${url}`;
@@ -208,6 +232,7 @@ export function renderReviewPage(r, { prev = null, next = null, preview = false 
         ${prose(s.text)}
         ${(s.figures || []).map(figure).join('\n')}
       </section>`).join('\n')}
+${fundsBlock(r)}
 ${items.length ? `
       <section class="rv-meaning" aria-labelledby="rv-meaning-h">
         <h2 id="rv-meaning-h">מה זה אומר על החיסכון וההשקעות שלנו?</h2>

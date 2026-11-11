@@ -77,3 +77,15 @@ test('Noam: the message keeps [שם] for AgendOS, carries a measured link, and t
   assert(!teaser(r).includes('רביעי'));
   assert.throws(() => utmLink('2026-10', 'somebody'));
 });
+
+test('the funds table shows the stored snapshot only, labelled as historical', async () => {
+  const { normalize, validate } = await load('business-site/js/reviews/model.mjs');
+  const { renderReviewPage } = await load('business-site/js/reviews/render.mjs');
+  const r = normalize({ ...sample(), funds: { period: 202609, takenAt: '2026-11-11', rows: [{ key: 'invest-general', m1: -0.02, y1: 10.39, y3: 43.84, funds: 11, companies: 11 }, { key: 'policy-general', m1: 0.1, y1: 10.52, y3: 42.09, funds: 12, companies: 7 }] } });
+  assert.deepEqual(validate(r, { forPublish: true }).errors, []);
+  const html = renderReviewPage(r);
+  for (const part of ['נתונים היסטוריים', 'נכונה לסוף ספטמבר 2026', 'כפי שנשמרו ב־11 בנובמבר 2026', '−0.02%', '+10.39%', '+42.09%', '12 מסלולים של 7 חברות', 'לפני דמי ניהול']) assert(html.includes(part), 'missing: ' + part);
+  assert(!renderReviewPage(normalize(sample())).includes('מה עשו הקופות'), 'no snapshot, no table');
+  const bad = normalize({ ...sample(), funds: { period: 202613, takenAt: '', rows: [] } });
+  assert(validate(bad).errors.some(e => e.includes('הקופות')));
+});

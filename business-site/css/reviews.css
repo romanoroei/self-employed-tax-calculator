@@ -128,3 +128,14 @@
   .topbar, .back-home, .art-share, .rv-pager, .rv-related, .rv-cta, .foot { display: none !important; }
   .rv-fig { background: none; color: inherit; border: 1px solid #999; }
 }
+
+/* "מה עשו הקופות?": a frozen snapshot, labelled as historical so nobody reads it as today's figures */
+.rv-funds { margin-top: 56px; }
+.prose .rv-snap { font-size: var(--t-5); line-height: 1.6; color: var(--ink-soft); margin-bottom: 0; }
+.rv-snap-tag { display: inline-block; margin-inline-end: 8px; padding: 2px 10px; background: var(--navy); color: var(--gold); font-size: 13px; font-weight: 800; }
+.rv-funds-fig { margin-top: 16px; }
+.rv-funds-fig .rv-table td { white-space: nowrap; }
+.prose .rv-funds-why { font-size: var(--t-5); color: var(--ink-soft); }
+@media (max-width: 700px) {
+  .rv-funds-fig .rv-table th, .rv-funds-fig .rv-table td { padding-inline-end: 8px; font-size: 13.5px; }
+}

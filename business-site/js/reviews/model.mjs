@@ -57,6 +57,17 @@ export const COVERS = {
   '/assets/edison-ticker.jpg': 'טלגרף מניות של אדיסון',
 };
 
+// "מה עשו הקופות": the general track of each product, as a frozen snapshot stored in the review itself
+// (scripts/review-funds.mjs writes it once, from scripts/yields-data.json). The page never reads live data,
+// so an old review keeps showing the figures that were known when it was written.
+export const FUND_TRACKS = {
+  'invest-general': { name: 'קופת גמל להשקעה', href: '/investment-fund' },
+  'study-general': { name: 'קרן השתלמות' },
+  'policy-general': { name: 'פוליסת חיסכון', href: '/savings-policy' },
+};
+export const PERIOD_RE = /^20\d\d(?:0[1-9]|1[0-2])$/;
+export const periodLabel = (p) => `${MONTHS[Number(String(p).slice(4)) - 1]} ${String(p).slice(0, 4)}`;
+
 // Channels for measured links (10). The counter accepts exactly these names.
 export const CHANNELS = {
   whatsapp: { name: 'וואטסאפ (נועם)', medium: 'noam' },
@@ -211,6 +222,11 @@ export function validate(r, { forPublish = false } = {}) {
   if (str(r.seoTitle) && r.seoTitle.length > LIMITS.seoTitle) warn('כותרת ה־SEO ארוכה מ־70 תווים ועלולה להיחתך בגוגל');
   if (str(r.metaDescription) && r.metaDescription.trim() && (r.metaDescription.length < 70 || r.metaDescription.length > 160)) warn('תיאור ה־Meta מומלץ באורך 70 עד 160 תווים');
   len(r.noam?.opener, LIMITS.opener, 'משפט הפתיחה לנועם'); len(r.noam?.message, LIMITS.message, 'הודעת נועם');
+  if (r.funds) {
+    const f = r.funds;
+    if (!PERIOD_RE.test(String(f.period)) || !DATE_RE.test(f.takenAt || '')) err('לתמונת המצב של הקופות חסרים חודש הנתונים או תאריך הצילום');
+    if (!f.rows?.length || f.rows.some(x => !FUND_TRACKS[x.key] || ['m1', 'y1', 'y3'].some(k => x[k] !== null && !Number.isFinite(x[k])))) err('נתוני הקופות לא תקינים');
+  }
   if (forPublish) {
     if (r.approval?.content !== true) err('הסקירה לא סומנה כ"בדקתי ואישרתי"');
     if (!DATE_RE.test(r.publishedAt || '')) err('חסר תאריך פרסום');
@@ -244,6 +260,16 @@ export function normalize(input) {
     noam: { opener: s(r.noam?.opener, 400), message: s(r.noam?.message, 2000) },
     approval: { content: r.approval?.content === true, at: s(r.approval?.at, 25) },
     marketing: normalizeMarketing(r.marketing),
+    ...(r.funds ? { funds: normalizeFunds(r.funds) } : {}),
+  };
+}
+
+function normalizeFunds(f) {
+  const n = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+  const i = (v) => (Number.isInteger(v) && v >= 0 ? v : 0);
+  return {
+    period: Number(f.period), takenAt: typeof f.takenAt === 'string' ? f.takenAt.slice(0, 10) : '',
+    rows: (Array.isArray(f.rows) ? f.rows : []).filter(x => FUND_TRACKS[x?.key]).map(x => ({ key: x.key, m1: n(x.m1), y1: n(x.y1), y3: n(x.y3), funds: i(x.funds), companies: i(x.companies) })),
   };
 }
 
