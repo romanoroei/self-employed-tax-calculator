@@ -350,4 +350,5 @@ export function renderKnowledgeReviews(reviews, limit = 6) {
 }
 
 // Sitemap paths for the build.
-export const sitemapPaths = (reviews) => ['market-reviews', ...reviews.map(r => reviewPath(r.id).slice(1))];
+// Only the reviews themselves; the hub page stays out of the sitemap (Roei, 2026-11-11).
+export const sitemapPaths = (reviews) => reviews.map(r => reviewPath(r.id).slice(1));
