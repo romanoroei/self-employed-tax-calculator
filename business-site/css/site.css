@@ -1036,11 +1036,16 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .invest-strip { gap: 4px 10px; padding: 10px 14px; }
   .invest-say { font-size: 14.5px; line-height: 1.4; }
   .invest-cap { padding-inline: 10px; }
+  /* a little air between the ceiling and its label (Roei, 2026-11-11) */
+  .invest-cap { gap: 5px; }
   .invest-cap b { font-size: 18px; }
   .invest-cap small { font-size: 11px; }
+  /* a slimmer gold mark around the fund's name */
+  .invest-key { padding: 0 3px; }
   .now-copy { gap: 6px; padding: 12px 14px; }
   .now-copy strong { font-size: 17px; }
-  .now-guide { font-size: 13px; }
+  /* the self-employed tile keeps its line and the calculator: the guide and compass links stay on larger screens (Roei, 2026-11-11) */
+  .now-guide { display: none; }
   .now-go { padding: 9px 14px; font-size: 15px; }
   .now-go small { font-size: 12px; }
 
