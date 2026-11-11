@@ -73,7 +73,7 @@ test('Noam: the message keeps [שם] for AgendOS, carries a measured link, and t
   const r = normalize(sample());
   const msg = noamMessage(r);
   assert(msg.startsWith('היי [שם], כאן נועם'));
-  assert(msg.includes('https://romanoinvest.co.il/market-reviews/2026-10?utm_source=whatsapp&utm_medium=noam&utm_campaign=market-review-2026-10'));
+  assert(msg.includes('https://romanoinvest.co.il/oct26\n'), 'Noam sends the short link');
   assert(!teaser(r).includes('רביעי'));
   assert.throws(() => utmLink('2026-10', 'somebody'));
 });
@@ -90,4 +90,14 @@ test('the funds table shows the stored snapshot only, labelled as historical', a
   assert(validate(normalize({ ...sample(), funds: { period: 202609, takenAt: '2026-11-11', rows: [{ key: 'invest-general', m1: 1, y1: 1, y3: 1, funds: 1, companies: 1 }] } })).errors.some(e => e.includes('חודש הסקירה')), 'another month is refused');
   const bad = normalize({ ...sample(), funds: { period: 202613, takenAt: '', rows: [] } });
   assert(validate(bad).errors.some(e => e.includes('הקופות')));
+});
+
+test('short links: one per channel, each to the measured address of its review', async () => {
+  const { normalize, redirectLines, shortLink } = await load('business-site/js/reviews/model.mjs');
+  assert.equal(shortLink('2026-10'), 'https://romanoinvest.co.il/oct26');
+  assert.equal(shortLink('2027-01', 'facebook'), 'https://romanoinvest.co.il/jan27-fb');
+  const lines = redirectLines([normalize(sample())]);
+  assert.equal(lines.length, 5);
+  assert(lines.includes('/oct26 /market-reviews/2026-10?utm_source=whatsapp&utm_medium=noam&utm_campaign=market-review-2026-10 302'));
+  assert(lines.includes('/oct26-ig /market-reviews/2026-10?utm_source=instagram&utm_medium=social&utm_campaign=market-review-2026-10 302'));
 });

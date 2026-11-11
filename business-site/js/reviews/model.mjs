@@ -77,6 +77,15 @@ export const CHANNELS = {
   email: { name: 'מייל', medium: 'email' },
 };
 
+// Short addresses on the site itself for sending and posting (https://romanoinvest.co.il/oct26).
+// Each one redirects (302) to the review with that channel's measuring parameters, so the long address
+// never has to be shown. The build writes them into _redirects from the published reviews.
+const SHORT_MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+export const SHORT_SUFFIX = { whatsapp: '', facebook: '-fb', instagram: '-ig', tiktok: '-tt', email: '-mail' };
+export const shortPath = (id, channel = 'whatsapp') => `/${SHORT_MONTHS[Number(id.slice(5, 7)) - 1]}${id.slice(2, 4)}${SHORT_SUFFIX[channel]}`;
+export const shortLink = (id, channel = 'whatsapp') => SITE + shortPath(id, channel);
+export const redirectLines = (reviews) => reviews.flatMap(r => Object.keys(SHORT_SUFFIX).map(ch => `${shortPath(r.id, ch)} ${reviewPath(r.id)}?utm_source=${ch}&utm_medium=${CHANNELS[ch].medium}&utm_campaign=market-review-${r.id} 302`));
+
 // Phase 2 (marketing content) is stored on the review so it never needs a schema change.
 export const MARKETING_CHANNELS = ['facebook', 'reels', 'instagram', 'whatsapp'];
 export const MARKETING_STATUSES = ['draft', 'approved', 'published'];
@@ -149,7 +158,7 @@ export function noamMessage(r) {
     opener,
     '',
     '📊 לקריאת הסקירה:',
-    utmLink(r.id, 'whatsapp'),
+    shortLink(r.id, 'whatsapp'),
     '',
     'אם משהו בסקירה מעלה אצלך שאלה לגבי החיסכון או ההשקעות שלך, אפשר לכתוב לי ואעביר לרועי.',
   ].join('\n');

@@ -59,6 +59,10 @@ for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // the reviews name the Finance Ministry as the source of the fund figures, never GemelHub (Roei)
 for(const p of ['market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert(!/gemelhub|גמלהאב|גמל האב/i.test(await readFile(path.join(root,p),'utf8')),'A market review must not mention GemelHub: '+p);
+// every published review has five short links, each a 302 to its own measured address, and none hides a real page
+const redirects=(await readFile(path.join(root,'_redirects'),'utf8')).split('\n').filter(l=>l&&!l.startsWith('#'));
+assert.equal(redirects.length,5*reviewPages.length,'Each review needs its five short links');
+for(const l of redirects){const m=l.match(/^\/([a-z]{3}\d\d(?:-(?:fb|ig|tt|mail))?) \/market-reviews\/(20\d\d-\d\d)\?utm_source=(?:whatsapp|facebook|instagram|tiktok|email)&utm_medium=(?:noam|social|email)&utm_campaign=market-review-\2 302$/);assert(m&&reviewPages.includes(m[2]+'.html'),'Malformed short link: '+l);await stat(path.join(root,m[1]+'.html')).then(()=>assert.fail('A short link hides a page: '+m[1]),()=>{});}
 const knowledgePage=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(knowledgePage.includes('id="market-reviews"')&&!knowledgePage.includes('<!-- market-reviews-list -->'),'The knowledge page must hold the market reviews category');
 for(const p of reviewPages.sort().reverse().slice(0,6))assert(knowledgePage.includes('href="/market-reviews/'+p.replace(/\.html$/,'')+'"'),'The knowledge page must link straight to the review '+p);

@@ -16,3 +16,4 @@ no long quotes), with `status: "draft"`, and shows Roei a preview. Only after Ro
 - `noam.opener` feeds Noam's WhatsApp message (`noamMessage()` in the model), sent by hand through AgendOS.
 - `marketing` is reserved for phase 2 (social content). It is stored, never rendered on the site.
 - This folder is never published (`content` is not in the build's file list, and check-site refuses it in dist).
+- Short links (romanoinvest.co.il/oct26, -fb, -ig, -tt, -mail) are written into `_redirects` by the build: a 302 to the review with that channel's UTM. Noam's message uses the short one.

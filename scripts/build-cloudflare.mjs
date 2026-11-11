@@ -57,7 +57,8 @@ for (const page of businessPages) {
   }
   await writeFile(file, document);
 }
-await writeFile(path.join(output,'_redirects'), '# Homepage is served directly; calculator retains its existing path.\n');
+// Short links for the market reviews (romanoinvest.co.il/oct26 and per channel), written from the published reviews.
+await writeFile(path.join(output,'_redirects'), ['# Homepage is served directly; calculator retains its existing path.', '# Market review short links: one per review and channel, to the review with that channel\'s measuring parameters.', ...reviewBuild.redirects].join('\n') + '\n');
 await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>העמוד לא נמצא</title><h1>העמוד לא נמצא</h1><a href="/">חזרה לאתר</a></html>');
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
 const sitePages = ['', 'self-employed', 'savings-policy', 'investment-fund', 'knowledge', 'compass', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];

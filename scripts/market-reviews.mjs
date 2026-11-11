@@ -2,7 +2,7 @@
 // keeps the published ones, refuses any that fail validation, and writes the hub and one page per review.
 import { readFile, readdir, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
-import { normalize, validate, ID_RE } from '../business-site/js/reviews/model.mjs';
+import { normalize, validate, ID_RE, redirectLines } from '../business-site/js/reviews/model.mjs';
 import { renderHub, renderReviewPage, renderKnowledgeReviews, sitemapPaths } from '../business-site/js/reviews/render.mjs';
 
 export async function loadPublishedReviews(dir) {
@@ -36,5 +36,5 @@ export async function buildReviews(root, output) {
   const kn = await readFile(knowledge, 'utf8');
   if (!kn.includes('<!-- market-reviews-list -->')) throw new Error('Missing market reviews slot in knowledge.html');
   await writeFile(knowledge, kn.replace('<!-- market-reviews-list -->', renderKnowledgeReviews(reviews)));
-  return { count: reviews.length, pages: ['market-reviews.html', ...reviews.map(r => r._page)], sitemap: sitemapPaths(reviews) };
+  return { redirects: redirectLines(reviews), count: reviews.length, pages: ['market-reviews.html', ...reviews.map(r => r._page)], sitemap: sitemapPaths(reviews) };
 }
