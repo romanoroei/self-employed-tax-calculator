@@ -28,18 +28,21 @@ jobs:
       - name: Refresh the figures
         run: node scripts/update-yields.mjs
 
+      - name: Add the month's fund figures to reviews waiting for them
+        run: node scripts/review-funds.mjs --auto
+
       - name: Check the site still builds
         run: node scripts/build-cloudflare.mjs
 
       - name: Commit changed figures
         run: |
-          git add scripts/yields-data.json
+          git add scripts/yields-data.json business-site/content/market-reviews
           if git diff --cached --quiet; then
             echo "No change."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update yields tile figures"
+          git commit -m "Update yields tile figures (and market review fund snapshots)"
           git pull --rebase origin main
           git push origin main

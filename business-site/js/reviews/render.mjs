@@ -139,24 +139,35 @@ function figure(f) {
 // "מה עשו הקופות?": the frozen snapshot stored in the review (see FUND_TRACKS in the model).
 // It says plainly that the figures are historical, up to which month, and when they were taken.
 const pct = (v) => (v === null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + '%');
+// The figures are always for the review's own month. The ministry publishes them about three weeks after
+// the month ends, so a new review first shows a short note, and the table appears once the data are out
+// (scripts/review-funds.mjs --auto, run daily by the yields workflow), then stays as it is.
 function fundsBlock(r) {
   const f = r.funds;
-  if (!f || !f.rows?.length) return '';
+  const reviewMonth = monthLabel(r.id);
+  const current = '<a class="link" href="/#invest-yields">לתשואות העדכניות ולדירוג החברות</a>';
+  if (!f || !f.rows?.length) {
+    return `
+      <section class="rv-funds" aria-labelledby="rv-funds-h">
+        <h2 id="rv-funds-h">מה עשו הקופות?</h2>
+        <p class="rv-snap rv-pending">משרד האוצר מפרסם את תשואות הקופות כשלושה שבועות אחרי סוף החודש. התשואות של ${esc(reviewMonth)} יתווספו כאן כשיתפרסמו, ויישמרו כתמונת מצב קבועה. ${current}</p>
+      </section>`;
+  }
   const month = periodLabel(f.period);
   const counts = f.rows.map(x => `${FUND_TRACKS[x.key].name} ${x.companies === x.funds ? `${x.funds} קופות` : `${x.funds} מסלולים של ${x.companies} חברות`}`).join(', ');
   return `
       <section class="rv-funds" aria-labelledby="rv-funds-h">
         <h2 id="rv-funds-h">מה עשו הקופות?</h2>
-        <p class="rv-snap"><span class="rv-snap-tag">נתונים היסטוריים</span> תמונת מצב נכונה לסוף ${esc(month)}, כפי שפורסמה במועד כתיבת הסקירה. הנתונים בטבלה נשמרו ואינם מתעדכנים.</p>
+        <p class="rv-snap"><span class="rv-snap-tag">נתונים היסטוריים</span> תמונת מצב לסוף ${esc(month)}, כפי שנשמרה ב־${esc(hebrewDate(f.takenAt))}. הנתונים בטבלה אינם מתעדכנים.</p>
         <figure class="rv-fig rv-funds-fig">
-          <figcaption class="rv-fig-cap">המסלול הכללי: תשואה ממוצעת עד סוף ${esc(month)}</figcaption>
+          <figcaption class="rv-fig-cap">תשואה ממוצעת עד סוף ${esc(month)}</figcaption>
           <div class="rv-table-wrap" tabindex="0" role="region" aria-label="תשואת המסלול הכללי עד סוף ${esc(month)}"><table class="rv-table">
             <thead><tr><th scope="col">מסלול כללי</th><th scope="col">${esc(month)}</th><th scope="col">12 חודשים</th><th scope="col">3 שנים (מצטבר)</th></tr></thead>
-            <tbody>${f.rows.map(x => `<tr><th scope="row">${esc(FUND_TRACKS[x.key].name)}</th>${['m1', 'y1', 'y3'].map(k => `<td dir="ltr">${pct(x[k])}</td>`).join('')}</tr>`).join('')}</tbody>
+            <tbody>${f.rows.map(x => `<tr><th scope="row">${esc(FUND_TRACKS[x.key].name)}</th>${['m1', 'y1', 'y3'].map(k => `<td><span dir="ltr">${pct(x[k])}</span></td>`).join('')}</tr>`).join('')}</tbody>
           </table></div>
-          <p class="rv-fig-src">נתוני משרד האוצר (גמל־נט וביטוח־נט) עד סוף ${esc(month)}, כפי שנשמרו ב־${esc(hebrewDate(f.takenAt))}. ממוצע פשוט של המסלולים הכלליים: ${esc(counts)}. לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד, והמידע אינו המלצה.</p>
+          <p class="rv-fig-src">נתוני משרד האוצר (גמל־נט וביטוח־נט) עד סוף ${esc(month)}. ממוצע פשוט של המסלולים הכלליים: ${esc(counts)}. לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד, והמידע אינו המלצה.</p>
         </figure>
-        <p class="rv-funds-why">משרד האוצר מפרסם את תשואות הקופות כחודש וחצי אחרי סוף החודש, ולכן הטבלה מציגה את החודש האחרון שפורסם כשנכתבה הסקירה. <a class="link" href="/#invest-yields">לתשואות העדכניות ולדירוג החברות</a></p>
+        <p class="rv-funds-why">${current}</p>
       </section>`;
 }
 

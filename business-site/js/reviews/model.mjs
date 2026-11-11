@@ -225,6 +225,7 @@ export function validate(r, { forPublish = false } = {}) {
   if (r.funds) {
     const f = r.funds;
     if (!PERIOD_RE.test(String(f.period)) || !DATE_RE.test(f.takenAt || '')) err('לתמונת המצב של הקופות חסרים חודש הנתונים או תאריך הצילום');
+    else if (String(f.period) !== String(r.id).replace('-', '')) err('נתוני הקופות חייבים להיות של חודש הסקירה עצמו');
     if (!f.rows?.length || f.rows.some(x => !FUND_TRACKS[x.key] || ['m1', 'y1', 'y3'].some(k => x[k] !== null && !Number.isFinite(x[k])))) err('נתוני הקופות לא תקינים');
   }
   if (forPublish) {
