@@ -57,6 +57,8 @@ const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.
 assert.equal([...sitemap.matchAll(/<loc>/g)].length,13+reviewPages.length,'Sitemap must include all thirteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
+// the reviews name the Finance Ministry as the source of the fund figures, never GemelHub (Roei)
+for(const p of ['market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert(!/gemelhub|גמלהאב|גמל האב/i.test(await readFile(path.join(root,p),'utf8')),'A market review must not mention GemelHub: '+p);
 const knowledgePage=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(knowledgePage.includes('id="market-reviews"')&&!knowledgePage.includes('<!-- market-reviews-list -->'),'The knowledge page must hold the market reviews category');
 for(const p of reviewPages.sort().reverse().slice(0,6))assert(knowledgePage.includes('href="/market-reviews/'+p.replace(/\.html$/,'')+'"'),'The knowledge page must link straight to the review '+p);
