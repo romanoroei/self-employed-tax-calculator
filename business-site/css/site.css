@@ -211,21 +211,24 @@ html.menu-open { overflow: hidden; }
 .hero-figure b { font-size: clamp(36px, 3.4vw, 50px); font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
 .hero-figure span { margin-top: 4px; font-size: 15px; font-weight: 700; color: var(--on-dark-soft); }
 .hero-go { align-self: flex-start; gap: 10px; margin-top: 22px; }
+/* the fund slide: a smaller heading and figure (Roei) */
+.hero-slide-fund .hero-title { font-size: clamp(30px, 2.8vw, 44px); }
+.hero-slide-fund .hero-figure b { font-size: clamp(30px, 2.8vw, 42px); }
 .hero-deco { position: absolute; top: 50%; inset-inline-end: 7%; width: min(40%, 320px); transform: translateY(-50%); color: var(--gold); opacity: .5; }
 /* Wall Street: a narrower frame, so the whole front shows smaller, and a little of its colour (Roei) */
 /* on computers only: on a phone the words lie over the photo, and the colour would fight them */
 @media (min-width: 901px) { .hero-bg.hero-bg-street { width: 36%; filter: grayscale(.45) contrast(1.05); opacity: .8; } }
 /* the controls: previous, dots, next and pause, at the free corner of the tile */
 /* on a dark pill, so they read over a bright photo too */
-.hero-nav { position: absolute; z-index: 2; bottom: 18px; inset-inline-end: 22px; display: flex; align-items: center; gap: 6px; padding: 4px; border-radius: 22px; background: rgba(8, 24, 38, .72); }
+.hero-nav { position: absolute; z-index: 2; bottom: 18px; inset-inline-end: 22px; display: flex; align-items: center; gap: 4px; padding: 3px; border-radius: 18px; background: rgba(8, 24, 38, .72); }
 .hero-nav button { display: grid; place-items: center; padding: 0; border: 0; background: none; color: var(--on-dark); font: inherit; cursor: pointer; }
-.hero-nav .hero-arrow, .hero-nav .hero-pause { width: 34px; height: 34px; border-radius: 50%; background: rgba(241, 241, 238, .14); transition: background-color 160ms ease, color 160ms ease; }
-.hero-arrow svg, .hero-pause svg { width: 14px; height: 14px; fill: currentColor; }
+.hero-nav .hero-arrow, .hero-nav .hero-pause { width: 28px; height: 28px; border-radius: 50%; background: rgba(241, 241, 238, .14); transition: background-color 160ms ease, color 160ms ease; }
+.hero-arrow svg, .hero-pause svg { width: 11px; height: 11px; fill: currentColor; }
 .hero-dots { display: flex; }
-.hero-dot { width: 22px; height: 34px; }
-.hero-dot::before { content: ""; width: 9px; height: 9px; border-radius: 5px; background: rgba(241, 241, 238, .45); transition: width 220ms var(--ease-out), background-color 160ms ease; }
-.hero-dot[aria-current="true"] { width: 34px; }
-.hero-dot[aria-current="true"]::before { width: 24px; background: var(--gold); }
+.hero-dot { width: 18px; height: 28px; }
+.hero-dot::before { content: ""; width: 7px; height: 7px; border-radius: 4px; background: rgba(241, 241, 238, .45); transition: width 220ms var(--ease-out), background-color 160ms ease; }
+.hero-dot[aria-current="true"] { width: 28px; }
+.hero-dot[aria-current="true"]::before { width: 18px; background: var(--gold); }
 @media (hover: hover) and (pointer: fine) {
   .hero-nav .hero-arrow:hover, .hero-nav .hero-pause:hover { background: var(--gold); color: var(--navy-deep); }
   .hero-dot:hover::before { background: var(--gold-soft); }
@@ -941,6 +944,8 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .hero-title { font-size: 30px; }
   .hero-figure { margin-top: 8px; }
   .hero-figure b { font-size: 30px; }
+  .hero-slide-fund .hero-title { font-size: 26px; }
+  .hero-slide-fund .hero-figure b { font-size: 26px; }
   .hero-slide .hero-lead { margin-top: 10px; }
   .hero-go { margin-top: 14px; }
   .hero-kicker { margin-bottom: 10px; }
