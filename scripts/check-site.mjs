@@ -27,8 +27,6 @@ for(const file of published){
  if(ext==='.html'){
   pageCount++;
   if(path.basename(file)==='404.html')continue;
-  // the admin page is private: kept out of search, the sitemap and the canonical rule
-  if(path.basename(file)==='admin.html'){assert(text.includes('<meta name="robots" content="noindex, nofollow">'),'The admin page must stay out of search');assert(!/ghp_|github_pat_|sk-ant-/.test(text),'No keys in the admin page');continue;}
   const rel=path.relative(root,file).replaceAll('\\','/');
   const expected='https://romanoinvest.co.il/'+(rel==='index.html'?'':rel.replace(/index\.html$/,'').replace(/\.html$/,''));
   assert(text.includes('rel="canonical" href="'+expected+'"'),'Incorrect canonical: '+rel);
@@ -58,7 +56,7 @@ const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
 const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
 assert.equal([...sitemap.matchAll(/<loc>/g)].length,14+reviewPages.length,'Sitemap must include all fourteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
-assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>')&&!sitemap.includes('/admin'),'Sitemap: reviews hub in, admin out');
+assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'Sitemap must include the reviews hub');
 assert((await readFile(path.join(root,'knowledge.html'),'utf8')).includes('href="/market-reviews"'),'The knowledge page must lead to the market reviews');
 // The financial compass: the agreed lead pipeline, consents, counters, and no Google Analytics on the business site.
 const compass=await readFile(path.join(root,'compass.html'),'utf8');

@@ -1,5 +1,5 @@
 // Monthly market reviews: HTML for the hub (/market-reviews) and each review (/market-reviews/<id>).
-// Used by the build (scripts/build-cloudflare.mjs) and by the admin preview, so both show the same page.
+// Used by the build (scripts/build-cloudflare.mjs).
 // Every piece of review text goes through esc(); the only markup a review can produce is
 // paragraphs, lists and bold (see prose()).
 import { SITE, SECTION_KINDS, PRODUCTS, RELATED, monthLabel, reviewPath, reviewUrl, pageTitle, hebrewDate, readingMinutes, contactText, parseRows, parseNumber } from './model.mjs';
@@ -117,7 +117,8 @@ function figure(f) {
   }
   const values = rows.map(r => parseNumber(r[1]));
   const max = Math.max(...values.map(Math.abs), 0.0001);
-  const hasNeg = values.some(v => v < 0);
+  // gains and losses together share a middle line; all losses (or all gains) are plain bars
+  const hasNeg = values.some(v => v < 0) && values.some(v => v > 0);
   return `<figure class="rv-fig">
   <figcaption class="rv-fig-cap">${esc(f.title)}</figcaption>
   <table class="rv-bars${hasNeg ? ' has-neg' : ''}">
@@ -226,7 +227,7 @@ ${angle ? `
         </div>
       </section>` : ''}
 
-      <p class="art-note rv-credit">הסקירה מבוססת על סקירת שוק ההון של ${esc(r.source.name)}${r.source.title ? ` ("${esc(r.source.title)}")` : ''} מ־${esc(hebrewDate(r.source.date))}, בעריכה ובעיבוד של רועי רומנו, ומובאת באישור. ${r.source.note ? esc(r.source.note) + ' ' : ''}הנתונים נכונים לתאריכים שצוינו לצדם. המידע כללי, אינו ייעוץ השקעות, ייעוץ פנסיוני או שיווק השקעות, ואינו תחליף לייעוץ המותאם לנתונים ולצרכים של כל אדם. תשואות עבר אינן מבטיחות תשואות בעתיד. כסוכן פנסיוני אני עשוי לקבל עמלות מחברות ביטוח ומגופים מוסדיים, הפרטים ב<a class="link" href="/disclosure">גילוי הנאות</a>.</p>
+      <p class="art-note rv-credit">הסקירה מבוססת על סקירת שוק ההון של ${esc(r.source.name)}${r.source.title ? ` ("${esc(r.source.title)}")` : ''} מ־${esc(hebrewDate(r.source.date))}, בעריכה ובעיבוד של רועי רומנו, ומובאת באישור.${r.source.url ? ` <a class="link" href="${esc(r.source.url)}" target="_blank" rel="noopener">לסקירה המקורית באתר ארביטראז&#39;</a>.` : ''} ${r.source.note ? esc(r.source.note) + ' ' : ''}הנתונים נכונים לתאריכים שצוינו לצדם. המידע כללי, אינו ייעוץ השקעות, ייעוץ פנסיוני או שיווק השקעות, ואינו תחליף לייעוץ המותאם לנתונים ולצרכים של כל אדם. תשואות עבר אינן מבטיחות תשואות בעתיד. כסוכן פנסיוני אני עשוי לקבל עמלות מחברות ביטוח ומגופים מוסדיים, הפרטים ב<a class="link" href="/disclosure">גילוי הנאות</a>.</p>
 
       ${shareBlock(r)}
 ${prev || next ? `
@@ -295,12 +296,12 @@ export function renderHub(reviews) {
       { '@type': 'ListItem', position: 2, name: 'סקירות שוק ההון', item: url },
     ] },
   ];
-  return head({ title: 'סקירות שוק ההון – Romano Invest | רועי רומנו מתכנן פיננסי', description, canonical: url, image: latest ? latest.cover.src : '/assets/tase-board.jpg', type: 'website', root, jsonLd }) + `
+  return head({ title: 'סקירות שוק ההון: מה קרה בשווקים החודש | רועי רומנו מתכנן פיננסי', description, canonical: url, image: latest ? latest.cover.src : '/assets/tase-board.jpg', type: 'website', root, jsonLd }) + `
 <main class="rv-hub">
   <header class="wrap art-head kn-head">
     <div class="art-col">
       <nav class="rv-crumbs" aria-label="פירורי לחם"><ol><li><a class="link" href="/knowledge">ארביטראז' של ידע</a></li><li aria-current="page">סקירות שוק ההון</li></ol></nav>
-      <h1 class="art-title">סקירות שוק ההון – Romano Invest</h1>
+      <h1 class="art-title">סקירות שוק ההון</h1>
       <p class="art-standfirst">מדי חודש אני מרכז עבורכם את ההתפתחויות המרכזיות בשוקי ההון בישראל ובעולם, ומסביר מה חשוב לדעת על החסכונות וההשקעות שלנו.</p>
     </div>
   </header>

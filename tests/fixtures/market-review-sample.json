@@ -12,7 +12,7 @@
   "topics": ["נושא א", "נושא ב", "נושא ג"],
   "tags": ["israel", "rates"],
   "cover": { "src": "/assets/tase-board.jpg", "alt": "לוח המסחר בבורסה לניירות ערך בתל אביב" },
-  "source": { "name": "ארביטראז'", "title": "סקירה לדוגמה", "date": "2026-11-05", "permission": true, "note": "" },
+  "source": { "name": "ארביטראז'", "title": "סקירה לדוגמה", "date": "2026-11-05", "url": "https://www.ar-fo.co.il/professional-magazine/sample", "permission": true, "note": "" },
   "sections": [
     { "kind": "israel", "heading": "כותרת לדוגמה לשוק המקומי", "text": "פסקה ראשונה לדוגמה.\n\nפסקה שנייה לדוגמה עם <b>תגית</b> שצריכה להופיע כטקסט.\n\n- פריט ראשון\n- פריט שני", "basis": "source", "ref": "עמוד 2",
       "figures": [

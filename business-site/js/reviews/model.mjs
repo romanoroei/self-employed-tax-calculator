@@ -1,5 +1,6 @@
-// Monthly market reviews: the data model, shared by the build (node), the admin page (browser)
-// and the admin API (Cloudflare Pages Functions). Pure functions only, no DOM and no I/O.
+// Monthly market reviews: the data model used by the build and the tests. Pure functions only, no DOM and no I/O.
+// Each month Roei sends the link to the Arbitrage review; Claude writes an edited review from it in this format,
+// Roei approves it, and only then it is published.
 //
 // One review = one JSON file in business-site/content/market-reviews/<id>.json, where <id> is the
 // month the review covers (YYYY-MM). Only status "published" reaches the site.
@@ -11,7 +12,9 @@ export const SCHEMA = 1;
 export const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 export const ID_RE = /^20\d\d-(?:0[1-9]|1[0-2])$/;
 export const DATE_RE = /^20\d\d-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/;
-export const STATUSES = ['draft', 'approved', 'published'];
+// The original review is linked only on the Arbitrage site (ar-fo.co.il).
+export const SOURCE_URL_RE = /^https:\/\/www\.ar-fo\.co\.il\/[\w\-\/%.]+$/;
+export const STATUSES =['draft', 'approved', 'published'];
 
 // The market areas a section can cover (5ב). A month may use any subset, in any order.
 export const SECTION_KINDS = {
@@ -76,7 +79,7 @@ export function emptyReview(id = '') {
     publishedAt: '', updatedAt: '',
     summary: '', highlights: ['', '', ''], topics: ['', '', ''], tags: [],
     cover: { src: '/assets/tase-board.jpg', alt: COVERS['/assets/tase-board.jpg'] },
-    source: { name: "ארביטראז'", title: '', date: '', permission: false, note: '' },
+    source: { name: "ארביטראז'", title: '', date: '', url: '', permission: false, note: '' },
     sections: [],
     meaning: { intro: '', items: [] },
     angle: { text: '', approved: false },
@@ -175,6 +178,7 @@ export function validate(r, { forPublish = false } = {}) {
   if (!COVERS[r.cover?.src]) err('תמונת השער אינה מהרשימה המאושרת');
   if (blank(r.source?.name)) err('חסר שם המקור לקרדיט');
   if (!DATE_RE.test(r.source?.date || '')) err('חסר תאריך הסקירה המקורית');
+  if (r.source?.url && !SOURCE_URL_RE.test(r.source.url)) err("הקישור לסקירה המקורית חייב להיות באתר ארביטראז'");
   if (forPublish && r.source?.permission !== true) err('לא סומן שיש הרשאת שימוש בתוכן המקור');
   const sections = r.sections || [];
   if (!sections.some(s => !blank(s.heading) && !blank(s.text))) err('צריך לפחות נושא אחד ב"מה קרה החודש בשווקים"');
@@ -228,7 +232,7 @@ export function normalize(input) {
     topics: (Array.isArray(r.topics) ? r.topics : base.topics).slice(0, 3).map(t => s(t, 80)),
     tags: (Array.isArray(r.tags) ? r.tags : []).filter(t => SECTION_KINDS[t]).slice(0, 7),
     cover: COVERS[r.cover?.src] ? { src: r.cover.src, alt: s(r.cover.alt, 200) || COVERS[r.cover.src] } : base.cover,
-    source: { name: s(r.source?.name, 100) || base.source.name, title: s(r.source?.title, 200), date: s(r.source?.date, 10), permission: r.source?.permission === true, note: s(r.source?.note, 400) },
+    source: { name: s(r.source?.name, 100) || base.source.name, title: s(r.source?.title, 200), date: s(r.source?.date, 10), url: SOURCE_URL_RE.test(r.source?.url || '') ? r.source.url : '', permission: r.source?.permission === true, note: s(r.source?.note, 400) },
     sections: (Array.isArray(r.sections) ? r.sections : []).slice(0, 12).map(x => ({
       kind: SECTION_KINDS[x?.kind] ? x.kind : 'other', heading: s(x?.heading, 200), text: s(x?.text, 12000),
       basis: x?.basis === 'verified' ? 'verified' : 'source', ref: s(x?.ref, 300),
