@@ -27,13 +27,15 @@ for(const file of published){
  if(ext==='.html'){
   pageCount++;
   if(path.basename(file)==='404.html')continue;
+  // the admin page is private: kept out of search, the sitemap and the canonical rule
+  if(path.basename(file)==='admin.html'){assert(text.includes('<meta name="robots" content="noindex, nofollow">'),'The admin page must stay out of search');assert(!/ghp_|github_pat_|sk-ant-/.test(text),'No keys in the admin page');continue;}
   const rel=path.relative(root,file).replaceAll('\\','/');
   const expected='https://romanoinvest.co.il/'+(rel==='index.html'?'':rel.replace(/index\.html$/,'').replace(/\.html$/,''));
   assert(text.includes('rel="canonical" href="'+expected+'"'),'Incorrect canonical: '+rel);
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
   assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
-  if(/^(?:self-employed|savings-policy|investment-fund|magazine\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
+  if(/^(?:self-employed|savings-policy|investment-fund|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
@@ -53,7 +55,11 @@ assert(feed.split('\r\n').every(l=>Buffer.byteLength(l)<=75),'Calendar feed line
 const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,13,'Sitemap must include all thirteen canonical pages');
+const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,14+reviewPages.length,'Sitemap must include all fourteen canonical pages and every published review');
+for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
+assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>')&&!sitemap.includes('/admin'),'Sitemap: reviews hub in, admin out');
+assert((await readFile(path.join(root,'knowledge.html'),'utf8')).includes('href="/market-reviews"'),'The knowledge page must lead to the market reviews');
 // The financial compass: the agreed lead pipeline, consents, counters, and no Google Analytics on the business site.
 const compass=await readFile(path.join(root,'compass.html'),'utf8');
 const cdir=path.join(root,'js','compass');
@@ -63,7 +69,7 @@ assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing o
 const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
-for(const page of ['index.html','compass.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html'])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
+for(const page of ['index.html','compass.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
 assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');
@@ -77,7 +83,7 @@ assert(cjs.ui.includes('cfg.productionHosts.includes(location.hostname)'),'Compa
 for(const t of [compass,...Object.values(cjs)])assert(!/googletagmanager|gtag\(|G-9GFDYS61G9|google-analytics/i.test(t),'No Google Analytics on the compass');
 const countSrc=await readFile(path.resolve('functions/api/count.js'),'utf8');
 const LABEL=new RegExp(countSrc.match(/const LABEL = \/(.+)\/;/)[1]);
-const labels=['strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
+const labels=['strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other','review:hub','review:view-2026-10','review:cta-2026-10','review:copy-2026-10','review:from-whatsapp-2026-10','review:from-other-2027-01','share:review-2026-10',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
 for(const l of labels)assert(LABEL.test(l),'Counter label not whitelisted: '+l);
-assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody'),'Counter whitelist too loose');
+assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody')&&!LABEL.test('review:view-2026-13')&&!LABEL.test('review:from-roei-2026-10')&&!LABEL.test('review:view-972528089808'),'Counter whitelist too loose');
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);

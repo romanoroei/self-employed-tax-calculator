@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "2026-10",
+  "status": "published",
+  "title": "דוגמה בלבד: כותרת לבדיקת העמוד <script>alert(1)</script>",
+  "seoTitle": "",
+  "metaDescription": "",
+  "publishedAt": "2026-11-12",
+  "updatedAt": "2026-11-12",
+  "summary": "זהו טקסט לדוגמה לבדיקת התצוגה, ואינו מבוסס על נתונים אמיתיים. המשפט השני של התקציר. המשפט השלישי של התקציר. משפט רביעי שלא ייכנס להודעה של נועם.",
+  "highlights": ["נקודה לדוגמה ראשונה עם **הדגשה**", "נקודה לדוגמה שנייה", "נקודה לדוגמה שלישית"],
+  "topics": ["נושא א", "נושא ב", "נושא ג"],
+  "tags": ["israel", "rates"],
+  "cover": { "src": "/assets/tase-board.jpg", "alt": "לוח המסחר בבורסה לניירות ערך בתל אביב" },
+  "source": { "name": "ארביטראז'", "title": "סקירה לדוגמה", "date": "2026-11-05", "permission": true, "note": "" },
+  "sections": [
+    { "kind": "israel", "heading": "כותרת לדוגמה לשוק המקומי", "text": "פסקה ראשונה לדוגמה.\n\nפסקה שנייה לדוגמה עם <b>תגית</b> שצריכה להופיע כטקסט.\n\n- פריט ראשון\n- פריט שני", "basis": "source", "ref": "עמוד 2",
+      "figures": [
+        { "type": "bars", "title": "גרף לדוגמה, לא נתונים אמיתיים", "unit": "%", "rows": "מדד א | 3.2\nמדד ב | -1.5\nמדד ג | 0.4", "asOf": "2026-10-31", "source": "נתוני דוגמה" },
+        { "type": "table", "title": "טבלה לדוגמה", "unit": "", "rows": "שם | ערך | שינוי\nשורה א | 1 | 2\nשורה ב | 3 | 4", "asOf": "2026-10-31", "source": "נתוני דוגמה" }
+      ] },
+    { "kind": "rates", "heading": "כותרת לדוגמה לריבית", "text": "טקסט לדוגמה על ריבית.", "basis": "verified", "ref": "בנק ישראל", "figures": [] }
+  ],
+  "meaning": { "intro": "פתיח לדוגמה.", "items": [ { "key": "pension", "text": "הסבר לדוגמה לקרנות פנסיה." }, { "key": "gemel", "text": "הסבר לדוגמה לקופות גמל להשקעה." } ] },
+  "angle": { "text": "פרשנות לדוגמה.", "approved": true },
+  "related": ["/investment-fund", "/magazine/tides-and-waves"],
+  "noam": { "opener": "משפט פתיחה לדוגמה.", "message": "" },
+  "approval": { "content": true, "at": "2026-11-12T10:00:00Z" },
+  "marketing": { "topics": [], "items": [] }
+}

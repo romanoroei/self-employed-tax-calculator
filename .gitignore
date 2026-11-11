@@ -10,6 +10,9 @@
 !tests/
 !tests/pension.test.cjs
 !tests/compass.test.cjs
+!tests/reviews.test.cjs
+!tests/fixtures/
+!tests/fixtures/market-review-sample.json
 
 !analytics.js
 !tests/analytics.test.cjs
@@ -25,6 +28,7 @@
 !scripts/update-yields.mjs
 !scripts/yields-data.json
 !scripts/update-boe.mjs
+!scripts/market-reviews.mjs
 
 !.github/
 !.github/workflows/
