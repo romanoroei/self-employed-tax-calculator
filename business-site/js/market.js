@@ -62,6 +62,8 @@
     const plot = figure.querySelector('.market-plot');
     const caption = figure.querySelector('figcaption');
     caption.innerHTML = '<span class="chart-title"></span><span class="chart-help"></span><span class="chart-read" aria-live="polite"></span>';
+    // until its figures arrive the plot says it is loading, so a slow answer never looks like a fault
+    plot.classList.add('is-loading');
     const [titleEl, helpEl, readEl] = caption.children;
     const edges = [0, 1].map(() => { const el = document.createElement('div'); el.className = 'chart-edge'; el.hidden = true; return el; });
     plot.append(...edges);
@@ -264,6 +266,7 @@
     });
     return {
       set(next) {
+        plot.classList.remove('is-loading');
         options = next;
         range = null; first = null; anchor = null; grab = -1;
         titleEl.textContent = options.title;
@@ -274,6 +277,7 @@
         rest();
       },
       clear(title) {
+        plot.classList.remove('is-loading');
         options = null; geometry = null; svg.replaceChildren();
         edges.forEach((el) => { el.hidden = true; });
         titleEl.textContent = title || '';
@@ -362,8 +366,9 @@
     const endOf = (t) => monthYear(t - DAY_MS);
     const rangeStart = lines[0].points[0][0];
     fundsChart.set({
-      title: `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${when}`,
-      periodTitle: (a, b) => `${lines.length === 1 ? `${lines[0].name}: ` : ''}תשואה מצטברת ${chosenMonths(a.t, b.t)}`,
+      // the fund's name is in the readout under the title, so the title does not repeat it (Roei)
+      title: `תשואה מצטברת ${when}`,
+      periodTitle: (a, b) => `תשואה מצטברת ${chosenMonths(a.t, b.t)}`,
       hint: '',
       lines, base: 0,
       axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
@@ -428,10 +433,15 @@
   // ---------- shared by the live tabs ----------
   const noteBlock = '<p class="yield-note"><strong data-updated>&nbsp;</strong><span data-source></span></p>';
   const UNAVAILABLE = 'הנתונים לא זמינים כרגע';
-  const getJson = async (url) => {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(String(response.status));
-    return response.json();
+  // one request per address: the tabs fetch what was already asked for in the background (see the end)
+  const asked = new Map();
+  const getJson = (url) => {
+    if (!asked.has(url)) {
+      const request = fetch(url).then((response) => { if (!response.ok) throw new Error(String(response.status)); return response.json(); });
+      request.catch(() => asked.delete(url));
+      asked.set(url, request);
+    }
+    return asked.get(url);
   };
   function pickRow(element, row) {
     element.querySelectorAll('tbody tr').forEach((r) => {
@@ -489,6 +499,7 @@
   }
 
   async function loadFx() {
+    drawFx(); // the chart and the table load side by side
     try {
       const { items } = await getJson('/api/fx');
       for (const item of items) {
@@ -508,7 +519,6 @@
     } catch {
       fx.element.querySelector('[data-updated]').textContent = UNAVAILABLE;
     }
-    drawFx();
   }
 
   // ---------- the rates tab ----------
@@ -752,4 +762,9 @@
 
   buildFx();
   buildRates();
+  [fx.element, rates.element].forEach((el) => { el.querySelector('[data-updated]').textContent = 'טוען נתונים…'; });
+  // The currencies, the rates and the index are fetched quietly once the page has settled, so the tabs
+  // open with their figures in place. Only this site is asked; nothing about the visitor is sent.
+  const warm = () => ['/api/fx', `/api/fx?id=${fx.picked}`, '/api/rates', '/api/cpi'].forEach((url) => getJson(url).catch(() => {}));
+  if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 3000 }); else setTimeout(warm, 1500);
 })();

@@ -7,7 +7,8 @@ const YEARS = 25;
 const HEADERS = { 'User-Agent': 'romanoinvest.co.il rates', Accept: '*/*' };
 
 async function source(url) {
-  const response = await fetch(url, { headers: HEADERS });
+  // a source that hangs gives way after 6 seconds, so one slow bank never holds up the page
+  const response = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(6000) });
   if (!response.ok) throw new Error(`${response.status} from ${new URL(url).host}`);
   return response;
 }
@@ -60,11 +61,6 @@ const RATES = {
   // Last comes the BIS's daily series of the same Bank Rate, which is published a week or so late.
   // asOf says how far each answer reaches.
   async uk({ origin, env } = {}) {
-    try {
-      return { ...(await RATES.boe()), source: 'boe' };
-    } catch (error) {
-      console.error('uk from the Bank of England', error.message);
-    }
     let daily = null;
     try {
       const request = new Request(`${origin}/assets/data/boe-rate.json`);
@@ -76,8 +72,15 @@ const RATES = {
     } catch (error) {
       console.error('uk from the daily file', error.message);
     }
-    const fresh = (asOf) => (Date.now() - isoDay(asOf)) / 86400000 <= 10;
-    if (daily && fresh(daily.asOf)) return daily;
+    const age = (asOf) => (Date.now() - isoDay(asOf)) / 86400000;
+    // a recent daily file (it is rewritten every few weekdays) is as good as the Bank itself, and the Bank's site only stalls from here
+    if (daily && age(daily.asOf) <= 7) return daily;
+    try {
+      return { ...(await RATES.boe()), source: 'boe' };
+    } catch (error) {
+      console.error('uk from the Bank of England', error.message);
+    }
+    if (daily && age(daily.asOf) <= 10) return daily;
     try {
       const url = `https://stats.bis.org/api/v1/data/WS_CBPOL/D.GB?startPeriod=${startDate()}&format=csv&detail=dataonly`;
       const bis = { ...series(csvRows(await (await source(url)).text())), source: 'bis' };
@@ -136,13 +139,26 @@ export async function onRequestGet({ request, waitUntil, env }) {
   const key = new Request(`${origin}/api/rates?years=${YEARS}&v=4`);
   const held = cache && await cache.match(key);
   if (held) return held;
-  try {
+  // The last whole answer is also kept for a month. When the fresh one has expired, a visitor gets that
+  // one at once while a new answer is fetched in the background, so nobody waits for four banks.
+  const staleKey = new Request(`${origin}/api/rates-last?years=${YEARS}&v=4`);
+  const refresh = async () => {
     const { body, complete } = await rates(origin, waitUntil, env);
-    const response = new Response(JSON.stringify(body), {
-      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${complete ? SECONDS : SHORT}` },
-    });
-    if (cache) waitUntil(cache.put(key, response.clone()));
-    return response;
+    const text = JSON.stringify(body);
+    if (cache) {
+      await cache.put(key, new Response(text, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${complete ? SECONDS : SHORT}` } }));
+      await cache.put(staleKey, new Response(text, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${KEEP}` } }));
+    }
+    return text;
+  };
+  const stale = cache && await cache.match(staleKey);
+  if (stale) {
+    waitUntil(refresh().catch((error) => console.error('rates refresh', error.message)));
+    return new Response(await stale.text(), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${SHORT}` } });
+  }
+  try {
+    const text = await refresh();
+    return new Response(text, { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${SHORT}` } });
   } catch (error) {
     console.error('rates', error.message);
     return new Response(JSON.stringify({ error: 'unavailable' }), { status: 502, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
