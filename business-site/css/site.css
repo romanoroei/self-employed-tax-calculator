@@ -941,6 +941,48 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 }
 
 
+/* ================= Folding tiles (Roei, 2026-11-11) =================
+   To shorten the home page, the pillars, the services, the stories, the magazine list and the FAQ show
+   their titles, and each opens its text on a click (<details>, so it works by keyboard and without scripts).
+   The icon is a plus that turns into a minus. */
+.fold > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; cursor: pointer; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary h3 { margin: 0; }
+.fold-icon { flex: none; position: relative; width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; opacity: .7; transition: opacity 160ms ease; }
+.fold-icon::before, .fold-icon::after { content: ""; position: absolute; top: 50%; left: 50%; width: 10px; height: 1.5px; margin: -.75px 0 0 -5px; background: currentColor; transition: transform 220ms var(--ease-out); }
+.fold-icon::after { transform: rotate(90deg); }
+.fold[open] > summary .fold-icon::after { transform: rotate(0deg); }
+@media (hover: hover) and (pointer: fine) { .fold > summary:hover .fold-icon { opacity: 1; } }
+.fold[open] > summary ~ * { animation: fold-in 260ms var(--ease-out); }
+@keyframes fold-in { from { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .fold[open] > summary ~ * { animation: none; } }
+
+/* the four pillars: a title bar each, the text under it when open */
+.pillar.fold { min-height: 0; padding: 24px 30px; justify-content: flex-start; gap: 14px; }
+/* the services: the narrow photo stays; the text opens under the title, the travel purchase links stay in view */
+.service .fold > summary h3 { margin-bottom: 0; }
+.service .fold > p { margin-top: 8px; }
+.tile-ink.service .fold-icon { color: var(--gold); }
+/* the stories: one bar each */
+.story.fold { display: block; padding: 24px 32px; }
+.story.fold > p { margin-top: 12px; }
+/* the magazine: a link to the guides page, and the full list folded under it */
+.mag-more { margin-top: 32px; max-width: 720px; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.mag-all { gap: 10px; }
+.mag-fold { align-self: stretch; }
+.mag-fold > summary { padding-block: 10px; border-block: 1px solid rgba(12, 33, 52, .18); font-size: var(--t-5); font-weight: 700; }
+.mag-fold .mag-table { margin-top: 12px; }
+/* the FAQ: the questions in two columns, each answer opens under its question */
+.faq-list { margin-top: 40px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; align-items: start; }
+.faq-item { padding-block: 16px; border-top: 1px solid rgba(12, 33, 52, .18); }
+.faq-item h3 { font-size: var(--t-4); font-weight: 700; line-height: 1.4; }
+.faq-item > p { margin-top: 10px; max-width: 60ch; }
+@media (max-width: 900px) { .faq-list { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) {
+  .pillar.fold, .story.fold { padding: 18px 20px; }
+  .faq-item { padding-block: 14px; }
+}
+
 /* ================= Phones: a compact first screen (Roei, 2026-11-11) =================
    Kept last, so it wins over the rules above.
    Slides: the words start at eye level on every slide, over the picture, and the drawn chart and compass
