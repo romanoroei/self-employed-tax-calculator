@@ -58,7 +58,7 @@ assert.equal([...sitemap.matchAll(/<loc>/g)].length,13+reviewPages.length,'Sitem
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 const knowledgePage=await readFile(path.join(root,'knowledge.html'),'utf8');
-assert(knowledgePage.includes('href="/market-reviews"')&&!knowledgePage.includes('<!-- market-reviews-list -->'),'The knowledge page must hold the market reviews category');
+assert(knowledgePage.includes('id="market-reviews"')&&!knowledgePage.includes('<!-- market-reviews-list -->'),'The knowledge page must hold the market reviews category');
 for(const p of reviewPages.sort().reverse().slice(0,6))assert(knowledgePage.includes('href="/market-reviews/'+p.replace(/\.html$/,'')+'"'),'The knowledge page must link straight to the review '+p);
 // The financial compass: the agreed lead pipeline, consents, counters, and no Google Analytics on the business site.
 const compass=await readFile(path.join(root,'compass.html'),'utf8');

@@ -170,7 +170,7 @@ export function renderReviewPage(r, { prev = null, next = null, preview = false 
     },
     { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: "ארביטראז' של ידע", item: SITE + '/knowledge' },
-      { '@type': 'ListItem', position: 2, name: 'סקירות שוק ההון', item: SITE + '/market-reviews' },
+      { '@type': 'ListItem', position: 2, name: 'סקירות שוק ההון', item: SITE + '/knowledge#market-reviews' },
       { '@type': 'ListItem', position: 3, name: month, item: url },
     ] },
   ];
@@ -180,7 +180,7 @@ export function renderReviewPage(r, { prev = null, next = null, preview = false 
 <article class="rv">
   <header class="wrap art-head rv-head">
     <div class="art-col">
-      <nav class="rv-crumbs" aria-label="פירורי לחם"><ol><li><a class="link" href="/knowledge">ארביטראז' של ידע</a></li><li><a class="link" href="/market-reviews">סקירות שוק ההון</a></li><li aria-current="page">${esc(month)}</li></ol></nav>
+      <nav class="rv-crumbs" aria-label="פירורי לחם"><ol><li><a class="link" href="/knowledge">ארביטראז' של ידע</a></li><li><a class="link" href="/knowledge#market-reviews">סקירות שוק ההון</a></li><li aria-current="page">${esc(month)}</li></ol></nav>
       <p class="rv-kicker">סקירה חודשית</p>
       <h1 class="art-title rv-title">${esc(h1)}</h1>
       <p class="art-standfirst">${esc(r.title)}</p>
@@ -235,7 +235,7 @@ ${prev || next ? `
         ${next ? `<a class="rv-pager-link" href="/market-reviews/${next.id}" rel="next"><small>הסקירה הבאה</small><strong>${esc(monthLabel(next.id))}</strong></a>` : '<span></span>'}
         ${prev ? `<a class="rv-pager-link is-prev" href="/market-reviews/${prev.id}" rel="prev"><small>הסקירה הקודמת</small><strong>${esc(monthLabel(prev.id))}</strong></a>` : '<span></span>'}
       </nav>` : ''}
-      <p class="rv-all"><a class="link" href="/market-reviews">לכל סקירות שוק ההון</a></p>
+      <p class="rv-all"><a class="link" href="/knowledge#market-reviews">לכל סקירות שוק ההון</a></p>
     </div>
   </div>
 ${(r.related || []).length ? `
