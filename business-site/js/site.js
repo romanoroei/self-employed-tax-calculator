@@ -432,7 +432,7 @@ document.addEventListener('click', (e) => {
   let timer = 0;
   let paused = still.matches;
   let held = false;
-  let moving = null;
+  let finishMove = null;
 
   hero.setAttribute('role', 'region');
   hero.setAttribute('aria-roledescription', 'מצגת');
@@ -464,10 +464,13 @@ document.addEventListener('click', (e) => {
   }
   drawPause();
 
-  // dir 1: the slide leaves to the right and the next comes in from the left; -1 the other way
+  // dir 1: the slide leaves to the right and the next comes in from the left; -1 the other way.
+  // The slide coming in is always drawn above the one leaving, and the leaving one stays where the move took it
+  // until it is hidden: from the last slide back to Roei the leaving slide came later in the page and stayed
+  // on top, so a strip of its photo could show at the side of his (Roei, 2026-11-11).
   function show(next, dir) {
     if (next === current) return;
-    if (moving) moving.forEach((a) => a.finish());
+    if (finishMove) finishMove();
     const from = slides[current];
     const to = slides[next];
     current = next;
@@ -475,16 +478,31 @@ document.addEventListener('click', (e) => {
     to.hidden = false;
     to.inert = false;
     from.inert = true;
-    const done = () => { from.hidden = true; from.classList.remove('is-moving'); to.classList.remove('is-moving'); moving = null; };
+    let anims = [];
+    let ended = false;
+    const done = () => {
+      if (ended) return;
+      ended = true;
+      from.hidden = true;
+      from.classList.remove('is-moving');
+      to.classList.remove('is-moving');
+      from.style.zIndex = '';
+      to.style.zIndex = '';
+      anims.forEach((a) => a.cancel());
+      if (finishMove === done) finishMove = null;
+    };
     if (still.matches || !to.animate) { done(); return; }
     from.classList.add('is-moving');
     to.classList.add('is-moving');
+    from.style.zIndex = '0';
+    to.style.zIndex = '1';
     const timing = { duration: 650, easing: 'cubic-bezier(.2, .7, .2, 1)' };
-    moving = [
-      from.animate([{ transform: 'none' }, { transform: `translateX(${dir * 100}%)` }], timing),
+    anims = [
+      from.animate([{ transform: 'none' }, { transform: `translateX(${dir * 100}%)` }], { ...timing, fill: 'forwards' }),
       to.animate([{ transform: `translateX(${dir * -100}%)` }, { transform: 'none' }], timing),
     ];
-    moving[1].finished.then(done, done);
+    finishMove = done;
+    anims[1].finished.then(done, done);
   }
   const step = (dir) => show((current + (dir > 0 ? 1 : -1) + slides.length) % slides.length, dir);
 
