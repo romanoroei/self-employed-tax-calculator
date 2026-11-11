@@ -134,12 +134,16 @@ a.tile { transition: background-color 180ms ease; }
 
 /* "ארביטראז' של ידע": the tile next to the brand opens /knowledge, the page of guides and tools */
 .bar-tools { display: flex; }
+/* a gold frame and two lines (Roei, 2026-11-11): the brand of the knowledge small above, what is inside below, so it reads as a button */
 .bar-tools-toggle {
-  display: flex; align-items: center; padding-inline: 20px; white-space: nowrap; text-decoration: none;
-  background: var(--navy); color: var(--gold); font-weight: 700; font-size: var(--t-5);
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px;
+  padding-inline: 20px; white-space: nowrap; text-decoration: none; line-height: 1.1;
+  background: var(--navy); color: var(--gold); box-shadow: inset 0 0 0 2px var(--gold);
   transition: background-color 160ms ease;
 }
-.bar-tools-toggle[aria-current="page"] { background: var(--slate); box-shadow: inset 0 -3px 0 var(--gold); }
+.bar-tools-kicker { font-size: 11.5px; font-weight: 700; color: var(--gold); }
+.bar-tools-name { font-size: 16px; font-weight: 800; color: var(--on-dark); }
+.bar-tools-toggle[aria-current="page"] { background: var(--slate); }
 @media (hover: hover) and (pointer: fine) { .bar-tools-toggle:hover { background: var(--slate); } }
 /* the tools tile takes room from the links: the last two go earlier than before */
 @media (max-width: 1280px) { .bar-nav a:nth-child(n+5) { display: none; } }
@@ -880,7 +884,13 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 @media (max-width: 600px) { .bar-brand span { display: none; } }
 /* the menu's name is long: on phones it takes two lines, so the name beside it still fits */
 @media (max-width: 520px) {
-  .bar-tools-toggle { width: 96px; padding-inline: 8px; font-size: 13px; line-height: 1.15; white-space: normal; text-align: start; }
+  .bar-tools-toggle { padding-inline: 10px; gap: 2px; }
+  .bar-tools-kicker { font-size: 10.5px; }
+  .bar-tools-name { font-size: 13.5px; }
+  /* the button gets the room: the name beside the logo is a little smaller */
+  .bar-brand { padding-inline: 10px; gap: 7px; }
+  .bar-brand img { width: 34px; }
+  .bar-brand strong { font-size: 15px; }
 }
 @media (max-width: 400px) {
   .bar-brand, .bar-cta { padding-inline: 10px; }

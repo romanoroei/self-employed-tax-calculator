@@ -51,7 +51,7 @@ ${preview ? `<base href="${esc(preview)}">\n<meta name="robots" content="noindex
 
 <header class="topbar" id="top">
   <a class="tile tile-ink bar-brand" href="/"><img src="${root}assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
-  <div class="bar-tools"><a class="bar-tools-toggle" href="/knowledge">ארביטראז' של ידע</a></div>
+  <div class="bar-tools"><a class="bar-tools-toggle" href="/knowledge"><span class="bar-tools-kicker">ארביטראז' של ידע</span><span class="bar-tools-name">מדריכים וכלים <span aria-hidden="true">←</span></span></a></div>
   <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
     <a href="/#approach">הגישה שלי</a>
     <a href="/#about">עליי</a>
