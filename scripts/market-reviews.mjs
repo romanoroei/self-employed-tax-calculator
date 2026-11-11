@@ -3,7 +3,7 @@
 import { readFile, readdir, writeFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { normalize, validate, ID_RE } from '../business-site/js/reviews/model.mjs';
-import { renderHub, renderReviewPage, sitemapPaths } from '../business-site/js/reviews/render.mjs';
+import { renderHub, renderReviewPage, renderKnowledgeReviews, sitemapPaths } from '../business-site/js/reviews/render.mjs';
 
 export async function loadPublishedReviews(dir) {
   const names = await readdir(dir).catch(() => []);
@@ -31,5 +31,10 @@ export async function buildReviews(root, output) {
   for (const [i, r] of reviews.entries()) {
     await writeFile(path.join(output, r._page), renderReviewPage(r, { next: reviews[i - 1] || null, prev: reviews[i + 1] || null }));
   }
+  // the reviews category on /knowledge links straight to each review
+  const knowledge = path.join(output, 'knowledge.html');
+  const kn = await readFile(knowledge, 'utf8');
+  if (!kn.includes('<!-- market-reviews-list -->')) throw new Error('Missing market reviews slot in knowledge.html');
+  await writeFile(knowledge, kn.replace('<!-- market-reviews-list -->', renderKnowledgeReviews(reviews)));
   return { count: reviews.length, pages: ['market-reviews.html', ...reviews.map(r => r._page)], sitemap: sitemapPaths(reviews) };
 }

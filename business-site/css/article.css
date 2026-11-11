@@ -170,6 +170,13 @@
   .kn-card:hover .kn-go { transform: translateX(-4px); }
 }
 .kn-cols + .art-cta { margin-top: 0; }
+/* market reviews: their own category above the columns, each card opens the review itself */
+.kn-reviews { padding-block: 8px 32px; }
+.kn-lead { font-size: var(--t-5); color: var(--ink-soft); margin: -4px 0 14px; }
+.kn-reviews-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kn-more { margin-top: 12px; font-size: var(--t-5); }
+@media (max-width: 1000px) { .kn-reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 800px) { .kn-reviews { padding-bottom: 16px; } .kn-reviews-grid { grid-template-columns: minmax(0, 1fr); } }
 /* phones and narrow tablets: the tools column goes under the guides */
 @media (max-width: 800px) {
   .kn-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 48px; }
