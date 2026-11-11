@@ -1044,4 +1044,14 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .yield-cta { padding: 9px 18px; }
   /* events: four that happened and three that are coming, so the tab keeps the tile's height */
   .ev-table:not(.is-coming) tbody tr:nth-child(n+5), .ev-table.is-coming tbody tr:nth-child(n+4) { display: none; }
+
+  /* who I work with: smaller type and a short photo, so more of the list fits one screen (Roei, 2026-11-11) */
+  .panel { margin-top: 16px; }
+  .panel-text { padding: 20px; }
+  .panel-text h3 { font-size: 20px; margin-bottom: 12px; }
+  .panel-text ul { gap: 8px; }
+  .panel-text li { font-size: 15.5px; line-height: 1.4; padding-inline-start: 18px; }
+  .panel-text li::before { width: 6px; height: 6px; }
+  .panel-more { margin-top: 14px; font-size: 14px; }
+  .panel-photo img { height: 190px; width: 100%; object-fit: cover; object-position: center 40%; }
 }
