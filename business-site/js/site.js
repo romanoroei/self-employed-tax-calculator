@@ -488,7 +488,8 @@ document.addEventListener('click', (e) => {
 
   function schedule() {
     clearTimeout(timer);
-    if (!paused && !held && !document.hidden) timer = setTimeout(() => { step(1); schedule(); }, INTERVAL);
+    // each slide stands still for the whole interval, and the move (650ms) comes on top (Roei)
+    if (!paused && !held && !document.hidden) timer = setTimeout(() => { step(1); schedule(); }, INTERVAL + (still.matches ? 0 : 650));
   }
 
   nav.addEventListener('click', (e) => {
