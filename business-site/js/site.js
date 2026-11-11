@@ -179,7 +179,9 @@
 
 // ===== Audience tabs: one panel at a time (all panels show when scripting is off) =====
 (() => {
-  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  // only the audience tabs: the market tile has tabs of its own (js/market.js), and taking those too
+  // left every audience panel closed when the page opened
+  const tabs = [...document.querySelectorAll('.clients [role="tab"]')];
   if (!tabs.length) return;
   const select = (tab, focus) => {
     tabs.forEach((t) => {

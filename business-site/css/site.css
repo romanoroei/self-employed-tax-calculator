@@ -494,15 +494,16 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 }
 
 /* ================= Approach ================= */
-.approach { padding-block: var(--section); }
+/* the heading sits a little higher, and the two arbitrage tiles are more compact (Roei) */
+.approach { padding-block: calc(var(--section) * .6) var(--section); }
 .lead-ink { color: var(--ink); max-width: 70ch; }
-.arb { margin-block: 48px var(--gap); grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.arb-tile { padding: 32px; display: grid; gap: 16px; align-content: start; }
-.arb-tile h3 { font-size: var(--t-2); font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
+.arb { margin-block: 32px var(--gap); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.arb-tile { padding: 22px 26px; display: grid; gap: 10px; align-content: start; }
+.arb-tile h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
 .tile-ink.arb-tile h3 { color: var(--gold); }
 .arb-row { display: grid; gap: 6px; }
 .arb-label { font-size: var(--t-5); font-weight: 500; }
-.arb-track { display: block; height: 40px; background: rgba(241, 241, 238, .12); }
+.arb-track { display: block; height: 32px; background: rgba(241, 241, 238, .12); }
 .tile-gold .arb-track { background: rgba(8, 24, 38, .12); }
 .arb-bar {
   display: flex; align-items: center; height: 100%;
@@ -522,7 +523,8 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 .tile-ink.pillar h3, .tile-slate.pillar h3 { color: var(--gold); }
 
 /* ================= Clients ================= */
-.clients { background: var(--gold); color: var(--navy-deep); padding-block: var(--section); }
+/* shorter gold and navy backgrounds for "את מי אני מלווה" and "מבלגן לתוכנית אחת" (Roei) */
+.clients { background: var(--gold); color: var(--navy-deep); padding-block: calc(var(--section) * .6); }
 .tabs { margin-top: 40px; display: flex; flex-wrap: wrap; gap: var(--gap); }
 .tab {
   appearance: none; border: 0; border-radius: 0; cursor: pointer;
@@ -534,13 +536,13 @@ section h2[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 @media (hover: hover) and (pointer: fine) { .tab[aria-selected="false"]:hover { background: var(--gold-soft); } }
 .panel { margin-top: var(--gap); grid-template-columns: minmax(0, 1fr) auto; }
 .panel-more { margin-top: 20px; font-size: var(--t-5); font-weight: 700; }
-.panel-text { padding: 40px; }
+.panel-text { padding: 32px; }
 .panel-text h3 { font-size: var(--t-2); font-weight: 800; color: var(--gold); margin-bottom: 20px; }
 .panel-text ul { display: grid; gap: 12px; }
 .panel-text li { padding-inline-start: 22px; position: relative; line-height: 1.45; }
 .panel-text li::before { content: ""; position: absolute; inset-inline-start: 0; top: .6em; width: 8px; height: 8px; background: var(--gold); }
 .panel-photo { overflow: hidden; background: var(--navy-deep); }
-.panel-photo img { height: 380px; width: auto; max-width: 560px; object-fit: contain; filter: grayscale(1) contrast(1.05); }
+.panel-photo img { height: 320px; width: auto; max-width: 560px; object-fit: contain; filter: grayscale(1) contrast(1.05); }
 html:not(.js) .tabs { display: none; }
 html:not(.js) .panel + .panel { margin-top: 32px; }
 .panel[hidden] { display: none; }
@@ -548,9 +550,9 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* ================= How ================= */
-.how { background: var(--navy); color: var(--on-dark); padding-block: var(--section); }
+.how { background: var(--navy); color: var(--on-dark); padding-block: calc(var(--section) * .6); }
 .how .lead { color: var(--on-dark-soft); }
-.how-figure { display: block; margin-block: 56px 40px; }
+.how-figure { display: block; margin-block: 32px 28px; }
 .how-figure img { width: 100%; height: auto; }
 .how-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
 .how-steps h3 { font-size: var(--t-3); font-weight: 800; margin-bottom: 8px; color: var(--gold); }
@@ -916,10 +918,25 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 @media (hover: hover) and (pointer: fine) { .service:hover > img { transform: scale(1.04); }
   .service-buy a:hover img { opacity: 1; }
   .service-buy a:hover .logo { opacity: 0; } }
+/* eight services in four columns, and travel insurance as a full row under them, its purchase links beside
+   the title, so it no longer makes its neighbours taller (Roei) */
+.service-board { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.service { padding-inline-end: 96px; }
+.service > img { width: 78px; }
+.service-travel { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 32px; }
+.service-travel > .fold { flex: 0 1 280px; }
+.service-travel .service-buy { flex: 1 1 420px; margin-top: 0; }
+.service-travel .service-buy > span { flex-basis: auto; }
+.service-travel .service-buy a { flex: none; width: 84px; }
+.service-travel .service-buy p { flex: 1 1 220px; max-width: 320px; margin-top: 0; }
 @media (max-width: 1100px) { .service-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) {
   .service-board { grid-template-columns: minmax(0, 1fr); }
   .service { padding: 14px 16px; padding-inline-end: 92px; }
+  .service-travel { display: block; }
+  .service-travel .service-buy { margin-top: 12px; }
+  .service-travel .service-buy > span, .service-travel .service-buy p { flex-basis: 100%; max-width: none; }
+  .service-travel .service-buy a { flex: 1 1 72px; width: auto; }
   .service > img { width: 76px; }
 }
 
