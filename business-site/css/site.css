@@ -1070,3 +1070,53 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .panel-more { margin-top: 14px; font-size: 14px; }
   .panel-photo img { height: 190px; width: 100%; object-fit: cover; object-position: center 40%; }
 }
+
+/* ================= The home hero says who, what and the next step; four ways in follow it (2026-11-12) ================= */
+.hero-copy-home { max-width: 58%; }
+.hero-copy-home h1 { font-size: inherit; line-height: inherit; letter-spacing: 0; }
+.hero-who { margin-bottom: 14px; font-size: 17px; font-weight: 500; line-height: 1.4; color: var(--on-dark-soft); }
+.hero-who b { font-weight: 800; color: var(--on-dark); }
+.hero-main h1 .hero-who .hero-role { display: inline; font-weight: 500; color: var(--gold); }
+.hero-who .hero-role::before { content: "· "; color: var(--on-dark-soft); }
+.hero-head { font-size: clamp(30px, 2.7vw, 40px); font-weight: 800; line-height: 1.12; letter-spacing: -0.01em; color: var(--on-dark); text-wrap: balance; }
+.hero-main h1 .hero-head-2 { margin-top: 4px; font-weight: 400; color: var(--gold); }
+.hero-copy-home .hero-promise { margin-top: 16px; font-size: clamp(18px, 1.4vw, 21px); }
+.hero-copy-home .hero-promise + .hero-lead { margin-top: 6px; font-size: 16px; max-width: 46ch; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 20px; }
+.hero-actions .hero-go { margin-top: 0; }
+.hero-how { font-weight: 700; color: var(--on-dark); }
+
+.paths { padding-block: calc(var(--section) * .5) 0; }
+.path-board { margin-top: 28px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.path { display: flex; flex-direction: column; gap: 10px; min-height: 220px; padding: 26px 24px 22px; transition: background-color 160ms ease; }
+.path h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; color: var(--gold); text-wrap: balance; }
+.tile-gold.path h3 { color: var(--navy-deep); }
+.path p { font-size: var(--t-5); line-height: 1.55; color: var(--on-dark-soft); }
+.tile-gold.path p { color: var(--navy); }
+.path-go { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 8px; font-size: var(--t-5); font-weight: 700; }
+.path-go .arrow { transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .tile-ink.path:hover { background: var(--slate); }
+  .tile-gold.path:hover { background: var(--gold-soft); }
+  .path:hover .path-go .arrow { transform: translateX(-4px); }
+}
+@media (max-width: 1100px) { .path-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.how-cost { max-width: 70ch; margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(241, 241, 238, .16); font-size: var(--t-5); line-height: 1.6; color: var(--on-dark-soft); }
+
+@media (max-width: 900px) { .hero-copy-home { max-width: 62%; } }
+@media (max-width: 700px) {
+  .hero-copy-home { max-width: none; }
+  /* a phone keeps the first screen short: smaller lines, and the button with the link beside it */
+  .hero-slide:first-child { padding-top: 96px; }
+  .hero-who { margin-bottom: 10px; font-size: 13.5px; }
+  .hero-head { font-size: 26px; }
+  .hero-copy-home .hero-promise { margin-top: 12px; font-size: 17px; }
+  .hero-copy-home .hero-promise + .hero-lead { font-size: 15px; line-height: 1.5; }
+  .hero-actions { flex-wrap: nowrap; gap: 16px; margin-top: 16px; }
+  .hero-actions .hero-go { padding: 12px 16px; font-size: 15px; white-space: nowrap; }
+  .hero-how { font-size: 15px; white-space: nowrap; }
+  .paths { padding-top: 40px; }
+  .path-board { margin-top: 20px; grid-template-columns: minmax(0, 1fr); }
+  .path { min-height: 0; gap: 6px; padding: 18px 20px; }
+}

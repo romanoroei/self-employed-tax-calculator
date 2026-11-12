@@ -547,11 +547,12 @@ document.addEventListener('click', (e) => {
     step(dx > 0 ? 1 : -1);
     schedule();
   });
-  // a slide button that leads to the contact form ticks the matching topic there
-  hero.addEventListener('click', (e) => {
-    const goal = e.target.closest('a[data-goal]')?.dataset.goal;
-    const box = goal && [...document.querySelectorAll('input[name="מטרה"]')].find((input) => input.value === goal);
-    if (box) box.checked = true;
-  });
   schedule();
 })();
+
+// a link that leads to the contact form (a slide button, a path card) ticks the matching topic there
+document.addEventListener('click', (e) => {
+  const goal = e.target.closest('a[data-goal]')?.dataset.goal;
+  const box = goal && [...document.querySelectorAll('input[name="מטרה"]')].find((input) => input.value === goal);
+  if (box) box.checked = true;
+});
