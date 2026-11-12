@@ -7,6 +7,11 @@
 // the plot. Clicking two points, or dragging from one to the other, marks that period and measures it.
 (() => {
   const tile = document.querySelector('[data-market]');
+  // phones show the tile on /market-data only: a guide's link to the home tile goes there, and the hidden tile loads nothing
+  if (tile && getComputedStyle(tile).display === 'none') {
+    if (['#policy-yields', '#invest-yields'].includes(location.hash)) location.replace('/market-data' + location.hash);
+    return;
+  }
   if (!tile) return;
 
   const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];

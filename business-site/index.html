@@ -34,9 +34,9 @@
   <a class="tile tile-ink bar-brand" href="#top"><img src="assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
   <div class="bar-tools"><a class="bar-tools-toggle" href="/knowledge"><span class="bar-tools-kicker">ארביטראז' של ידע</span><span class="bar-tools-name">מדריכים וכלים <span aria-hidden="true">←</span></span></a></div>
   <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
-    <a href="#approach">הגישה שלי</a>
     <a href="#about">עליי</a>
     <a href="#clients">את מי אני מלווה</a>
+    <a href="#approach">הגישה שלי</a>
     <a href="#services">תחומים</a>
     <a href="#magazine">מגזין וכלים</a>
     <a href="#faq">שאלות נפוצות</a>
@@ -55,9 +55,9 @@
       <div class="hero-slide" data-slide>
         <img class="hero-bg" src="assets/img/roei-3.jpg" width="1400" height="2100" alt="רועי רומנו בחליפה כחולה" fetchpriority="high">
         <div class="hero-copy hero-copy-home">
-          <h1><span class="hero-who"><b>רועי רומנו</b> <span class="hero-role">מתכנן פיננסי וסוכן פנסיוני מורשה</span></span> <span class="hero-head">הפנסיה, ההשקעות והביטוחים שלכם. <span class="hero-head-2">תוכנית אחת שמתאימה לחיים שלכם.</span></span></h1>
+          <h1><span>רועי רומנו</span> <span class="hero-role">מתכנן פיננסי</span></h1>
           <p class="hero-promise"><span>לראות את התמונה המלאה.</span></p>
-          <p class="hero-lead">מאז 2009 אני מלווה אנשים בהחלטות פיננסיות, מתוך ראייה כוללת של הצרכים, המטרות והאפשרויות שלהם.</p>
+          <p class="hero-lead">ליווי אישי ומקצועי למשקיעים, לשכירים, לעצמאים ולחברות.</p>
           <p class="hero-actions"><a class="button hero-go" href="#contact" data-count="hero:contact">לתיאום שיחת היכרות <span class="arrow" aria-hidden="true">←</span></a> <a class="link hero-how" href="#how" data-count="hero:how">איך אני עובד?</a></p>
         </div>
       </div>
@@ -68,7 +68,7 @@
           <h2 class="hero-title">קופת גמל להשקעה</h2>
           <p class="hero-figure"><b>83,641&nbsp;₪</b><span>תקרת ההפקדה השנתית ל־2026</span></p>
           <p class="hero-lead">הפקדה עד 31.12 מנצלת את תקרת 2026, ובינואר נפתחת לכם תקרה חדשה לשנת 2027.</p>
-          <a class="button hero-go" href="#contact" data-count="hero:invest" data-goal="פתרון לכסף פנוי">רוצים להפקיד? השאירו פרטים <span class="arrow" aria-hidden="true">←</span></a>
+          <p class="hero-actions"><a class="button hero-go" href="#contact" data-count="hero:invest" data-goal="פתרון לכסף פנוי">רוצים להפקיד? השאירו פרטים <span class="arrow" aria-hidden="true">←</span></a> <a class="link hero-how" href="/investment-fund" data-count="hero:fund-guide">למדריך קופת גמל להשקעה</a></p>
         </div>
       </div>
       <div class="hero-slide" data-slide hidden>
@@ -78,6 +78,15 @@
           <h2 class="hero-title">המצפן הפיננסי</h2>
           <p class="hero-lead">ענו על כמה שאלות קצרות וקבלו מפת צרכים אישית: מה כדאי לבדוק בפנסיה, בביטוחים, בהטבות המס ובנזילות. בלי להשאיר פרטים.</p>
           <a class="button hero-go" href="/compass" data-count="hero:compass">להתחיל במצפן <span class="arrow" aria-hidden="true">←</span></a>
+        </div>
+      </div>
+      <div class="hero-slide hero-slide-market" data-slide data-media="(max-width: 700px)" hidden>
+        <img class="hero-bg hero-bg-board" src="assets/tase-board.jpg" width="1600" height="1278" alt="" loading="lazy">
+        <div class="hero-copy">
+          <p class="hero-kicker">נתוני שוק</p>
+          <h2 class="hero-title">תשואות ונתוני שוק</h2>
+          <p class="hero-lead">מי הוביל בתשואות בקופות, אירועים כלכליים, מט"ח, ריביות ומדדים, במקום אחד.</p>
+          <a class="button hero-go" href="/market-data" data-count="hero:market">לנתוני השוק <span class="arrow" aria-hidden="true">←</span></a>
         </div>
       </div>
       <div class="hero-slide" data-slide hidden>
@@ -91,15 +100,9 @@
       </div>
     </div>
   </div>
-  <!-- the year-end group: the 31.12 countdown beside the investment fund strip and the self-employed tile.
-       js/site.js shows the countdown and the strip in November and December -->
+  <!-- the year-end group: the 31.12 countdown beside the self-employed tile. js/site.js shows the countdown in November and December -->
   <div class="now-group">
   <span class="tile now-when" data-now-when hidden><small>עד 31.12</small><b data-now-days></b><span data-now-unit></span></span>
-  <a class="tile tile-slate invest-strip" href="/investment-fund" data-count="strip:invest" data-invest-strip hidden>
-    <span class="invest-say">משקיעים, נצלו את תקרת ההפקדה השנתית והפקידו <mark class="invest-key">לקופת גמל להשקעה</mark></span>
-    <span class="invest-cap" data-cap-year="2026"><b>83,641&nbsp;₪</b><small>התקרה ל־2026</small></span>
-    <span class="invest-go">למדריך <span class="arrow" aria-hidden="true">←</span></span>
-  </a>
   <!-- the calculator teaser and the guide. js/site.js adds the countdown -->
   <div class="tile tile-paper now-tile" data-now>
     <span class="now-copy">
@@ -110,6 +113,7 @@
     <a class="now-go" href="/self-employed-tax-calculator/" data-count="strip:calculator"><span><span data-now-go>כמה אחסוך?</span> <span class="arrow" aria-hidden="true">←</span></span><small>למחשבון הטבות המס לעצמאים</small></a>
   </div>
   </div>
+  <!-- market-tile:start -->
   <div class="tile tile-paper hero-yields" data-market>
     <div class="market-tabs" role="tablist" aria-label="תשואות ונתוני שוק">
       <button type="button" role="tab" id="tab-funds" aria-controls="panel-funds" aria-selected="true" data-market-tab="funds">קופות</button>
@@ -142,6 +146,7 @@
     </div>
     <a class="yield-cta" href="#contact">איפה הקופה שלכם עומדת? <span class="arrow" aria-hidden="true">←</span></a>
   </div>
+  <!-- market-tile:end -->
 </section>
 
 <!-- ===== Paths: four ways in, by what the visitor needs. A card that leads to the form ticks its topic there (js/site.js) ===== -->
@@ -149,69 +154,30 @@
   <div class="wrap">
     <h2 id="paths-title" class="h-1" data-reveal>במה אוכל לעזור לכם?</h2>
     <div class="path-board board" data-reveal>
-      <a class="tile tile-ink path" href="#contact" data-goal="פתרון לכסף פנוי" data-count="path:cash">
+      <a class="tile tile-ink path path-cash" href="#contact" data-goal="פתרון לכסף פנוי" data-count="path:cash">
+        <img class="path-bg" src="assets/services/fx.jpg" width="1200" height="752" alt="" loading="lazy">
         <h3>יש לי סכום פנוי בבנק</h3>
         <p>רוצים לבדוק אילו אפשרויות עומדות בפניכם ואיך להתאים את הכסף למטרות שלכם?</p>
         <span class="path-go">לבחינת האפשרויות <span class="arrow" aria-hidden="true">←</span></span>
       </a>
-      <a class="tile tile-ink path" href="#contact" data-goal="פנסיה" data-count="path:pension">
+      <a class="tile tile-slate path path-pension" href="#contact" data-goal="פנסיה" data-count="path:pension">
+        <img class="path-bg" src="assets/services/retirement.jpg" width="1200" height="1476" alt="" loading="lazy">
         <h3>אני רוצה לבדוק את הפנסיה שלי</h3>
         <p>יש לכם פנסיה, השתלמות וביטוחים בכמה מקומות? כדאי לבדוק איך הכול משתלב.</p>
         <span class="path-go">לבדיקת החיסכון הפנסיוני <span class="arrow" aria-hidden="true">←</span></span>
       </a>
-      <a class="tile tile-ink path" href="/self-employed" data-count="path:self">
+      <a class="tile tile-paper2 path path-self" href="/self-employed" data-count="path:self">
+        <img class="path-bg" src="assets/shoemaker-1949.jpg" width="1400" height="988" alt="" loading="lazy">
         <h3>אני עצמאי ורוצה לעשות סדר</h3>
         <p>הפקדות, חיסכון, כיסויים ביטוחיים והטבות מס: נבין מה רלוונטי לכם.</p>
         <span class="path-go">לפתרונות לעצמאים <span class="arrow" aria-hidden="true">←</span></span>
       </a>
-      <a class="tile tile-gold path" href="#contact" data-goal="תמונה מלאה של הכול" data-count="path:full">
+      <a class="tile tile-gold path path-full" href="#contact" data-goal="תמונה מלאה של הכול" data-count="path:full">
+        <img class="path-bg" src="assets/services/alternative.jpg" width="1024" height="990" alt="" loading="lazy">
         <h3>אני רוצה לראות את כל התמונה</h3>
         <p>בדיקה רחבה של החסכונות, ההשקעות והביטוחים, בהתאם למטרות שלכם.</p>
         <span class="path-go">לתכנון פיננסי אישי <span class="arrow" aria-hidden="true">←</span></span>
       </a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Approach: closing the knowledge gap ===== -->
-<section class="approach" id="approach" aria-labelledby="approach-title">
-  <div class="wrap">
-    <h2 id="approach-title" class="h-1" data-reveal>מה זה ארביטראז' של ידע?</h2>
-    <p class="statement" data-reveal>הפער בין מה שאתם יודעים על הכסף שלכם, לבין מה שצריך לדעת כדי להחליט נכון.</p>
-    <p class="lead lead-ink" data-reveal>בשוק ההון סוחרים סוגרים פערי מחיר (ארביטראז'). אצל חוסכים הפער הוא בידע, והתפקיד שלי הוא לסגור אותו, כדי שתקבלו החלטות מושכלות לעתיד שלכם.</p>
-
-    <div class="arb board board-light" data-reveal>
-      <div class="tile tile-ink arb-tile arb-loop">
-        <h3>ארביטראז' בשוק ההון</h3>
-        <div class="arb-row"><span class="arb-label">אותה מניה בבורסה אחת</span><span class="arb-track"><span class="arb-bar" style="--from: .72; --to: .86"><span data-price-from="100" data-price-to="101.5">100.00 ₪</span></span></span></div>
-        <div class="arb-row"><span class="arb-label">ובבורסה אחרת</span><span class="arb-track"><span class="arb-bar" style="--from: 1; --to: .86"><span data-price-from="103" data-price-to="101.5">103.00 ₪</span></span></span></div>
-        <p class="arb-note">סוחרים קונים בזול ומוכרים ביוקר, המחירים מתיישרים והפער נסגר.</p>
-      </div>
-      <div class="tile tile-gold arb-tile">
-        <h3>ארביטראז' של ידע</h3>
-        <div class="arb-row"><span class="arb-label">מה שאתם יודעים על הכסף שלכם</span><span class="arb-track"><span class="arb-bar" style="--from: .38; --to: 1"><span>היום</span></span></span></div>
-        <div class="arb-row"><span class="arb-label">מה שצריך לדעת כדי להחליט נכון</span><span class="arb-track"><span class="arb-bar" style="--from: 1; --to: 1"><span>התמונה המלאה</span></span></span></div>
-        <p class="arb-note">אני מנגיש את הידע, וההחלטה שלכם נשענת על התמונה המלאה.</p>
-      </div>
-    </div>
-
-    <div class="pillars board board-light">
-      <details class="tile tile-ink pillar pillar-wide fold" data-reveal>
-        <summary><h3>הנגשת ידע</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <p>הסברים בגובה העיניים, מאמרים וכלים, כדי שתבינו מה יש לכם, למה, ומה האפשרויות.</p>
-      </details>
-      <details class="tile tile-gold pillar fold" data-reveal>
-        <summary><h3>ליווי אישי</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <p>אותו איש מקצוע לאורך שנים, שמכיר את התמונה המלאה ומעדכן אותה כשהחיים משתנים. לא רק ביום החתימה.</p>
-      </details>
-      <details class="tile tile-paper2 pillar fold" data-reveal>
-        <summary><h3>שירות זמין</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <p>שאלה על הדוח השנתי, על משיכה או על שינוי מסלול מקבלת תשובה ברורה, בטלפון או בוואטסאפ.</p>
-      </details>
-      <details class="tile tile-slate pillar pillar-wide fold" data-reveal>
-        <summary><h3>מקצועיות</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <p>רישיון סוכן פנסיוני ויותר מחמש עשרה שנים בשוק ההון. כל המלצה נשענת על ניתוח של הנתונים שלכם.</p>
-      </details>
     </div>
   </div>
 </section>
@@ -245,23 +211,6 @@
         <span class="about-year">00117164</span>
         <p>מספר הרישיון שלי, לבדיקה ברשות שוק ההון <span class="arrow" aria-hidden="true">↗</span></p>
       </a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Wall Street, through my lens ===== -->
-<section class="street" aria-labelledby="street-title">
-  <div class="wrap">
-    <div class="street-board board board-light">
-      <figure class="tile street-photo" data-reveal>
-        <img src="assets/img/wall-street.jpg" width="1000" height="1564" alt="בניין הבורסה לניירות ערך בניו יורק עטוף בדגל ארצות הברית, ומולו פסל הילדה חסרת הפחד, ביום גשום" loading="lazy">
-      </figure>
-      <div class="tile tile-ink street-text" data-reveal>
-        <h2 id="street-title" class="h-1">וול סטריט, בעדשה שלי</h2>
-        <p>את התמונה הזאת צילמתי בביקור בניו יורק. ברקע, בניין הבורסה לניירות ערך של ניו יורק ברחוב ברוד, ממש בפינת וול סטריט, שעומד שם מאז 1903 ועל חזיתו תלוי דגל ענק.</p>
-        <p>מולו עומד פסל "הילדה חסרת הפחד" של האמנית קריסטן ויסבל. הפסל הוצב במרץ 2017, ביום האישה הבינלאומי, מול פסל "השור הדוהר", כחלק מקמפיין של חברת ההשקעות סטייט סטריט לקידום נשים בדירקטוריונים. בסוף 2018 הוא הועבר לכאן, פנים אל פנים מול הבורסה.</p>
-        <p class="street-pull">ילדה קטנה, ידיים על המותניים, מול המוסד הפיננסי הגדול בעולם. בעיניי זה בדיוק העניין: מי שמבין את השוק, לא צריך לפחד ממנו.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -329,6 +278,84 @@
         </ul>
       </div>
       <figure class="tile panel-photo"><img src="assets/sewing-workshop-1950.jpg" width="1300" height="1380" alt="צעירות תופרות סביב שולחן עבודה במפעל טקסטיל, 1950" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ===== How it works ===== -->
+<section class="how" id="how" aria-labelledby="how-title">
+  <div class="wrap">
+    <h2 id="how-title" class="h-1" data-reveal>מבלגן לתוכנית אחת</h2>
+    <p class="lead" data-reveal>רוב האנשים מגיעים עם כמה קופות, כמה פוליסות ודוחות שנתיים שאף אחד לא קרא. התהליך אוסף הכול לתמונה אחת, ואז הופך אותה לסדר שנשאר.</p>
+    <picture class="how-figure" data-reveal>
+      <source media="(max-width: 700px)" srcset="assets/order-tall.svg" data-still="assets/order-tall-still.svg" width="300" height="480">
+      <img src="assets/order-wide.svg" data-still="assets/order-wide-still.svg" width="1350" height="300" alt="ריבועים מפוזרים מימין נאספים לסרט צפוף באמצע ויוצאים משמאל בשורות מסודרות" loading="lazy">
+    </picture>
+    <div class="how-steps">
+      <div data-reveal><h3>איסוף וניתוח</h3><p>כל המידע מהמסלקה הפנסיונית ומהגופים, וניתוח של התיק הקיים.</p></div>
+      <div data-reveal><h3>תוכנית ויישום</h3><p>תוכנית אחת לפי המטרות, הטווח ורמת הסיכון שלכם, עם המלצות ברורות.</p></div>
+      <div data-reveal><h3>ליווי ובקרה</h3><p>בקרה קבועה לאורך השנים, ועדכון כשהחיים משתנים.</p></div>
+    </div>
+    <p class="how-cost" data-reveal>שיחת ההיכרות הראשונה היא ללא עלות וללא התחייבות. בהמשך, לפי הצורך, חלק משירותי הבדיקה והתכנון ניתנים בתשלום, ועל כך נסכם מראש. על עמלות ותגמולים אפשר לקרוא ב<a class="link" href="/disclosure">גילוי הנאות</a>.</p>
+  </div>
+</section>
+
+<!-- ===== Approach: closing the knowledge gap ===== -->
+<section class="approach" id="approach" aria-labelledby="approach-title">
+  <div class="wrap">
+    <h2 id="approach-title" class="h-1" data-reveal>מה זה ארביטראז' של ידע?</h2>
+    <p class="statement" data-reveal>הפער בין מה שאתם יודעים על הכסף שלכם, לבין מה שצריך לדעת כדי להחליט נכון.</p>
+    <p class="lead lead-ink" data-reveal>בשוק ההון סוחרים סוגרים פערי מחיר (ארביטראז'). אצל חוסכים הפער הוא בידע, והתפקיד שלי הוא לסגור אותו, כדי שתקבלו החלטות מושכלות לעתיד שלכם.</p>
+
+    <div class="arb board board-light" data-reveal>
+      <div class="tile tile-ink arb-tile arb-loop">
+        <h3>ארביטראז' בשוק ההון</h3>
+        <div class="arb-row"><span class="arb-label">אותה מניה בבורסה אחת</span><span class="arb-track"><span class="arb-bar" style="--from: .72; --to: .86"><span data-price-from="100" data-price-to="101.5">100.00 ₪</span></span></span></div>
+        <div class="arb-row"><span class="arb-label">ובבורסה אחרת</span><span class="arb-track"><span class="arb-bar" style="--from: 1; --to: .86"><span data-price-from="103" data-price-to="101.5">103.00 ₪</span></span></span></div>
+        <p class="arb-note">סוחרים קונים בזול ומוכרים ביוקר, המחירים מתיישרים והפער נסגר.</p>
+      </div>
+      <div class="tile tile-gold arb-tile">
+        <h3>ארביטראז' של ידע</h3>
+        <div class="arb-row"><span class="arb-label">מה שאתם יודעים על הכסף שלכם</span><span class="arb-track"><span class="arb-bar" style="--from: .38; --to: 1"><span>היום</span></span></span></div>
+        <div class="arb-row"><span class="arb-label">מה שצריך לדעת כדי להחליט נכון</span><span class="arb-track"><span class="arb-bar" style="--from: 1; --to: 1"><span>התמונה המלאה</span></span></span></div>
+        <p class="arb-note">אני מנגיש את הידע, וההחלטה שלכם נשענת על התמונה המלאה.</p>
+      </div>
+    </div>
+
+    <div class="pillars board board-light">
+      <details class="tile tile-ink pillar pillar-wide fold" data-reveal>
+        <summary><h3>הנגשת ידע</h3><span class="fold-icon" aria-hidden="true"></span></summary>
+        <p>הסברים בגובה העיניים, מאמרים וכלים, כדי שתבינו מה יש לכם, למה, ומה האפשרויות.</p>
+      </details>
+      <details class="tile tile-gold pillar fold" data-reveal>
+        <summary><h3>ליווי אישי</h3><span class="fold-icon" aria-hidden="true"></span></summary>
+        <p>אותו איש מקצוע לאורך שנים, שמכיר את התמונה המלאה ומעדכן אותה כשהחיים משתנים. לא רק ביום החתימה.</p>
+      </details>
+      <details class="tile tile-paper2 pillar fold" data-reveal>
+        <summary><h3>שירות זמין</h3><span class="fold-icon" aria-hidden="true"></span></summary>
+        <p>שאלה על הדוח השנתי, על משיכה או על שינוי מסלול מקבלת תשובה ברורה, בטלפון או בוואטסאפ.</p>
+      </details>
+      <details class="tile tile-slate pillar pillar-wide fold" data-reveal>
+        <summary><h3>מקצועיות</h3><span class="fold-icon" aria-hidden="true"></span></summary>
+        <p>רישיון סוכן פנסיוני ויותר מחמש עשרה שנים בשוק ההון. כל המלצה נשענת על ניתוח של הנתונים שלכם.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Wall Street, through my lens ===== -->
+<section class="street" aria-labelledby="street-title">
+  <div class="wrap">
+    <div class="street-board board board-light">
+      <figure class="tile street-photo" data-reveal>
+        <img src="assets/img/wall-street.jpg" width="1000" height="1564" alt="בניין הבורסה לניירות ערך בניו יורק עטוף בדגל ארצות הברית, ומולו פסל הילדה חסרת הפחד, ביום גשום" loading="lazy">
+      </figure>
+      <div class="tile tile-ink street-text" data-reveal>
+        <h2 id="street-title" class="h-1">וול סטריט, בעדשה שלי</h2>
+        <p>את התמונה הזאת צילמתי בביקור בניו יורק. ברקע, בניין הבורסה לניירות ערך של ניו יורק ברחוב ברוד, ממש בפינת וול סטריט, שעומד שם מאז 1903 ועל חזיתו תלוי דגל ענק.</p>
+        <p>מולו עומד פסל "הילדה חסרת הפחד" של האמנית קריסטן ויסבל. הפסל הוצב במרץ 2017, ביום האישה הבינלאומי, מול פסל "השור הדוהר", כחלק מקמפיין של חברת ההשקעות סטייט סטריט לקידום נשים בדירקטוריונים. בסוף 2018 הוא הועבר לכאן, פנים אל פנים מול הבורסה.</p>
+        <p class="street-pull">ילדה קטנה, ידיים על המותניים, מול המוסד הפיננסי הגדול בעולם. בעיניי זה בדיוק העניין: מי שמבין את השוק, לא צריך לפחד ממנו.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -410,24 +437,6 @@
         </div>
       </article>
     </div>
-  </div>
-</section>
-
-<!-- ===== How it works ===== -->
-<section class="how" id="how" aria-labelledby="how-title">
-  <div class="wrap">
-    <h2 id="how-title" class="h-1" data-reveal>מבלגן לתוכנית אחת</h2>
-    <p class="lead" data-reveal>רוב האנשים מגיעים עם כמה קופות, כמה פוליסות ודוחות שנתיים שאף אחד לא קרא. התהליך אוסף הכול לתמונה אחת, ואז הופך אותה לסדר שנשאר.</p>
-    <picture class="how-figure" data-reveal>
-      <source media="(max-width: 700px)" srcset="assets/order-tall.svg" data-still="assets/order-tall-still.svg" width="300" height="480">
-      <img src="assets/order-wide.svg" data-still="assets/order-wide-still.svg" width="1350" height="300" alt="ריבועים מפוזרים מימין נאספים לסרט צפוף באמצע ויוצאים משמאל בשורות מסודרות" loading="lazy">
-    </picture>
-    <div class="how-steps">
-      <div data-reveal><h3>איסוף וניתוח</h3><p>כל המידע מהמסלקה הפנסיונית ומהגופים, וניתוח של התיק הקיים.</p></div>
-      <div data-reveal><h3>תוכנית ויישום</h3><p>תוכנית אחת לפי המטרות, הטווח ורמת הסיכון שלכם, עם המלצות ברורות.</p></div>
-      <div data-reveal><h3>ליווי ובקרה</h3><p>בקרה קבועה לאורך השנים, ועדכון כשהחיים משתנים.</p></div>
-    </div>
-    <p class="how-cost" data-reveal>שיחת ההיכרות הראשונה היא ללא עלות וללא התחייבות. בהמשך, לפי הצורך, חלק משירותי הבדיקה והתכנון ניתנים בתשלום, ועל כך נסכם מראש. על עמלות ותגמולים אפשר לקרוא ב<a class="link" href="/disclosure">גילוי הנאות</a>.</p>
   </div>
 </section>
 

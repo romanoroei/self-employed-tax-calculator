@@ -40,6 +40,8 @@ for(const file of published){
 const home=await readFile(path.join(root,'index.html'),'utf8');
 assert(home.includes('href="/self-employed-tax-calculator/"'),'Missing calculator entry');
 assert((home.match(/<table data-yield-view=/g)||[]).length===18,'The yields tile needs all six views in all three rankings');
+const marketPage=await readFile(path.join(root,'market-data.html'),'utf8');
+assert((marketPage.match(/<table data-yield-view=/g)||[]).length===18&&!/gemelhub/i.test(marketPage)&&marketPage.includes('js/market.js'),'The market data page needs the full tile, its script, and no GemelHub');
 assert(!/gemelhub/i.test(home),'The home page must not mention GemelHub');
 assert(home.includes('action="https://formspree.io/f/mvzjeykj"'),'Incorrect lead endpoint');
 for(const name of ['שם מלא','טלפון','אימייל','מטרה'])assert(home.includes('name="'+name+'"'),'Incorrect form field '+name);
@@ -55,7 +57,7 @@ const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
 const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,13+reviewPages.length,'Sitemap must include all thirteen canonical pages and every published review');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,14+reviewPages.length,'Sitemap must include all fourteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check is reached by its own campaign link only: not in the sitemap, linked from no other page, no Google Analytics
@@ -84,7 +86,7 @@ assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing o
 const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
-for(const page of ['index.html','compass.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
+for(const page of ['index.html','market-data.html','compass.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
 assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');

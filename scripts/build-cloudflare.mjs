@@ -16,7 +16,7 @@ const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Publish an explicit file list so source, tests and working files stay private.
 // Earlier share images stay published so links shared before keep their preview; v5 is the current one.
 const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg', 'whatsapp-share-v4.jpg', 'whatsapp-share-v5.jpg'];
-const publicSiteEntries = ['index.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','compass.html','financial-check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
+const publicSiteEntries = ['index.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','market-data.html','compass.html','financial-check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine'];
 const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml','market-reviews.html','market-reviews',...publicSiteEntries];
 await mkdir(calc, { recursive: true });
 // Refuse an output tree containing unexpected files rather than uploading them.
@@ -41,7 +41,15 @@ await writeFile(path.join(output, 'magazine', 'financial-calendar.ics'), calenda
 const homeFile = path.join(output, 'index.html');
 const homeSource = await readFile(homeFile, 'utf8');
 assert(homeSource.includes('<!-- yields-tile -->'), 'Missing yields tile slot');
-await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', renderYields(JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8')))));
+const yieldsHtml = renderYields(JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8')));
+await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', yieldsHtml));
+// /market-data holds the same tile (phones see it there only): copied from the home page, its form link pointing home
+const marketTile = homeSource.match(/<!-- market-tile:start -->([\s\S]*?)<!-- market-tile:end -->/);
+assert(marketTile, 'Missing market tile markers on the home page');
+const marketFile = path.join(output, 'market-data.html');
+const marketSource = await readFile(marketFile, 'utf8');
+assert(marketSource.includes('<!-- market-tile -->'), 'Missing market tile slot');
+await writeFile(marketFile, marketSource.replace('<!-- market-tile -->', marketTile[1].replace('<!-- yields-tile -->', yieldsHtml).replaceAll('href="#contact"', 'href="/#contact"')));
 // Content versions ensure browsers pick up stylesheet and script updates together.
 // Monthly market reviews: written from business-site/content/market-reviews, published ones only.
 const reviewBuild = await buildReviews(root, output);
@@ -61,7 +69,7 @@ for (const page of businessPages) {
 await writeFile(path.join(output,'_redirects'), ['# Homepage is served directly; calculator retains its existing path.', '# Market review short links: one per review and channel, to the review with that channel\'s measuring parameters.', ...reviewBuild.redirects].join('\n') + '\n');
 await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>העמוד לא נמצא</title><h1>העמוד לא נמצא</h1><a href="/">חזרה לאתר</a></html>');
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
-const sitePages = ['', 'self-employed', 'savings-policy', 'investment-fund', 'knowledge', 'compass', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];
+const sitePages = ['', 'self-employed', 'savings-policy', 'investment-fund', 'knowledge', 'market-data', 'compass', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];
 await writeFile(path.join(output,'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages.map(p=>`<url><loc>https://romanoinvest.co.il/${p}</loc></url>`).join('')}</urlset>`);
 const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:root,stdio:'inherit'});
 if (siteCheck.error) throw siteCheck.error;

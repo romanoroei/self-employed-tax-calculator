@@ -1071,52 +1071,69 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .panel-photo img { height: 190px; width: 100%; object-fit: cover; object-position: center 40%; }
 }
 
-/* ================= The home hero says who, what and the next step; four ways in follow it (2026-11-12) ================= */
-.hero-copy-home { max-width: 58%; }
-.hero-copy-home h1 { font-size: inherit; line-height: inherit; letter-spacing: 0; }
-.hero-who { margin-bottom: 14px; font-size: 17px; font-weight: 500; line-height: 1.4; color: var(--on-dark-soft); }
-.hero-who b { font-weight: 800; color: var(--on-dark); }
-.hero-main h1 .hero-who .hero-role { display: inline; font-weight: 500; color: var(--gold); }
-.hero-who .hero-role::before { content: "· "; color: var(--on-dark-soft); }
-.hero-head { font-size: clamp(30px, 2.7vw, 40px); font-weight: 800; line-height: 1.12; letter-spacing: -0.01em; color: var(--on-dark); text-wrap: balance; }
-.hero-main h1 .hero-head-2 { margin-top: 4px; font-weight: 400; color: var(--gold); }
-.hero-copy-home .hero-promise { margin-top: 16px; font-size: clamp(18px, 1.4vw, 21px); }
-.hero-copy-home .hero-promise + .hero-lead { margin-top: 6px; font-size: 16px; max-width: 46ch; }
-.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 20px; }
+/* ================= Home, round 1 (Roei, 2026-11-12): two ways forward under the hero words, four ways in, the new order ================= */
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 22px; }
 .hero-actions .hero-go { margin-top: 0; }
 .hero-how { font-weight: 700; color: var(--on-dark); }
 
+/* the countdown sits beside the self-employed tile only: the fund strip moved into its slide */
+.now-group > .now-when { grid-row: 1; }
+
+/* the market slide (phones only): the Tel Aviv index board behind the words */
+.hero-bg.hero-bg-board { object-position: 40% 50%; }
+
+/* four ways in: each card its own colour, with a photo of what it is about fading into it */
 .paths { padding-block: calc(var(--section) * .5) 0; }
+.paths + .about { padding-top: calc(var(--section) * .6); }
 .path-board { margin-top: 28px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.path { display: flex; flex-direction: column; gap: 10px; min-height: 220px; padding: 26px 24px 22px; transition: background-color 160ms ease; }
-.path h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; color: var(--gold); text-wrap: balance; }
-.tile-gold.path h3 { color: var(--navy-deep); }
-.path p { font-size: var(--t-5); line-height: 1.55; color: var(--on-dark-soft); }
+.path { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 10px; min-height: 330px; padding: 150px 24px 22px; }
+.path-bg {
+  position: absolute; z-index: -1; inset: 0 0 auto 0; width: 100%; height: 64%;
+  object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: .5;
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
+  transition: opacity 200ms ease, transform 400ms var(--ease-out);
+}
+.tile-paper2 .path-bg, .tile-gold .path-bg { mix-blend-mode: multiply; opacity: .55; }
+.path h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
+.tile-ink.path h3, .tile-slate.path h3 { color: var(--gold); }
+.path p { font-size: var(--t-5); line-height: 1.55; }
+.tile-ink.path p, .tile-slate.path p { color: var(--on-dark-soft); }
+.tile-paper2.path p { color: var(--ink-soft); }
 .tile-gold.path p { color: var(--navy); }
 .path-go { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 8px; font-size: var(--t-5); font-weight: 700; }
 .path-go .arrow { transition: transform 200ms var(--ease-out); }
 @media (hover: hover) and (pointer: fine) {
-  .tile-ink.path:hover { background: var(--slate); }
-  .tile-gold.path:hover { background: var(--gold-soft); }
+  .path:hover .path-bg { opacity: .75; transform: scale(1.04); }
   .path:hover .path-go .arrow { transform: translateX(-4px); }
 }
 @media (max-width: 1100px) { .path-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+/* the new order puts Wall Street right before the services, both on paper: one gap between them, not two */
+.street + .services { padding-top: 0; }
+
 .how-cost { max-width: 70ch; margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(241, 241, 238, .16); font-size: var(--t-5); line-height: 1.6; color: var(--on-dark-soft); }
 
-@media (max-width: 900px) { .hero-copy-home { max-width: 62%; } }
+/* /market-data: the home market tile on a page of its own (phones see it only there) */
+.market-page { padding-block: 8px 64px; }
+.market-page .hero-yields { max-width: 880px; margin-inline: auto; box-shadow: 0 0 0 1px rgba(12, 33, 52, .12); }
+
 @media (max-width: 700px) {
-  .hero-copy-home { max-width: none; }
-  /* a phone keeps the first screen short: smaller lines, and the button with the link beside it */
-  .hero-slide:first-child { padding-top: 96px; }
-  .hero-who { margin-bottom: 10px; font-size: 13.5px; }
-  .hero-head { font-size: 26px; }
-  .hero-copy-home .hero-promise { margin-top: 12px; font-size: 17px; }
-  .hero-copy-home .hero-promise + .hero-lead { font-size: 15px; line-height: 1.5; }
-  .hero-actions { flex-wrap: nowrap; gap: 16px; margin-top: 16px; }
-  .hero-actions .hero-go { padding: 12px 16px; font-size: 15px; white-space: nowrap; }
-  .hero-how { font-size: 15px; white-space: nowrap; }
+  .hero-actions { gap: 12px 16px; margin-top: 16px; }
+  .hero-actions .hero-go { padding: 12px 16px; font-size: 15px; }
+  .hero-how { font-size: 15px; }
+  /* phones: the market tile leaves the home page; its slide leads to /market-data */
+  .hero .hero-yields { display: none; }
+
   .paths { padding-top: 40px; }
+  .paths + .about { padding-top: 56px; }
   .path-board { margin-top: 20px; grid-template-columns: minmax(0, 1fr); }
-  .path { min-height: 0; gap: 6px; padding: 18px 20px; }
+  /* the photo runs down the left side and fades into the words */
+  .path { min-height: 0; gap: 6px; padding: 18px 20px; padding-inline-end: 30%; }
+  .path-bg {
+    inset: 0 auto 0 0; width: 48%; height: 100%;
+    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+            mask-image: linear-gradient(to right, #000 25%, transparent 100%);
+  }
+  .market-page { padding-bottom: 40px; }
 }

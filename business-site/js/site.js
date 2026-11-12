@@ -423,6 +423,8 @@ document.addEventListener('click', (e) => {
   const today = new Date();
   const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   hero.querySelectorAll('[data-slide][data-until]').forEach((slide) => { if (slide.dataset.until < todayIso) slide.remove(); });
+  // a slide meant for one screen size (the market data slide is for phones only) leaves on the others
+  hero.querySelectorAll('[data-slide][data-media]').forEach((slide) => { if (!matchMedia(slide.dataset.media).matches) slide.remove(); });
   const slides = [...hero.querySelectorAll('[data-slide]')];
   if (slides.length < 2) return;
 
