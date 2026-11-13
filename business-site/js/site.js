@@ -592,18 +592,3 @@ try {
   };
   new MutationObserver(() => { if (!slide.hidden) run(); }).observe(slide, { attributes: true, attributeFilter: ['hidden'] });
 })();
-
-// ===== Home page: the Wall Street flags wave only while their slide shows =====
-// The photo loads after the page (it was a lazy image), and the SVG wind pauses whenever the slide is hidden,
-// and for good for visitors who asked for less motion.
-(() => {
-  const svg = document.querySelector('[data-wind]');
-  if (!svg) return;
-  const slide = svg.closest('.hero-slide');
-  const load = () => svg.querySelectorAll('image[data-href]').forEach((image) => image.setAttribute('href', image.dataset.href));
-  if (document.readyState === 'complete') load(); else window.addEventListener('load', load, { once: true });
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const sync = () => { if (still || slide.hidden) svg.pauseAnimations(); else svg.unpauseAnimations(); };
-  sync();
-  new MutationObserver(sync).observe(slide, { attributes: true, attributeFilter: ['hidden'] });
-})();
