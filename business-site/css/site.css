@@ -1137,3 +1137,51 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   }
   .market-page { padding-bottom: 40px; }
 }
+
+/* the savings policy slide: words on the right, the five leaders on a light board on the left (Roei, 2026-11-13) */
+.hero-slide-policy { flex-direction: row; align-items: flex-end; gap: 28px; }
+.hero-slide-policy .hero-copy { flex: 1 1 0; max-width: none; }
+.hero-slide-policy .hero-title { font-size: clamp(28px, 2.5vw, 40px); }
+.policy-board { flex: 1 1 0; max-width: 400px; padding: 16px 18px 12px; background: var(--paper); color: var(--ink); }
+.policy-top { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+.policy-top li { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: center; gap: 12px; }
+.policy-logo { display: flex; align-items: center; gap: 4px; height: 30px; }
+.policy-logo img { width: auto; max-width: 92px; height: 100%; object-fit: contain; object-position: right center; }
+.policy-logo b { font-size: 15px; font-weight: 800; }
+.policy-bar { display: flex; align-items: center; height: 26px; width: calc(var(--w) * 100%); min-width: 76px; background: var(--navy); color: var(--gold); }
+.policy-top li:first-child .policy-bar { background: var(--gold); color: var(--navy-deep); }
+.policy-bar span { padding-inline: 10px; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.policy-note { margin-top: 10px; font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); }
+.policy-join { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 18px; font-size: 15px; font-weight: 700; color: var(--on-dark); }
+.policy-join a { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 6px 12px; background: var(--paper); color: var(--navy); font-size: 14px; text-decoration: none; transition: background-color 160ms ease, transform 160ms ease; }
+.policy-join a img { width: auto; height: 100%; }
+.policy-join a:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .policy-join a:hover { background: var(--gold-soft); } }
+.policy-join > span { flex-basis: 100%; }
+.policy-fine { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--on-dark-soft); }
+.policy-fine .link { color: var(--on-dark); font-weight: 700; }
+
+/* a heading reached by its own link lands with air under the top bar, also before it has faded in (18px lower) */
+h2[id][data-reveal] { scroll-margin-top: 30px; }
+
+@media (max-width: 900px) {
+  .hero-slide-policy { flex-direction: column; align-items: stretch; gap: 14px; }
+  .policy-board { max-width: none; }
+}
+@media (max-width: 700px) {
+  /* no photo on this slide, so it starts high and keeps the slide show short */
+  .hero-slide.hero-slide-policy { padding-top: 28px; }
+  .hero-slide-policy .hero-title { font-size: 21px; }
+  .hero-slide-policy .hero-lead { display: none; }
+  .policy-board { padding: 10px 12px 8px; }
+  .policy-top { gap: 5px; }
+  .policy-top li { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; }
+  .policy-logo { height: 24px; }
+  .policy-logo img { max-width: 74px; }
+  .policy-bar { height: 22px; }
+  .policy-bar span { font-size: 13px; }
+  .policy-note { margin-top: 6px; font-size: 10.5px; }
+  .policy-join { margin-top: 12px; font-size: 14px; }
+  .policy-join a { height: 40px; padding: 5px 10px; }
+  .policy-fine { margin-top: 8px; font-size: 11.5px; }
+}

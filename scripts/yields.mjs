@@ -204,3 +204,29 @@ export function renderYields({ period, views, series }) {
     + `<div class="yield-tables">${tables}</div>`
     + `<p class="yield-note"><strong>תשואה מצטברת עד ${periodLabel(period)}</strong> ${counts}לפי נתוני משרד האוצר, לפני דמי ניהול. מקף: אין נתון לתקופה המלאה. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }
+
+// The savings policy slide on the home page: the five companies that led policies (general track) over seven
+// years, in their own colours (a logo too narrow to read carries the name beside it), with bars against the leader. Written from the same figures as the tile.
+const POLICY_LOGOS = {
+  'הפניקס': ['fnx-color.png', 147, 51],
+  'איילון': ['ayalon.svg', 140, 38],
+  'כלל': ['clal.svg', 120, 44],
+  'הכשרה': ['hachshara.svg', 140, 40],
+  'מגדל': ['migdal.svg', 40, 60, true],
+  'הראל': ['harel.svg', 125, 47],
+};
+export function renderPolicySlide({ period, views }) {
+  const { average, rank } = views['policy-general'];
+  const seen = new Set();
+  const top = rank.y7.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+  const max = Math.max(...top.map((r) => r.y7));
+  const rows = top.map((r) => {
+    const logo = POLICY_LOGOS[r.company];
+    const mark = logo
+      ? `<img src="assets/logos/${logo[0]}" width="${logo[1]}" height="${logo[2]}" alt="${logo[3] ? '' : escape(r.company)}" loading="lazy">${logo[3] ? `<b>${escape(r.company)}</b>` : ''}`
+      : `<b>${escape(r.company)}</b>`;
+    return `<li><span class="policy-logo">${mark}</span><span class="policy-bar" style="--w: ${(r.y7 / max).toFixed(3)}"><span>${percent(r.y7)}</span></span></li>`;
+  }).join('');
+  return `<ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
+    + `<p class="policy-note">תשואה מצטברת ל־7 שנים עד ${periodLabel(period)}, מסלול כללי, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
+}

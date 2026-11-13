@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { calendarFeed } from './calendar-feed.mjs';
-import { renderYields } from './yields.mjs';
+import { renderYields, renderPolicySlide } from './yields.mjs';
 import { buildReviews } from './market-reviews.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -41,8 +41,10 @@ await writeFile(path.join(output, 'magazine', 'financial-calendar.ics'), calenda
 const homeFile = path.join(output, 'index.html');
 const homeSource = await readFile(homeFile, 'utf8');
 assert(homeSource.includes('<!-- yields-tile -->'), 'Missing yields tile slot');
-const yieldsHtml = renderYields(JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8')));
-await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', yieldsHtml));
+const yieldsData = JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8'));
+const yieldsHtml = renderYields(yieldsData);
+assert(homeSource.includes('<!-- policy-slide -->'), 'Missing policy slide slot');
+await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', yieldsHtml).replace('<!-- policy-slide -->', renderPolicySlide(yieldsData)));
 // /market-data holds the same tile (phones see it there only): copied from the home page, its form link pointing home
 const marketTile = homeSource.match(/<!-- market-tile:start -->([\s\S]*?)<!-- market-tile:end -->/);
 assert(marketTile, 'Missing market tile markers on the home page');

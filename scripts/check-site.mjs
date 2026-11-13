@@ -40,6 +40,7 @@ for(const file of published){
 const home=await readFile(path.join(root,'index.html'),'utf8');
 assert(home.includes('href="/self-employed-tax-calculator/"'),'Missing calculator entry');
 assert((home.match(/<table data-yield-view=/g)||[]).length===18,'The yields tile needs all six views in all three rankings');
+assert.equal((home.match(/<ol class="policy-top"[^>]*>([\s\S]*?)<\/ol>/)?.[1].match(/<li>/g)||[]).length,5,'The policy slide needs five companies');
 const marketPage=await readFile(path.join(root,'market-data.html'),'utf8');
 assert((marketPage.match(/<table data-yield-view=/g)||[]).length===18&&!/gemelhub/i.test(marketPage)&&marketPage.includes('js/market.js'),'The market data page needs the full tile, its script, and no GemelHub');
 assert(!/gemelhub/i.test(home),'The home page must not mention GemelHub');
