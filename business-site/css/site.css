@@ -1144,10 +1144,14 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .hero-slide-policy .hero-title { font-size: clamp(28px, 2.5vw, 40px); }
 .policy-board { flex: 1 1 0; max-width: 400px; padding: 16px 18px 12px; background: var(--paper); color: var(--ink); }
 .policy-top { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
-.policy-top li { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: center; gap: 12px; }
+.policy-head { margin-bottom: 10px; font-size: 13px; font-weight: 800; color: var(--navy); }
+.policy-top li { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: center; gap: 12px; }
 .policy-logo { display: flex; align-items: center; gap: 4px; height: 30px; }
-.policy-logo img { width: auto; max-width: 92px; height: 100%; object-fit: contain; object-position: right center; }
+.policy-logo img { width: auto; max-width: 132px; height: 100%; object-fit: contain; object-position: right center; }
 .policy-logo b { font-size: 15px; font-weight: 800; }
+/* הכשרה with מיטב, who manages its policy investments: two marks share the row */
+.policy-logo:has(.policy-mgr) img { max-width: 64px; }
+.policy-logo .policy-mgr { height: 80%; padding-inline-start: 6px; border-inline-start: 1px solid rgba(12, 33, 52, .2); }
 .policy-bar { display: flex; align-items: center; height: 26px; width: calc(var(--w) * 100%); min-width: 76px; background: var(--navy); color: var(--gold); }
 .policy-top li:first-child .policy-bar { background: var(--gold); color: var(--navy-deep); }
 .policy-bar span { padding-inline: 10px; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -1175,9 +1179,11 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .hero-slide-policy .hero-lead { display: none; }
   .policy-board { padding: 10px 12px 8px; }
   .policy-top { gap: 5px; }
-  .policy-top li { grid-template-columns: 74px minmax(0, 1fr); gap: 10px; }
+  .policy-head { margin-bottom: 6px; font-size: 12px; }
+  .policy-top li { grid-template-columns: 104px minmax(0, 1fr); gap: 10px; }
   .policy-logo { height: 24px; }
-  .policy-logo img { max-width: 74px; }
+  .policy-logo img { max-width: 104px; }
+  .policy-logo:has(.policy-mgr) img { max-width: 50px; }
   .policy-bar { height: 22px; }
   .policy-bar span { font-size: 13px; }
   .policy-note { margin-top: 6px; font-size: 10.5px; }
@@ -1185,3 +1191,7 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .policy-join a { height: 40px; padding: 5px 10px; }
   .policy-fine { margin-top: 8px; font-size: 11.5px; }
 }
+
+/* the managing house beside a policy company in the tile, small and on the same line as the name and its join icon */
+.yield-tables th:has(.yield-mgr) { white-space: nowrap; }
+.yield-mgr { font-size: .82em; font-weight: 500; color: var(--ink-soft); }

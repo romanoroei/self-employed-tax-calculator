@@ -169,6 +169,9 @@ export const periodLabel = (period) => `${MONTHS[period % 100 - 1]} ${Math.floor
 const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</span>' : `<span dir="ltr">${v.toFixed(2)}%</span>`);
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 // Savings policies Roei can open digitally (the joining links in /savings-policy#join): a small icon beside the company leads there.
+// a savings policy whose investments another house manages: the tile and the slide name it (Roei, 2026-11-13)
+const MANAGED_BY = { 'הכשרה': 'מיטב' };
+const companyLabel = (productId, company) => escape(company) + (productId === 'policy' && MANAGED_BY[company] ? ` <small class="yield-mgr">(${MANAGED_BY[company]})</small>` : '');
 const JOIN = { 'הפניקס': 'fnx', 'הכשרה': 'hachshara' };
 const joinIcon = (productId, company) => (productId === 'policy' && JOIN[company]
   ? `<a class="yield-join" href="/savings-policy#join" data-count="join:tile-${JOIN[company]}" title="להצטרפות דיגיטלית דרכי" aria-label="הצטרפות דיגיטלית לפוליסת חיסכון ב${escape(company)}">`
@@ -194,7 +197,7 @@ export function renderYields({ period, views, series }) {
     const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
     return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
-      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${escape(r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}</tr>`).join('')
+      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
@@ -213,6 +216,7 @@ const POLICY_LOGOS = {
   'כלל': ['clal.svg', 120, 44],
   'הכשרה': ['hachshara.svg', 140, 40],
   'מגדל': ['migdal.svg', 40, 60, true],
+  'מיטב': ['meitav.svg', 62, 30],
   'הראל': ['harel.svg', 125, 47],
 };
 export function renderPolicySlide({ period, views }) {
@@ -225,8 +229,11 @@ export function renderPolicySlide({ period, views }) {
     const mark = logo
       ? `<img src="assets/logos/${logo[0]}" width="${logo[1]}" height="${logo[2]}" alt="${logo[3] ? '' : escape(r.company)}" loading="lazy">${logo[3] ? `<b>${escape(r.company)}</b>` : ''}`
       : `<b>${escape(r.company)}</b>`;
-    return `<li><span class="policy-logo">${mark}</span><span class="policy-bar" style="--w: ${(r.y7 / max).toFixed(3)}"><span>${percent(r.y7)}</span></span></li>`;
+    const manager = MANAGED_BY[r.company] && POLICY_LOGOS[MANAGED_BY[r.company]];
+    const managed = manager ? `<img class="policy-mgr" src="assets/logos/${manager[0]}" width="${manager[1]}" height="${manager[2]}" alt="בניהול ${escape(MANAGED_BY[r.company])}" loading="lazy">` : '';
+    return `<li><span class="policy-logo">${mark}${managed}</span><span class="policy-bar" style="--w: ${(r.y7 / max).toFixed(3)}"><span>${percent(r.y7)}</span></span></li>`;
   }).join('');
-  return `<ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
-    + `<p class="policy-note">תשואה מצטברת ל־7 שנים עד ${periodLabel(period)}, מסלול כללי, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
+  return `<p class="policy-head">מסלול כללי (סיכון בינוני) · תשואה מצטברת ל־7 שנים</p>`
+    + `<ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
+    + `<p class="policy-note">נכון ל${periodLabel(period)}, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
 }
