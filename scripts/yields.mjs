@@ -43,6 +43,17 @@ export function companyOf(record) {
   return null;
 }
 
+// A policy can be run by another investment house ("הכשרה - מנוהל באמצעות מור בית השקעות … - כללי"):
+// that house, named in the fund's own name, makes it a row of its own beside the insurer's own policy.
+export function managerOf(record, company) {
+  const name = String(record.FUND_NAME || '');
+  const hit = COMPANIES.filter((c) => (COMPANY_LABELS[c] || c) !== company && new RegExp(`(^|[\\s"'-])${c.replace(/[.]/g, '\\.')}(?![א-ת])`).test(name))
+    .sort((a, b) => name.search(a) - name.search(b))[0];
+  return hit ? COMPANY_LABELS[hit] || hit : null;
+}
+// one row per company, and per managing house where there is one
+const rowOf = (r) => `${r.company}|${r.manager || ''}`;
+
 const inTrack = (record, product, track) => {
   const name = String(record.FUND_NAME || '');
   if (product.source === 'polisa') {
@@ -128,6 +139,7 @@ export function computeYields({ gemel, polisa, trailing7y }) {
       const group = rows.filter((r) => inTrack(r, product, track))
         .map((r) => ({
           company: companyOf(r),
+          manager: product.source === 'polisa' ? managerOf(r, companyOf(r)) : null,
           id: String(r.FUND_ID),
           key: `${product.source[0]}${r.FUND_ID}`,
           name: String(r.FUND_NAME).trim(),
@@ -152,9 +164,9 @@ export function computeYields({ gemel, polisa, trailing7y }) {
         // One row per company: the tile compares companies inside a track, each by its best fund in the column.
         const seen = new Set();
         const best = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
-          .filter((r) => !seen.has(r.company) && seen.add(r.company));
+          .filter((r) => !seen.has(rowOf(r)) && seen.add(rowOf(r)));
         // /market-data lists every company: those with no figure in this column come last, with a dash
-        full[id] = [...best, ...new Map(group.filter((r) => !seen.has(r.company)).map((r) => [r.company, r])).values()];
+        full[id] = [...best, ...new Map(group.filter((r) => !seen.has(rowOf(r))).map((r) => [rowOf(r), r])).values()];
         if (!COLUMNS.some((c) => c.id === id)) continue;
         rank[id] = best.slice(0, ROWS);
         if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
@@ -178,8 +190,7 @@ const percent = (v) => (v === null ? '<span aria-label="אין נתון">—</sp
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 // Savings policies Roei can open digitally (the joining links in /savings-policy#join): a small icon beside the company leads there.
 // a savings policy whose investments another house manages: the tile and the slide name it (Roei, 2026-11-13)
-const MANAGED_BY = { 'הכשרה': 'מיטב' };
-const companyLabel = (productId, company) => escape(company) + (productId === 'policy' && MANAGED_BY[company] ? ` <small class="yield-mgr">(${MANAGED_BY[company]})</small>` : '');
+const companyLabel = (r) => escape(r.company) + (r.manager ? ` <small class="yield-mgr">(${escape(r.manager)})</small>` : '');
 const JOIN = { 'הפניקס': 'fnx', 'הכשרה': 'hachshara' };
 const joinIcon = (productId, company) => (productId === 'policy' && JOIN[company]
   ? `<a class="yield-join" href="/savings-policy#join" data-count="join:tile-${JOIN[company]}" title="להצטרפות דיגיטלית דרכי" aria-label="הצטרפות דיגיטלית לפוליסת חיסכון ב${escape(company)}">`
@@ -195,7 +206,7 @@ const ROW_LOGOS = {
 const rowLogo = (company) => (ROW_LOGOS[company] ? `<img class="yield-logo" src="assets/logos/${ROW_LOGOS[company]}" alt="" loading="lazy">` : '');
 // The WhatsApp button at the end of a row of /market-data.
 // js/market.js writes the message when the button is pressed (product, track and fund from the row), which keeps the page light
-const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" data-company="${escape(r.company)}" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
+const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" data-company="${escape(r.company + (r.manager ? ` (${r.manager})` : ''))}" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
 
 export function renderYields({ period, views, series }, { full = false } = {}) {
   const columns = full ? FULL_COLUMNS : COLUMNS;
@@ -222,7 +233,7 @@ export function renderYields({ period, views, series }, { full = false } = {}) {
     const waCell = (r) => (full ? `<td class="yield-wa-cell">${waLink(r)}</td>` : '');
     return `<table data-yield-view="${view}"${full ? ' class="yield-full"' : ''}${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}${waHead}</tr></thead><tbody>`
-      + rowsOf(v, sort).map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${full ? rowLogo(r.company) : ''}${joinIcon(productId, r.company)}</th>${cells(r)}${waCell(r)}</tr>`).join('')
+      + rowsOf(v, sort).map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(r)}</button>${full ? rowLogo(r.company) : ''}${joinIcon(productId, r.company)}</th>${cells(r)}${waCell(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}${full ? '<td class="yield-wa-cell"></td>' : ''}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
@@ -242,20 +253,24 @@ const POLICY_LOGOS = {
   'הכשרה': ['hachshara.svg', 140, 40],
   'מגדל': ['migdal.svg', 40, 60, true],
   'מיטב': ['meitav.svg', 62, 30],
+  'מור': ['more.svg', 148, 33],
+  'ילין לפידות': ['yelin.png', 1301, 166],
+  'אנליסט': ['analyst.svg', 1016, 120],
+  'אלטשולר שחם': ['altshuler.png', 600, 208],
   'הראל': ['harel.svg', 125, 47],
 };
 export function renderPolicySlide({ period, views }) {
   const { average, rank } = views['policy-general'];
   const seen = new Set();
-  const top = rank.y7.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+  const top = rank.y7.filter((r) => r.y7 !== null && !seen.has(rowOf(r)) && seen.add(rowOf(r))).slice(0, ROWS);
   const max = Math.max(...top.map((r) => r.y7));
   const rows = top.map((r) => {
     const logo = POLICY_LOGOS[r.company];
     const mark = logo
       ? `<img src="assets/logos/${logo[0]}" width="${logo[1]}" height="${logo[2]}" alt="${logo[3] ? '' : escape(r.company)}" loading="lazy">${logo[3] ? `<b>${escape(r.company)}</b>` : ''}`
       : `<b>${escape(r.company)}</b>`;
-    const manager = MANAGED_BY[r.company] && POLICY_LOGOS[MANAGED_BY[r.company]];
-    const managed = manager ? `<img class="policy-mgr" src="assets/logos/${manager[0]}" width="${manager[1]}" height="${manager[2]}" alt="בניהול ${escape(MANAGED_BY[r.company])}" loading="lazy">` : '';
+    const manager = r.manager && POLICY_LOGOS[r.manager];
+    const managed = manager ? `<img class="policy-mgr" src="assets/logos/${manager[0]}" width="${manager[1]}" height="${manager[2]}" alt="בניהול ${escape(r.manager)}" loading="lazy">` : (r.manager ? `<b>${escape(r.manager)}</b>` : '');
     return `<li><span class="policy-logo">${mark}${managed}</span><span class="policy-bar" style="--w: ${(r.y7 / max).toFixed(3)}"><span>${percent(r.y7)}</span></span></li>`;
   }).join('');
   return `<p class="policy-head">מסלול כללי (סיכון בינוני) · תשואה מצטברת ל־7 שנים</p>`
@@ -266,7 +281,7 @@ export function renderPolicySlide({ period, views }) {
 // The same slide on phones: one line of proof (the range of the five leaders over three years, whole percents, rounded down) and its note.
 export function renderPolicyProof({ period, views }) {
   const seen = new Set();
-  const top = views['policy-general'].rank.y3.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+  const top = views['policy-general'].rank.y3.filter((r) => r.y3 !== null && !seen.has(rowOf(r)) && seen.add(rowOf(r))).slice(0, ROWS);
   const values = top.map((r) => Math.floor(r.y3));
   return {
     proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> טווח תשואה מצטברת ב־3 שנים, 5 המובילות<span class="pp-star">*</span>`,

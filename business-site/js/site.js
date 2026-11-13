@@ -216,6 +216,9 @@ function pageTop(element) {
 function landingPoint(section) {
   // the photo starts with this tile, above "נעים להכיר" on phones and beside it on desktop: show all of it
   if (section.id === 'about') return section.querySelector('.about-text');
+  // a section with a small label over its heading lands on the label (the approach, Roei 2026-11-13)
+  const kicker = section.querySelector('.section-kicker');
+  if (kicker) return kicker;
   return section.querySelector('h2') || section;
 }
 function sectionTop(section) {

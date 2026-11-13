@@ -1408,3 +1408,34 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .hero-slide.hero-slide-policy { padding-bottom: 54px; }
   .hero-slide-policy .policy-fit { margin-top: 26px; }
 }
+
+/* ===== Roei's notes, 2026-11-13 (evening) ===== */
+/* 12. the home page: less space between its sections */
+main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
+/* 13. a small gold label over a section heading */
+.section-kicker { margin-bottom: 6px; font-size: 17px; font-weight: 800; letter-spacing: .01em; color: #9A8340; }
+/* 11. the Google mark beside "all reviews" */
+.quote-all { display: inline-flex; align-items: center; gap: 8px; color: var(--on-dark); text-decoration: underline; text-underline-offset: .25em; }
+.google-g { flex: none; width: 18px; height: 18px; padding: 2px; border-radius: 50%; background: #fff; }
+/* 2. the logos behind the policy slide: phones only */
+.policy-bg { display: none; }
+@media (max-width: 700px) {
+  .hero-slide-policy .policy-bg { position: absolute; inset: 0; z-index: 0; display: grid; grid-template-columns: 1fr 1fr; align-content: space-evenly; gap: 14px 18px; padding: 24px 18px 64px; opacity: .13; pointer-events: none; }
+  .hero-slide-policy .hero-copy { position: relative; z-index: 1; }
+  .pbg-chip { display: flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 6px 10px; border-radius: 8px; background: #fff; }
+  .pbg-chip img { width: auto; max-width: 70px; height: 100%; object-fit: contain; }
+  /* 1. the button, the joining link and the note go to the foot of the slide, the note just above the arrows */
+  .hero-slide.hero-slide-policy { padding-bottom: 56px; }
+  .hero-slide-policy .hero-copy { flex: 1; display: flex; flex-direction: column; }
+  .hero-slide-policy .policy-fit { margin-top: auto; padding-top: 26px; }
+  /* 8. smaller "how can I help" cards */
+  .path { gap: 4px; padding: 13px 16px; }
+  .path h3 { font-size: 16px; }
+  .path p { font-size: 13.5px; line-height: 1.45; }
+  .path-go { padding-top: 4px; font-size: 13.5px; }
+  .path-board { gap: 6px; }
+}
+/* 9. /market-data: the closing call follows the table closely */
+.market-page { padding-bottom: 12px; }
+.market-page + .art-cta { margin-top: 12px; padding-block: 48px; }
+@media (max-width: 700px) { .market-page + .art-cta { padding-block: 36px; } }
