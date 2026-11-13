@@ -584,7 +584,7 @@ try {
     cancelAnimationFrame(frame);
     const start = performance.now();
     const tick = (now) => {
-      const t = Math.min(1, (now - start - 250) / 1100);
+      const t = Math.min(1, (now - start - 300) / 1700);
       show(t <= 0 ? 0 : 1 - (1 - t) ** 3);
       if (t < 1) frame = requestAnimationFrame(tick);
     };

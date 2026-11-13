@@ -1265,22 +1265,23 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   @keyframes kb-drift { from { scale: 1.12; } to { scale: 1; } }
 
   /* the policy table: logos fade in, bars grow one after another, the leader's bar catches the light */
-  .hero-slide:not([hidden]) .policy-logo { animation: fd-fade 500ms both; }
-  .hero-slide:not([hidden]) .policy-bar { animation: pb-grow 900ms var(--ease-out) both; }
-  .policy-top li:nth-child(2) > * { animation-delay: 120ms !important; }
-  .policy-top li:nth-child(3) > * { animation-delay: 240ms !important; }
-  .policy-top li:nth-child(4) > * { animation-delay: 360ms !important; }
-  .policy-top li:nth-child(5) > * { animation-delay: 480ms !important; }
+  /* a touch slower (Roei, 2026-11-13) */
+  .hero-slide:not([hidden]) .policy-logo { animation: fd-fade 700ms both; }
+  .hero-slide:not([hidden]) .policy-bar { animation: pb-grow 1400ms var(--ease-out) both; }
+  .policy-top li:nth-child(2) > * { animation-delay: 180ms !important; }
+  .policy-top li:nth-child(3) > * { animation-delay: 360ms !important; }
+  .policy-top li:nth-child(4) > * { animation-delay: 540ms !important; }
+  .policy-top li:nth-child(5) > * { animation-delay: 720ms !important; }
   .policy-top li:first-child .policy-bar::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%);
     transform: translateX(110%);
   }
-  .hero-slide:not([hidden]) .policy-top li:first-child .policy-bar::after { animation: pb-shine 4200ms 1400ms ease-in-out infinite; }
+  .hero-slide:not([hidden]) .policy-top li:first-child .policy-bar::after { animation: pb-shine 5000ms 2200ms ease-in-out infinite; }
   @keyframes pb-grow { from { transform: scaleX(0); } to { transform: none; } }
   @keyframes pb-shine { 0% { transform: translateX(110%); } 35%, 100% { transform: translateX(-110%); } }
 
   /* phones: the range of yields rises into place */
-  .hero-slide:not([hidden]) .policy-proof b { animation: pp-rise 700ms 150ms var(--ease-out) both; }
+  .hero-slide:not([hidden]) .policy-proof b { animation: pp-rise 1000ms 200ms var(--ease-out) both; }
   @keyframes pp-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 }
