@@ -761,8 +761,12 @@
       tab.tabIndex = on ? 0 : -1;
     }
     tile.querySelectorAll('[data-market-panel]').forEach((el) => { el.hidden = el.dataset.marketPanel !== name; });
-    // "where does your fund stand" belongs to the funds only; its place stays, so the tile keeps its height
-    if (cta) cta.classList.toggle('is-away', name !== 'funds');
+    // the button at the foot of the tile: "where does your fund stand" under the funds, and under the events
+    // the way to the full page (Roei, 2026-11-13); its place stays on the other tabs, so the tile keeps its height
+    if (cta) {
+      cta.classList.toggle('is-away', name !== 'funds' && name !== 'events');
+      cta.firstChild.textContent = name === 'events' ? 'מעבר לעמוד תשואות ונתוני שוק ' : 'איפה הקופה שלכם עומדת? ';
+    }
     if (!opened.has(name)) { opened.add(name); firstOpen[name](); }
   }
 
