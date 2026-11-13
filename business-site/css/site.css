@@ -1390,3 +1390,21 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .market-page .yield-full td { font-size: 11px; }
   .market-page .yield-full thead th { font-size: 11px; }
 }
+
+/* ===== Roei, 2026-11-13 ===== */
+/* the fund slide: larger coins on computers; on phones the coins rise and the line draws a little slower */
+@media (min-width: 901px) { .hero-deco.hero-deco-coins { width: min(48%, 400px); } }
+@media (max-width: 700px) and (prefers-reduced-motion: no-preference) {
+  .hero-slide:not([hidden]) .fd-stack { animation-duration: 1100ms; }
+  .hero-slide:not([hidden]) .fd-line { animation-duration: 2200ms; animation-delay: 500ms; }
+  .hero-slide:not([hidden]) .fd-area { animation-delay: 1500ms; }
+  .hero-slide:not([hidden]) .fd-coin { animation-duration: 1200ms, 2600ms; animation-delay: 1900ms, 3100ms; }
+}
+/* the market and knowledge photos keep a little of their colour */
+.hero-bg.hero-bg-board, .hero-bg.hero-bg-street { filter: grayscale(.55) contrast(1.05); }
+@media (min-width: 901px) { .hero-bg.hero-bg-street { filter: grayscale(.25) contrast(1.05); } }
+/* the policy slide on phones: the button, the joining link and the note sit lower, the note just above the arrows */
+@media (max-width: 700px) {
+  .hero-slide.hero-slide-policy { padding-bottom: 54px; }
+  .hero-slide-policy .policy-fit { margin-top: 26px; }
+}

@@ -309,6 +309,11 @@
   const HINT_SHORT = '';
   const PICK_SECOND = '<small>עכשיו לחצו על נקודה נוספת</small>';
   const tipLines = (lines, values, show, named = lines.length > 1) => lines.map((l, n) => `<span class="chart-read-item">${named ? `${lines.length > 1 ? swatch(l.color) : ''}${l.name} ` : ''}<b>${ltr(show(values[n]))}</b></span>`).join('');
+  // the funds readout lists the chosen funds from the highest yield to the lowest (Roei, 2026-11-13)
+  const tipLinesByValue = (lines, values, show) => {
+    const order = values.map((_, n) => n).sort((a, b) => (values[b] ?? -Infinity) - (values[a] ?? -Infinity));
+    return tipLines(order.map((n) => lines[n]), order.map((n) => values[n]), show, true);
+  };
 
   // ---------- the funds tab ----------
   const fundsPanel = tile.querySelector('[data-market-panel="funds"]');
@@ -380,8 +385,8 @@
       lines, base: 0,
       axis: (v) => `${number(v, Number.isInteger(v) ? 0 : 1)}%`,
       edge: (t, isStart) => (isStart ? startOf(t) : endOf(t)),
-      tip: (s, waiting) => `<span class="chart-read-head">מ־${startOf(rangeStart)} עד סוף ${endOf(s.t)}:</span>${tipLines(lines, s.values, (v) => `${signed(v)}%`, true)}${waiting ? PICK_SECOND : ''}`,
-      measure: (a, b) => `<span class="chart-read-head">מ־${startOf(a.t)} עד סוף ${endOf(b.t)}:</span>${tipLines(lines, a.values.map((v, n) => ((1 + b.values[n] / 100) / (1 + v / 100) - 1) * 100), (v) => `${signed(v)}%`, true)}`,
+      tip: (s, waiting) => `<span class="chart-read-head">מ־${startOf(rangeStart)} עד סוף ${endOf(s.t)}:</span>${tipLinesByValue(lines, s.values, (v) => `${signed(v)}%`)}${waiting ? PICK_SECOND : ''}`,
+      measure: (a, b) => `<span class="chart-read-head">מ־${startOf(a.t)} עד סוף ${endOf(b.t)}:</span>${tipLinesByValue(lines, a.values.map((v, n) => ((1 + b.values[n] / 100) / (1 + v / 100) - 1) * 100), (v) => `${signed(v)}%`)}`,
     });
   }
 
