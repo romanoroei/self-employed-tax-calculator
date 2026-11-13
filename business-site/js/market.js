@@ -315,7 +315,7 @@
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
   const COLUMN_RANGE = { y1: 12, y3: 36, y5: 60, y7: 84 };
-  const WA_PRODUCTS = { invest: 'קופת גמל להשקעה', study: 'קרן השתלמות', policy: 'פוליסת חיסכון' };
+  const WA_PRODUCTS = { invest: 'לקופת גמל להשקעה', study: 'לקרן השתלמות', policy: 'לפוליסת חיסכון' };
   const WA_TRACKS = { general: 'כללי', stocks: 'מניות' };
   // "ל־18 החודשים שנבחרו (1.5 שנים)": a point's time is the first day after its month, so the count is the gap in months
   const monthNumber = (t) => { const d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); };
@@ -412,12 +412,8 @@
     const wa = e.target.closest('.yield-wa');
     if (wa) {
       const [productId, trackId] = wa.closest('table').dataset.yieldView.split('-');
-      const head = wa.closest('tr').querySelector('th');
-      const company = head.querySelector('[data-yield-row]').textContent.trim();
-      const text = `שלום רועי, ראיתי באתר את טבלת התשואות ואשמח שתחזור אליי לגבי הצטרפות.
-קטגוריה: ${WA_PRODUCTS[productId]}
-מסלול השקעה: ${WA_TRACKS[trackId]}
-קופה: ${company}, ${head.title}`;
+      // Roei's wording: "…לבחון הצטרפות לקופת גמל להשקעה של חברת הראל במסלול כללי"
+      const text = `שלום רועי, ראיתי באתר שלך את טבלת התשואות ואשמח שתחזור אליי לבחון הצטרפות ${WA_PRODUCTS[productId]} של חברת ${wa.dataset.company} במסלול ${WA_TRACKS[trackId]}`;
       wa.href = `https://wa.me/972528089808?text=${encodeURIComponent(text)}`;
       return;
     }
@@ -477,8 +473,8 @@
 
   function buildFx() {
     const element = tile.querySelector('[data-market-panel="fx"]');
-    element.innerHTML = `<div class="yield-head"><h2 class="yield-title">שערי מטבע</h2><p class="yield-sub">שער יציג ושערי הבנק המרכזי האירופי, פעם ביום</p></div>${rangeButtons(FX_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">שערי מטבע</caption><thead><tr><th scope="col">צמד</th><th scope="col">שער</th><th scope="col">שינוי</th><th scope="col">שינוי %</th></tr></thead><tbody>`
-      + FX.map(([id, label], i) => `<tr data-row="${id}"${i ? '' : ' class="is-picked"'}><th scope="row"><button type="button" aria-pressed="${!i}">${label}</button></th><td data-price>—</td><td data-change>—</td><td data-percent>—</td></tr>`).join('')
+    element.innerHTML = `<div class="yield-head"><h2 class="yield-title">שערי מטבע</h2><p class="yield-sub">שער יציג ושערי הבנק המרכזי האירופי, פעם ביום</p></div>${rangeButtons(FX_RANGES)}${chartBlock}<div class="yield-tables market-table"><table><caption class="visually-hidden">שערי מטבע</caption><thead><tr><th scope="col">צמד</th><th scope="col">שער</th><th scope="col">שינוי %</th><th scope="col">שינוי</th></tr></thead><tbody>`
+      + FX.map(([id, label], i) => `<tr data-row="${id}"${i ? '' : ' class="is-picked"'}><th scope="row"><button type="button" aria-pressed="${!i}">${label}</button></th><td data-price>—</td><td data-percent>—</td><td data-change>—</td></tr>`).join('')
       + `</tbody></table></div>${noteBlock}`;
     fx.element = element;
     fx.chart = makeChart(element.querySelector('.market-chart'));
@@ -652,6 +648,7 @@
   // No figure is typed in by hand: a decision's result is read from /api/rates, the index from /api/cpi.
   const BANKS = { il: 'ריבית בנק ישראל', us: 'ריבית הפד', eu: 'ריבית הבנק האירופי', uk: 'ריבית בנק אנגליה' };
   const DECISIONS = [
+    ['us', '2026-09-16'], ['eu', '2026-09-10'], ['uk', '2026-09-17'],
     ['il', '2026-10-21'], ['us', '2026-10-28'], ['eu', '2026-10-29'], ['uk', '2026-11-05'],
     ['il', '2026-11-23'], ['us', '2026-12-09'], ['eu', '2026-12-17'], ['uk', '2026-12-17'],
     ['us', '2027-01-27'], ['eu', '2027-02-04'], ['uk', '2027-02-04'],
@@ -665,8 +662,11 @@
     uk: ['בריטניה', '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="3.4"/>'],
   };
   const flag = (id) => `<svg class="ev-flag" viewBox="0 0 30 20" role="img" aria-label="${FLAGS[id][0]}"><title>${FLAGS[id][0]}</title>${FLAGS[id][1]}</svg>`;
-  // five that happened, four that are coming: the tab keeps the tile's height
-  const EVENT_ROWS = 5;
+  // five that happened, four that are coming: the tab keeps the tile's height. /market-data has room
+  // for three more of each (Roei): the meeting before the last of the Fed, the ECB and the Bank of England.
+  const FULL_PAGE = Boolean(tile.closest('.market-page'));
+  const EVENT_ROWS = FULL_PAGE ? 8 : 5;
+  const COMING_ROWS = FULL_PAGE ? 7 : 4;
   const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const shortDay = (date) => { const [, m, d] = date.split('-'); return `${Number(d)}.${Number(m)}`; };
   const between = (a, b) => Math.round((isoTime(b) - isoTime(a)) / 86400000);
@@ -726,13 +726,13 @@
     coming.sort((a, b) => a.date.localeCompare(b.date));
     for (const e of coming) { const n = between(today, e.date); e.when = n === 0 ? 'היום' : n === 1 ? 'מחר' : `בעוד ${n} ימים`; }
 
-    // lately: each bank's latest decision, and the latest index
+    // lately: each bank's latest decision (on /market-data the one before it too), and the latest index
     const lately = [];
     for (const id of Object.keys(BANKS)) {
-      const last = DECISIONS.filter(([bank, date]) => bank === id && date < today).pop();
-      if (!last) continue;
-      const f = decisionFigures(item(id), last[1]);
-      lately.push({ id, date: last[1], title: BANKS[id], actual: f ? rateText(id, f.actual) : '', previous: f ? rateText(id, f.previous) : '', dir: f && move(f.actual, f.previous) });
+      for (const last of DECISIONS.filter(([bank, date]) => bank === id && date < today).slice(FULL_PAGE ? -2 : -1)) {
+        const f = decisionFigures(item(id), last[1]);
+        lately.push({ id, date: last[1], title: BANKS[id], actual: f ? rateText(id, f.actual) : '', previous: f ? rateText(id, f.previous) : '', dir: f && move(f.actual, f.previous) });
+      }
     }
     if (cpiOk) {
       const release = cpiRelease(cpi.month === 12 ? cpi.year + 1 : cpi.year, cpi.month === 12 ? 1 : cpi.month + 1);
@@ -743,7 +743,7 @@
     for (const e of lately) { const n = between(e.date, today); e.when = n === 0 ? 'היום' : n === 1 ? 'אתמול' : `לפני ${n} ימים`; }
 
     element.querySelector('[data-events="lately"]').innerHTML = lately.length ? eventTable('אירועים אחרונים', 'בפועל', lately.slice(0, EVENT_ROWS).map(eventRow).join('')) : `<p class="ev-empty">${UNAVAILABLE}</p>`;
-    element.querySelector('[data-events="coming"]').innerHTML = eventTable('אירועים צפויים', '', coming.slice(0, EVENT_ROWS - 1).map((e) => eventRow({ ...e, actual: undefined })).join(''));
+    element.querySelector('[data-events="coming"]').innerHTML = eventTable('אירועים צפויים', '', coming.slice(0, COMING_ROWS).map((e) => eventRow({ ...e, actual: undefined })).join(''));
     element.querySelector('[data-updated]').textContent = `עודכן ${day(Date.now())}`;
     element.querySelector('[data-source]').innerHTML = '<span class="ev-key"><span class="is-up">▲ עלייה</span> <span class="is-down">▼ ירידה</span> <span class="ev-same">● ללא שינוי</span>, לעומת הקודם.</span> לפי בנק ישראל, הפד, הבנק המרכזי האירופי, בנק אנגליה והלשכה המרכזית לסטטיסטיקה. המידע אינו המלצה.';
   }

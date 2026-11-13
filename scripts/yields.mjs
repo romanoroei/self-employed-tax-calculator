@@ -186,9 +186,16 @@ const joinIcon = (productId, company) => (productId === 'policy' && JOIN[company
     + '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M19 8v6M16 11h6"/></svg></a>'
   : '');
 
+// /market-data, on computers: each company's small logo after its name (where there is a logo in colour)
+const ROW_LOGOS = {
+  'הפניקס': 'fnx-color.png', 'איילון': 'ayalon.svg', 'כלל': 'clal.svg', 'הכשרה': 'hachshara.svg', 'מגדל': 'migdal.svg',
+  'הראל': 'harel.svg', 'מור': 'more.svg', 'מיטב': 'meitav.svg', 'אלטשולר שחם': 'altshuler.png', 'ילין לפידות': 'yelin.png',
+  'אנליסט': 'analyst.svg', 'מנורה מבטחים': 'raw/menora.png',
+};
+const rowLogo = (company) => (ROW_LOGOS[company] ? `<img class="yield-logo" src="assets/logos/${ROW_LOGOS[company]}" alt="" loading="lazy">` : '');
 // The WhatsApp button at the end of a row of /market-data.
 // js/market.js writes the message when the button is pressed (product, track and fund from the row), which keeps the page light
-const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
+const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" data-company="${escape(r.company)}" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
 
 export function renderYields({ period, views, series }, { full = false } = {}) {
   const columns = full ? FULL_COLUMNS : COLUMNS;
@@ -215,7 +222,7 @@ export function renderYields({ period, views, series }, { full = false } = {}) {
     const waCell = (r) => (full ? `<td class="yield-wa-cell">${waLink(r)}</td>` : '');
     return `<table data-yield-view="${view}"${full ? ' class="yield-full"' : ''}${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
       + `<thead><tr><th scope="col">חברה</th>${heads}${waHead}</tr></thead><tbody>`
-      + rowsOf(v, sort).map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}${waCell(r)}</tr>`).join('')
+      + rowsOf(v, sort).map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${full ? rowLogo(r.company) : ''}${joinIcon(productId, r.company)}</th>${cells(r)}${waCell(r)}</tr>`).join('')
       + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}${full ? '<td class="yield-wa-cell"></td>' : ''}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
@@ -262,7 +269,7 @@ export function renderPolicyProof({ period, views }) {
   const top = views['policy-general'].rank.y3.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
   const values = top.map((r) => Math.floor(r.y3));
   return {
-    proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> תשואה מצטברת ב־3 שנים, 5 המובילות<span class="pp-star">*</span>`,
+    proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> טווח תשואה מצטברת ב־3 שנים, 5 המובילות<span class="pp-star">*</span>`,
     note: `<span class="pp-star">*</span> מסלול כללי (סיכון בינוני), עד ${periodLabel(period)}, לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד.`,
   };
 }

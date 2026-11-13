@@ -1058,7 +1058,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .yield-note { font-size: 11px; line-height: 1.35; }
   .yield-cta { padding: 9px 18px; }
   /* events: four that happened and three that are coming, so the tab keeps the tile's height */
-  .ev-table:not(.is-coming) tbody tr:nth-child(n+5), .ev-table.is-coming tbody tr:nth-child(n+4) { display: none; }
+  .hero .ev-table:not(.is-coming) tbody tr:nth-child(n+5), .hero .ev-table.is-coming tbody tr:nth-child(n+4) { display: none; }
 
   /* who I work with: smaller type and a short photo, so more of the list fits one screen (Roei, 2026-11-11) */
   .panel { margin-top: 16px; }
@@ -1336,4 +1336,41 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .yield-full td { padding-inline-start: 6px; font-size: 12px; }
   .market-page .yield-body { padding-inline: 10px; }
   .market-page .hero-yields { margin-inline: -6px; }
+}
+
+/* ===== /market-data, Roei's notes (2026-11-13) ===== */
+/* 3. computers: more air in the tab bar and around the product and track choices */
+@media (min-width: 701px) {
+  .market-page .market-tabs { padding: 8px 20px 0; }
+  .market-page .market-tabs button { padding: 14px 18px 12px; font-size: 16px; }
+  .market-page .market-tabs button + button::before { top: 18px; }
+  .market-page .yield-body { gap: 14px; padding: 20px 26px 16px; }
+  .market-page .yield-picks { gap: 8px; margin-block: 4px; }
+  .market-page .yield-picks > div { gap: 4px; }
+  .market-page .yield-picks button { padding: 7px 14px; font-size: 14px; }
+}
+/* 9. computers: each company's small logo after its name */
+.yield-logo { display: inline-block; width: auto; max-width: 64px; height: 16px; margin-inline-start: 8px; vertical-align: -3px; object-fit: contain; }
+/* 7 and 8. currency and rates: equal columns, each figure at the start of its own, so the first sits near the name */
+.market-page .market-table table { table-layout: fixed; }
+.market-page .market-table thead th:first-child { width: 28%; }
+.market-page .market-table td, .market-page .market-table thead th + th { width: auto; text-align: start; }
+/* 6. events: room between the actual figure and the one before it */
+.market-page .ev-table th:nth-last-child(2):not(:nth-child(2)) { width: 104px; }
+.market-page .ev-prev, .market-page .ev-table thead th:last-child { padding-inline-start: 16px; }
+@media (max-width: 700px) {
+  .yield-logo { display: none; }
+  /* 5. phones: the year column moves up to the company, the figures are spaced evenly, a smaller WhatsApp */
+  .yield-full { table-layout: fixed; }
+  .yield-full thead th:first-child { width: 27%; }
+  .yield-full td, .yield-full thead th + th { width: auto; text-align: start; }
+  .yield-full thead button { text-align: start; }
+  .yield-full .yield-wa-cell, .yield-full thead .yield-wa-cell { width: 28px; padding-inline-start: 4px; text-align: end; }
+  .yield-wa { width: 20px; height: 20px; }
+  .yield-wa::before { width: 12px; height: 12px; }
+  .market-page .ev-table th:nth-last-child(2):not(:nth-child(2)) { width: 88px; }
+  .market-page .ev-prev, .market-page .ev-table thead th:last-child { padding-inline-start: 12px; }
+  /* 4. the policy slide: a slimmer label and button, so the note sits just above the slide arrows */
+  .hero-slide-policy .hero-kicker { margin-bottom: 6px; padding: 1px 8px; font-size: 12.5px; }
+  .hero-slide-policy .policy-fit a { padding: 8px 14px; }
 }
