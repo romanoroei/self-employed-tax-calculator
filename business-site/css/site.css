@@ -1417,17 +1417,12 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 /* 11. the Google mark beside "all reviews" */
 .quote-all { display: inline-flex; align-items: center; gap: 8px; color: var(--on-dark); text-decoration: underline; text-underline-offset: .25em; }
 .google-g { flex: none; width: 18px; height: 18px; padding: 2px; border-radius: 50%; background: #fff; }
-/* 2. the logos behind the policy slide: phones only */
-.policy-bg { display: none; }
 @media (max-width: 700px) {
-  .hero-slide-policy .policy-bg { position: absolute; inset: 0; z-index: 0; display: grid; grid-template-columns: 1fr 1fr; align-content: space-evenly; gap: 14px 18px; padding: 24px 18px 64px; opacity: .13; pointer-events: none; }
-  .hero-slide-policy .hero-copy { position: relative; z-index: 1; }
-  .pbg-chip { display: flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 6px 10px; border-radius: 8px; background: #fff; }
-  .pbg-chip img { width: auto; max-width: 70px; height: 100%; object-fit: contain; }
   /* 1. the button, the joining link and the note go to the foot of the slide, the note just above the arrows */
   .hero-slide.hero-slide-policy { padding-bottom: 56px; }
-  .hero-slide-policy .hero-copy { flex: 1; display: flex; flex-direction: column; }
-  .hero-slide-policy .policy-fit { margin-top: auto; padding-top: 26px; }
+  /* the words go down with the button (Roei, 2026-11-14): the whole text sits at the foot, close above the arrows */
+  .hero-slide-policy .hero-copy { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
+  .hero-slide-policy .policy-fit { margin-top: 18px; padding-top: 0; }
   /* 8. smaller "how can I help" cards */
   .path { gap: 4px; padding: 13px 16px; }
   .path h3 { font-size: 16px; }
