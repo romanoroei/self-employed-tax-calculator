@@ -1241,3 +1241,8 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .policy-join a { font-size: 14px; }
   .hero-deco-coins { opacity: .22; }
 }
+
+/* Wall Street now follows the navy "how" section: it needs its own space above */
+.how + .street { padding-top: var(--section); }
+/* the knowledge gap section now sits right before the magazine, both on paper: one gap between them */
+.approach + .mag { padding-top: 0; }

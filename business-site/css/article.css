@@ -160,10 +160,10 @@
   transition: background-color 180ms ease;
 }
 .kn-text { display: flex; flex-direction: column; gap: 3px; }
-.kn-k { font-size: 12px; font-weight: 800; color: var(--gold-deep); }
+.kn-k { font-size: 12.5px; font-weight: 800; color: #6E5B20; }
 .kn-text strong { font-size: 16px; font-weight: 800; line-height: 1.3; }
 .kn-text small { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
-.kn-go { font-size: 18px; color: var(--gold-deep); transition: transform 200ms var(--ease-out); }
+.kn-go { font-size: 18px; color: #6E5B20; transition: transform 200ms var(--ease-out); }
 .kn-card:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
   .kn-card:hover { background: #D9DBD7; }

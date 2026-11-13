@@ -55,8 +55,8 @@ ${preview ? `<base href="${esc(preview)}">\n<meta name="robots" content="noindex
   <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
     <a href="/#about">עליי</a>
     <a href="/#clients">את מי אני מלווה</a>
-    <a href="/#approach">הגישה שלי</a>
     <a href="/#services">תחומים</a>
+    <a href="/#approach">הגישה שלי</a>
     <a href="/#magazine">מגזין וכלים</a>
     <a href="/#faq">שאלות נפוצות</a>
   </nav>
