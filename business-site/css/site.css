@@ -1156,19 +1156,10 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .policy-top li:first-child .policy-bar { background: var(--gold); color: var(--navy-deep); }
 .policy-bar span { padding-inline: 10px; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .policy-note { margin-top: 10px; font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); }
-.policy-join { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 18px; font-size: 15px; font-weight: 700; color: var(--on-dark); }
-.policy-join a { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 6px 12px; background: var(--paper); color: var(--navy); font-size: 14px; text-decoration: none; transition: background-color 160ms ease, transform 160ms ease; }
-.policy-join a img { width: auto; height: 100%; }
-/* its word sits low in the image (the bird above it): lift it to the line of the הכשרה word */
-.policy-join a img.policy-join-fnx { height: 92%; transform: translateY(-3px); }
 /* the way to the form, above the joining buttons */
 .policy-fit { margin-top: 18px; }
 .policy-fit a { display: inline-flex; gap: 8px; font-size: 16px; font-weight: 800; color: var(--gold); text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .25em; }
 @media (hover: hover) and (pointer: fine) { .policy-fit a:hover { color: var(--gold-soft); } }
-.policy-fit + .policy-join { margin-top: 12px; }
-.policy-join a:active { transform: scale(.97); }
-@media (hover: hover) and (pointer: fine) { .policy-join a:hover { background: var(--gold-soft); } }
-.policy-join > span { flex-basis: 100%; }
 .policy-fine { margin-top: 12px; font-size: 12.5px; line-height: 1.5; color: var(--on-dark-soft); }
 .policy-fine .link { color: var(--on-dark); font-weight: 700; }
 
@@ -1196,9 +1187,6 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .policy-note { margin-top: 6px; font-size: 10.5px; }
   .policy-fit { margin-top: 12px; }
   .policy-fit a { font-size: 15px; }
-  .policy-fit + .policy-join { margin-top: 10px; }
-  .policy-join { margin-top: 12px; font-size: 14px; }
-  .policy-join a { height: 40px; padding: 5px 10px; }
   .policy-fine { margin-top: 8px; font-size: 11.5px; }
 }
 
@@ -1219,9 +1207,37 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .policy-fit { margin-top: 16px; }
   .policy-fit a { display: flex; justify-content: center; padding: 13px 16px; background: var(--gold); color: var(--navy-deep); font-size: 16px; text-decoration: none; }
   .policy-fit a:active { transform: scale(.98); }
-  /* the second way: two joining buttons side by side */
-  .policy-fit + .policy-join { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--on-dark-soft); }
-  .policy-join > span { grid-column: 1 / -1; }
-  .policy-join a { justify-content: center; height: 40px; }
   .policy-fine.for-phone { margin-top: 10px; font-size: 10.5px; line-height: 1.45; }
+}
+
+/* the policy slide (Roei, 2026-11-13): one title everywhere, the fit link, then a quiet link to joining in the guide */
+.policy-join { margin-top: 12px; }
+.policy-join a { display: inline-flex; gap: 8px; font-size: 15px; font-weight: 700; color: var(--on-dark); text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .25em; }
+@media (hover: hover) and (pointer: fine) { .policy-join a:hover { color: var(--gold-soft); } }
+.hero-slide-policy .hero-lead { max-width: 44ch; }
+
+/* the fund slide: coin stacks rise, the line draws itself and its end breathes, while the slide is shown */
+.hero-deco-coins { opacity: .6; }
+.fd-stack { transform-box: fill-box; transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slide:not([hidden]) .fd-stack { animation: fd-rise 700ms var(--d) var(--ease-out) both; }
+  .hero-slide:not([hidden]) .fd-line { stroke-dasharray: 1; animation: fd-draw 1400ms 300ms var(--ease-out) both; }
+  .hero-slide:not([hidden]) .fd-area { animation: fd-fade 900ms 900ms ease both; }
+  .hero-slide:not([hidden]) .fd-coin { animation: fd-drop 800ms 1200ms var(--ease-out) both, fd-bob 1800ms 2000ms ease-in-out infinite alternate; }
+  .fd-pulse { transform-box: fill-box; transform-origin: center; animation: fd-pulse 2200ms ease-out infinite; }
+  @keyframes fd-rise { from { transform: scaleY(0); } to { transform: none; } }
+  @keyframes fd-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes fd-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fd-drop { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+  @keyframes fd-bob { to { transform: translateY(-4px); } }
+  @keyframes fd-pulse { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(2.8); } }
+}
+
+@media (max-width: 700px) {
+  .hero-slide-policy .hero-lead { display: block; margin-top: 8px; font-size: 15px; line-height: 1.5; }
+  /* a smaller gold button for the fit check (Roei) */
+  .policy-fit a { padding: 10px 14px; font-size: 15px; }
+  .policy-join { margin-top: 10px; }
+  .policy-join a { font-size: 14px; }
+  .hero-deco-coins { opacity: .22; }
 }

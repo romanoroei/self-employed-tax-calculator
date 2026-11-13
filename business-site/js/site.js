@@ -553,8 +553,18 @@ document.addEventListener('click', (e) => {
 })();
 
 // a link that leads to the contact form (a slide button, a path card) ticks the matching topic there
-document.addEventListener('click', (e) => {
-  const goal = e.target.closest('a[data-goal]')?.dataset.goal;
+// from another page (a guide) the topic waits in this tab's session storage until the form is there
+const tickGoal = (goal) => {
   const box = goal && [...document.querySelectorAll('input[name="מטרה"]')].find((input) => input.value === goal);
   if (box) box.checked = true;
+  return Boolean(box);
+};
+document.addEventListener('click', (e) => {
+  const goal = e.target.closest('a[data-goal]')?.dataset.goal;
+  if (!goal || tickGoal(goal)) return;
+  try { sessionStorage.setItem('lead-goal', goal); } catch { /* the topic is a convenience */ }
 });
+try {
+  const waiting = sessionStorage.getItem('lead-goal');
+  if (waiting && tickGoal(waiting)) sessionStorage.removeItem('lead-goal');
+} catch { /* the topic is a convenience */ }

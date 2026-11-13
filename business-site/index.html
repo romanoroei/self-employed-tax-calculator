@@ -62,7 +62,19 @@
         </div>
       </div>
       <div class="hero-slide hero-slide-fund" data-slide data-until="2026-12-31" hidden>
-        <svg class="hero-deco hero-deco-growth" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor"><path d="M20 180h170M20 180V20" stroke-width="1.2"/><path d="M20 140h170M20 100h170M20 60h170" stroke-width=".5" opacity=".6"/></g><g fill="currentColor"><rect x="36" y="146" width="22" height="34" opacity=".35"/><rect x="72" y="128" width="22" height="52" opacity=".5"/><rect x="108" y="104" width="22" height="76" opacity=".7"/><rect x="144" y="70" width="22" height="110"/></g><path d="M30 150L82 116l36-20 50-52" fill="none" stroke="currentColor" stroke-width="3"/><path d="M168 30l12 2-4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        <svg class="hero-deco hero-deco-coins" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="fund-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".4"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>
+          <g fill="none" stroke="currentColor" opacity=".3"><path d="M10 188h182" stroke-width="1.2"/><path d="M10 148h182M10 108h182M10 68h182M10 28h182" stroke-width=".5" stroke-dasharray="2 4"/></g>
+          <g class="fd-stack" style="--d: 0ms" fill="currentColor" stroke="#081826" stroke-width="1.2"><ellipse cx="40" cy="182" rx="15" ry="5"/><ellipse cx="40" cy="175" rx="15" ry="5"/><ellipse cx="40" cy="168" rx="15" ry="5"/></g>
+          <g class="fd-stack" style="--d: 120ms" fill="currentColor" stroke="#081826" stroke-width="1.2"><ellipse cx="80" cy="182" rx="15" ry="5"/><ellipse cx="80" cy="175" rx="15" ry="5"/><ellipse cx="80" cy="168" rx="15" ry="5"/><ellipse cx="80" cy="161" rx="15" ry="5"/><ellipse cx="80" cy="154" rx="15" ry="5"/></g>
+          <g class="fd-stack" style="--d: 240ms" fill="currentColor" stroke="#081826" stroke-width="1.2"><ellipse cx="120" cy="182" rx="15" ry="5"/><ellipse cx="120" cy="175" rx="15" ry="5"/><ellipse cx="120" cy="168" rx="15" ry="5"/><ellipse cx="120" cy="161" rx="15" ry="5"/><ellipse cx="120" cy="154" rx="15" ry="5"/><ellipse cx="120" cy="147" rx="15" ry="5"/><ellipse cx="120" cy="140" rx="15" ry="5"/><ellipse cx="120" cy="133" rx="15" ry="5"/></g>
+          <g class="fd-stack" style="--d: 360ms" fill="currentColor" stroke="#081826" stroke-width="1.2"><ellipse cx="160" cy="182" rx="15" ry="5"/><ellipse cx="160" cy="175" rx="15" ry="5"/><ellipse cx="160" cy="168" rx="15" ry="5"/><ellipse cx="160" cy="161" rx="15" ry="5"/><ellipse cx="160" cy="154" rx="15" ry="5"/><ellipse cx="160" cy="147" rx="15" ry="5"/><ellipse cx="160" cy="140" rx="15" ry="5"/><ellipse cx="160" cy="133" rx="15" ry="5"/><ellipse cx="160" cy="126" rx="15" ry="5"/><ellipse cx="160" cy="119" rx="15" ry="5"/><ellipse cx="160" cy="112" rx="15" ry="5"/><ellipse cx="160" cy="105" rx="15" ry="5"/></g>
+          <path class="fd-area" d="M14 170C36 162 50 152 70 147S102 130 122 121S152 98 164 84S181 52 186 34L186 188L14 188Z" fill="url(#fund-area)"/>
+          <path class="fd-line" d="M14 170C36 162 50 152 70 147S102 130 122 121S152 98 164 84S181 52 186 34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" pathLength="1"/>
+          <circle class="fd-pulse" cx="186" cy="34" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="186" cy="34" r="5" fill="currentColor"/>
+          <g class="fd-coin"><circle cx="160" cy="44" r="13" fill="currentColor" stroke="#081826" stroke-width="1.2"/><text x="160" y="49" text-anchor="middle" font-size="14" font-weight="800" fill="#081826">₪</text></g>
+        </svg>
         <div class="hero-copy">
           <p class="hero-kicker">עד 31.12</p>
           <h2 class="hero-title">קופת גמל להשקעה</h2>
@@ -74,18 +86,13 @@
       <div class="hero-slide hero-slide-policy" data-slide hidden>
         <div class="hero-copy">
           <p class="hero-kicker">פוליסת חיסכון</p>
-          <!-- phones get a shorter slide: what a policy is, one line of proof, and the way to act (Roei, 2026-11-13) -->
-          <h2 class="hero-title"><span class="for-wide">חמש המובילות ב־7 השנים האחרונות</span><span class="for-phone">כסף פנוי בעו״ש? תנו לו לעבוד</span></h2>
-          <p class="hero-lead for-wide">כסף נזיל, מסלולי השקעה לבחירה והצטרפות מהירה דרכי.</p>
-          <p class="hero-lead for-phone">חיסכון נזיל, עם מסלולי השקעה לבחירה.</p>
+          <h2 class="hero-title">כסף פנוי בעו״ש? תנו לו לעבוד</h2>
+          <p class="hero-lead">תכנית השקעה מנוהלת, המאפשרת לכל אדם ליהנות מניהול מקצועי בשוק ההון, בנזילות מלאה וללא תקרות הפקדה.</p>
+          <!-- phones show one line of proof instead of the table -->
           <p class="policy-proof for-phone"><!-- policy-proof --></p>
           <p class="policy-fit"><a href="#contact" data-goal="פתרון לכסף פנוי" data-count="hero:policy-fit">לבדיקת התאמה לפוליסה <span class="arrow" aria-hidden="true">←</span></a></p>
-          <p class="policy-join"><span><span class="for-phone">או </span>להצטרפות דיגיטלית:</span>
-            <a href="https://www.bestonline.co.il/?token=6723E262-7178-47B0-ABC2-7018821F1F04" target="_blank" rel="noopener" data-count="join:slide-hachshara" aria-label="הצטרפות דיגיטלית לפוליסת חיסכון בהכשרה (נפתח בחלון חדש)"><img src="assets/logos/hachshara.svg" width="140" height="40" alt=""><span aria-hidden="true">↗</span></a>
-            <a href="https://forms.fnx.co.il/fnx/redirector/?templatenumber=2000789&amp;agent_number=25838" target="_blank" rel="noopener" data-count="join:slide-fnx" aria-label="הצטרפות דיגיטלית לפוליסת חיסכון בהפניקס (נפתח בחלון חדש)"><img class="policy-join-fnx" src="assets/logos/fnx-color.png" width="147" height="51" alt=""><span aria-hidden="true">↗</span></a>
-          </p>
-          <p class="policy-fine for-wide">ההצטרפות דרכי כסוכן ביטוח, בעמלה מהחברה וללא שינוי במחיר. <a class="link" href="/savings-policy" data-count="hero:policy-guide">למדריך פוליסת חיסכון</a></p>
-          <p class="policy-fine for-phone"><!-- policy-proof-note --> הצטרפות דרכי כסוכן, בעמלה מהחברה וללא שינוי במחיר.</p>
+          <p class="policy-join"><a href="/savings-policy#join" data-count="hero:policy-join"><span class="for-phone">או </span>להצטרפות דיגיטלית <span class="arrow" aria-hidden="true">←</span></a></p>
+          <p class="policy-fine for-phone"><!-- policy-proof-note --></p>
         </div>
         <div class="policy-board"><!-- policy-slide --></div>
       </div>
