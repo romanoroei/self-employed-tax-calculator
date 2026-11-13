@@ -612,12 +612,12 @@ try {
   const open = OPEN_DAYS.includes(day) && minute >= OPEN && minute < CLOSE;
   let text;
   if (open) text = 'פתוח עכשיו';
-  else if (OPEN_DAYS.includes(day) && minute < OPEN) text = 'סגור עכשיו · נחזור אליכם היום מ־9:00';
+  else if (OPEN_DAYS.includes(day) && minute < OPEN) text = 'סגור עכשיו · אחזור אליכם היום מ־9:00';
   else {
     let next = (day + 1) % 7;
     while (!OPEN_DAYS.includes(next)) next = (next + 1) % 7;
     const name = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'][next];
-    text = `סגור עכשיו · נחזור אליכם ${next === (day + 1) % 7 ? 'מחר' : `ביום ${name}`} מ־9:00`;
+    text = `סגור עכשיו · אחזור אליכם ${next === (day + 1) % 7 ? 'מחר' : `ביום ${name}`} מ־9:00`;
   }
   lines.forEach((line) => { line.textContent = text; line.classList.toggle('is-open', open); line.hidden = false; });
 })();
