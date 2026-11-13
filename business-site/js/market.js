@@ -766,6 +766,9 @@
     if (!opened.has(name)) { opened.add(name); firstOpen[name](); }
   }
 
+  // the home tile opens on the events (Roei, 2026-11-13); /market-data and a guide's link to a fund table open the funds
+  if (!FULL_PAGE && !linked) show('events');
+
   tile.querySelector('.market-tabs').addEventListener('click', (e) => {
     const tab = e.target.closest('[data-market-tab]');
     if (tab) show(tab.dataset.marketTab);
