@@ -237,3 +237,14 @@ export function renderPolicySlide({ period, views }) {
     + `<ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
     + `<p class="policy-note">נכון ל${periodLabel(period)}, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
 }
+
+// The same slide on phones: one line of proof (the range of the five leaders, whole percents, rounded down) and its note.
+export function renderPolicyProof({ period, views }) {
+  const seen = new Set();
+  const top = views['policy-general'].rank.y7.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+  const values = top.map((r) => Math.floor(r.y7));
+  return {
+    proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> תשואה מצטברת ב־7 שנים, 5 המובילות*`,
+    note: `* מסלול כללי (סיכון בינוני), עד ${periodLabel(period)}, לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד.`,
+  };
+}

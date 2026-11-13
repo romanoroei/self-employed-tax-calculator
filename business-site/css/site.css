@@ -1205,3 +1205,23 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
 /* the managing house beside a policy company in the tile, small and on the same line as the name and its join icon */
 .yield-tables th:has(.yield-mgr) { white-space: nowrap; }
 .yield-mgr { font-size: .82em; font-weight: 500; color: var(--ink-soft); }
+
+/* the policy slide on phones: minimum words, maximum action (Roei, 2026-11-13). Wide screens keep the table */
+.hero-slide-policy .for-phone { display: none; }
+.policy-proof { margin-top: 12px; font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--on-dark); }
+.policy-proof b { display: block; text-align: right; font-size: 30px; font-weight: 800; line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) {
+  .hero-slide-policy .for-wide, .hero-slide-policy .policy-board { display: none; }
+  .hero-slide-policy .for-phone { display: revert; }
+  .hero-slide-policy .hero-title { font-size: 25px; }
+  .hero-slide-policy .hero-lead.for-phone { margin-top: 8px; font-size: 16px; }
+  /* the main action is a full-width gold button */
+  .policy-fit { margin-top: 16px; }
+  .policy-fit a { display: flex; justify-content: center; padding: 13px 16px; background: var(--gold); color: var(--navy-deep); font-size: 16px; text-decoration: none; }
+  .policy-fit a:active { transform: scale(.98); }
+  /* the second way: two joining buttons side by side */
+  .policy-fit + .policy-join { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--on-dark-soft); }
+  .policy-join > span { grid-column: 1 / -1; }
+  .policy-join a { justify-content: center; height: 40px; }
+  .policy-fine.for-phone { margin-top: 10px; font-size: 10.5px; line-height: 1.45; }
+}

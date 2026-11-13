@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { calendarFeed } from './calendar-feed.mjs';
-import { renderYields, renderPolicySlide } from './yields.mjs';
+import { renderYields, renderPolicySlide, renderPolicyProof } from './yields.mjs';
 import { buildReviews } from './market-reviews.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -44,7 +44,7 @@ assert(homeSource.includes('<!-- yields-tile -->'), 'Missing yields tile slot');
 const yieldsData = JSON.parse(await readFile(path.join(root, 'scripts', 'yields-data.json'), 'utf8'));
 const yieldsHtml = renderYields(yieldsData);
 assert(homeSource.includes('<!-- policy-slide -->'), 'Missing policy slide slot');
-await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', yieldsHtml).replace('<!-- policy-slide -->', renderPolicySlide(yieldsData)));
+await writeFile(homeFile, homeSource.replace('<!-- yields-tile -->', yieldsHtml).replace('<!-- policy-slide -->', renderPolicySlide(yieldsData)).replace('<!-- policy-proof -->', renderPolicyProof(yieldsData).proof).replace('<!-- policy-proof-note -->', renderPolicyProof(yieldsData).note));
 // /market-data holds the same tile (phones see it there only): copied from the home page, its form link pointing home
 const marketTile = homeSource.match(/<!-- market-tile:start -->([\s\S]*?)<!-- market-tile:end -->/);
 assert(marketTile, 'Missing market tile markers on the home page');
