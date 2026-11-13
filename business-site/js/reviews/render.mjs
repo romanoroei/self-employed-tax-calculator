@@ -61,7 +61,7 @@ ${preview ? `<base href="${esc(preview)}">\n<meta name="robots" content="noindex
     <a href="/#approach">הגישה שלי</a>
     <a href="/#faq">שאלות נפוצות</a>
   </nav>
-  <a class="tile tile-gold bar-cta" href="/#contact">לשיחת היכרות</a>
+  <a class="tile tile-gold bar-cta" href="/#contact">לשיחת התאמה</a>
 </header>
 
 <a class="back-home" href="/"><span aria-hidden="true">→</span> חזרה לדף העסקי</a>
@@ -365,7 +365,7 @@ ${older.length ? `
     <div class="wrap">
       <div class="art-col">
         <p class="statement">הסקירה מסבירה מה קרה. בשיחה נבדוק מה זה אומר בשבילכם.</p>
-        <a class="button button-ink art-cta-btn" href="/#contact">לשיחת היכרות ללא עלות</a>
+        <a class="button button-ink art-cta-btn" href="/#contact">לשיחת התאמה ללא עלות</a>
       </div>
     </div>
   </section>

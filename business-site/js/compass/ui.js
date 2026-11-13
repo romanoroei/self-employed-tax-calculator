@@ -288,7 +288,7 @@
     const hidden = (name, value) => h('input', { type: 'hidden', name, value });
     const form = h('form', { class: 'coupon-form cp-form', id: 'cp-lead', action: cfg.formspreeUrl, method: 'POST', novalidate: false },
       h('h3', { text: 'לתיאום שיחת התאמה' }),
-      h('p', { class: 'cp-form-lead', text: 'השאירו פרטים ורועי יחזור אליכם. שיחת ההיכרות הראשונה ללא עלות וללא התחייבות.' }),
+      h('p', { class: 'cp-form-lead', text: 'השאירו פרטים ורועי יחזור אליכם. שיחת ההתאמה הראשונה ללא עלות וללא התחייבות.' }),
       hidden('_subject', 'פנייה חדשה מהמצפן הפיננסי'),
       hidden('מקור', 'המצפן הפיננסי'),
       hidden('_replyto', ''),

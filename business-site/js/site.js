@@ -57,7 +57,7 @@
     const go = document.createElement('a');
     go.className = 'site-menu-cta';
     go.href = cta.getAttribute('href');
-    go.textContent = 'לשיחת היכרות ללא עלות';
+    go.textContent = 'לשיחת התאמה ללא עלות';
     list.append(go);
   }
   document.body.append(panel);
