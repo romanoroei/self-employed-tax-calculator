@@ -1285,3 +1285,20 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .hero-slide:not([hidden]) .policy-proof b { animation: pp-rise 1000ms 200ms var(--ease-out) both; }
   @keyframes pp-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 }
+
+/* ===== Trial (Roei, 2026-11-13): living motion on his own slide ===== */
+.hero-copy-home .hero-promise span { position: relative; display: inline-block; }
+.hero-copy-home .hero-promise span::after { content: ""; position: absolute; inset-inline: 0; bottom: -6px; height: 3px; background: var(--gold); transform-origin: right center; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slide:first-child:not([hidden]) > .hero-bg { animation: kb-drift-soft 10000ms ease-out both; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home h1 > span,
+  .hero-slide:first-child:not([hidden]) .hero-copy-home > p { animation: hs-rise 800ms var(--ease-out) both; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home .hero-role { animation-delay: 160ms; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home .hero-promise { animation-delay: 380ms; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home .hero-lead { animation-delay: 540ms; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home .hero-actions { animation-delay: 700ms; }
+  .hero-slide:first-child:not([hidden]) .hero-copy-home .hero-promise span::after { animation: hs-line 900ms 1000ms var(--ease-out) both; }
+  @keyframes kb-drift-soft { from { scale: 1.07; } to { scale: 1; } }
+  @keyframes hs-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes hs-line { from { transform: scaleX(0); } to { transform: none; } }
+}

@@ -115,7 +115,18 @@
         </div>
       </div>
       <div class="hero-slide" data-slide hidden>
-        <img class="hero-bg hero-bg-street" src="assets/img/wall-street.jpg" width="1000" height="1564" alt="" loading="lazy">
+        <!-- the photo and, over it, its flags rippling in the wind (an SVG filter; js/site.js loads the photo and runs the wind only while the slide shows) -->
+        <svg class="hero-bg hero-bg-street" viewBox="0 0 1000 1564" preserveAspectRatio="xMidYMin slice" aria-hidden="true" focusable="false" data-wind>
+          <defs>
+            <filter id="flag-wind" filterUnits="userSpaceOnUse" x="40" y="360" width="920" height="540" color-interpolation-filters="sRGB">
+              <feTurbulence type="turbulence" baseFrequency="0.0035 0.011" numOctaves="1" seed="4" result="noise"><animate attributeName="baseFrequency" dur="6s" values="0.0035 0.011;0.0045 0.014;0.0035 0.011" repeatCount="indefinite"/></feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <clipPath id="flag-area"><rect x="92" y="382" width="838" height="448"/><rect x="58" y="676" width="100" height="196"/><rect x="428" y="668" width="84" height="192"/><rect x="814" y="678" width="78" height="202"/></clipPath>
+          </defs>
+          <image data-href="assets/img/wall-street.jpg" width="1000" height="1564"/>
+          <g clip-path="url(#flag-area)"><image data-href="assets/img/wall-street.jpg" width="1000" height="1564" filter="url(#flag-wind)"/></g>
+        </svg>
         <div class="hero-copy">
           <p class="hero-kicker">ארביטראז' של ידע</p>
           <h2 class="hero-title">מדריכים וכלים, בגובה העיניים</h2>
