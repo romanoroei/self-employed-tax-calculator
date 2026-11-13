@@ -1246,3 +1246,41 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
 .how + .street { padding-top: var(--section); }
 /* the knowledge gap section now sits right before the magazine, both on paper: one gap between them */
 .approach + .mag { padding-top: 0; }
+
+/* ===== The slides come alive while shown (Roei, 2026-11-13); still for visitors who asked for less motion ===== */
+.cp-ring, .cp-needle, .cp-pulse { transform-box: view-box; transform-origin: 100px 100px; }
+.policy-bar { transform-origin: right center; }
+.policy-top li:first-child .policy-bar { position: relative; overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  /* the compass: the ring turns slowly, the needle swings in and settles, the centre breathes */
+  .cp-ring { animation: cp-spin 80s linear infinite; }
+  .hero-slide:not([hidden]) .cp-needle { animation: cp-swing 2400ms 200ms cubic-bezier(.3, .7, .3, 1) both, cp-idle 3600ms 2700ms ease-in-out infinite alternate; }
+  .cp-pulse { animation: fd-pulse 2600ms ease-out infinite; }
+  @keyframes cp-spin { to { transform: rotate(360deg); } }
+  @keyframes cp-swing { 0% { transform: rotate(-75deg); } 35% { transform: rotate(26deg); } 55% { transform: rotate(-11deg); } 72% { transform: rotate(5deg); } 86% { transform: rotate(-2deg); } 100% { transform: rotate(0); } }
+  @keyframes cp-idle { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+
+  /* the knowledge slide: Wall Street drifts in slowly */
+  .hero-slide:not([hidden]) .hero-bg-street, .hero-slide:not([hidden]) .hero-bg-board { animation: kb-drift 9000ms ease-out both; }
+  @keyframes kb-drift { from { scale: 1.12; } to { scale: 1; } }
+
+  /* the policy table: logos fade in, bars grow one after another, the leader's bar catches the light */
+  .hero-slide:not([hidden]) .policy-logo { animation: fd-fade 500ms both; }
+  .hero-slide:not([hidden]) .policy-bar { animation: pb-grow 900ms var(--ease-out) both; }
+  .policy-top li:nth-child(2) > * { animation-delay: 120ms !important; }
+  .policy-top li:nth-child(3) > * { animation-delay: 240ms !important; }
+  .policy-top li:nth-child(4) > * { animation-delay: 360ms !important; }
+  .policy-top li:nth-child(5) > * { animation-delay: 480ms !important; }
+  .policy-top li:first-child .policy-bar::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%);
+    transform: translateX(110%);
+  }
+  .hero-slide:not([hidden]) .policy-top li:first-child .policy-bar::after { animation: pb-shine 4200ms 1400ms ease-in-out infinite; }
+  @keyframes pb-grow { from { transform: scaleX(0); } to { transform: none; } }
+  @keyframes pb-shine { 0% { transform: translateX(110%); } 35%, 100% { transform: translateX(-110%); } }
+
+  /* phones: the range of yields rises into place */
+  .hero-slide:not([hidden]) .policy-proof b { animation: pp-rise 700ms 150ms var(--ease-out) both; }
+  @keyframes pp-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+}

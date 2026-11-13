@@ -568,3 +568,27 @@ try {
   const waiting = sessionStorage.getItem('lead-goal');
   if (waiting && tickGoal(waiting)) sessionStorage.removeItem('lead-goal');
 } catch { /* the topic is a convenience */ }
+
+// ===== Home page: the savings policy slide counts its yields up each time it comes in =====
+// The figures are written by the build; this only replays them from zero. Not for visitors who asked for less motion.
+(() => {
+  const slide = document.querySelector('.hero-slide-policy');
+  if (!slide || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const figures = [...slide.querySelectorAll('.policy-bar span[dir="ltr"], .policy-proof b')];
+  figures.forEach((el) => { el.dataset.final = el.textContent; });
+  const show = (k) => figures.forEach((el) => {
+    el.textContent = k >= 1 ? el.dataset.final : el.dataset.final.replace(/\d+(?:\.\d+)?/g, (n) => (parseFloat(n) * k).toFixed(n.includes('.') ? n.split('.')[1].length : 0));
+  });
+  let frame = 0;
+  const run = () => {
+    cancelAnimationFrame(frame);
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, (now - start - 250) / 1100);
+      show(t <= 0 ? 0 : 1 - (1 - t) ** 3);
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+  };
+  new MutationObserver(() => { if (!slide.hidden) run(); }).observe(slide, { attributes: true, attributeFilter: ['hidden'] });
+})();
