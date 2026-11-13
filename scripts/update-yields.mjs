@@ -34,9 +34,10 @@ if (current && next.period < current.period) throw new Error(`Refusing older dat
 // A one-month move this large means a broken source, not a market.
 const plausible = (row) => (row.y3 === null || (row.y3 <= 300 && row.y3 >= -80))
   && (row.y1 === null || Math.abs(row.y1) <= 200)
+  && (row.y5 === undefined || row.y5 === null || (row.y5 <= 450 && row.y5 >= -85))
   && (row.y7 === null || (row.y7 <= 600 && row.y7 >= -90));
-for (const [key, { average, rank }] of Object.entries(next.views)) {
-  for (const row of [average, ...Object.values(rank).flat()]) if (!plausible(row)) throw new Error(`Implausible yield in ${key}: ${row.name || 'average'}`);
+for (const [key, { average, rank, full }] of Object.entries(next.views)) {
+  for (const row of [average, ...Object.values(rank).flat(), ...Object.values(full).flat()]) if (!plausible(row)) throw new Error(`Implausible yield in ${key}: ${row.name || 'average'}`);
 }
 const text = `${JSON.stringify(next, null, 1)}\n`;
 if (current && JSON.stringify(current) === JSON.stringify(next)) console.log(`No change (period ${next.period}).`);

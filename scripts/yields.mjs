@@ -18,6 +18,8 @@ export const COLUMNS = [
   { id: 'y3', label: '3 שנים' },
   { id: 'y7', label: '7 שנים' },
 ];
+// /market-data adds the five years, from the ministry's own cumulative figure (YIELD_TRAILING_5_YRS).
+export const FULL_COLUMNS = [COLUMNS[0], COLUMNS[1], { id: 'y5', label: '5 שנים' }, COLUMNS[2]];
 export const DEFAULT_COLUMN = 'y7';
 export const ROWS = 5;
 // The chart's ranges, in months; 0 is the whole history.
@@ -93,8 +95,8 @@ function monthly(records, id, period) {
   return { start: months[0], m: months.map((m) => rounded(yields.get(m))) };
 }
 
-// Which funds the tile ranks, so the updater can fetch just their history.
-export const rankedFunds = ({ views }) => [...new Map(Object.values(views).flatMap((v) => Object.values(v.rank).flat()).map((r) => [r.key, r.id])).entries()];
+// Which funds the tiles show (the home top five and the full lists of /market-data), so the updater fetches just their history.
+export const rankedFunds = ({ views }) => [...new Map(Object.values(views).flatMap((v) => [...Object.values(v.rank), ...Object.values(v.full || {})].flat()).map((r) => [r.key, r.id])).entries()];
 
 // Adds each ranked fund's monthly history. history: { gemel: records, polisa: records }, older and current months together.
 export function addHistory(data, history) {
@@ -131,6 +133,7 @@ export function computeYields({ gemel, polisa, trailing7y }) {
           name: String(r.FUND_NAME).trim(),
           y1: y1.get(String(r.FUND_ID)) ?? null,
           y3: figure(r.YIELD_TRAILING_3_YRS),
+          y5: figure(r.YIELD_TRAILING_5_YRS),
           y7: (() => { const v = figure(trailing7y.families[product.source].values[String(r.FUND_ID)]); return v === null ? null : rounded(v); })(),
           m1: isNumber(r.MONTHLY_YIELD) ? rounded(r.MONTHLY_YIELD) : null,
         }))
@@ -138,17 +141,22 @@ export function computeYields({ gemel, polisa, trailing7y }) {
       // How many stand behind each column's average: a company can hold several funds in a track.
       const average = { count: group.length, funds: {}, companies: {} };
       const rank = {};
-      for (const { id } of COLUMNS) {
+      const full = {};
+      for (const { id } of FULL_COLUMNS) {
         const holders = group.filter((r) => r[id] !== null);
         const values = holders.map((r) => r[id]);
         if (!values.length) throw new Error(`No ${id} figures for ${product.id}/${track.id}`);
         average[id] = rounded(values.reduce((sum, v) => sum + v, 0) / values.length);
         average.funds[id] = holders.length;
         average.companies[id] = new Set(holders.map((r) => r.company)).size;
-        // One row per company: the tile compares companies inside a track.
+        // One row per company: the tile compares companies inside a track, each by its best fund in the column.
         const seen = new Set();
-        rank[id] = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
-          .filter((r) => !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+        const best = group.filter((r) => r[id] !== null).sort((a, b) => b[id] - a[id])
+          .filter((r) => !seen.has(r.company) && seen.add(r.company));
+        // /market-data lists every company: those with no figure in this column come last, with a dash
+        full[id] = [...best, ...new Map(group.filter((r) => !seen.has(r.company)).map((r) => [r.company, r])).values()];
+        if (!COLUMNS.some((c) => c.id === id)) continue;
+        rank[id] = best.slice(0, ROWS);
         if (rank[id].length < ROWS) throw new Error(`Only ${rank[id].length} rows for ${product.id}/${track.id}/${id}`);
       }
       // The month itself, for the monthly market reviews (not shown in the tile): the same simple average.
@@ -158,7 +166,7 @@ export function computeYields({ gemel, polisa, trailing7y }) {
         average.funds.m1 = monthly.length;
         average.companies.m1 = new Set(monthly.map((r) => r.company)).size;
       }
-      views[`${product.id}-${track.id}`] = { average, rank };
+      views[`${product.id}-${track.id}`] = { average, rank, full };
     }
   }
   return { period, views };
@@ -178,32 +186,42 @@ const joinIcon = (productId, company) => (productId === 'policy' && JOIN[company
     + '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M19 8v6M16 11h6"/></svg></a>'
   : '');
 
-export function renderYields({ period, views, series }) {
+// The WhatsApp button at the end of a row of /market-data.
+// js/market.js writes the message when the button is pressed (product, track and fund from the row), which keeps the page light
+const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
+
+export function renderYields({ period, views, series }, { full = false } = {}) {
+  const columns = full ? FULL_COLUMNS : COLUMNS;
+  const rowsOf = (view, sort) => (full ? view.full[sort] : view.rank[sort]);
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
   const firstView = `${PRODUCTS[0].id}-${TRACKS[0].id}-${DEFAULT_COLUMN}`;
   // How many stand behind the average differs by view and column, so the note carries one line per table.
-  const counts = Object.entries(views).flatMap(([key, { average }]) => COLUMNS.map(({ id: sort, label }) => {
+  const counts = Object.entries(views).flatMap(([key, { average }]) => columns.map(({ id: sort, label }) => {
     const view = `${key}-${sort}`;
     const makers = average.companies[sort] === average.funds[sort]
       ? `${average.companies[sort]} חברות`
       : `${average.companies[sort]} חברות, ${average.funds[sort]} קופות`;
     return `<span data-yield-view="${view}"${view === firstView ? '' : ' hidden'}>ממוצע הקבוצה, ${label}: ${makers}. </span>`;
   })).join('');
-  const tables = Object.entries(views).flatMap(([key, { average, rank }]) => COLUMNS.map(({ id: sort }) => {
+  const tables = Object.entries(views).flatMap(([key, v]) => columns.map(({ id: sort }) => {
+    const { average } = v;
     const [productId, trackId] = key.split('-');
     const view = `${key}-${sort}`;
-    const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${COLUMNS.find((c) => c.id === sort).label}`;
-    const heads = COLUMNS.map((c) => `<th scope="col"${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${c.label}</button></th>`).join('');
-    const cells = (row) => COLUMNS.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
-    return `<table data-yield-view="${view}"${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
-      + `<thead><tr><th scope="col">חברה</th>${heads}</tr></thead><tbody>`
-      + rank[sort].map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}</tr>`).join('')
-      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}</tr></tfoot></table>`;
+    const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${columns.find((c) => c.id === sort).label}`;
+    const heads = columns.map((c) => `<th scope="col"${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${c.label}</button></th>`).join('');
+    const cells = (row) => columns.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
+    // the full list ends each row with a WhatsApp button to Roei about that fund
+    const waHead = full ? '<th scope="col" class="yield-wa-cell"><span class="visually-hidden">וואטסאפ</span></th>' : '';
+    const waCell = (r) => (full ? `<td class="yield-wa-cell">${waLink(r)}</td>` : '');
+    return `<table data-yield-view="${view}"${full ? ' class="yield-full"' : ''}${view === firstView ? '' : ' hidden'}><caption class="visually-hidden">${caption}</caption>`
+      + `<thead><tr><th scope="col">חברה</th>${heads}${waHead}</tr></thead><tbody>`
+      + rowsOf(v, sort).map((r) => `<tr><th scope="row" title="${escape(r.name)}"><button type="button" data-yield-row="${r.key}">${companyLabel(productId, r.company)}</button>${joinIcon(productId, r.company)}</th>${cells(r)}${waCell(r)}</tr>`).join('')
+      + `</tbody><tfoot><tr><th scope="row" title="ממוצע פשוט של הקופות במסלול שיש להן נתון">ממוצע הקבוצה</th>${cells(average)}${full ? '<td class="yield-wa-cell"></td>' : ''}</tr></tfoot></table>`;
   })).join('');
   return `<div class="yield-picks"><div role="group" aria-label="סוג המוצר">${buttons('product', PRODUCTS, PRODUCTS[0].id)}</div><div role="group" aria-label="מסלול">${buttons('track', TRACKS, TRACKS[0].id)}</div></div>`
     + `<div class="market-ranges" role="group" aria-label="טווח זמן">${FUND_RANGES.map(([months, label]) => `<button type="button" data-range="${months}" aria-pressed="false">${label}</button>`).join('')}</div>`
     + `<figure class="market-chart"><figcaption></figcaption><div class="market-plot"><svg></svg></div></figure>`
-    + `<script type="application/json" id="yield-series">${JSON.stringify(series)}</script>`
+    + `<script type="application/json" id="yield-series">${JSON.stringify(full ? series : Object.fromEntries(Object.entries(series).filter(([key]) => Object.values(views).some((v) => Object.values(v.rank).flat().some((r) => r.key === key)))))}</script>`
     + `<div class="yield-tables">${tables}</div>`
     + `<p class="yield-note"><strong>תשואה מצטברת עד ${periodLabel(period)}</strong> ${counts}לפי נתוני משרד האוצר, לפני דמי ניהול. מקף: אין נתון לתקופה המלאה. תשואות עבר אינן מבטיחות תשואות בעתיד. המידע אינו המלצה.</p>`;
 }
@@ -238,13 +256,13 @@ export function renderPolicySlide({ period, views }) {
     + `<p class="policy-note">נכון ל${periodLabel(period)}, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
 }
 
-// The same slide on phones: one line of proof (the range of the five leaders, whole percents, rounded down) and its note.
+// The same slide on phones: one line of proof (the range of the five leaders over three years, whole percents, rounded down) and its note.
 export function renderPolicyProof({ period, views }) {
   const seen = new Set();
-  const top = views['policy-general'].rank.y7.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
-  const values = top.map((r) => Math.floor(r.y7));
+  const top = views['policy-general'].rank.y3.filter((r) => r.y7 !== null && !seen.has(r.company) && seen.add(r.company)).slice(0, ROWS);
+  const values = top.map((r) => Math.floor(r.y3));
   return {
-    proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> תשואה מצטברת ב־7 שנים, 5 המובילות*`,
-    note: `* מסלול כללי (סיכון בינוני), עד ${periodLabel(period)}, לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד.`,
+    proof: `<b dir="ltr">${Math.min(...values)}%–${Math.max(...values)}%</b> תשואה מצטברת ב־3 שנים, 5 המובילות<span class="pp-star">*</span>`,
+    note: `<span class="pp-star">*</span> מסלול כללי (סיכון בינוני), עד ${periodLabel(period)}, לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד.`,
   };
 }

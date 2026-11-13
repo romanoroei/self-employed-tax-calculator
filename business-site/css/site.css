@@ -1302,3 +1302,38 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   @keyframes hs-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   @keyframes hs-line { from { transform: scaleX(0); } to { transform: none; } }
 }
+
+/* ===== Roei's notes, 2026-11-13 ===== */
+/* the policy slide: the fit check is a modest gold button, joining a link under it, underlined in its words only */
+.policy-fit a { padding: 10px 18px; background: var(--gold); color: var(--navy-deep); font-size: 15px; text-decoration: none; transition: background-color 160ms ease; }
+.policy-fit a:active { transform: scale(.98); }
+@media (hover: hover) and (pointer: fine) { .policy-fit a:hover { background: var(--gold-soft); color: var(--navy-deep); } }
+.policy-join a { text-decoration: none; }
+.policy-join .pj-text { text-decoration: underline; text-decoration-thickness: .08em; text-underline-offset: .25em; }
+/* the asterisk sits a little lower, by the words it belongs to */
+.pp-star { position: relative; top: .22em; }
+@media (max-width: 700px) {
+  .policy-fit a { justify-content: center; padding: 10px 14px; }
+  .policy-join { text-align: center; }
+  .policy-proof { font-size: 13px; }
+}
+
+/* /market-data: every house, four columns and a WhatsApp button per row */
+.yield-full td, .yield-full thead th + th { width: 16%; }
+.yield-full .yield-wa-cell { width: 48px; padding-inline-start: 14px; text-align: end; }
+.yield-wa { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #1FA855; color: #fff; vertical-align: middle; transition: background-color .15s; }
+/* one icon for every row, drawn by CSS so the page does not repeat it */
+.yield-wa::before { content: ""; width: 15px; height: 15px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12.05 2a9.9 9.9 0 0 0-8.53 14.9L2 22l5.25-1.37A9.9 9.9 0 1 0 12.05 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 1 1 6.96 3.86zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06a6.7 6.7 0 0 1-3.32-2.9c-.25-.43.25-.4.71-1.33.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.48a.92.92 0 0 0-.66.31 2.8 2.8 0 0 0-.87 2.07 4.85 4.85 0 0 0 1.02 2.58 11.1 11.1 0 0 0 4.25 3.76c1.58.68 2.2.74 2.99.62.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.08.14-1.18-.06-.1-.22-.16-.47-.29z%22/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12.05 2a9.9 9.9 0 0 0-8.53 14.9L2 22l5.25-1.37A9.9 9.9 0 1 0 12.05 2zm0 18.1a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.2 8.2 0 1 1 6.96 3.86zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06a6.7 6.7 0 0 1-3.32-2.9c-.25-.43.25-.4.71-1.33.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.56-.42h-.48a.92.92 0 0 0-.66.31 2.8 2.8 0 0 0-.87 2.07 4.85 4.85 0 0 0 1.02 2.58 11.1 11.1 0 0 0 4.25 3.76c1.58.68 2.2.74 2.99.62.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.08.14-1.18-.06-.1-.22-.16-.47-.29z%22/%3E%3C/svg%3E") center / contain no-repeat; }
+.yield-wa:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+@media (hover: hover) { .yield-wa:hover { background: #178A45; } }
+@media (max-width: 520px) {
+  .yield-full { font-size: 13px; }
+  .yield-full td, .yield-full thead th + th { width: 15%; }
+  .yield-full thead th { font-size: 12px; }
+  .yield-full .yield-wa-cell { width: 34px; padding-inline-start: 8px; }
+  .yield-wa { width: 24px; height: 24px; }
+  /* room between the figures on a phone */
+  .yield-full td { padding-inline-start: 6px; font-size: 12px; }
+  .market-page .yield-body { padding-inline: 10px; }
+  .market-page .hero-yields { margin-inline: -6px; }
+}

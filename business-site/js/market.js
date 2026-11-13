@@ -314,7 +314,9 @@
   const fundsPanel = tile.querySelector('[data-market-panel="funds"]');
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
-  const COLUMN_RANGE = { y1: 12, y3: 36, y7: 84 };
+  const COLUMN_RANGE = { y1: 12, y3: 36, y5: 60, y7: 84 };
+  const WA_PRODUCTS = { invest: 'קופת גמל להשקעה', study: 'קרן השתלמות', policy: 'פוליסת חיסכון' };
+  const WA_TRACKS = { general: 'כללי', stocks: 'מניות' };
   // "ל־18 החודשים שנבחרו (1.5 שנים)": a point's time is the first day after its month, so the count is the gap in months
   const monthNumber = (t) => { const d = new Date(t); return d.getFullYear() * 12 + d.getMonth(); };
   const yearsWord = (months) => (months === 12 ? 'שנה' : months === 24 ? 'שנתיים' : `${number(months / 12, months % 12 ? 1 : 0)} שנים`);
@@ -406,6 +408,19 @@
   }
 
   fundsPanel.addEventListener('click', (e) => {
+    // /market-data: the WhatsApp button carries what the visitor looked at, and asks Roei to call back about joining
+    const wa = e.target.closest('.yield-wa');
+    if (wa) {
+      const [productId, trackId] = wa.closest('table').dataset.yieldView.split('-');
+      const head = wa.closest('tr').querySelector('th');
+      const company = head.querySelector('[data-yield-row]').textContent.trim();
+      const text = `שלום רועי, ראיתי באתר את טבלת התשואות ואשמח שתחזור אליי לגבי הצטרפות.
+קטגוריה: ${WA_PRODUCTS[productId]}
+מסלול השקעה: ${WA_TRACKS[trackId]}
+קופה: ${company}, ${head.title}`;
+      wa.href = `https://wa.me/972528089808?text=${encodeURIComponent(text)}`;
+      return;
+    }
     if (e.target.closest('.market-ranges, .market-chart, .yield-join')) return;
     const row = e.target.closest('tbody tr');
     if (row && e.target.closest('table[data-yield-view]')) { toggle(row.querySelector('[data-yield-row]').dataset.yieldRow); return; }

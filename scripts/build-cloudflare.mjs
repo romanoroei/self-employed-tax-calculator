@@ -51,7 +51,8 @@ assert(marketTile, 'Missing market tile markers on the home page');
 const marketFile = path.join(output, 'market-data.html');
 const marketSource = await readFile(marketFile, 'utf8');
 assert(marketSource.includes('<!-- market-tile -->'), 'Missing market tile slot');
-await writeFile(marketFile, marketSource.replace('<!-- market-tile -->', marketTile[1].replace('<!-- yields-tile -->', yieldsHtml).replaceAll('href="#contact"', 'href="/#contact"')));
+const marketHtml = marketTile[1].replace('<!-- yields-tile -->', renderYields(yieldsData, { full: true })).replace(/\s*<a class="yield-cta"[\s\S]*?<\/a>/, '').replace('<p class="yield-top5">מוצגות רק 5 החברות המובילות בכל קטגוריה</p>', '<p class="yield-top5">כל החברות בכל קטגוריה. לחיצה על שורה מוסיפה אותה לגרף</p>').replaceAll('href="#contact"', 'href="/#contact"');
+await writeFile(marketFile, marketSource.replace('<!-- market-tile -->', marketHtml));
 // Content versions ensure browsers pick up stylesheet and script updates together.
 // Monthly market reviews: written from business-site/content/market-reviews, published ones only.
 const reviewBuild = await buildReviews(root, output);
