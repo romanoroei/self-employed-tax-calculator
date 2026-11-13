@@ -595,3 +595,29 @@ try {
   };
   new MutationObserver(() => { if (!slide.hidden) run(); }).observe(slide, { attributes: true, attributeFilter: ['hidden'] });
 })();
+
+// ===== Opening hours: "open now", or when Roei will be back, by Israel time =====
+// The hours are those of the Google Business Profile (Sunday to Thursday, 9:00–18:00). Holidays are not
+// worked out here: on a holiday the line may say open. Change OPEN_DAYS and the hours together with Google.
+(() => {
+  const lines = document.querySelectorAll('[data-hours-now]');
+  if (!lines.length) return;
+  const OPEN_DAYS = [0, 1, 2, 3, 4];
+  const OPEN = 9 * 60;
+  const CLOSE = 18 * 60;
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Jerusalem', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' })
+    .formatToParts(new Date()).map((p) => [p.type, p.value]));
+  const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.weekday);
+  const minute = Number(parts.hour) * 60 + Number(parts.minute);
+  const open = OPEN_DAYS.includes(day) && minute >= OPEN && minute < CLOSE;
+  let text;
+  if (open) text = 'פתוח עכשיו';
+  else if (OPEN_DAYS.includes(day) && minute < OPEN) text = 'סגור עכשיו · נחזור אליכם היום מ־9:00';
+  else {
+    let next = (day + 1) % 7;
+    while (!OPEN_DAYS.includes(next)) next = (next + 1) % 7;
+    const name = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'][next];
+    text = `סגור עכשיו · נחזור אליכם ${next === (day + 1) % 7 ? 'מחר' : `ביום ${name}`} מ־9:00`;
+  }
+  lines.forEach((line) => { line.textContent = text; line.classList.toggle('is-open', open); line.hidden = false; });
+})();

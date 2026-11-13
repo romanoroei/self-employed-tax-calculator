@@ -1434,3 +1434,11 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 .market-page { padding-bottom: 12px; }
 .market-page + .art-cta { margin-top: 12px; padding-block: 48px; }
 @media (max-width: 700px) { .market-page + .art-cta { padding-block: 36px; } }
+
+/* opening hours beside the form and in the footer, with the live line (Roei, 2026-11-14) */
+.hours { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 14px; font-size: var(--t-5); line-height: 1.5; color: var(--on-dark-soft); }
+.hours-now { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--on-dark); }
+.hours-now::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #9AA6B2; }
+.hours-now.is-open::before { background: #3FBF7F; box-shadow: 0 0 0 3px rgba(63, 191, 127, .25); }
+.hours-foot { margin-top: 6px; }
+.coupon-say .hours { max-width: none; }
