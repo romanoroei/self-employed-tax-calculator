@@ -1465,3 +1465,6 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 @media (min-width: 901px) { .hero-bg.hero-bg-street { filter: contrast(1.04); opacity: .9; } .hero-bg.hero-bg-board { opacity: .7; } }
 /* the four ways in stay black and white: in colour the gold headings got lost (Roei) */
 .panel-photo img, .about-photo img, .service > img { filter: contrast(1.04); }
+/* phones and tablets: the "about" photo behind the text keeps its colour too (Roei); it was grey through the luminosity blend */
+@media (max-width: 700px) { .about-text::before { background-blend-mode: normal, normal; } }
+@media (min-width: 701px) and (max-width: 1100px) { .about-text { background-blend-mode: normal, normal, normal; } }
