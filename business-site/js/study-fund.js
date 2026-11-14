@@ -1261,7 +1261,7 @@ ${url}`;
     } catch (e) {
     }
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-    location.assign(`${location.pathname}?restart=1#check`);
+    location.assign(`${location.pathname}?restart=1#q`);
   }
   $("#restart").addEventListener("click", restartCalculator);
   $("#stage-restart").addEventListener("click", restartCalculator);
@@ -1273,10 +1273,33 @@ ${url}`;
       sessionStorage.removeItem(FORM_STATE_KEY);
     } catch (e) {
     }
-    history.replaceState(null, "", location.pathname);
+    history.replaceState(null, "", location.pathname + location.hash);
     scrollTo(0, 0);
   }
   trackOnceOrQueue("calculator_started", attributionParameters);
   restoreFormState();
   renderStep(currentStep, false);
+
+  // study-fund-src/ui/screens.js
+  var main = document.querySelector(".sf");
+  function show() {
+    var _a, _b;
+    const screen = location.hash === "#q" ? "quiz" : "intro";
+    if (!main || main.dataset.screen === screen) return;
+    main.dataset.screen = screen;
+    if (screen === "intro") (_a = document.querySelector(".check-heading")) == null ? void 0 : _a.removeAttribute("hidden");
+    scrollTo(0, 0);
+    if (screen === "quiz") (_b = document.querySelector('.step:not([hidden]) input:not([type="radio"]):not([type="checkbox"])')) == null ? void 0 : _b.focus({ preventScroll: true });
+  }
+  addEventListener("hashchange", show);
+  show();
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    const target = link && link.getAttribute("href").length > 1 ? document.getElementById(link.getAttribute("href").slice(1)) : null;
+    if (target && target.tagName === "DETAILS") {
+      event.preventDefault();
+      target.open = true;
+      target.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+    }
+  });
 })();

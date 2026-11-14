@@ -45,7 +45,7 @@
   <a class="tile tile-gold bar-cta" href="/#contact">לשיחת התאמה</a>
 </header>
 
-<main class="sf" id="check">
+<main class="sf" id="check" data-screen="intro">
   <div class="tax-year-status sf-wrap" data-tax-year-status hidden><span></span></div>
 
   <section class="sf-wrap check-heading" aria-labelledby="sf-title">
@@ -54,8 +54,7 @@
         <p class="sf-kicker"><img src="assets/arbitrage-mark.png" width="44" height="28" alt="">בדיקת קרן השתלמות לעצמאים</p>
         <h1 id="sf-title">עצמאי? כמה כדאי לך להפקיד לקרן ההשתלמות השנה?</h1>
         <p class="sf-sub">תוך פחות מדקה תקבל תמונת מצב, תחזית עתידית ופירוט צעדים שכדאי לשקול.</p>
-        <p class="sf-cap"><span>התקרה המוטבת ל־<span data-tax-data-year>2026</span></span><strong>20,566 ₪</strong><small>מתוכם עד 13,203 ₪ מוכרים כהוצאה</small></p>
-        <p class="sf-start-row"><a class="button sf-start" href="#consumer-form">מתחילים בדיקה <span class="arrow" aria-hidden="true">←</span></a><small>ללא הרשמה וללא התחייבות</small></p>
+        <p class="sf-start-row"><a class="button sf-start" href="#q" data-sf-start>מתחילים בדיקה <span class="arrow" aria-hidden="true">←</span></a><small>ללא הרשמה וללא התחייבות</small></p>
       </div>
       <ul class="tile tile-paper2 sf-facts">
         <li><strong>4 שאלות קצרות</strong><span>הכנסה, קרן קיימת, הפקדות השנה ומה חשוב לך.</span></li>
@@ -101,16 +100,16 @@
         <section class="step" data-title="הפקדות השנה" hidden>
           <p class="question-number">הפקדות בשנת <span data-tax-data-year>2026</span></p>
           <h2>כמה הפקדת לקרן שלך השנה?</h2>
-          <p class="question-help">בחר את אופן ההפקדה. אם נדרש סכום, מלא אותו ולחץ על “ממשיכים”.</p>
+          <p class="question-help">בחר את אופן ההפקדה ומלא את הסכום.</p>
           <div class="choice-grid">
             <label class="choice-card"><input type="radio" name="depositMethod" value="none" required><span class="choice-check" aria-hidden="true"></span><span class="choice-copy"><strong>עדיין לא הפקדתי</strong></span></label>
             <label class="choice-card"><input type="radio" name="depositMethod" value="lump"><span class="choice-check" aria-hidden="true"></span><span class="choice-copy"><strong>הפקדתי סכום אחד או יותר</strong></span></label>
             <label class="choice-card"><input type="radio" name="depositMethod" value="monthly"><span class="choice-check" aria-hidden="true"></span><span class="choice-copy"><strong>יש לי הוראת קבע חודשית</strong></span></label>
             <label class="choice-card"><input type="radio" name="depositMethod" value="both"><span class="choice-check" aria-hidden="true"></span><span class="choice-copy"><strong>שילוב של הוראת קבע וסכום חד פעמי</strong></span></label>
           </div>
-          <div class="conditional-fields" id="lump-fields" hidden><div class="field-group"><label for="lumpSum">כמה הפקדת השנה? <span>(סכום חד פעמי)</span></label><div class="money-field"><input id="lumpSum" name="lumpSum" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 2,000"><span>₪</span></div></div></div>
-          <div class="conditional-fields fields-row" id="monthly-fields" hidden><div class="field-group"><label for="monthlyDeposit">כמה מופקד בהוראת קבע בכל חודש?</label><div class="money-field"><input id="monthlyDeposit" name="monthlyDeposit" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 500"><span>₪</span></div><p class="field-error" aria-hidden="true"></p></div><div class="field-group"><label for="monthsDeposited">כמה חודשים הופקדו מתחילת השנה?</label><input id="monthsDeposited" name="monthsDeposited" type="number" min="1" max="12" step="1" inputmode="numeric" placeholder="1–12" aria-describedby="months-deposited-error"><p class="field-error" id="months-deposited-error"></p></div></div>
-          <div class="balance-forecast-card conditional-fields existing-balance-field"><div class="field-group"><label for="existingBalance">רוצה תחזית גם על הצבירה הקיימת? <span>מה הצבירה הנוכחית בקרן (לא חובה)</span></label><div class="money-field"><input id="existingBalance" name="existingBalance" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 100,000"><span>₪</span></div></div></div>
+          <div class="conditional-fields" id="lump-fields" hidden><div class="field-group"><label for="lumpSum">כמה הפקדת השנה? <span>(חד פעמי)</span></label><div class="money-field"><input id="lumpSum" name="lumpSum" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 2,000"><span>₪</span></div></div></div>
+          <div class="conditional-fields fields-row" id="monthly-fields" hidden><div class="field-group"><label for="monthlyDeposit">הוראת קבע לחודש</label><div class="money-field"><input id="monthlyDeposit" name="monthlyDeposit" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 500"><span>₪</span></div><p class="field-error" aria-hidden="true"></p></div><div class="field-group"><label for="monthsDeposited">כמה חודשים הופקדו?</label><input id="monthsDeposited" name="monthsDeposited" type="number" min="1" max="12" step="1" inputmode="numeric" placeholder="1–12" aria-describedby="months-deposited-error"><p class="field-error" id="months-deposited-error"></p></div></div>
+          <div class="balance-forecast-card conditional-fields existing-balance-field"><div class="field-group"><label for="existingBalance">צבירה קיימת בקרן <span>(לא חובה, לתחזית)</span></label><div class="money-field"><input id="existingBalance" name="existingBalance" inputmode="numeric" autocomplete="off" placeholder="לדוגמה: 100,000"><span>₪</span></div></div></div>
           <p class="deposit-preview" id="deposit-preview" hidden><span></span></p>
         </section>
 
@@ -137,7 +136,7 @@
         <div><dt>הכנסה</dt><dd id="summary-income">טרם הוזנה</dd></div>
         <div><dt>הופקד השנה</dt><dd id="summary-deposited">טרם הוזן</dd></div>
         <div><dt>צבירה קיימת</dt><dd id="summary-balance">טרם הוזנה</dd></div>
-        <div><dt>מצב הקרן</dt><dd id="summary-fund">טרם נבחר</dd></div>
+        <div class="sum-fund"><dt>מצב הקרן</dt><dd id="summary-fund">טרם נבחר</dd></div>
       </dl>
       <p>הנתונים נשארים בדפדפן שלך.</p>
       <button id="stage-restart" type="button" class="stage-restart">נקה והתחל מחדש</button>
@@ -147,7 +146,14 @@
   <section class="sf-wrap sf-seo" aria-labelledby="seo-title">
     <div class="tile tile-paper2 sf-seo-tile">
       <h2 id="seo-title">מה תקבל בסיום הבדיקה?</h2>
-      <p>הבדיקה מציגה את הטבות המס לשנת <span data-tax-data-year>2026</span>, תמונת מצב של כמה עוד ניתן להפקיד והאם מתאימה הפקדה חודשית או חד־פעמית, תחזית עתידית ופירוט צעדים שכדאי לשקול. בסיום אפשר לשלוח לי את התוצאה ולעבור עליה יחד. החישוב הוא הערכה כללית בלבד ואינו ייעוץ מס.</p>
+      <ul class="sf-gets">
+        <li><span><strong>כמה עוד אפשר להפקיד</strong> עד סוף <span data-tax-data-year>2026</span>, אחרי מה שכבר הפקדת</span></li>
+        <li><span><strong>שווי הטבות המס</strong>: מס הכנסה, ביטוח לאומי ופטור ממס רווחי הון</span></li>
+        <li><span><strong>איך להשלים</strong>: הפקדה חד־פעמית, הוראת קבע או שילוב</span></li>
+        <li><span><strong>תחזית</strong>: לכמה ההפקדה יכולה לצמוח בעוד 6 עד 20 שנה</span></li>
+        <li><span><strong>תכנית פעולה קצרה</strong>, ואפשרות לשלוח לי את התוצאה ולעבור עליה יחד</span></li>
+      </ul>
+      <p class="sf-note">החישוב הוא הערכה כללית בלבד ואינו ייעוץ מס.</p>
       <div class="faq-list sf-faq">
         <details class="fold faq-item"><summary><h3>כמה עצמאי יכול להפקיד לקרן השתלמות בשנת 2026?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p><strong>אין תקרת הפקדה בפועל</strong>, אלא רק מגבלות על הטבות המס.</p><p><strong>13,203 ₪</strong> — מקסימום הוצאה מוכרת.</p><p><strong>20,566 ₪</strong> — מקסימום הפקדה שנהנית גם מפטור ממס רווחי הון.</p></div></details>
         <details class="fold faq-item"><summary><h3>כמה מההפקדה מוכר כהוצאה?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>בשנת 2026, ההפקדה המוכרת כהוצאה לעצמאי היא עד 4.5% מההכנסה החייבת.</p><p>ההכנסה לצורך החישוב מוגבלת ל־293,397 ₪ בשנה.</p><p>לכן, <strong>סכום ההוצאה המוכרת המרבי הוא 13,203 ₪ בשנה</strong> (4.5% × 293,397 ₪).</p></div></details>
@@ -176,142 +182,122 @@
           <h2 id="result-title"></h2>
           <p id="result-message"></p>
         </div>
-        <div class="deadline-inline" id="tax-countdown"><strong id="countdown-heading">נותרו <span id="countdown-days"></span> ימים עד סוף שנת המס <span data-tax-data-year>2026</span></strong><span id="countdown-copy">כדאי להיערך מראש ולא לחכות לימים האחרונים של דצמבר.</span></div>
+        <p class="deadline-inline" id="tax-countdown"><strong id="countdown-heading">נותרו <span id="countdown-days"></span> ימים עד סוף שנת המס <span data-tax-data-year>2026</span></strong> <span id="countdown-copy">כדאי להיערך מראש ולא לחכות לימים האחרונים של דצמבר.</span></p>
       </div>
 
       <div class="board result-metrics result-metrics--essential">
         <article class="tile tile-paper2 result-card">
-          <span>זה הסכום שעוד ניתן להפקיד עד סוף <span data-tax-data-year>2026</span></span>
+          <span>עוד אפשר להפקיד עד סוף <span data-tax-data-year>2026</span></span>
           <strong id="remaining"></strong>
-          <div class="deposit-mini" id="deposit-mini"><span>הופקד השנה <b id="deposited-to-date"></b></span><span id="projected-deposit-row">צפוי עד סוף השנה כולל הוראת קבע <b id="projected-annual"></b><small id="future-scheduled"></small></span></div>
+          <div class="deposit-mini" id="deposit-mini"><span>הופקד השנה <b id="deposited-to-date"></b></span><span id="projected-deposit-row">צפוי עד סוף השנה <b id="projected-annual"></b><small id="future-scheduled"></small></span></div>
         </article>
         <a class="tile tile-gold result-card benefit-details-link" href="#benefit-breakdown" aria-label="מעבר לפירוט שווי הטבות המס">
-          <span>שווי הטבות המס הכולל (אומדן)</span>
+          <span>שווי הטבות המס (אומדן)</span>
           <strong id="tax-benefit"></strong>
-          <small>בהתאם למיקסום ההפקדה.</small>
-          <span class="benefit-jump">איך אני מקבל את הכסף? <span aria-hidden="true">↓</span></span>
+          <span class="benefit-jump">איך זה מורכב? <span aria-hidden="true">↓</span></span>
         </a>
       </div>
 
-      <section class="tile tile-paper2 sf-block benefit-breakdown" id="benefit-breakdown" aria-labelledby="benefit-title">
-        <p class="sf-label">פירוט שווי הטבות המס הכולל (אומדן): <strong id="benefit-total-repeat"></strong></p>
-        <h3 id="benefit-title">כך מורכב הסכום שראית למעלה</h3>
-        <p class="sf-note">הסכומים מוצגים בנפרד כדי להבחין בין חיסכון אפשרי כיום לבין שווי פטור עתידי.</p>
-        <div class="benefit-grid">
-          <article><strong id="income-tax-benefit"></strong><span>חיסכון אפשרי במס הכנסה</span><small id="income-tax-note">על ההפקדה השנתית המוכרת במיקסום התקרה.</small></article>
-          <article><strong id="insurance-benefit"></strong><span>חיסכון אפשרי בביטוח לאומי ובריאות</span><small>אומדן לפי שיעורי עצמאי <span data-tax-data-year>2026</span> ובהנחה שהניכוי מפחית את ההכנסה המבוטחת.</small></article>
-          <article><strong id="capital-gains-benefit"></strong><span>שווי עתידי משוער של הפטור ממס רווחי הון</span><small>על מלוא ההפקדה עד התקרה, בהנחת 8% לשנה במשך 6 שנים ומס של 25% על הרווח.</small></article>
-        </div>
-        <p class="sf-note benefit-warning">האומדן הכולל מחבר רכיבים במועדים שונים: מס הכנסה וביטוח לאומי/בריאות עשויים להשפיע כיום, ואילו הפטור ממס רווחי הון הוא שווי עתידי משוער.</p>
+      <section class="tile tile-ink whatsapp-card">
+        <div class="advisor-mini"><img src="assets/img/roei-2.jpg" width="720" height="853" alt=""><h3 id="dynamic-cta"></h3></div>
+        <p class="whatsapp-copy">שלחו לי את התוצאה ונעבור עליה יחד. ללא עלות וללא התחייבות.</p>
+        <a id="whatsapp" class="button sf-wa" target="_blank" rel="noopener"><span class="desktop-label">שליחת התוצאה ובקשת שיחה ללא עלות</span><span class="mobile-label">שליחת התוצאה לרועי</span></a>
+        <span id="whatsapp-status" class="whatsapp-status" aria-live="polite"></span>
       </section>
 
-      <div class="board sf-pair">
-        <section class="tile tile-paper sf-block preparedness-score" id="preparedness-score">
-          <div class="score-summary">
-            <div class="score-gauge" id="score-gauge"><strong id="score"></strong><span>/100</span></div>
-            <div>
-              <h3>ציון ההיערכות שלך לקרן ההשתלמות</h3>
-              <p id="score-meaning"></p>
-              <ul id="score-components"></ul>
-            </div>
-          </div>
-          <p class="sf-note">הציון משקף רק את מצב ההפקדות וההיערכות שהוזנו. הוא אינו בוחן את איכות הקרן, התשואות או דמי הניהול.</p>
-        </section>
-        <section class="tile tile-paper sf-block action-plan-card" id="action-plan-section">
-          <p class="sf-label">הצעדים הבאים</p>
-          <h3>תוכנית הפעולה הראשונית שלך</h3>
+      <p class="sf-pick">רוצים להעמיק? פתחו רק את מה שמעניין אתכם</p>
+      <details class="tile tile-paper2 fold sf-fold" id="action-plan-section">
+        <summary><span class="sf-fold-head"><h3>תוכנית הפעולה שלך</h3><small>הצעדים הבאים, לפי מה שענית</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
           <div class="goal-context" id="goal-context" hidden><div class="goal-highlights" id="goal-highlights"></div><p id="goal-context-copy"></p></div>
           <ol id="recommendation-steps" class="recommendation-steps"></ol>
           <details class="more-recommendations" id="more-recommendations" hidden><summary>הצג צעדים נוספים</summary><ol id="additional-recommendation-steps" class="recommendation-steps"></ol></details>
           <p class="sf-note">המידע הוא הערכה כללית ואינו תחליף לייעוץ מס או לייעוץ פנסיוני אישי.</p>
-        </section>
-      </div>
-
-      <section class="tile tile-ink whatsapp-card">
-        <div class="advisor-mini"><img src="assets/img/roei-2.jpg" width="720" height="853" alt=""><span><strong>רועי רומנו</strong><small>מתכנן פיננסי</small></span></div>
-        <div class="whatsapp-copy">
-          <h3 id="dynamic-cta"></h3>
-          <p>אפשר לשלוח את התוצאה שכבר קיבלת ולעבור עליה יחד בשיחה ראשונית. הפנייה מגיעה ישירות לרועי.</p>
-          <span id="whatsapp-status" class="whatsapp-status" aria-live="polite"></span>
         </div>
-        <div class="cta-actions">
-          <a id="whatsapp" class="button sf-wa" target="_blank" rel="noopener"><span class="desktop-label">שליחת התוצאה ובקשת שיחה ללא עלות</span><span class="mobile-label">שליחת התוצאה לשיחה ללא עלות</span></a>
-          <small>ללא עלות וללא התחייבות. אין חובה לפתוח מוצר, להעביר קרן או לבצע שינוי. אם בהמשך יוצע שירות בתשלום, הוא יוצג ויוסכם מראש.</small>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="benefit-breakdown">
+        <summary><span class="sf-fold-head"><h3>כך מורכבת הטבת המס</h3><small>סה״כ <b id="benefit-total-repeat"></b>, בשלושה רכיבים</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <div class="benefit-grid">
+            <article><strong id="income-tax-benefit"></strong><span>חיסכון אפשרי במס הכנסה</span><small id="income-tax-note">על ההפקדה השנתית המוכרת במיקסום התקרה.</small></article>
+            <article><strong id="insurance-benefit"></strong><span>חיסכון אפשרי בביטוח לאומי ובריאות</span><small>לפי שיעורי עצמאי <span data-tax-data-year>2026</span>, בהנחה שהניכוי מפחית את ההכנסה המבוטחת.</small></article>
+            <article><strong id="capital-gains-benefit"></strong><span>שווי עתידי של הפטור ממס רווחי הון</span><small>בהנחת 8% לשנה במשך 6 שנים ומס של 25% על הרווח.</small></article>
+          </div>
+          <p class="sf-note">מס הכנסה וביטוח לאומי משפיעים כבר השנה; הפטור ממס רווחי הון הוא שווי עתידי משוער.</p>
         </div>
-      </section>
-
-      <section class="tile tile-paper2 sf-block growth-card" id="growth-scenarios">
-        <div class="section-header">
-          <div><p class="sf-label">תחזית קדימה</p><h3>מה ההפקדה של השנה יכולה להפוך להיות בעתיד?</h3><p class="sf-note">המחשה של השפעת החיסכון לאורך זמן. לחצו על מסלול לגרף ולטבלה.</p></div>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="growth-scenarios">
+        <summary><span class="sf-fold-head"><h3>כמה זה יכול להיות שווה בעתיד</h3><small>שלושה מסלולים, 6 עד 20 שנה</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
           <div class="year-segments" role="group" aria-label="בחירת תקופה בשנים"><button type="button" data-years="6">6</button><button type="button" data-years="10" class="is-active">10</button><button type="button" data-years="15">15</button><button type="button" data-years="20">20</button><span>שנים</span></div>
+          <div id="scenario-list" class="scenario-grid"></div>
+          <section id="growth-detail" class="growth-detail" hidden aria-live="polite">
+            <h4 id="growth-detail-title"></h4>
+            <svg id="growth-chart" class="growth-chart" viewBox="0 0 760 270" role="img" aria-label="גרף צמיחת שווי הקרן לפי שנים"></svg>
+            <div class="growth-table-wrap"><table><thead><tr><th>תקופה</th><th>צבירה התחלתית</th><th>הפקדות מצטברות</th><th>רווח משוער</th><th>שווי כולל</th></tr></thead><tbody id="growth-table-body"></tbody></table></div>
+          </section>
+          <p class="sf-note growth-notice"></p>
         </div>
-        <div id="scenario-list" class="scenario-grid"></div>
-        <section id="growth-detail" class="growth-detail" hidden aria-live="polite">
-          <p class="sf-label">פירוט התרחיש</p><h4 id="growth-detail-title"></h4>
-          <svg id="growth-chart" class="growth-chart" viewBox="0 0 760 270" role="img" aria-label="גרף צמיחת שווי הקרן לפי שנים"></svg>
-          <div class="growth-table-wrap"><table><thead><tr><th>תקופה</th><th>צבירה התחלתית</th><th>הפקדות מצטברות</th><th>רווח משוער</th><th>שווי כולל</th></tr></thead><tbody id="growth-table-body"></tbody></table></div>
-        </section>
-        <p class="sf-note growth-notice"></p>
-      </section>
-
-      <div class="board sf-checks">
-        <section class="tile tile-paper sf-block" id="pre-deposit-checks">
-          <p class="sf-label">לפני שמפקידים כדאי לבדוק</p>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="preparedness-score">
+        <summary><span class="sf-fold-head"><h3>ציון ההיערכות שלך</h3><small>עד כמה ההפקדות שלך מסודרות לשנת המס</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <div class="score-summary">
+            <div class="score-gauge" id="score-gauge"><strong id="score"></strong><span>/100</span></div>
+            <div><p id="score-meaning"></p><ul id="score-components"></ul></div>
+          </div>
+          <p class="sf-note">הציון משקף רק את מצב ההפקדות שהוזנו. הוא אינו בוחן את איכות הקרן, התשואות או דמי הניהול.</p>
+        </div>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="pre-deposit-checks">
+        <summary><span class="sf-fold-head"><h3>לפני שמפקידים כדאי לבדוק</h3><small>ומה המחשבון לא יודע עליך</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
           <ul class="sf-list">
             <li><strong>תזרים פנוי</strong><span>שההפקדה אינה מכבידה על ההוצאות וההתחייבויות הקרובות.</span></li>
             <li><strong id="fund-check-title">הקרן הקיימת</strong><span id="fund-check-copy"></span></li>
             <li><strong>מסלול השקעה</strong><span>האם רמת הסיכון מתאימה לטווח ולמטרות שלך.</span></li>
             <li><strong>מוטבים</strong><span>שהפרטים האישיים והמוטבים מעודכנים אצל הגוף המנהל.</span></li>
           </ul>
-        </section>
-        <section class="tile tile-slate sf-block advisor-value" id="advisor-value">
-          <p class="sf-label">המחשבון לא מכיר אותך</p>
-          <h3>אז מה נכון עבורך?</h3>
-          <p>המחשבון מציג את תמונת ההפקדה. בשיחה אפשר לבדוק גם את הדברים שהמחשבון לא יכול לבחון לבד.</p>
+          <p class="sf-sub-h">בשיחה אפשר לבדוק גם:</p>
           <ul id="advisor-checks" class="sf-ticks"></ul>
-        </section>
-      </div>
-
-      <details class="tile tile-paper2 fold sf-block fund-knowledge" id="fund-knowledge">
-        <summary><h3>מידע חשוב על קרן השתלמות לעצמאים</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <div class="knowledge-grid">
-          <article><strong>חיסכון לעצמאים</strong><span>אפיק חיסכון והשקעה הוני לעצמאים לטווח הבינוני והארוך (עוסק מורשה/פטור/זעיר).</span></article>
-          <article><strong>נזילות אחרי 6 שנים</strong><span>הכספים נעשים נזילים לאחר 6 שנים, או מוקדם יותר בתנאים מסוימים.</span></article>
-          <article><strong>מעבר ללא אירוע מס</strong><span>אפשר לעבור מנהל השקעות או לשנות מסלול, תוך שמירה על הזכויות בקרן.</span></article>
-          <article><strong>הלוואה על חשבון הקרן</strong><span>ניתן לקבל הלוואה לכל מטרה (כפוף לתנאי החברה) בריבית אטרקטיבית, בלי לפדות את החיסכון ובלי לפגוע ברווחים ובוותק.</span></article>
-          <article><strong>השקעה בשוק ההון</strong><span>כספי הקרן מושקעים בהתאם למסלול ולרמת הסיכון שנבחרו.</span></article>
-          <article><strong>גם שכיר וגם עצמאי?</strong><span>ניתן ליהנות מפטור ממס רווחי הון בשתי הקרנות, בכפוף לתקרות.</span></article>
         </div>
       </details>
-
-      <details class="tile tile-paper2 fold sf-block calculation-details" id="calculation-details-panel">
-        <summary><h3>איך חישבתי את הטבות המס שלך?</h3><span class="fold-icon" aria-hidden="true"></span></summary>
-        <div id="calculation-details"></div>
-        <p class="sf-note"><strong>החישוב הוא אומדן להמחשה בלבד ואינו מהווה ייעוץ מס, שיווק פנסיוני או תחליף לבדיקה אישית מול בעל מקצוע.</strong></p>
+      <details class="tile tile-paper2 fold sf-fold" id="fund-knowledge">
+        <summary><span class="sf-fold-head"><h3>מידע חשוב על קרן השתלמות לעצמאים</h3><small>נזילות, הלוואות, מעבר בין קרנות</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <ul class="sf-list">
+            <li><strong>חיסכון לעצמאים</strong><span>אפיק חיסכון והשקעה הוני לטווח הבינוני והארוך (עוסק מורשה/פטור/זעיר).</span></li>
+            <li><strong>נזילות אחרי 6 שנים</strong><span>או מוקדם יותר בתנאים מסוימים.</span></li>
+            <li><strong>מעבר ללא אירוע מס</strong><span>אפשר לעבור מנהל השקעות או מסלול, תוך שמירה על הזכויות בקרן.</span></li>
+            <li><strong>הלוואה על חשבון הקרן</strong><span>לכל מטרה (כפוף לתנאי החברה), בלי לפדות את החיסכון ובלי לפגוע ברווחים ובוותק.</span></li>
+            <li><strong>השקעה בשוק ההון</strong><span>לפי המסלול ורמת הסיכון שנבחרו.</span></li>
+            <li><strong>גם שכיר וגם עצמאי?</strong><span>אפשר ליהנות מפטור ממס רווחי הון בשתי הקרנות, בכפוף לתקרות.</span></li>
+          </ul>
+        </div>
       </details>
-
-      <section class="tile tile-ink sf-block contact-process" id="contact-process">
-        <p class="sf-label">התאמה אישית</p>
-        <h3>מה קורה לאחר שליחת ההודעה?</h3>
-        <ol>
-          <li><strong>התוצאה נשלחת לרועי</strong><span>בצירוף הסיכום שכבר ראית כאן.</span></li>
-          <li><strong>עוברים על הנתונים</strong><span>ומוודאים שהמשמעות ברורה.</span></li>
-          <li><strong>בודקים אם נדרש צעד נוסף</strong><span>למשל הפקדה, מסלול או דמי ניהול.</span></li>
-          <li><strong>הבחירה נשארת שלך</strong><span>בהתאם לשיחה אמליץ מה נכון לבצע.</span></li>
-        </ol>
-        <a id="whatsapp-secondary" class="button sf-wa contact-process__whatsapp" target="_blank" rel="noopener">שליחת התוצאה לרועי</a>
-      </section>
-
-      <div class="tile tile-paper2 result-actions">
-        <div class="share-prompt"><strong>מכירים עצמאי שהבדיקה יכולה לעזור לו?</strong><span>שתפו את הבדיקה ב־WhatsApp, בלי הנתונים או התוצאה האישית שלכם.</span></div>
-        <a id="share-benefits" class="button button-ink share-link" target="_blank" rel="noopener">שיתוף ב־WhatsApp</a>
-        <button id="restart" type="button" class="restart-link">ניקוי הנתונים והתחלה מחדש</button>
-      </div>
-
-      <section class="tile tile-paper results-faq" id="results-faq" aria-labelledby="results-faq-title">
-        <p class="sf-label">מידע שימושי</p>
-        <h2 id="results-faq-title">שאלות נפוצות ששואלים אותי על קרן השתלמות לעצמאים</h2>
-        <div class="faq-list results-faq__list" id="results-faq-list">
+      <details class="tile tile-paper2 fold sf-fold calculation-details" id="calculation-details-panel">
+        <summary><span class="sf-fold-head"><h3>איך חישבתי את הטבות המס שלך?</h3><small>הנתונים וההנחות של החישוב</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <div id="calculation-details"></div>
+          <p class="sf-note"><strong>החישוב הוא אומדן להמחשה בלבד ואינו ייעוץ מס, שיווק פנסיוני או תחליף לבדיקה אישית.</strong></p>
+        </div>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="contact-process">
+        <summary><span class="sf-fold-head"><h3>מה קורה אחרי שליחת ההודעה?</h3><small>ארבעה שלבים, והבחירה נשארת שלך</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <ol class="sf-steps">
+            <li><strong>התוצאה נשלחת לרועי</strong><span>בצירוף הסיכום שראית כאן.</span></li>
+            <li><strong>עוברים על הנתונים</strong><span>ומוודאים שהמשמעות ברורה.</span></li>
+            <li><strong>בודקים אם נדרש צעד נוסף</strong><span>למשל הפקדה, מסלול או דמי ניהול.</span></li>
+            <li><strong>הבחירה נשארת שלך</strong><span>בהתאם לשיחה אמליץ מה נכון לבצע.</span></li>
+          </ol>
+          <a id="whatsapp-secondary" class="button sf-wa contact-process__whatsapp" target="_blank" rel="noopener">שליחת התוצאה לרועי</a>
+        </div>
+      </details>
+      <details class="tile tile-paper2 fold sf-fold" id="results-faq">
+        <summary><span class="sf-fold-head"><h3>שאלות נפוצות על קרן השתלמות לעצמאים</h3><small>30 תשובות קצרות</small></span><span class="fold-icon" aria-hidden="true"></span></summary>
+        <div class="sf-fold-body">
+          <div class="results-faq__list" id="results-faq-list">
           <details class="fold faq-item"><summary><h3>מהי קרן השתלמות לעצמאים?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>קרן השתלמות היא אפיק חיסכון והשקעה שמאפשר לעצמאים להפקיד כסף, ליהנות מהטבות מס אפשריות ומהשקעה מקצועית ולמשוך את הכספים לאחר תקופת הוותק הקבועה בחוק, בכפוף לתנאים.</p></div></details>
           <details class="fold faq-item"><summary><h3>מי יכול לפתוח קרן השתלמות לעצמאים?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>עצמאי שיש לו הכנסה מעסק או ממשלח יד יכול בדרך כלל לפתוח קרן השתלמות במעמד עצמאי ולהפקיד אלי בהתאם לתקרות המס הרלוונטיות.</p></div></details>
           <details class="fold faq-item"><summary><h3>האם עצמאי חייב להפקיד לקרן השתלמות?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>לא. בניגוד להפקדה לפנסיה, הפקדה לקרן השתלמות אינה חובה. עם זאת, עבור עצמאים רבים היא יכולה להיות כלי חיסכון יעיל בזכות הטבות המס והאפשרות לחיסכון לטווח בינוני וארוך.</p></div></details>
@@ -342,18 +328,20 @@
           <details class="fold faq-item"><summary><h3>האם המחשבון באתר מחליף רואה חשבון או ייעוץ פנסיוני?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>לא. המחשבון נותן הערכה כללית לפי הנתונים שהוזנו.</p><p>הוא אינו בודק את מלוא נתוני המס, הקרן, המסלול, הזכאות ודמי הניהול, או את המצב הפיננסי הכולל.</p></div></details>
           <details class="fold faq-item"><summary><h3>מה כדאי לבדוק לפני שמבצעים הפקדה?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>לפני ההפקדה כדאי לבדוק:</p><ul><li>האם קיימת זכאות לפתיחת קרן השתלמות.</li><li>מהי ההכנסה החייבת המשוערת.</li><li>כמה כבר הופקד השנה.</li><li>מהי התקרה הרלוונטית.</li><li>האם הקרן והמסלול מתאימים.</li><li>מה גובה דמי הניהול.</li><li>האם ההפקדה מתאימה לתזרים.</li><li>האם קיימות קרנות נוספות שכדאי לבדוק.</li></ul></div></details>
           <details class="fold faq-item"><summary><h3>האם הבדיקה והשיחה עם רועי הן ללא עלות?</h3><span class="fold-icon" aria-hidden="true"></span></summary><div><p>כן. המעבר על התוצאה והשיחה הראשונית עם רועי הם ללא עלות וללא התחייבות.</p><p>אין חובה לפתוח מוצר, להעביר קרן או לבצע שינוי.</p><p>אם בהמשך יוצע שירות אחר בתשלום, הוא יוצג ויוסכם מראש לפני ביצוע פעולה.</p></div></details>
+          </div>
+          <div class="results-faq__more">
+            <button id="faq-load-more" class="button button-ink" type="button" aria-controls="results-faq-list" aria-expanded="false"><span id="faq-load-more-label">עוד שאלות נפוצות</span></button>
+            <small id="faq-progress" aria-live="polite"></small>
+          </div>
+          <p class="sf-note">נשארה שאלה? <a id="faq-whatsapp" class="link" target="_blank" rel="noopener">כתבו לי בוואטסאפ</a></p>
         </div>
-        <div class="results-faq__more">
-          <button id="faq-load-more" class="button button-ink" type="button" aria-controls="results-faq-list" aria-expanded="false"><span id="faq-load-more-label">עוד שאלות נפוצות</span></button>
-          <small id="faq-progress" aria-live="polite"></small>
-        </div>
-      </section>
+      </details>
 
-      <section class="tile tile-gold faq-contact">
-        <h2>נשארה שאלה? אפשר לשאול אותי ישירות</h2>
-        <a id="faq-whatsapp" class="button button-ink" target="_blank" rel="noopener">יצירת קשר עם רועי בוואטסאפ</a>
-      </section>
-      <button id="back-to-top" class="back-to-top" type="button">חזרה לראש העמוד <span aria-hidden="true">↑</span></button>
+      <div class="result-actions">
+        <a id="share-benefits" class="share-link link" target="_blank" rel="noopener">שיתוף הבדיקה בוואטסאפ</a>
+        <button id="restart" type="button" class="restart-link">בדיקה חדשה</button>
+        <button id="back-to-top" class="back-to-top" type="button">לראש העמוד <span aria-hidden="true">↑</span></button>
+      </div>
     </div>
   </section>
 </main>

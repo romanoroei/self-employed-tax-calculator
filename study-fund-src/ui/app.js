@@ -781,7 +781,7 @@ $('#share-benefits').addEventListener('click', () => trackEvent('share_clicked',
 function restartCalculator() {
   try { sessionStorage.removeItem(FORM_STATE_KEY); sessionStorage.removeItem('consumer_event_calculator_completed'); sessionStorage.removeItem('consumer_event_calculator_started'); } catch { /* Ignore unavailable storage. */ }
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  location.assign(`${location.pathname}?restart=1#check`);
+  location.assign(`${location.pathname}?restart=1#q`);
 }
 $('#restart').addEventListener('click', restartCalculator);
 $('#stage-restart').addEventListener('click', restartCalculator);
@@ -790,7 +790,7 @@ $('#back-to-top').addEventListener('click', () => {
 });
 if (new URLSearchParams(location.search).has('restart')) {
   try { sessionStorage.removeItem(FORM_STATE_KEY); } catch { /* Ignore unavailable storage. */ }
-  history.replaceState(null, '', location.pathname);
+  history.replaceState(null, '', location.pathname + location.hash);
   scrollTo(0, 0);
 }
 trackOnceOrQueue('calculator_started', attributionParameters);
