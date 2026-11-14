@@ -60,7 +60,7 @@ const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
 const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,14+reviewPages.length,'Sitemap must include all fourteen canonical pages and every published review');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,15+reviewPages.length,'Sitemap must include all fifteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check is reached by its own campaign link only: not in the sitemap, linked from no other page, no Google Analytics
@@ -89,7 +89,7 @@ assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing o
 const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
-for(const page of ['index.html','market-data.html','compass.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
+for(const page of ['index.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
 assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');
@@ -103,7 +103,12 @@ assert(cjs.ui.includes('cfg.productionHosts.includes(location.hostname)'),'Compa
 for(const t of [compass,...Object.values(cjs)])assert(!/googletagmanager|gtag\(|G-9GFDYS61G9|google-analytics/i.test(t),'No Google Analytics on the compass');
 const countSrc=await readFile(path.resolve('functions/api/count.js'),'utf8');
 const LABEL=new RegExp(countSrc.match(/const LABEL = \/(.+)\/;/)[1]);
-const labels=['strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other','review:hub','review:view-2026-10','review:cta-2026-10','review:copy-2026-10','review:from-whatsapp-2026-10','review:from-other-2027-01','share:review-2026-10','fc:view-direct','fc:view-partner01','fc:start-other','fc:sent-direct','fc:route-invest','fc:route-unsure','fc:exit-need','fc:exit-d_study_interest','fc:result-general','fc:form','fc:fail','fc:restart','fc:edit','fc:site-top','fc:site-success',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
+const labels=['study:start','study:done','study:whatsapp','study:share','strip:compass','compass:start','compass:resume','compass:done','compass:limited','compass:whatsapp','compass:calculator','compass:share','compass:form','compass:utm-tiktok','compass:utm-other','review:hub','review:view-2026-10','review:cta-2026-10','review:copy-2026-10','review:from-whatsapp-2026-10','review:from-other-2027-01','share:review-2026-10','fc:view-direct','fc:view-partner01','fc:start-other','fc:sent-direct','fc:route-invest','fc:route-unsure','fc:exit-need','fc:exit-d_study_interest','fc:result-general','fc:form','fc:fail','fc:restart','fc:edit','fc:site-top','fc:site-success',...[1,2,3,4,5,6].flatMap(n=>['compass:pick-'+n,'compass:primary-'+n]),...[2,3,4,5].map(n=>'compass:stage-'+n),...['fast','mid','slow'].map(t=>'compass:time-'+t)];
 for(const l of labels)assert(LABEL.test(l),'Counter label not whitelisted: '+l);
 assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody')&&!LABEL.test('review:view-2026-13')&&!LABEL.test('review:from-roei-2026-10')&&!LABEL.test('review:view-972528089808')&&!LABEL.test('fc:view-0528089808')&&!LABEL.test('fc:result-A')&&!LABEL.test('fc:exit-x'),'Counter whitelist too loose');
+// The study fund check: on the site's own address, linked from the knowledge page and the self-employed guide, no Google Analytics.
+{const sf=await readFile(path.join(root,'study-fund.html'),'utf8');const sfjs=await readFile(path.join(root,'js/study-fund.js'),'utf8');
+for(const t of [sf,sfjs])assert(!/googletagmanager|gtag\(|G-XF5X2QLB8L|G-9GFDYS61G9|google-analytics/i.test(t),'No Google Analytics on the study fund check');
+assert(sf.includes('src="js/study-fund.js')&&sfjs.includes('972528089808'),'The study fund check needs its script and the WhatsApp number');
+for(const page of ['knowledge.html','self-employed.html']){const t=await readFile(path.join(root,page),'utf8');assert(t.includes('href="/study-fund"')&&!t.includes('KerenHeshtalmut'),'Link the study fund check on the site, not on GitHub Pages: '+page);}}
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);
