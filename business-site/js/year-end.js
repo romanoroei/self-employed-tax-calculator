@@ -8,3 +8,11 @@
   const k = card.querySelector('.kn-k');
   if (k) k.insertAdjacentHTML('beforeend', ' <span class="ye-tag">סוף שנה</span>');
 })();
+// Year-end offers (e.g. the Hachshara fee offer) carry data-until and disappear on their own once that moment passes.
+(() => {
+  const now = new Date();
+  document.querySelectorAll('[data-until]').forEach(el => {
+    const until = new Date(el.getAttribute('data-until'));
+    if (!isNaN(until) && now >= until) el.remove();
+  });
+})();

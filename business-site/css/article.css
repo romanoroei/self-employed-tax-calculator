@@ -206,8 +206,17 @@
   .hp-board .logo-tile:hover .logo { opacity: 0; transform: none; }
   .hp-board .logo-tile:hover img { opacity: 1; }
 }
-/* year-end offer above the title */
-.hp-promo { margin: 0 0 18px; }
-.hp-promo a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--gold); color: var(--navy); font-size: var(--t-5); font-weight: 700; text-decoration: none; transition: background-color 160ms ease; }
-.hp-promo strong { font-weight: 900; }
-.hp-promo a:hover { background: #d8c789; }
+/* year-end offer: a red stamp like Hachshara's own ads; everything marked data-until is removed by js/year-end.js after 31.12 */
+.hp-stamp { display: inline-block; padding: 6px 16px; background: #E1251B; color: #fff; font-weight: 900; line-height: 1.3; letter-spacing: .01em; transform: rotate(-3deg); box-shadow: inset 0 0 0 2px #fff, 0 0 0 3px #B5141B; }
+.hp-promo { margin: 0 0 22px; }
+.hp-promo a { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; color: var(--ink); text-decoration: none; font-size: var(--t-5); font-weight: 700; }
+.hp-promo .hp-stamp { font-size: 17px; }
+.hp-promo-text { border-bottom: 2px solid #E1251B; padding-bottom: 1px; }
+.hp-promo a:hover .hp-promo-text { color: #B5141B; }
+.hp-offer-note a { color: var(--gold); font-weight: 700; }
+.hp-stamp-lg { margin-bottom: 22px; font-size: 22px; padding: 8px 22px; }
+.hp-offer-go { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+.hp-offer-btn { background: #E1251B; color: #fff; }
+.hp-offer-btn:hover { background: #B5141B; }
+.hp-offer-line { background: transparent; color: var(--on-dark); box-shadow: inset 0 0 0 2px var(--gold); }
+.hp-offer-line:hover { background: rgba(201, 183, 114, .14); }
