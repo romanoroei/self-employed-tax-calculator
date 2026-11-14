@@ -177,7 +177,8 @@ function renderStep(index, animate = true) {
   $('#progress-fill').style.width = `${(currentStep + 1) * 25}%`;
   $('.progress-track').setAttribute('aria-valuenow', String(currentStep + 1));
   $('[data-back]').hidden = stepHistory.length === 1;
-  $('[data-next]').hidden = ![0, 2].includes(currentStep);
+  // question 2 moves on by itself when an answer is picked; coming back to it with the answer already set, the button lets you continue
+  $('[data-next]').hidden = !([0, 2].includes(currentStep) || (currentStep === 1 && form.elements.fundStatus.value));
   $('#submit-check').hidden = currentStep !== 3;
   $('#form-error').textContent = '';
   if (animate) steps[currentStep].classList.add('is-entering');
@@ -418,7 +419,6 @@ function setupValueSectionTracking(result) {
     ['deposit-options-section', 'deposit_options_viewed'],
     ['pre-deposit-checks', 'pre_deposit_checks_viewed'],
     ['growth-scenarios', 'growth_scenarios_viewed'],
-    ['contact-process', 'contact_process_viewed'],
   ];
   const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
     if (!entry.isIntersecting || entry.target.hidden) return;
@@ -610,7 +610,6 @@ function renderResult(result, profile) {
   $('.growth-notice').textContent = `החישוב מתחיל מהצבירה שהזנת, ${money(result.existingBalance)}, ומוסיף הפקדה חודשית קבועה של ${money(result.suggestedMonthly)} (תקרת ${result.taxYear} חלקי 12), ללא הפקדה חד־פעמית ולפני דמי ניהול. המחשה בלבד, ללא התחייבות לתשואה; הסכומים נומינליים ובהנחת תשואה קבועה.`;
   const whatsappUrl = buildWhatsAppUrl(result, profile);
   $('#whatsapp').href = whatsappUrl;
-  $('#whatsapp-secondary').href = whatsappUrl;
   $('#faq-whatsapp').href = whatsappUrl;
   $('#share-benefits').href = buildConsumerShareUrl();
   const bracketNote = result.taxBenefitUsesMultipleBrackets
@@ -633,7 +632,7 @@ form.addEventListener('click', (event) => {
     }
     return;
   }
-  if (event.target.closest('[data-next]') && validateStep()) transitionTo(currentStep === 0 ? 1 : 3);
+  if (event.target.closest('[data-next]') && validateStep()) transitionTo(currentStep === 0 ? 1 : currentStep === 1 ? (form.elements.fundStatus.value === 'none' ? 3 : 2) : 3);
 });
 
 form.addEventListener('change', (event) => {
@@ -765,7 +764,7 @@ function setupFaqProgressiveDisclosure() {
 }
 setupFaqProgressiveDisclosure();
 
-$$('#whatsapp, #whatsapp-secondary, #faq-whatsapp').forEach((link) => link.addEventListener('click', () => {
+$$('#whatsapp, #faq-whatsapp').forEach((link) => link.addEventListener('click', () => {
   trackEvent('whatsapp_clicked', {
     result_status: resultStatus(lastResult),
     fund_status: lastProfile?.fundStatus || '',

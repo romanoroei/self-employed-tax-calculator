@@ -726,7 +726,7 @@ ${url}`;
     $("#progress-fill").style.width = `${(currentStep + 1) * 25}%`;
     $(".progress-track").setAttribute("aria-valuenow", String(currentStep + 1));
     $("[data-back]").hidden = stepHistory.length === 1;
-    $("[data-next]").hidden = ![0, 2].includes(currentStep);
+    $("[data-next]").hidden = !([0, 2].includes(currentStep) || currentStep === 1 && form.elements.fundStatus.value);
     $("#submit-check").hidden = currentStep !== 3;
     $("#form-error").textContent = "";
     if (animate) steps[currentStep].classList.add("is-entering");
@@ -910,8 +910,7 @@ ${url}`;
       ["action-plan-section", "action_plan_viewed"],
       ["deposit-options-section", "deposit_options_viewed"],
       ["pre-deposit-checks", "pre_deposit_checks_viewed"],
-      ["growth-scenarios", "growth_scenarios_viewed"],
-      ["contact-process", "contact_process_viewed"]
+      ["growth-scenarios", "growth_scenarios_viewed"]
     ];
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
       var _a;
@@ -1088,7 +1087,6 @@ ${url}`;
     $(".growth-notice").textContent = `\u05D4\u05D7\u05D9\u05E9\u05D5\u05D1 \u05DE\u05EA\u05D7\u05D9\u05DC \u05DE\u05D4\u05E6\u05D1\u05D9\u05E8\u05D4 \u05E9\u05D4\u05D6\u05E0\u05EA, ${money2(result.existingBalance)}, \u05D5\u05DE\u05D5\u05E1\u05D9\u05E3 \u05D4\u05E4\u05E7\u05D3\u05D4 \u05D7\u05D5\u05D3\u05E9\u05D9\u05EA \u05E7\u05D1\u05D5\u05E2\u05D4 \u05E9\u05DC ${money2(result.suggestedMonthly)} (\u05EA\u05E7\u05E8\u05EA ${result.taxYear} \u05D7\u05DC\u05E7\u05D9 12), \u05DC\u05DC\u05D0 \u05D4\u05E4\u05E7\u05D3\u05D4 \u05D7\u05D3\u05BE\u05E4\u05E2\u05DE\u05D9\u05EA \u05D5\u05DC\u05E4\u05E0\u05D9 \u05D3\u05DE\u05D9 \u05E0\u05D9\u05D4\u05D5\u05DC. \u05D4\u05DE\u05D7\u05E9\u05D4 \u05D1\u05DC\u05D1\u05D3, \u05DC\u05DC\u05D0 \u05D4\u05EA\u05D7\u05D9\u05D9\u05D1\u05D5\u05EA \u05DC\u05EA\u05E9\u05D5\u05D0\u05D4; \u05D4\u05E1\u05DB\u05D5\u05DE\u05D9\u05DD \u05E0\u05D5\u05DE\u05D9\u05E0\u05DC\u05D9\u05D9\u05DD \u05D5\u05D1\u05D4\u05E0\u05D7\u05EA \u05EA\u05E9\u05D5\u05D0\u05D4 \u05E7\u05D1\u05D5\u05E2\u05D4.`;
     const whatsappUrl = buildWhatsAppUrl(result, profile);
     $("#whatsapp").href = whatsappUrl;
-    $("#whatsapp-secondary").href = whatsappUrl;
     $("#faq-whatsapp").href = whatsappUrl;
     $("#share-benefits").href = buildConsumerShareUrl();
     const bracketNote = result.taxBenefitUsesMultipleBrackets ? "<p><strong>\u05DC\u05EA\u05E9\u05D5\u05DE\u05EA \u05DC\u05D1:</strong> \u05D4\u05E0\u05D9\u05DB\u05D5\u05D9 \u05D7\u05D5\u05E6\u05D4 \u05DE\u05D3\u05E8\u05D2\u05EA \u05DE\u05E1, \u05D5\u05DC\u05DB\u05DF \u05D4\u05D8\u05D1\u05EA \u05DE\u05E1 \u05D4\u05D4\u05DB\u05E0\u05E1\u05D4 \u05D7\u05D5\u05E9\u05D1\u05D4 \u05DC\u05E4\u05D9 \u05D4\u05DE\u05E1 \u05DC\u05E4\u05E0\u05D9 \u05D5\u05D0\u05D7\u05E8\u05D9 \u05D4\u05E0\u05D9\u05DB\u05D5\u05D9 \u05D5\u05D1\u05D4\u05EA\u05D0\u05DD \u05DC\u05DB\u05DC \u05DE\u05D3\u05E8\u05D2\u05D5\u05EA \u05D4\u05DE\u05E1 \u05D4\u05E8\u05DC\u05D5\u05D5\u05E0\u05D8\u05D9\u05D5\u05EA \u2014 \u05D5\u05DC\u05D0 \u05DC\u05E4\u05D9 \u05E9\u05D9\u05E2\u05D5\u05E8 \u05E9\u05D5\u05DC\u05D9 \u05D9\u05D7\u05D9\u05D3.</p>" : "";
@@ -1114,7 +1112,7 @@ ${url}`;
       }
       return;
     }
-    if (event.target.closest("[data-next]") && validateStep()) transitionTo(currentStep === 0 ? 1 : 3);
+    if (event.target.closest("[data-next]") && validateStep()) transitionTo(currentStep === 0 ? 1 : currentStep === 1 ? form.elements.fundStatus.value === "none" ? 3 : 2 : 3);
   });
   form.addEventListener("change", (event) => {
     if (event.target.matches('input[type="radio"], input[type="checkbox"]')) updateSelectedCards();
@@ -1242,7 +1240,7 @@ ${url}`;
     update();
   }
   setupFaqProgressiveDisclosure();
-  $$("#whatsapp, #whatsapp-secondary, #faq-whatsapp").forEach((link) => link.addEventListener("click", () => {
+  $$("#whatsapp, #faq-whatsapp").forEach((link) => link.addEventListener("click", () => {
     trackEvent("whatsapp_clicked", {
       result_status: resultStatus(lastResult),
       fund_status: (lastProfile == null ? void 0 : lastProfile.fundStatus) || "",
