@@ -8,6 +8,7 @@
 
   const SOURCES = {
     mofMandatory: { name: 'משרד האוצר, פנסיה חובה לעצמאים', url: 'https://www.gov.il/he/pages/independent-must-pension' },
+    investmentFundGuide: { name: 'כל זכות, קופת גמל להשקעה (עודכן 15.1.2026)', url: 'https://www.kolzchut.org.il/he/קופת_גמל_להשקעה' },
     kolZchut: { name: 'כל זכות, הפקדות עצמאיות לביטוח פנסיוני', url: 'https://www.kolzchut.org.il/he/הפקדות_עצמאיות_לביטוח_פנסיוני' },
     taxBooklet2026: { name: 'רשות המסים, חוברת הניכויים 2026', url: 'https://www.gov.il/BlobFolder/generalpage/income-tax-monthly-deductions-booklet/he/generalInformation_income-tax-monthly-deductions-booklet_monthly-deductions-booklet-2026.pdf' },
     btlAverageWage: { name: 'ביטוח לאומי, שכר ממוצע לפי סעיפים 1 ו־2', url: 'https://www.btl.gov.il/Mediniyut/GeneralData/Pages/%d7%a9%d7%9b%d7%a8%20%d7%9e%d7%9e%d7%95%d7%a6%d7%a2.aspx' },
@@ -27,6 +28,7 @@
       status: 'verified',
       verificationDate: VERIFIED_2026,
       parameters: {
+        investmentFundCap: fig(83641, '₪ לשנה', 'investmentFundGuide', 'תקרת ההפקדה השנתית לקופת גמל להשקעה, בכל הקופות יחד; כמו במדריך /investment-fund', { lastVerifiedAt: '2026-11-09' }),
         averageWageMonthly: fig(13769, '₪ לחודש', 'btlAverageWage', 'השכר הממוצע לפי סעיף 2, מ־1.1.2026', { lastVerifiedAt: RECHECKED }),
         mandatoryContributionRates: {
           tier1Rate: fig(0.0445, 'שיעור', 'mofMandatory', 'על ההכנסה עד מחצית השכר הממוצע'),

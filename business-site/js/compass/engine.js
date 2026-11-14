@@ -329,6 +329,91 @@
     function safe(text) { return !C.forbidden.some((w) => text.includes(w)); }
     function guard(list) { return list.filter((t) => typeof t === 'string' && t && safe(t)); }
 
+    // ---------- findings: figures in shekels from regulatory.js, steps for today, what the call covers ----------
+    // days left to 31.12, counted on Israel dates (today itself not counted)
+    function daysToYearEnd(now) {
+      const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jerusalem', year: 'numeric', month: '2-digit', day: '2-digit' })
+        .formatToParts(now).map((x) => [x.type, x.value]));
+      return Math.round((Date.UTC(+p.year, 11, 31) - Date.UTC(+p.year, +p.month - 1, +p.day)) / 86400000);
+    }
+    const LUMP_EXAMPLE = { lt50: 30000, '50to150': 100000, '150to400': 250000, '400to1m': 500000, gt1m: 1000000 };
+    function growthRows(amount) {
+      return C.trackYields.rows.map((r) => ({ id: r.id, label: r.label, total: r.cum === 0 ? amount : Math.round(amount * (1 + r.cum / 100) / 1000) * 1000 }));
+    }
+    function tokensFor(ctx) {
+      const y = ctx.year;
+      const F = (p) => regulatory.figure(y, p);
+      const t = {};
+      const days = daysToYearEnd(ctx.now);
+      t.days = days === 0 ? 'היום' : String(days);
+      t.daysText = days === 0 ? 'היום' : days === 1 ? 'מחר' : `בעוד ${days} ימים`;
+      t.year = String(y);
+      const avg = F('averageWageMonthly');
+      const t1 = F('mandatoryContributionRates.tier1Rate');
+      const t2 = F('mandatoryContributionRates.tier2Rate');
+      if (avg !== null && t1 !== null && t2 !== null) {
+        const avgYear = avg * 12;
+        const half = avgYear / 2;
+        const mand = (inc) => t1 * Math.min(inc, half) + t2 * Math.max(0, Math.min(inc, avgYear) - half);
+        Object.assign(t, { avgYear: fmt(avgYear), half: fmt(half), tier1: String(+(t1 * 100).toFixed(2)), tier2: String(+(t2 * 100).toFixed(2)),
+          mandMax: fmt(mand(avgYear)), mandMonthly: fmt(Math.round(mand(avgYear) / 12 / 10) * 10), mand100k: fmt(Math.round(mand(100000) / 10) * 10) });
+        const sfCap = F('studyFundThresholds.deductionIncomeCap');
+        const sfRate = F('studyFundThresholds.deductionRate');
+        const sfExempt = F('studyFundThresholds.exemptDepositCap');
+        if (sfCap !== null && sfRate !== null && sfExempt !== null) {
+          const sfMax = fmt(sfRate * sfCap);
+          const sfB1 = fmt(Math.round(sfRate * avgYear / 100) * 100);
+          Object.assign(t, { sfCap: fmt(sfCap), sfRate: String(+(sfRate * 100).toFixed(2)), sfExempt: fmt(sfExempt), sfMax });
+          const band = ctx.facts.income;
+          t.sfYou = band === 'b1' ? `בהכנסה כמו שציינתם, זה עד כ־${sfB1} ₪ בשנה.`
+            : band === 'b2' ? `בטווח ההכנסה שציינתם, זה בין כ־${sfB1} ל־${sfMax} ₪ בשנה.`
+              : band === 'b3' ? `בהכנסה כמו שציינתם, זה ${sfMax} ₪ בשנה, התקרה המלאה.` : `התקרה המלאה היא ${sfMax} ₪ בשנה.`;
+          t.sfFigure = band === 'b1' ? `עד ${sfB1} ₪` : band === 'b3' ? `${sfMax} ₪` : `עד ${sfMax} ₪`;
+        }
+      }
+      const cap = F('pensionContributionThresholds.taxBenefitIncomeCap');
+      if (cap !== null) t.benefitCap = fmt(cap);
+      const ifCap = F('investmentFundCap');
+      if (ifCap !== null) t.ifCap = fmt(ifCap);
+      const lump = LUMP_EXAMPLE[ctx.facts.liquidAmount];
+      if (lump) {
+        const rows = growthRows(lump);
+        Object.assign(t, { lumpEx: fmt(lump), bonds: fmt(rows[1].total), general: fmt(rows[2].total), stocks: fmt(rows[3].total) });
+      }
+      t.period = C.trackYields.period;
+      return t;
+    }
+    const fillTokens = (text, t) => String(text).replace(/\{(\w+)\}/g, (m, k) => (k in t ? t[k] : m));
+    const unfilled = (text) => /\{\w+\}/.test(text);
+    function findingsFor(ctx) {
+      const t = tokensFor(ctx);
+      const R = C.result;
+      const out = [];
+      for (const x of R.findings) {
+        if (out.length >= L.maxFindings) break;
+        if (x.needs && !figureOk(x.needs, ctx.year)) continue;
+        if (!ev(x.when, ctx)) continue;
+        const v = (x.variants || []).find((z) => ev(z.when, ctx)) || {};
+        const f = v.figure || x.figure;
+        let figure = null;
+        if (f && f.kind === 'growth') {
+          const lump = LUMP_EXAMPLE[ctx.facts.liquidAmount];
+          const rows = growthRows(lump);
+          const top = rows[rows.length - 1].total;
+          figure = { caption: fillTokens(f.caption, t), rows: rows.map((r) => ({ label: r.label, value: `${fmt(r.total)} ₪`, share: r.total / top })) };
+        } else if (f) figure = { value: fillTokens(f.value, t), caption: fillTokens(f.caption, t) };
+        const item = { id: x.id, tag: v.tag || x.tag, title: fillTokens(v.title || x.title, t), text: fillTokens(v.text || x.text, t), figure, call: fillTokens(x.call, t) };
+        const all = [item.title, item.text, item.call, figure ? figure.caption + (figure.value || '') : ''].join(' ');
+        if (unfilled(all) || !safe(all)) continue; // a figure that is missing for the year, or forbidden wording: never shown
+        out.push(item);
+      }
+      // the finding with a figure leads, so the number sits in the gold tile; a warning about money needed soon stays first
+      const lead = out.findIndex((x) => x.figure);
+      if (lead > 0 && out[0].id !== 'horizon-short') out.unshift(...out.splice(lead, 1));
+      const steps = C.result.steps.filter((x) => ev(x.when, ctx)).slice(0, L.maxSteps).map(({ id, text, label, href }) => ({ id, text, label, href }));
+      return { findings: out, steps, calls: [...out.map((x) => x.call), C.result.callTail], findingsLead: fillTokens(C.result.findingsLead(out.length), t) };
+    }
+
     // ---------- the result ----------
     function result(state, opts) {
       const w = walk(state, opts);
@@ -358,7 +443,8 @@
       checks = guard(checks).slice(0, 3);
 
       const missing = R.missingFacts
-        .filter((m) => m.areas.some((a) => shown.includes(a)) && !isKnown(ctx, m.fact))
+        // only what was asked and answered "don't know" or skipped: never a question the visitor was not asked
+        .filter((m) => m.areas.some((a) => shown.includes(a)) && ctx.facts[m.fact] !== undefined && !isKnown(ctx, m.fact))
         .map((m) => m.text).slice(0, 3);
       const documents = shown.map((a) => R.documents[a]);
       const contradictions = C.contradictions.filter((c) => ev(c.when, ctx)).map((c) => ({ id: c.id, text: c.text, areas: c.areas }));
@@ -386,6 +472,7 @@
         callToAction: C.areas[primaryArea].cta,
         showNumbersLink: numbers,
         unknownCount: ctx.unknownCount,
+        ...findingsFor(ctx),
       };
     }
 
@@ -443,6 +530,7 @@
       const shownAreas = [res.primaryNeed.area, ...res.secondaryNeeds.map((n) => n.area)];
       const miss = C.result.missingFacts.filter((m) => res.knowledge.missing.includes(m.fact) && m.areas.some((a) => shownAreas.includes(a))).map((m) => m.text);
       lines.push(`מידע חסר להמשך: ${miss.length ? miss.join('; ') : 'אין פריטים חסרים מהשאלון'}; בכל מקרה: ${res.documents.join('; ')}`);
+      lines.push(`מה הוצג לפונה בתוצאה: ${res.findings.map((x) => x.title).join(' | ')}`);
       lines.push(`נושאים לבירור בשיחה: ${res.recommendedChecks.join(' | ')}`);
       const urgency = S.urgency.filter((u) => ev(u.when, w.ctx));
       lines.push(`דחיפות: ${urgency.length ? urgency.map((u) => `${u.level} (${u.text})`).join('; ') : S.urgencyUnknown}`);

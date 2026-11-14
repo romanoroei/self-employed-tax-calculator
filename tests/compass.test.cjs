@@ -86,7 +86,7 @@ test('a figure-dependent rule is dropped when its figure is not verified', () =>
   const Rx = { ...R, figure: (y, p) => (p === 'eligibilityRules.obligationMaxAge' ? null : R.figure(y, p)) };
   const Ex = require(path.join(dir, 'engine.js')).make(C, Rx);
   let s = Ex.newState(NOW);
-  for (const [q, v] of [['priorities', ['minimum']], ['minReason', 'cantAfford'], ['obligationKnown', 'no'], ['deposits', 'none'], ['employee', 'no'], ['coverageImpact', 'no'], ['otherSavings', ['none']], ['age', '60p'], ['income', 'b1']]) s = Ex.answer(s, q, v, opts);
+  for (const [q, v] of [['priorities', ['minimum']], ['minReason', 'cantAfford'], ['obligationKnown', 'no'], ['income', 'b1'], ['deposits', 'none'], ['employee', 'no'], ['coverageImpact', 'no'], ['otherSavings', ['none']], ['age', '60p']]) s = Ex.answer(s, q, v, opts);
   const withFigure = run({ priorities: ['minimum'], minReason: 'cantAfford', obligationKnown: 'no', deposits: 'none', employee: 'no', coverageImpact: 'no', otherSavings: ['none'], age: '60p', income: 'b1' });
   assert.equal(scores(withFigure.result).D, 40 + 35 + 20 - 25, 'from 60 the obligation usually no longer applies');
   const res = Ex.result(s, opts);
@@ -226,7 +226,7 @@ test('scenario 6: also an employee -> taken into account for the obligation and 
   const tax = run({ priorities: ['tax'], income: 'b2', employee: 'yes', deposits: 'monthly', studyFund: 'no', taxReviewed: 'no', extraDeposit: 'no', age: '40s' });
   assert.ok(tax.result.primaryNeed.explain.some((t) => t.includes('משכורת')));
   assert.ok(tax.result.recommendedChecks.some((t) => t.includes('המשכורת')));
-  const min = run({ priorities: ['minimum'], minReason: 'business', businessNeed: 'temporary', obligationKnown: 'unsure', deposits: 'irregular', employee: 'yes', coverageImpact: 'unaware', otherSavings: ['none'], age: '30s', yearsActive: '6m3y' });
+  const min = run({ priorities: ['minimum'], minReason: 'business', businessNeed: 'temporary', obligationKnown: 'unsure', income: 'b1', deposits: 'irregular', employee: 'yes', coverageImpact: 'unaware', otherSavings: ['none'], age: '30s', yearsActive: '6m3y' });
   assert.ok(min.result.relevanceScores.D.reasons.some((r) => r.why.includes('משכורת')));
   assert.ok(min.result.primaryNeed.explain.some((t) => t.includes('משכורת')));
 });
@@ -386,4 +386,35 @@ test('configuration: WhatsApp and the lead endpoints are the agreed ones', () =>
   assert.equal(CONFIG.formspreeUrl, 'https://formspree.io/f/mvzjeykj');
   assert.ok(CONFIG.productionHosts.includes('romanoinvest.co.il'));
   assert.equal(CONFIG.calculatorUrl, '/self-employed-tax-calculator/');
+});
+
+test('findings: every random path gets two or three, with real 2026 figures and no forbidden wording', async () => {
+  let seed = 23;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+  for (let n = 0; n < 3000; n++) {
+    let s = E.newState(NOW);
+    for (;;) {
+      const v = E.view(s, opts);
+      if (!v.question) break;
+      const q = v.question;
+      let value;
+      if (q.type === 'single') value = q.options[Math.floor(rnd() * q.options.length)].value;
+      else { const plain = q.options.filter((o) => !o.exclusive); value = plain.filter(() => rnd() < 0.4).map((o) => o.value); if (!value.length) value = [plain[Math.floor(rnd() * plain.length)].value]; }
+      s = E.answer(s, q.id, value, opts);
+    }
+    const res = E.result(s, opts);
+    assert.ok(res.findings.length >= 2 && res.findings.length <= C.limits.maxFindings, 'findings ' + res.findings.length);
+    assert.ok(res.steps.length >= 1 && res.calls.length === res.findings.length + 1);
+  }
+  const r = run({ priorities: ['minimum'], minReason: 'business', businessNeed: 'temporary', obligationKnown: 'unsure', deposits: 'annual', employee: 'no', coverageImpact: 'yes', income: 'b2', yearsActive: '3y10y', age: '40s', otherSavings: ['none'] }).result;
+  const full = r.findings.find((x) => x.id === 'obligation-full');
+  assert.ok(full, 'the obligation in shekels');
+  assert.equal(full.figure.value, '14,044 ₪');
+  assert.match(full.text, /1,170 ₪ לחודש/);
+  assert.equal(r.findings[0].id, 'obligation-full');
+  assert.ok(r.findings.some((x) => x.id === 'obligation-third'));
+  // the growth example and the financial check use the same yields
+  const { TRACK_YIELDS } = await import(require('node:url').pathToFileURL(path.join(__dirname, '..', 'business-site', 'js', 'fcheck', 'insights.mjs')).href);
+  assert.deepEqual(C.trackYields.rows.map((x) => x.cum), TRACK_YIELDS.rows.map((x) => x.cum));
+  assert.equal(C.trackYields.period, TRACK_YIELDS.period);
 });

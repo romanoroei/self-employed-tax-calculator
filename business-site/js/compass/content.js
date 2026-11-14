@@ -19,7 +19,21 @@
 
   const content = {
     version: '2026-11-08',
-    limits: { maxQuestions: 12, softMaxQuestions: 9, relevantScore: 25, limitedUnknownShare: 0.5, limitedUnknownMin: 3 },
+    limits: { maxQuestions: 12, softMaxQuestions: 9, relevantScore: 25, limitedUnknownShare: 0.5, limitedUnknownMin: 3, maxFindings: 3, maxSteps: 3 },
+
+    // The growth example: the average cumulative 7-year yield of the investment provident funds in each track
+    // (Finance Ministry figures via GemelHub, the yields tile's group rules). Same data as TRACK_YIELDS in
+    // js/fcheck/insights.mjs (a test keeps the two equal): update both with the yields.
+    trackYields: {
+      period: '09/2026',
+      years: 7,
+      rows: [
+        { id: 'bank', label: 'בלי תשואה (עו"ש)', cum: 0 },
+        { id: 'bonds', label: 'מסלול סולידי (אשראי ואג"ח)', cum: 32.01 },
+        { id: 'general', label: 'סיכון בינוני (מסלול כללי)', cum: 71.08 },
+        { id: 'stocks', label: 'סיכון גבוה (מסלול מניות)', cum: 143.1 },
+      ],
+    },
 
     // Progress is shown by diagnosis stage, never as a misleading percentage.
     stages: [
@@ -394,7 +408,7 @@
       pension: { core: ['age', 'deposits', 'expectedPension', 'pensionVsLiquidity', 'otherSavings'], key: ['age', 'expectedPension'] },
       protection: { core: ['worry', 'family', 'dependents', 'altIncome', 'coverageKnown', 'age'], key: ['dependents', 'coverageKnown'] },
       tax: { core: ['income', 'employee', 'deposits', 'studyFund', 'taxReviewed', 'extraDeposit'], key: ['income', 'taxReviewed'] },
-      minimum: { core: ['minReason', 'businessNeed', 'investWhere', 'pensionDislike', 'obligationKnown', 'deposits', 'employee', 'coverageImpact', 'otherSavings'], key: ['minReason'] },
+      minimum: { core: ['minReason', 'businessNeed', 'investWhere', 'pensionDislike', 'obligationKnown', 'income', 'deposits', 'employee', 'coverageImpact', 'otherSavings'], key: ['minReason'] },
       liquidity: { core: ['liqReason', 'horizon', 'liquidSavings', 'liquidAmount', 'studyFundLiquid', 'deposits'], key: ['liqReason', 'horizon'] },
       unsure: { core: ['product', 'accumulated', 'lastReview', 'wantToUnderstand', 'otherSavingsSimple', 'age'], key: ['lastReview'] },
     },
@@ -549,26 +563,247 @@
 
     // ----- the result screen -----
     result: {
-      title: 'מפת הצרכים הפיננסיים שלכם',
+      title: 'מה עלה מהתשובות שלכם',
       subtitle: 'לפי התשובות שלכם, אלה הנושאים שכדאי לתת להם תשומת לב.',
+      findingsLead: (n) => `${n === 1 ? 'נקודה אחת' : n === 2 ? 'שתי נקודות' : 'שלוש נקודות'} ש${n === 1 ? 'נוגעת' : 'נוגעות'} למצב שלכם, לפי הכללים של {year}. את רובן אפשר לבדוק גם לבד, והצעדים מופיעים בהמשך.`,
+      stepsTitle: 'מה אפשר לעשות כבר היום, לבד',
+      callsLead: 'שיחת התאמה קצרה, ללא עלות וללא התחייבות. על מה נדבר:',
+      mapSummary: 'מפת הנושאים: איך המצפן דירג את מה שסיפרתם',
       limitedNote: 'בחלק גדול מהשאלות עניתם שאינכם יודעים, ולכן זה אבחון מוגבל. זה בסדר גמור: זו בדיוק נקודת ההתחלה של מיפוי.',
       primaryPrefix: 'העדיפות המרכזית שלכם:',
       mapTitle: 'מפת הנושאים',
       mapNote: 'הציון מראה עד כמה כדאי לבדוק כל נושא, לפי מה שסיפרתם. הוא לא מדרג את המצב הכלכלי שלכם.',
       complementTitle: 'עוד שני נושאים שעלו',
       checksTitle: 'מה כדאי לבדוק?',
-      missingTitle: 'מה עדיין חסר כדי לקבוע?',
-      missingIntro: 'כדי לבחון את הנושאים בצורה מדויקת יותר, יהיה צורך לבדוק:',
+      missingTitle: 'מה להכין לשיחה',
+      missingIntro: 'כדי שהשיחה תהיה קצרה ומדויקת, כדאי לברר או להביא:',
       cannotTell: 'על בסיס המידע שמסרתם, עדיין אי אפשר לדעת אם מדובר בפער אמיתי. כדאי לבדוק זאת בשיחה מקצועית.',
       contradictionsIntro: 'שתי תשובות שכדאי לברר:',
       noDocuments: 'האבחון נשען רק על מה שסיפרתם. לא נבדקו מסמכים או דוחות.',
-      inviteTitle: 'רוצים להבין מה זה אומר במספרים שלכם?',
+      inviteTitle: 'רוצים לעבור על זה עם רועי?',
       inviteText: 'אני רועי רומנו, מתכנן פיננסי וסוכן פנסיוני. בשיחת התאמה נוכל לעבור על הצרכים שעלו ולבחון אם יש מקום לבדיקה מקצועית מעמיקה יותר.',
       inviteButton: 'לתיאום שיחת התאמה אישית עם רועי',
       whatsappButton: 'לשלוח לרועי בוואטסאפ',
       numbersButton: 'אני רוצה להבין את המספרים שלי',
       numbersNote: 'מחשבון הטבות המס לעצמאים: הפקדות לפנסיה ולקרן השתלמות.',
       disclaimer: 'המצפן מציג אבחון צרכים ראשוני בלבד, על סמך דיווח עצמי. הוא אינו ייעוץ פנסיוני, ייעוץ מס או המלצה על מוצר, חברה מנהלת, מסלול או סכום הפקדה. בדיקה מקצועית נעשית מול הנתונים והמסמכים שלכם.',
+
+      // ----- what the visitor gets back: findings in shekels, steps for today, and what the call covers -----
+      // Shown in order, the first `limits.maxFindings` that hold; the one with a figure goes to the gold tile.
+      // Every figure comes from regulatory.js through the tokens below, and a finding whose figures are not
+      // verified for the year is dropped (needs). General information only: never a product, track or company.
+      // Tokens: {mandMax} {mandMonthly} {mand100k} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
+      // {sfExempt} {sfYou} {sfFigure} {benefitCap} {ifCap} {days} {daysText} {lumpEx} {bonds} {general} {stocks} {period}
+      findings: [
+        {
+          id: 'horizon-short', tag: 'טווח קצר',
+          when: { fact: 'horizon', is: 'y1' },
+          title: 'כסף שיידרש בקרוב צריך כללים אחרים',
+          text: 'כשהכסף עשוי להידרש בתוך שנה, השאלה הראשונה היא נזילות ותנודתיות, לא תשואה. ירידה בשווקים ממש לפני מועד השימוש עלולה לשבש את התוכנית.',
+          call: 'איך לשמור על הכסף זמין ויציב לקראת המועד שבו יידרש',
+        },
+        {
+          id: 'obligation-full', tag: 'חובת ההפקדה',
+          needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
+          when: { all: [{ fact: 'income', in: ['b2', 'b3'] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
+            { any: [{ priority: 'minimum' }, { priority: 'tax' }, { priority: 'liquidity' }, { fact: 'deposits', in: ['none', 'irregular', 'annual', 'unknown'] }, { fact: 'obligationKnown', in: ['no', 'unsure'] }] }] },
+          title: 'זו ההפקדה שהחוק מחייב אתכם השנה',
+          text: 'החובה מחושבת עד השכר הממוצע במשק בלבד: {tier1}% על ההכנסה עד {half} ₪ בשנה, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. בהכנסה כמו שציינתם זו ההפקדה המרבית לפי החובה, כ־{mandMonthly} ₪ לחודש, והיא צריכה להיכנס באותה שנת מס.',
+          figure: { value: '{mandMax} ₪', caption: 'חובת ההפקדה לפנסיה ב־2026, בהכנסה חייבת מעל {avgYear} ₪ בשנה' },
+          call: 'אם ההפקדות של השנה כבר עומדות בחובה, ומה חסר עד 31.12',
+        },
+        {
+          id: 'obligation-partial', tag: 'חובת ההפקדה',
+          needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
+          when: { all: [{ any: [{ fact: 'income', in: ['b1', 'unknown'] }, { fact: 'income', asked: false }] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
+            { any: [{ priority: 'minimum' }, { priority: 'tax' }, { priority: 'liquidity' }, { fact: 'deposits', in: ['none', 'irregular', 'annual', 'unknown'] }, { fact: 'obligationKnown', in: ['no', 'unsure'] }] }] },
+          title: 'חובת ההפקדה: עד {mandMax} ₪ בשנה, לפי ההכנסה',
+          text: 'החובה מחושבת לפי ההכנסה החייבת: {tier1}% על ההכנסה עד {half} ₪ בשנה, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. למשל, בהכנסה חייבת של 100,000 ₪ החובה היא כ־{mand100k} ₪ בשנה. ההפקדה צריכה להיכנס באותה שנת מס.',
+          figure: { value: '{mand100k} ₪', caption: 'חובת ההפקדה ב־2026 בהכנסה חייבת של 100,000 ₪ בשנה (המרבית: {mandMax} ₪)' },
+          call: 'כמה בדיוק החובה לפי ההכנסה שלכם, ואם היא כבר מולאה השנה',
+        },
+        {
+          id: 'obligation-third', tag: 'לא הכול ננעל',
+          when: { any: [{ fact: 'minReason', in: ['business', 'cantAfford'] }, { fact: 'pensionDislike', is: 'liquidity' }, { fact: 'liqReason', in: ['business', 'fearLock'] }] },
+          title: 'שליש מהפקדת החובה לא ננעל עד הפרישה',
+          text: 'שליש מההפקדה לפי החוק נשמר לסיוע במצבי אבטלה. אפשר למשוך אותו בסגירת עסק, בפטור ממס ובכפוף לתנאים שבחוק. מי שלא מושך, הסכום מצטרף לקצבה.',
+          call: 'איך החובה משתלבת עם הצורך בכסף זמין לעסק',
+        },
+        {
+          id: 'annual-deposit', tag: 'הפקדה שנתית',
+          when: { fact: 'deposits', is: 'annual' },
+          title: 'הפקדה שנתית נחשבת רק אם נקלטה באותה שנה',
+          text: 'הפקדה לפנסיה נחשבת לשנת המס, גם לעניין החובה וגם לעניין הטבת המס, רק אם נקלטה בקופה עד 31.12. כדאי לא להשאיר אותה לימים האחרונים של דצמבר.',
+          variants: [{ when: { monthAtLeast: 11 }, text: 'הפקדה לפנסיה נחשבת לשנת המס, גם לעניין החובה וגם לעניין הטבת המס, רק אם נקלטה בקופה עד 31.12, {daysText}. כדאי לא להשאיר אותה לימים האחרונים של דצמבר.' }],
+          call: 'מתי ואיך להפקיד השנה כדי שההפקדה תיחשב ל־2026',
+        },
+        {
+          id: 'study-fund', tag: 'קרן השתלמות',
+          needs: ['studyFundThresholds.deductionIncomeCap', 'studyFundThresholds.deductionRate', 'studyFundThresholds.exemptDepositCap'],
+          when: { all: [{ not: { fact: 'age', is: '60p' } }, { any: [{ fact: 'studyFund', in: ['no', 'notDepositing', 'unknown'] }, { fact: 'studyFundLiquid', is: 'no' }, { all: [{ fact: 'otherSavings', has: 'none' }, { any: [{ priority: 'tax' }, { priority: 'liquidity' }] }] }] }] },
+          title: 'קרן השתלמות: ניכוי ממס, וכסף שנזיל אחרי 6 שנים',
+          text: 'עצמאים יכולים לנכות ממס הפקדה של עד {sfRate}% מההכנסה, עד הכנסה של {sfCap} ₪. {sfYou} רווחים על הפקדה של עד {sfExempt} ₪ פטורים ממס, והכסף נזיל בדרך כלל אחרי שש שנים.',
+          variants: [{ when: { monthAtLeast: 11 }, text: 'עצמאים יכולים לנכות ממס הפקדה של עד {sfRate}% מההכנסה, עד הכנסה של {sfCap} ₪. {sfYou} רווחים על הפקדה של עד {sfExempt} ₪ פטורים ממס, והכסף נזיל בדרך כלל אחרי שש שנים. הפקדה ל־2026 צריכה להיכנס עד 31.12 ({daysText}).' }],
+          figure: { value: '{sfFigure}', caption: 'הניכוי האפשרי ממס בהפקדה לקרן השתלמות ב־2026, לפי טווח ההכנסה שציינתם' },
+          call: 'כמה אפשר להפקיד לקרן השתלמות, ומה ההטבה בשקלים',
+        },
+        {
+          id: 'above-average', tag: 'מעל השכר הממוצע',
+          needs: ['averageWageMonthly', 'pensionContributionThresholds.taxBenefitIncomeCap'],
+          when: { all: [{ fact: 'income', in: ['b2', 'b3'] }, { any: [{ priority: 'pension' }, { priority: 'tax' }, { fact: 'taxVsMinimum', in: ['yes', 'maybe'] }] }] },
+          title: 'החובה מכסה רק עד השכר הממוצע',
+          text: 'על ההכנסה שמעל {avgYear} ₪ בשנה אין חובת הפקדה, ולכן מי שמרוויח יותר ומפקיד רק את המינימום חוסך על חלק מהכנסתו בלבד, וההפרש יורגש בקצבה. הפקדה מעבר לחובה מזכה בהטבת מס, עד הכנסה של {benefitCap} ₪ בשנה.',
+          call: 'כמה מעבר לחובה מזכה בהטבת מס במקרה שלכם',
+        },
+        {
+          id: 'liquid-growth', tag: 'תשואה לאורך זמן',
+          when: { all: [{ fact: 'liquidAmount', in: ['lt50', '50to150', '150to400', '400to1m', 'gt1m'] }, { not: { fact: 'horizon', is: 'y1' } }] },
+          title: 'מה עשו 7 השנים האחרונות ל־{lumpEx} ₪',
+          text: 'סכום של {lumpEx} ₪ שנשאר בעו"ש לפני 7 שנים שווה היום אותו דבר. בקופות גמל להשקעה, לפי התשואה הממוצעת של כל מסלול, הוא היה מגיע לכ־{bonds} ₪ במסלול סולידי, {general} ₪ במסלול בסיכון בינוני ו־{stocks} ₪ במסלול בסיכון גבוה. מסלול עם יותר מניות עלה יותר לאורך זמן, אבל גם ירד יותר בדרך.',
+          figure: { kind: 'growth', caption: 'סכום של {lumpEx} ₪ לפני 7 שנים. ממוצע קופות הגמל להשקעה בכל מסלול עד {period}, לפני דמי ניהול ובלי התאמה לאינפלציה. תשואות עבר אינן מעידות על תשואות בעתיד.' },
+          call: 'כמה מהסכום הנזיל צריך להישאר זמין, ואיזו רמת סיכון מתאימה לשאר',
+        },
+        {
+          id: 'investment-fund', tag: 'נזיל ועם הטבה',
+          needs: ['investmentFundCap'],
+          when: { any: [{ all: [{ primary: 'liquidity' }, { not: { fact: 'horizon', is: 'y1' } }] }, { fact: 'minReason', is: 'investSelf' }, { fact: 'pensionDislike', in: ['liquidity', 'control'] }, { fact: 'liqReason', is: 'investSelf' }] },
+          title: 'קופת גמל להשקעה: נזילה, ומגיל 60 קצבה פטורה ממס',
+          text: 'בקופת גמל להשקעה הכסף נזיל בכל עת, ובמשיכה משלמים עד 25% מהרווח הריאלי. מי שמושך מגיל 60 כקצבה פטור ממס על כל הרווחים, ומעבר בין מסלולים או בין חברות לא נחשב אירוע מס. אפשר להפקיד עד {ifCap} ₪ בשנה, בכל הקופות יחד.',
+          call: 'איך לחלק בין כסף זמין, חיסכון לטווח ארוך והפקדת החובה',
+        },
+        {
+          id: 'retirement-report', tag: 'הקצבה הצפויה',
+          when: { any: [{ fact: 'expectedPension', in: ['notChecked', 'noIdea'] }, { fact: 'wantToUnderstand', in: ['pensionAmount', 'enough'] }] },
+          title: 'הקצבה הצפויה כבר כתובה בדוח השנתי',
+          text: 'בדוח השנתי של קרן הפנסיה מופיעה הקצבה החודשית הצפויה בגיל הפרישה, בהנחה שההפקדות יימשכו. זה המספר הראשון לבדוק, והוא זמין גם באזור האישי באתר של הקרן.',
+          call: 'לעבור יחד על הדוח השנתי ועל הקצבה הצפויה',
+        },
+        {
+          id: 'pension-low', tag: 'הקצבה',
+          when: { fact: 'expectedPension', is: 'low' },
+          title: 'מה קובע את גובה הקצבה',
+          text: 'גובה הקצבה נקבע מגובה ההפקדות ומהרציפות שלהן, מדמי הניהול, ממסלול ההשקעה וממקדם ההמרה בפרישה. שינוי באחד מהם, גם קטן, מצטבר לאורך השנים שנותרו עד הפרישה.',
+          call: 'מה משפיע על הקצבה שלכם, ומה אפשר לשנות',
+        },
+        {
+          id: 'pension-assumes', tag: 'הדוח השנתי',
+          when: { fact: 'expectedPension', is: 'satisfied' },
+          title: 'הקצבה בדוח מניחה שההפקדות יימשכו',
+          text: 'הקצבה הצפויה בדוח השנתי מחושבת בהנחה שההפקדות יימשכו עד הפרישה באותו קצב. הפסקה או ירידה בהפקדות, למשל בשנה חלשה בעסק, מקטינות אותה.',
+          call: 'מה קורה לקצבה אם ההפקדות משתנות',
+        },
+        {
+          id: 'managers-factor', tag: 'ביטוח מנהלים',
+          when: { fact: 'product', in: ['managers', 'several'] },
+          title: 'בביטוח מנהלים, מקדם ההמרה הוא נתון מפתח',
+          text: 'מקדם ההמרה קובע כמה קצבה תקבלו על כל שקל שנצבר. בפוליסות ישנות הוא נקבע לעיתים כבר בהצטרפות, ובחדשות רק בפרישה. זה נתון שכדאי להכיר לפני כל שינוי בפוליסה.',
+          call: 'מה מקדם ההמרה בפוליסה שלכם, ומה המשמעות שלו',
+        },
+        {
+          id: 'disability', tag: 'אם לא תוכלו לעבוד',
+          when: { any: [{ fact: 'altIncome', in: ['no', 'partial'] }, { fact: 'worry', in: ['income', 'both'] }] },
+          title: 'לעצמאים אין מעסיק שימשיך לשלם',
+          text: 'בקרן פנסיה יש בדרך כלל כיסוי לנכות של עד 75% מההכנסה המבוטחת, וביטוח אובדן כושר עבודה פרטי יכול להשלים אותו. כדאי לדעת כמה תקבלו בפועל אם לא תוכלו לעבוד, ומאיזה חודש.',
+          call: 'כמה הכנסה תקבלו אם לא תוכלו לעבוד, ומאיפה',
+        },
+        {
+          id: 'gemel-no-cover', tag: 'קופת גמל',
+          when: { fact: 'product', is: 'gemel' },
+          title: 'בקופת גמל אין כיסוי ביטוחי',
+          text: 'בשונה מקרן פנסיה, בקופת גמל אין כיסוי לנכות ולשארים. מי שחוסך לפרישה רק בה כדאי שיידע איך הוא מבוטח למקרה שלא יוכל לעבוד, ומה יקבלו בני המשפחה.',
+          call: 'איך אתם מבוטחים היום לנכות ולשארים',
+        },
+        {
+          id: 'compare-yields', tag: 'השוואה',
+          when: { fact: 'wantToUnderstand', in: ['manage', 'all'] },
+          title: 'שווה לבדוק איפה הקופה שלכם עומדת',
+          text: 'קופות באותו מסלול יכולות להשיג תשואות שונות מאוד לאורך זמן. באתר אפשר לראות את התשואות של כל החברות לתקופות שונות, לפי הנתונים הרשמיים.',
+          call: 'איך הקופה שלכם ביצעה מול מסלולים דומים',
+        },
+        {
+          id: 'young-time', tag: 'הזמן עובד בשבילכם',
+          when: { all: [{ fact: 'age', in: ['u30', '30s'] }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] },
+          title: 'הפקדה היום שווה יותר מהפקדה בעוד 20 שנה',
+          text: 'לכסף שמופקד בגיל צעיר יש עשרות שנים לצבור תשואה עד הפרישה. לכן הפקדות סדירות עכשיו משפיעות על הקצבה יותר מהפקדות גדולות מאוחר יותר.',
+          call: 'איזה קצב הפקדה מתאים לכם היום',
+        },
+        {
+          id: 'coverage-deposit', tag: 'ביטוח בקרן הפנסיה',
+          when: { any: [{ fact: 'coverageImpact', in: ['no', 'unaware'] }, { all: [{ priority: 'protection' }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }] },
+          title: 'גובה ההפקדה קובע גם את הכיסוי',
+          text: 'בקרן פנסיה, הכיסוי לנכות ולשארים נקבע לפי ההכנסה שממנה מפקידים. הפקדה נמוכה מקטינה גם את הכיסוי, וכשאין הפקדות הכיסוי נמשך זמן מוגבל בלבד.',
+          call: 'מה הכיסוי שיש לכם היום בקרן, ואם הוא מתאים להכנסה',
+        },
+        {
+          id: 'see-everything', tag: 'בדיקה עצמית',
+          when: { any: [{ fact: 'product', is: 'noIdea' }, { fact: 'accumulated', is: 'no' }, { fact: 'coverageKnown', in: ['no', 'partial', 'none'] }, { fact: 'worry', is: 'unknownCover' }, { fact: 'deposits', is: 'unknown' }, { unknownCount: { atLeast: 3 } }] },
+          title: 'את כל מה שעל שמכם אפשר לראות בחינם',
+          text: 'באתר הממשלתי לאיתור חסכונות רואים את כל קופות הפנסיה, הגמל וההשתלמות על שמכם, ובהר הביטוח את כל הפוליסות. בשניהם נכנסים בהזדהות אישית, וזה לוקח כמה דקות.',
+          call: 'לעבור יחד על מה שמצאתם, או להפיק בהסכמתכם דוח מלא מהמסלקה הפנסיונית',
+        },
+        {
+          id: 'beneficiaries', tag: 'מוטבים',
+          when: { any: [{ fact: 'dependents', in: ['yes', 'partial'] }, { fact: 'family', in: ['partner', 'divorced', 'widowed'] }] },
+          title: 'מוטבים לא מתעדכנים מעצמם',
+          text: 'אחרי חתונה, לידה או פרידה כדאי לבדוק מי רשום כמוטב בקופות ובפוליסות, ואם סכום ביטוח החיים מתאים למי שתלוי בהכנסה שלכם.',
+          call: 'בדיקת המוטבים והכיסוי למשפחה',
+        },
+        {
+          id: 'employee-too', tag: 'גם שכירים',
+          when: { fact: 'employee', is: 'yes' },
+          title: 'משכורת וגם עסק: שתי בדיקות',
+          text: 'ההפקדות דרך המעסיק לא פוטרות מחובת ההפקדה על ההכנסה מהעסק, וחישוב הטבות המס תלוי בשני מקורות ההכנסה יחד.',
+          call: 'בדיקת ההפקדות משני מקורות ההכנסה',
+        },
+        {
+          id: 'portfolio-tax', tag: 'מס על השקעות',
+          when: { fact: 'investWhere', has: 'market' },
+          title: 'בתיק רגיל, כל שינוי עולה מס',
+          text: 'מי שמחזיק קרנות נאמנות או ניירות ערך בחשבון רגיל משלם מס על הרווח בכל מכירה. בקופת גמל להשקעה, מעבר בין מסלולים או בין חברות לא נחשב מכירה, והמס נדחה עד המשיכה.',
+          call: 'ההבדל במיסוי בין תיק רגיל לבין קופת גמל להשקעה',
+        },
+        {
+          id: 'pension-fees', tag: 'דמי ניהול',
+          when: { fact: 'pensionDislike', is: 'fees' },
+          title: 'בפנסיה יש שני סוגי דמי ניהול',
+          text: 'בקרן פנסיה גובים דמי ניהול מכל הפקדה, עד 6%, ומהכסף שכבר נצבר, עד 0.5% בשנה. הפרש קטן בדמי הניהול מהצבירה מצטבר לאורך השנים לסכום משמעותי בקצבה.',
+          call: 'כמה דמי ניהול משלמים היום, ובאיזה מסלול נמצא הכסף',
+        },
+        {
+          id: 'default-track', tag: 'מסלול השקעה',
+          when: { fact: 'lastReview', in: ['never', 'fewYears', 'notRemember'] },
+          title: 'בלי בחירה, הכסף במסלול לפי גיל',
+          text: 'מי שלא בחר מסלול השקעה מצורף בדרך כלל למסלול לפי הגיל. כדאי לוודא שהמסלול ודמי הניהול עדיין מתאימים, במיוחד כשהבדיקה האחרונה הייתה לפני כמה שנים.',
+          call: 'בדיקת המסלול ודמי הניהול',
+        },
+        {
+          id: 'existing-money', tag: 'מה שכבר נצבר',
+          when: null,
+          title: 'גם הכסף שכבר נצבר צריך בדיקה',
+          text: 'מעבר להחלטות על הפקדות חדשות, דמי הניהול והמסלול בפנסיה ובקופות הקיימות משפיעים בכל שנה על הכסף שכבר נצבר. זו בדיקה שלא דורשת להפקיד שקל.',
+          call: 'בדיקת דמי הניהול והמסלולים בחסכונות הקיימים',
+        },
+        {
+          id: 'yearly-check', tag: 'בדיקה שנתית',
+          when: null,
+          title: 'שלוש בדיקות שכדאי לעשות פעם בשנה',
+          text: 'שההפקדות של השנה עומדות בחובה ונקלטו עד 31.12, שהכיסוי הביטוחי מתאים להכנסה של היום, ושהמוטבים רשומים נכון. את שלושתן אפשר לבדוק מול הדוח השנתי של הקופה.',
+          call: 'בדיקה שנתית של ההפקדות, הכיסוי והמוטבים',
+        },
+      ],
+
+      // What can be done today, alone. Up to `limits.maxSteps`, in this order. Links open in a new tab.
+      steps: [
+        { id: 'calc', when: { any: [{ priority: 'tax' }, { priority: 'minimum' }, { fact: 'income', in: ['b1', 'b2', 'b3'] }] }, text: 'לחשב בשקלים כמה שווה לכם ההפקדה', label: 'מחשבון הטבות המס לעצמאים', href: '/self-employed-tax-calculator/' },
+        { id: 'gov', when: { any: [{ fact: 'product', is: 'noIdea' }, { fact: 'accumulated', is: 'no' }, { fact: 'deposits', is: 'unknown' }, { fact: 'expectedPension', in: ['notChecked', 'noIdea'] }, { priority: 'unsure' }, { unknownCount: { atLeast: 2 } }] }, text: 'לבדוק אילו קופות רשומות על שמכם', label: 'איתור חסכונות, gov.il', href: 'https://www.gov.il/he/service/pension_savings_search' },
+        { id: 'harb', when: { any: [{ priority: 'protection' }, { fact: 'coverageKnown', in: ['no', 'partial', 'none'] }, { fact: 'worry', is: 'unknownCover' }] }, text: 'לראות את כל הפוליסות על שמכם', label: 'הר הביטוח, רשות שוק ההון', href: 'https://harb.cma.gov.il/' },
+        { id: 'study', when: { any: [{ fact: 'studyFund', in: ['no', 'notDepositing', 'unknown'] }, { fact: 'studyFundLiquid', is: 'no' }] }, text: 'לבדוק כמה להפקיד לקרן השתלמות השנה', label: 'בדיקת קרן השתלמות לעצמאים', href: '/study-fund' },
+        { id: 'guide', when: { any: [{ priority: 'minimum' }, { priority: 'tax' }, { fact: 'obligationKnown', in: ['no', 'unsure'] }, { fact: 'deposits', in: ['none', 'irregular', 'annual'] }] }, text: 'לקרוא כמה חובה להפקיד ומה לבדוק לפני סוף השנה', label: 'המדריך לעצמאים', href: '/self-employed' },
+        { id: 'fund', when: { any: [{ priority: 'liquidity' }, { fact: 'minReason', is: 'investSelf' }, { fact: 'liquidAmount', in: ['lt50', '50to150', '150to400', '400to1m', 'gt1m'] }] }, text: 'להבין איך עובדת קופת גמל להשקעה', label: 'המדריך לקופת גמל להשקעה', href: '/investment-fund' },
+        { id: 'yields', when: { any: [{ priority: 'liquidity' }, { fact: 'wantToUnderstand', in: ['manage', 'all'] }, { fact: 'pensionDislike', in: ['fees', 'trust'] }, { fact: 'liquidAmount', in: ['lt50', '50to150', '150to400', '400to1m', 'gt1m'] }] }, text: 'להשוות תשואות בין החברות', label: 'תשואות קופות ונתוני שוק', href: '/market-data' },
+        { id: 'knowledge', when: null, text: 'לקרוא עוד לפני השיחה', label: 'כל המדריכים והכלים', href: '/knowledge' },
+      ],
+      callTail: 'וכל שאלה אחרת שעלתה לכם',
 
       // Section ב: the explanation for the main priority, plus sentences that fit the answers.
       explain: {

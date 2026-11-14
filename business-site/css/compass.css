@@ -196,3 +196,39 @@
 @media (min-width: 1000px) {
   .cp-res-grid { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: stretch; }
 }
+
+/* ---------- the findings (2026-11-15): a figure or bars in the gold tile, tiles, steps for today, the call list ---------- */
+.cp-res-topic { font-size: var(--t-5); font-weight: 700; color: var(--gold); }
+.cp-tag { display: block; font-size: var(--t-5); font-weight: 800; }
+.cp-lead .cp-figure { display: grid; gap: 4px; padding-block: 4px 6px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
+.cp-lead .cp-figure b { font-size: clamp(44px, 7vw, 76px); font-weight: 900; line-height: 1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.cp-lead .cp-figure span { font-size: var(--t-5); font-weight: 700; max-width: 52ch; }
+.cp-bars { display: grid; gap: 10px; padding-block: 4px 10px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
+.cp-bars ul { display: grid; gap: 10px; }
+.cp-bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.cp-bars li span { font-weight: 700; font-size: var(--t-5); }
+.cp-bars li b { font-size: clamp(20px, 2.4vw, 26px); font-weight: 900; font-variant-numeric: tabular-nums; }
+.cp-bars li i { grid-column: 1 / -1; height: 10px; background: rgba(8, 24, 38, .12); position: relative; }
+.cp-bars li i::after { content: ''; position: absolute; inset-block: 0; inset-inline-start: 0; width: var(--w); background: var(--navy-deep); }
+.cp-bars li:first-child i::after { background: rgba(8, 24, 38, .45); }
+.cp-bars figcaption { font-size: 13px; font-weight: 500; max-width: 64ch; }
+.cp-insights { display: grid; gap: var(--gap); }
+.cp-ins { display: grid; gap: 10px; align-content: start; padding: 24px 22px; background: var(--paper-2); }
+.cp-ins .cp-tag { color: var(--ink-soft); }
+.cp-ins h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; }
+.cp-ins p { max-width: 64ch; }
+.cp-today { padding: 24px 22px; background: var(--slate); color: var(--on-dark); display: grid; gap: 12px; }
+.cp-today h3 { font-size: var(--t-3); font-weight: 800; color: var(--gold); }
+.cp-today ol { display: grid; counter-reset: cp-today-n; }
+.cp-today li { counter-increment: cp-today-n; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 10px; padding-block: 12px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.cp-today li::before { content: counter(cp-today-n); grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; background: var(--gold); color: var(--navy-deep); font-weight: 800; }
+.cp-today li a { color: var(--gold); font-weight: 700; justify-self: start; }
+.cp-calls { display: grid; gap: 6px; margin: 4px 0 14px; padding-inline-start: 0; }
+.cp-calls li { position: relative; padding-inline-start: 20px; font-weight: 500; }
+.cp-calls li::before { content: ''; position: absolute; inset-inline-start: 0; top: .62em; width: 8px; height: 8px; background: var(--gold); }
+.cp-map-fold > summary { cursor: pointer; font-weight: 700; font-size: var(--t-5); }
+.cp-map-fold[open] > summary { margin-bottom: 12px; }
+@media (min-width: 760px) {
+  .cp-insights { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .cp-ins, .cp-today { padding: 32px 40px; }
+}

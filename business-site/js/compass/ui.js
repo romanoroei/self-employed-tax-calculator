@@ -200,14 +200,32 @@
     const s = res.relevanceScores;
 
     const head = h('header', { class: 'tile tile-ink cp-res-head' },
+      h('small', { class: 'cp-res-topic', text: `${R.primaryPrefix} ${res.primaryNeed.label}` }),
       h('h2', { id: 'cp-result-title', tabindex: '-1', text: R.title }),
-      h('p', { text: R.subtitle }),
+      h('p', { text: res.findingsLead }),
       res.limited ? h('p', { class: 'cp-limited', text: R.limitedNote }) : null);
 
-    const primary = h('section', { class: 'tile tile-gold cp-res-primary', 'aria-labelledby': 'cp-primary' },
-      h('small', { text: R.primaryPrefix }),
-      h('h3', { id: 'cp-primary', text: res.primaryNeed.label }),
-      res.primaryNeed.explain.map((t) => h('p', { text: t })));
+    // the findings: the first in the gold tile (with its figure, or the bars of the growth example), the others as tiles
+    const [first, ...rest] = res.findings;
+    const figureOf = (f) => (f.rows
+      ? h('figure', { class: 'cp-bars' },
+        h('ul', {}, f.rows.map((r) => h('li', { style: `--w:${Math.max(4, Math.round(r.share * 100))}%` }, h('span', { text: r.label }), h('b', { text: r.value }), h('i', { 'aria-hidden': 'true' })))),
+        h('figcaption', { text: f.caption }))
+      : h('p', { class: 'cp-figure' }, h('b', { text: f.value }), h('span', { text: f.caption })));
+    const primary = h('section', { class: 'tile tile-gold cp-res-primary cp-lead', 'aria-labelledby': 'cp-ins-1' },
+      h('small', { class: 'cp-tag', text: `1 · ${first.tag}` }),
+      first.figure ? figureOf(first.figure) : null,
+      h('h3', { id: 'cp-ins-1', text: first.title }),
+      h('p', { text: first.text }));
+    const others = rest.length ? h('div', { class: 'cp-insights' }, rest.map((x, i) => h('section', { class: 'cp-ins', 'aria-labelledby': `cp-ins-${i + 2}` },
+      h('small', { class: 'cp-tag', text: `${i + 2} · ${x.tag}` }),
+      h('h3', { id: `cp-ins-${i + 2}`, text: x.title }),
+      h('p', { text: x.text })))) : null;
+    const steps = res.steps.length ? h('section', { class: 'cp-today', 'aria-labelledby': 'cp-today-title' },
+      h('h3', { id: 'cp-today-title', text: R.stepsTitle }),
+      h('ol', {}, res.steps.map((st) => h('li', {},
+        h('span', { text: st.text }),
+        h('a', { class: 'link', href: st.href, target: '_blank', rel: 'noopener', 'data-count': `compass:step-${st.id}` }, `${st.label} ←`, h('span', { class: 'visually-hidden', text: ' (נפתח בלשונית חדשה)' })))))) : null;
 
     const needs = res.secondaryNeeds.length ? h('section', { class: 'cp-block cp-needs tile-paper2', 'aria-labelledby': 'cp-needs' },
       h('h3', { id: 'cp-needs', text: res.secondaryNeeds.length === 2 ? R.complementTitle : 'עוד נושא שעלה' }),
@@ -215,8 +233,8 @@
         h('h4', { text: n.title }), h('p', { text: n.text }), n.because ? h('p', { class: 'cp-because', text: `עלה כי ${n.because}.` }) : null)))) : null;
 
     const order = E.AREAS.slice().sort((a, b) => s[b].score - s[a].score);
-    const map = h('section', { class: 'cp-block cp-map', 'aria-labelledby': 'cp-map' },
-      h('h3', { id: 'cp-map', text: R.mapTitle }),
+    const map = h('details', { class: 'cp-block cp-map cp-map-fold' },
+      h('summary', { id: 'cp-map', text: R.mapSummary }),
       h('p', { class: 'cp-note', text: R.mapNote }),
       h('div', { class: 'cp-map-list' }, order.map((a) => {
         const reasons = s[a].reasons.filter((r) => r.pts !== 0);
@@ -239,7 +257,6 @@
       h('p', { text: R.missingIntro }),
       h('ul', {}, [...res.missing, ...res.documents].map((t) => h('li', { text: t }))),
       res.contradictions.length ? h('div', { class: 'cp-flag' }, h('p', { text: res.contradictions.length === 1 ? 'תשובה שכדאי לברר:' : R.contradictionsIntro }), h('ul', {}, res.contradictions.map((c) => h('li', { text: c.text })))) : null,
-      res.cannotTell ? h('p', { text: R.cannotTell }) : null,
       h('p', { class: 'cp-note', text: R.noDocuments }));
 
     // section ו: the invitation, only after the visitor already has the result
@@ -247,8 +264,8 @@
     const formTile = buildForm(res);
     const invite = h('section', { class: 'tile tile-ink cp-invite', 'aria-labelledby': 'cp-invite' },
       h('h3', { id: 'cp-invite', text: R.inviteTitle }),
-      h('p', { text: R.inviteText }),
-      h('p', { class: 'cp-cta-line', text: `${res.callToAction}.` }),
+      h('p', { text: R.callsLead }),
+      h('ul', { class: 'cp-calls' }, res.calls.map((t) => h('li', { text: t }))),
       h('div', { class: 'cp-actions' },
         h('button', { type: 'button', class: 'button', 'aria-expanded': 'false', 'aria-controls': 'cp-form', onclick: (e) => openForm(e.currentTarget, formTile) }, R.inviteButton),
         h('a', { class: 'button button-line', href: E.whatsappUrl(res, cfg), target: '_blank', rel: 'noopener', 'data-count': 'compass:whatsapp' }, icon(WA_ICON), R.whatsappButton),
@@ -264,7 +281,7 @@
       h('a', { class: 'button button-line-ink', href: `https://wa.me/?text=${encodeURIComponent('המצפן הפיננסי לעצמאים: כמה שאלות קצרות, ומפת צרכים אישית של מה כדאי לבדוק בחיסכון\nhttps://romanoinvest.co.il/compass')}`, target: '_blank', rel: 'noopener', 'data-count': 'compass:share' }, icon(WA_ICON), 'לשתף את המצפן'));
     const disclaimer = h('p', { class: 'cp-disclaimer' }, R.disclaimer, ' כסוכן פנסיוני רועי רומנו עשוי לקבל עמלות מגופים מוסדיים, הפרטים ב', h('a', { class: 'link', href: '/disclosure', text: 'גילוי הנאות' }), '.');
 
-    box.replaceChildren(head, primary, needs || '', h('div', { class: 'cp-res-grid' }, map, checks), missing, invite, formTile, mine, tools, share, disclaimer);
+    box.replaceChildren(...[head, primary, others, steps, invite, formTile, missing, map, mine, tools, share, disclaimer].filter(Boolean));
     if (!still()) { box.classList.remove('is-entering'); void box.offsetWidth; box.classList.add('is-entering'); }
     scrollToTop(box);
     head.querySelector('h2').focus({ preventScroll: true });
