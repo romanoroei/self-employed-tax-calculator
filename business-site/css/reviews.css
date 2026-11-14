@@ -9,7 +9,7 @@
 .rv-head .art-standfirst { color: var(--ink); font-weight: 500; }
 
 .rv-cover { margin-bottom: 48px; }
-.rv-cover img { width: 100%; max-height: 420px; aspect-ratio: 16 / 9; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.rv-cover img { width: 100%; max-height: 420px; aspect-ratio: 16 / 9; object-fit: cover; filter: contrast(1.04); }
 
 /* in short: the summary and the 3–5 points, on paper-2 with gold squares */
 .rv-brief { background: var(--paper-2); padding: 28px 32px; margin-bottom: 56px; }
@@ -58,7 +58,7 @@
 
 /* Roei's own angle: written and approved by him, never generated */
 .rv-angle { margin-top: 56px; background: var(--navy); color: var(--on-dark); padding: 28px 32px; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 20px; align-items: start; border-inline-start: 6px solid var(--gold); }
-.rv-angle img { width: 72px; height: 72px; object-fit: cover; object-position: 50% 15%; filter: grayscale(1); }
+.rv-angle img { width: 72px; height: 72px; object-fit: cover; object-position: 50% 15%; }
 .prose .rv-angle h2 { margin-top: 0; color: var(--gold); font-size: var(--t-3); }
 .prose .rv-angle p { font-size: 18px; }
 .prose .rv-angle p:last-child { margin-bottom: 0; }
@@ -82,7 +82,7 @@
 
 /* the hub */
 .rv-feature { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--gap); background: var(--paper-2); margin-bottom: 64px; }
-.rv-feature-img { width: 100%; height: 100%; min-height: 280px; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+.rv-feature-img { width: 100%; height: 100%; min-height: 280px; object-fit: cover; filter: contrast(1.04); }
 .rv-feature-text { padding: 32px 36px 36px 16px; }
 .rv-feature-title { font-size: var(--t-2); font-weight: 800; line-height: 1.25; }
 .rv-feature-title a { color: inherit; text-decoration: none; }

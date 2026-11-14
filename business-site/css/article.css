@@ -15,7 +15,7 @@
 .art-lead-photo { margin-top: 40px; }
 /* guides: the first section sits right under the byline, before the figures table */
 .art-intro + .se-figure { margin-top: 56px; }
-.art-lead-photo img { width: 100%; height: auto; filter: grayscale(1) contrast(1.05); }
+.art-lead-photo img { width: 100%; height: auto; filter: contrast(1.04); }
 
 .prose h2 { font-size: var(--t-2); font-weight: 800; line-height: 1.25; margin-block: 48px 14px; }
 .prose h2:first-child { margin-top: 0; }
@@ -37,7 +37,7 @@
 .art-figure-src { margin-top: 16px; font-size: var(--t-5); color: var(--on-dark-soft); }
 
 .mosaic { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 56px; }
-.mosaic img { height: 240px; width: auto; filter: grayscale(1) contrast(1.05); }
+.mosaic img { height: 240px; width: auto; filter: contrast(1.04); }
 .mosaic figcaption { flex-basis: 100%; margin-top: 8px; font-size: var(--t-5); color: var(--ink-soft); }
 
 .prose ul { display: grid; gap: 10px; margin-bottom: 20px; }
