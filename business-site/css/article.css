@@ -194,3 +194,19 @@
 .hp-board.logo-board { margin-top: var(--gap); grid-template-columns: repeat(6, minmax(0, 1fr)); }
 @media (max-width: 1080px) { .hp-board.logo-board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .hp-managers-head { flex-direction: column; align-items: flex-start; gap: 12px; } }
+/* hovering a manager shows its logo in its own colours */
+.hp-board .logo-tile { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); }
+.hp-board .logo-tile > * { grid-area: 1 / 1; transition: opacity 200ms ease; }
+.hp-board .logo-tile img { width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.hp-board .logo-tile:active .logo { opacity: 0; }
+.hp-board .logo-tile:active img { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .hp-board .logo-tile:hover { background: #fff; }
+  .hp-board .logo-tile:hover .logo { opacity: 0; transform: none; }
+  .hp-board .logo-tile:hover img { opacity: 1; }
+}
+/* year-end offer above the title */
+.hp-promo { margin: 0 0 18px; }
+.hp-promo a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--gold); color: var(--navy); font-size: var(--t-5); font-weight: 700; text-decoration: none; transition: background-color 160ms ease; }
+.hp-promo strong { font-weight: 900; }
+.hp-promo a:hover { background: #d8c789; }
