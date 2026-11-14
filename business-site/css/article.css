@@ -184,3 +184,13 @@
   .kn-text strong { font-size: 15px; }
   .kn-text small { font-size: 13px; }
 }
+
+/* Hachshara policy: the insurer and its six investment managers */
+.hp-managers { max-width: 1000px; margin-block: 8px 48px; }
+.hp-managers-head { display: flex; align-items: center; gap: 24px; padding: 22px 26px; }
+.hp-managers-head .logo { flex: none; width: 150px; height: 44px; background: var(--gold); }
+.hp-managers-head p { margin: 0; color: var(--on-dark); font-size: var(--t-4); line-height: 1.4; }
+.hp-managers-head strong { display: block; color: var(--gold); font-size: var(--t-3); font-weight: 800; }
+.hp-board.logo-board { margin-top: var(--gap); grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 1080px) { .hp-board.logo-board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .hp-managers-head { flex-direction: column; align-items: flex-start; gap: 12px; } }
