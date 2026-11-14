@@ -1465,3 +1465,5 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 @media (min-width: 901px) { .hero-bg.hero-bg-street { filter: contrast(1.04); opacity: .9; } .hero-bg.hero-bg-board { opacity: .7; } }
 /* the four ways in stay black and white: in colour the gold headings got lost (Roei) */
 .panel-photo img, .about-photo img, .service > img { filter: contrast(1.04); }
+/* computers: the portrait a little further away (Roei): the whole photo in its frame, its far edge fading before the words */
+@media (min-width: 901px) { .hero-slide:first-child > .hero-bg { object-fit: contain; object-position: 0 100%; -webkit-mask-image: linear-gradient(to right, #000 40%, transparent 76%); mask-image: linear-gradient(to right, #000 40%, transparent 76%); } }
