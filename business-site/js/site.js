@@ -631,8 +631,8 @@ try {
   if (!board || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const tiles = [...board.querySelectorAll('.logo-tile')];
   if (tiles.length < 2) return;
-  const STEP = 1700; // a new logo every 1.7s
-  const HOLD = 1200; // each stays lit about a second, then fades out as the next lights up
+  const STEP = 1130; // a new logo every 1.13s (a third faster, Roei)
+  const HOLD = 800; // each stays lit about 0.8s, then fades out as the next lights up
   let index = -1, timer = 0, offTimer = 0, inView = false, hovered = false;
   const tick = () => {
     index = (index + 1) % tiles.length;

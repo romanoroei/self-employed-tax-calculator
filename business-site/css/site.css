@@ -1472,10 +1472,10 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 /* ================= The institutions board: each logo lights up in its own colours (Roei, 2026-11-14) ================= */
 /* the real logo lies over the navy silhouette, hidden; js/site.js lights one tile at a time, gently, like a light going on and off.
    On a computer, resting the pointer on a logo shows its real colours too (instead of the old gold on navy) */
-.logo-tile { position: relative; transition: background-color 700ms ease; }
-.logo-real { position: absolute; inset: 0; width: 100%; height: 100%; box-sizing: border-box; padding: inherit; object-fit: contain; opacity: 0; pointer-events: none; transition: opacity 700ms ease; }
+.logo-tile { position: relative; transition: background-color 470ms ease; }
+.logo-real { position: absolute; inset: 0; width: 100%; height: 100%; box-sizing: border-box; padding: inherit; object-fit: contain; opacity: 0; pointer-events: none; transition: opacity 470ms ease; }
 .logo-tile:has(.logo-wide) .logo-real { padding-inline: 12px; }
-.logo-tile .logo { transition: opacity 700ms ease, transform 300ms var(--ease-out); }
+.logo-tile .logo { transition: opacity 470ms ease, transform 300ms var(--ease-out); }
 .logo-tile.is-lit { background: #fff; }
 .logo-tile.is-lit .logo { opacity: 0; }
 .logo-tile.is-lit .logo-real { opacity: 1; }
