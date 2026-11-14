@@ -24,6 +24,30 @@
 
 /* ---------- result ---------- */
 .fc-result .cp-res-primary .fc-season-note { padding: 12px 14px; background: rgba(8, 24, 38, .08); font-weight: 500; }
+.fc-res-topic { font-size: var(--t-5); font-weight: 700; color: var(--gold); }
+.fc-tag { display: block; font-size: var(--t-5); font-weight: 800; letter-spacing: .01em; }
+.fc-lead .fc-figure { display: grid; gap: 4px; padding-block: 4px 6px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
+.fc-lead .fc-figure b { font-size: clamp(44px, 7vw, 76px); font-weight: 900; line-height: 1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.fc-lead .fc-figure span { font-size: var(--t-5); font-weight: 700; max-width: 46ch; }
+.fc-insights { display: grid; gap: var(--gap); }
+.fc-ins { display: grid; gap: 10px; align-content: start; padding: 24px 22px; background: var(--paper-2); }
+.fc-ins .fc-tag { color: var(--ink-soft); }
+.fc-ins h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; }
+.fc-ins p { max-width: 64ch; }
+.fc-steps { padding: 24px 22px; background: var(--slate); color: var(--on-dark); display: grid; gap: 12px; }
+.fc-steps h3 { font-size: var(--t-3); font-weight: 800; color: var(--gold); }
+.fc-steps ol { display: grid; gap: 0; counter-reset: fc-step; }
+.fc-steps li { counter-increment: fc-step; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 10px; padding-block: 12px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.fc-steps li::before { content: counter(fc-step); grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; background: var(--gold); color: var(--navy-deep); font-weight: 800; }
+.fc-steps li span { font-weight: 500; }
+.fc-steps li a { color: var(--gold); font-weight: 700; justify-self: start; }
+.fc-calls { display: grid; gap: 6px; margin: 4px 0 10px; padding-inline-start: 0; }
+.fc-calls li { position: relative; padding-inline-start: 20px; color: var(--on-dark); font-weight: 500; }
+.fc-calls li::before { content: ''; position: absolute; inset-inline-start: 0; top: .62em; width: 8px; height: 8px; background: var(--gold); }
+@media (min-width: 760px) {
+  .fc-insights { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .fc-ins, .fc-steps { padding: 32px 40px; }
+}
 .fc-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; padding: 0 22px; font-size: var(--t-5); }
 .fc-tools a { font-weight: 700; }
 

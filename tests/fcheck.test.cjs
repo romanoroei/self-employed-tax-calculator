@@ -317,3 +317,41 @@ test('the lead function limits the rate, and keeps a lead when Formspree fails',
   globalThis.fetch = fakeFetch(false);
   assert.equal((await post(fn, await body(E, picks), {})).status, 502);
 });
+
+test('every path gets at least two findings, a step and a call list, with no token left unfilled', async () => {
+  const E = await engine();
+  for (const now of [NOW, OFF]) {
+    let paths = 0;
+    const walk = (s) => {
+      const v = E.view(s, { now });
+      if (!v.question) {
+        paths++;
+        const r = E.result(s, { now });
+        assert(r.insights.length >= 2 && r.insights.length <= 3, 'findings ' + r.insights.length);
+        assert(r.steps.length >= 1 && r.calls.length === r.insights.length + 1);
+        for (const x of r.insights) {
+          const all = [x.title, x.text, x.call, x.figure ? x.figure.value + x.figure.caption : ''].join(' ');
+          assert(!/[{}]/.test(all), 'unfilled token in ' + x.id);
+        }
+        return;
+      }
+      for (const o of v.question.options) walk(E.answer(s, v.question.id, o.id, { now }));
+    };
+    walk(E.newState(now));
+    assert(paths > 80000);
+  }
+});
+
+test('the year-end countdown and the fee example', async () => {
+  const E = await engine();
+  assert.equal(E.daysToYearEnd(new Date('2026-11-14T10:00:00Z')), 47);
+  assert.equal(E.daysToYearEnd(new Date('2026-12-31T22:30:00Z')), 364); // already 1.1.2027 in Israel
+  assert.equal(E.daysToYearEnd(new Date('2026-12-31T21:30:00Z')), 0);
+  assert.deepEqual(E.feeExample({ monthly: '500to1500', horizon: 'y5plus' }), { monthly: 1000, years: 15, gap: 9800 });
+  const r = E.result(run(E, ['invest', 'over300', 'general', 'y5plus', 'grow', 'checking', 'asap']), { now: NOW });
+  assert.equal(r.insights[0].id, 'ceiling');
+  assert.equal(r.insights[0].figure.value, '41');
+  assert.match(r.insights[0].text, /תקרת 2027/);
+  const off = E.result(run(E, ['invest', 'over300', 'general', 'y5plus', 'grow', 'checking', 'asap'], OFF), { now: OFF });
+  assert.equal(off.insights[0].figure.value, '83,641 ₪');
+});

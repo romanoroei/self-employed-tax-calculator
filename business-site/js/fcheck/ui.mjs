@@ -166,19 +166,32 @@ function start() {
     const box = screens.result;
 
     const head = h('header', { class: 'tile tile-ink cp-res-head' },
-      h('h2', { id: 'fc-result-title', tabindex: '-1', text: TEXTS.resultTitle }));
-    const primary = h('section', { class: 'tile tile-gold cp-res-primary', 'aria-labelledby': 'fc-track' },
-      h('small', { text: TEXTS.resultPrefix }),
-      h('h3', { id: 'fc-track', text: res.title }),
-      h('p', { text: res.text }),
-      res.seasonNote ? h('p', { class: 'fc-season-note', text: res.seasonNote }) : null);
+      h('small', { class: 'fc-res-topic', text: `${TEXTS.resultPrefix}: ${res.title}` }),
+      h('h2', { id: 'fc-result-title', tabindex: '-1', text: TEXTS.resultTitle }),
+      h('p', { text: TEXTS.resultLead(res.insights.length) }));
+    // the first finding in the gold tile (with its figure when it has one), the others as numbered tiles
+    const [first, ...rest] = res.insights;
+    const primary = h('section', { class: 'tile tile-gold cp-res-primary fc-lead', 'aria-labelledby': 'fc-ins-1' },
+      h('small', { class: 'fc-tag', text: `1 · ${first.tag}` }),
+      first.figure ? h('p', { class: 'fc-figure' }, h('b', { text: first.figure.value }), h('span', { text: first.figure.caption })) : null,
+      h('h3', { id: 'fc-ins-1', text: first.title }),
+      h('p', { text: first.text }));
+    const others = rest.length ? h('div', { class: 'fc-insights' }, rest.map((x, i) => h('section', { class: 'fc-ins', 'aria-labelledby': `fc-ins-${i + 2}` },
+      h('small', { class: 'fc-tag', text: `${i + 2} · ${x.tag}` }),
+      h('h3', { id: `fc-ins-${i + 2}`, text: x.title }),
+      h('p', { text: x.text })))) : null;
+    const steps = res.steps.length ? h('section', { class: 'fc-steps', 'aria-labelledby': 'fc-steps-title' },
+      h('h3', { id: 'fc-steps-title', text: TEXTS.stepsTitle }),
+      h('ol', {}, res.steps.map((s) => h('li', {},
+        h('span', { text: s.text }),
+        h('a', { class: 'link', href: s.href, target: '_blank', rel: 'noopener', onclick: () => count(`fc:step-${s.id}`) }, `${s.label} ←`, h('span', { class: 'visually-hidden', text: ' (נפתח בלשונית חדשה)' })))))) : null;
     const disclaimer = h('p', { class: 'cp-disclaimer' }, TEXTS.resultDisclaimer, ' כסוכן פנסיוני רועי רומנו עשוי לקבל עמלות מגופים מוסדיים, הפרטים ב', h('a', { class: 'link', href: '/disclosure', target: '_blank', rel: 'noopener', text: 'גילוי הנאות' }), '.');
     const mine = h('details', { class: 'cp-mine' }, h('summary', { text: 'התשובות שלך (אפשר לשנות כל אחת)' }), h('ul', {}, E.answersList(state).map(answerItem)));
     const tools = h('p', { class: 'fc-tools' },
       h('button', { type: 'button', class: 'cp-link-btn', onclick: () => { count('fc:restart'); session.del(KEY); begin(); } }, 'להתחיל מחדש'),
       h('a', { class: 'link', href: cfg.siteUrl, target: '_blank', rel: 'noopener', 'data-fc-site': 'result' }, 'רוצה להכיר את רועי רומנו קודם? ←', h('span', { class: 'visually-hidden', text: ' (נפתח בלשונית חדשה)' })));
 
-    box.replaceChildren(head, primary, disclaimer, buildForm(res), mine, tools);
+    box.replaceChildren(...[head, primary, others, steps, buildForm(res), disclaimer, mine, tools].filter(Boolean));
     if (!still()) { box.classList.remove('is-entering'); void box.offsetWidth; box.classList.add('is-entering'); }
     scrollToTop(box);
     head.querySelector('h2').focus({ preventScroll: true });
@@ -212,6 +225,7 @@ function start() {
     const form = h('form', { class: 'coupon-form', novalidate: true },
       h('h3', { id: 'fc-form-title', text: TEXTS.formTitle }),
       h('p', { class: 'fc-form-lead', text: TEXTS.formText }),
+      h('ul', { class: 'fc-calls' }, res.calls.map((c) => h('li', { text: c }))),
       field('name', 'שם מלא', name),
       field('phone', 'מספר טלפון נייד', phone),
       field('email', 'כתובת דוא"ל', email, true),

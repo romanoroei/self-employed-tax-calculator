@@ -8,6 +8,7 @@
 import { ENTRY, QUESTIONS, ROUTES, TEXTS, CONSENT } from './questions.mjs';
 import { TRACKS, TRACK_RULES, GRADE, GRADE_LABELS, GRADE_RULES, URGENCY, TALKING_POINTS } from './rules.mjs';
 import { CONFIG } from './config.mjs';
+import { INSIGHTS, STEPS, MAX_INSIGHTS, MAX_STEPS, CALL_TAIL } from './insights.mjs';
 
 export const STATE_VERSION = 1;
 export const MAX_QUESTIONS = 10;
@@ -173,6 +174,43 @@ export function answersList(state, opts) {
   });
 }
 
+// ---------- what the visitor gets back: findings, a figure, steps for today, the call list ----------
+// days left to 31.12, counted on Israel dates (today itself not counted)
+export function daysToYearEnd(now = new Date()) {
+  const p = israelParts(now);
+  const today = Date.UTC(+p.year, +p.month - 1, +p.day);
+  return Math.round((Date.UTC(+p.year, 11, 31) - today) / 86400000);
+}
+// the fee example: a monthly deposit at 4% a year before fees, with and without 0.5% more in fees
+const MONTHLY_EXAMPLE = { upto500: 500, '500to1500': 1000, '1500to3000': 2000, over3000: 3000, over1500: 2000, unknown: 1000 };
+const YEARS_EXAMPLE = { y3to5: 5, y5plus: 15, unknown: 15 };
+const fv = (m, years, rate) => { const i = rate / 12; const n = years * 12; return m * ((1 + i) ** n - 1) / i; };
+export function feeExample(facts) {
+  const m = MONTHLY_EXAMPLE[facts.monthly] || 1000;
+  const years = YEARS_EXAMPLE[facts.horizon] || 15;
+  const gap = Math.round((fv(m, years, 0.04) - fv(m, years, 0.035)) / 100) * 100;
+  return { monthly: m, years, gap };
+}
+const fmt = (n) => n.toLocaleString('en-US');
+function fill(text, tokens) { return String(text).replace(/\{(\w+)\}/g, (all, k) => (k in tokens ? tokens[k] : all)); }
+function outcome(ctx, now) {
+  const fee = feeExample(ctx.facts);
+  const days = daysToYearEnd(now);
+  const tokens = { days: days === 0 ? 'היום' : String(days), daysText: days === 0 ? 'היום' : days === 1 ? 'מחר' : `בעוד ${days} ימים`, feeGap: fmt(fee.gap), monthlyEx: fmt(fee.monthly), years: String(fee.years) };
+  const shown = INSIGHTS.filter((x) => ev(x.when, ctx)).slice(0, MAX_INSIGHTS).map((x) => {
+    const variant = (x.variants || []).find((v) => ev(v.when, ctx));
+    const v = variant || {};
+    const f = v.figure || x.figure;
+    const figure = f ? { value: f.kind === 'days' ? tokens.days : f.kind === 'fee' ? `${tokens.feeGap} ₪` : f.value, caption: fill(f.caption, tokens) } : null;
+    return { id: x.id, tag: v.tag || x.tag, title: fill(v.title || x.title, tokens), text: fill(v.text || x.text, tokens), figure, call: fill(x.call, tokens) };
+  });
+  // the finding with a figure leads, so the number sits in the gold tile; a warning about money needed soon stays first
+  const lead = shown.findIndex((x) => x.figure);
+  if (lead > 0 && shown[0].id !== 'short') shown.unshift(...shown.splice(lead, 1));
+  const steps = STEPS.filter((x) => ev(x.when, ctx)).slice(0, MAX_STEPS).map(({ id, text, label, href }) => ({ id, text, label, href }));
+  return { insights: shown, steps, calls: [...shown.map((x) => x.call), CALL_TAIL] };
+}
+
 // ---------- the result: track, grade and the reasons ----------
 export function result(state, opts) {
   const w = walk(state, opts);
@@ -198,6 +236,7 @@ export function result(state, opts) {
     urgency: w.facts.urgency ? URGENCY[w.facts.urgency] : 'לא נאסף',
     facts: { ...w.facts },
     season: ctx.season,
+    ...outcome(ctx, (opts && opts.now) || new Date()),
   };
 }
 
@@ -276,6 +315,7 @@ export function leadMessage(state, contact, source, consent, opts = {}) {
   L.push(`דחיפות: ${res.urgency}`);
   L.push(`סכום פנוי: ${valueOf('amount')}`);
   L.push(`חיסכון חודשי: ${valueOf('monthly')}`);
+  L.push(`מה הוצג לפונה בסיכום: ${res.insights.map((x) => x.title).join('; ')}`);
   L.push('נקודות לבירור בשיחה:');
   if (res.talking.length) res.talking.forEach((t) => L.push(`- ${t}`)); else L.push('- אין נקודות מיוחדות מעבר לתשובות');
   L.push('');
