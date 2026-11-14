@@ -220,3 +220,24 @@
 .hp-offer-btn:hover { background: #B5141B; }
 .hp-offer-line { background: transparent; color: var(--on-dark); box-shadow: inset 0 0 0 2px var(--gold); }
 .hp-offer-line:hover { background: rgba(201, 183, 114, .14); }
+/* the offer table compares the regular fee (struck through diagonally when the offer is lower) with the offer */
+.hp-compare thead th { padding: 0 0 10px; font-size: var(--t-5); font-weight: 700; color: var(--on-dark-soft); border-bottom: 1px solid rgba(241, 241, 238, .35); }
+.hp-compare thead th + th, .hp-compare td { width: 24%; text-align: center; }
+.hp-compare tbody th { width: 52%; }
+.hp-compare td.hp-was { color: var(--on-dark-soft); font-weight: 500; }
+.hp-compare del { position: relative; display: inline-block; padding-inline: 4px; text-decoration: none; }
+.hp-compare del::after { content: ""; position: absolute; inset: 44% -2px auto; height: 2px; background: #E1251B; transform: rotate(-18deg); }
+.hp-compare tbody td:last-child { font-size: var(--t-3); font-weight: 800; }
+
+/* phones: the comparison stays a real three-column table (the other fact tables stack) */
+@media (max-width: 760px) {
+  .se-table.hp-compare { display: table; width: 100%; }
+  .hp-compare thead { display: table-header-group; }
+  .hp-compare tbody { display: table-row-group; }
+  .hp-compare tr { display: table-row; padding: 0; border: 0; }
+  .hp-compare th, .hp-compare td { display: table-cell; padding: 12px 0; border-bottom: 1px solid rgba(241, 241, 238, .18); vertical-align: middle; }
+  .hp-compare thead th { padding: 0 0 8px; }
+  .hp-compare tbody th { width: 50%; padding-inline-end: 8px; }
+  .hp-compare thead th + th, .hp-compare td { width: 25%; }
+  .hp-compare tbody td:last-child { font-size: var(--t-4); }
+}
