@@ -34,7 +34,7 @@ for(const file of published){
   if(rel==='financial-check.html')assert(/<meta name="robots" content="noindex, nofollow">/.test(text)&&!/http-equiv="refresh"/.test(text),'The campaign page must stay out of search results');
   else assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
-  if(/^(?:self-employed|savings-policy|investment-fund|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
+  if(/^(?:self-employed|savings-policy|investment-fund|severance|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
@@ -60,7 +60,7 @@ const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
 const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,15+reviewPages.length,'Sitemap must include all fifteen canonical pages and every published review');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,16+reviewPages.length,'Sitemap must include all sixteen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check is reached by its own campaign link only: not in the sitemap, linked from no other page, no Google Analytics
@@ -89,7 +89,7 @@ assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing o
 const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
-for(const page of ['index.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
+for(const page of ['index.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
 assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');
