@@ -1484,3 +1484,6 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   .logo-tile:hover .logo { background: var(--navy); opacity: 0; transform: none; }
   .logo-tile:hover .logo-real { opacity: 1; transition-duration: 250ms; }
 }
+
+/* tools without an article head (compass, study fund): a quiet way back to the tools list */
+.tool-back { font-size: var(--t-5); color: var(--ink-soft); margin-bottom: 4px; }
