@@ -29,7 +29,7 @@ Google נטען רק לאחר אישור מדידה. לפני אישור, לאח
 | service_details_open | פתיחת „מה כולל השירות?” |
 | calculator_share | לחיצה על שיתוף המחשבון |
 
-מאפייני אירוע מוגדרים בדוחות: cta_location (comparison / page_end / footer), contact_channel (whatsapp / phone / email).
+מאפייני אירוע מוגדרים בדוחות: cta_location (comparison / deposit_banner / page_end / footer), contact_channel (whatsapp / phone / email).
 
 האירועים contact_click ו־contact_email_compose מוגדרים כאירועים מרכזיים, פעם אחת בכל סשן וללא ערך כספי ברירת מחדל.
 

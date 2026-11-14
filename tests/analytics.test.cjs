@@ -150,3 +150,9 @@ test('new production domains report their own clean URL; previews stay unmeasure
     assert.equal(env.scripts.length,0); assert.equal(env.events().length,0);
   }
 });
+
+test('the deposit banner reports a WhatsApp click with its own location only', () => {
+  const env=setup();env.allow();const target=env.get('deposit-cta-link');target.location='#deposit-cta';target.selector='.deposit-cta-action';env.document.emit('click',{target});
+  const event=env.events().find(e=>e[1]==='contact_click');
+  assert.deepEqual(event[2],{send_to:ID,cta_location:'deposit_banner',contact_channel:'whatsapp'});
+});

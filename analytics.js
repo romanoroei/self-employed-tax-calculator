@@ -6,7 +6,7 @@
   const PATH = '/self-employed-tax-calculator/';
   const HOSTS = new Set(['romanoroei.github.io', 'romanoinvest.co.il', 'www.romanoinvest.co.il']);
   const EVENTS = new Set(['calculation_complete', 'contact_click', 'contact_email_open', 'contact_email_compose', 'benefit_breakdown_view', 'service_details_open', 'calculator_share', 'contact_summary_send']);
-  const LOCATIONS = new Set(['comparison', 'page_end', 'footer']);
+  const LOCATIONS = new Set(['comparison', 'deposit_banner', 'page_end', 'footer']);
   const CHANNELS = new Set(['whatsapp', 'phone', 'email']);
   let consent = null, started = false, breakdownVisible = false, breakdownReported = false;
   const banner = document.getElementById('analytics-consent');
@@ -92,7 +92,7 @@
     gtag('event', name, safe);
   }
   function locationOf(element) {
-    return element.closest('#closing-cta') ? 'page_end' : element.closest('#contact-card') || element.closest('#summary-send') ? 'comparison' : 'footer';
+    return element.closest('#deposit-cta') ? 'deposit_banner' : element.closest('#closing-cta') ? 'page_end' : element.closest('#contact-card') || element.closest('#summary-send') ? 'comparison' : 'footer';
   }
   document.getElementById('analytics-allow').addEventListener('click', () => choose(true));
   document.getElementById('analytics-deny').addEventListener('click', () => choose(false));
@@ -116,7 +116,7 @@
       track('contact_email_open', { cta_location: location, contact_channel: 'email' });
     } else if (target.id === 'summary-send-button') {
       track('contact_summary_send', { cta_location: location, contact_channel: 'whatsapp' });
-    } else if (target.matches('.advisor-primary')) {
+    } else if (target.matches('.advisor-primary') || target.matches('.deposit-cta-action')) {
       track('contact_click', { cta_location: location, contact_channel: 'whatsapp' });
     } else if (target.matches('a[href^="mailto:"]')) {
       track('contact_click', { cta_location: location, contact_channel: 'email' });

@@ -736,6 +736,33 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
   .benefit-detail-table .detail-gap .gap-exempt{font-size:11px;line-height:1.35}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* deposit CTA: between the result and "where the benefit comes from" */
+.deposit-cta{margin-top:56px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,340px);gap:var(--gap)}
+.deposit-cta-copy{background:var(--navy);color:var(--on-dark);padding:36px 44px;border-inline-start:6px solid var(--gold)}
+.deposit-cta-kicker{margin:0 0 6px;color:var(--gold);font-size:15px;font-weight:700;letter-spacing:.01em}
+.deposit-cta h2{margin:0;font-size:var(--t-2);font-weight:800;line-height:1.15;color:var(--on-dark)}
+.deposit-cta-text{margin:12px 0 0;max-width:62ch;font-size:18px;color:var(--on-dark-soft)}
+.deposit-cta-text strong{color:var(--gold-soft);font-weight:800;white-space:nowrap}
+.deposit-cta-count{margin:0;min-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:24px 22px;background:var(--navy-deep);color:var(--on-dark-soft);text-align:center;font-size:15px;line-height:1.3}
+.deposit-cta-count strong{font-size:clamp(44px,4.4vw,64px);font-weight:800;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.deposit-cta-action{display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:32px 28px;background:var(--gold);color:var(--navy-deep);text-decoration:none;transition:background-color 160ms ease}
+.deposit-cta-action-main{font-size:clamp(22px,1.9vw,26px);font-weight:800;line-height:1.25}
+.deposit-cta-action small{font-size:15px;font-weight:500;line-height:1.4}
+.deposit-cta-action:hover{color:var(--navy-deep)}
+@media(hover:hover) and (pointer:fine){.deposit-cta-action:hover{background:var(--gold-soft)}}
+@media(max-width:1100px){.deposit-cta{grid-template-columns:minmax(0,1fr) auto}.deposit-cta-copy{grid-column:1/-1}}
+@media(max-width:700px){
+  .deposit-cta{margin-top:40px;grid-template-columns:auto minmax(0,1fr);gap:6px}
+  .deposit-cta-copy{padding:24px 22px;border-inline-start-width:5px}
+  .deposit-cta-kicker{font-size:14px}
+  .deposit-cta-text{font-size:16px}
+  .deposit-cta-count{min-width:0;padding:16px 14px;font-size:13px}
+  .deposit-cta-count strong{font-size:40px}
+  .deposit-cta-action{padding:18px 20px;gap:6px;justify-content:center}
+  .deposit-cta-action-main{font-size:19px}
+  .deposit-cta-action small{font-size:13px}
+  .deposit-cta-count[hidden]+.deposit-cta-action{grid-column:1/-1}
+}
 </style>
 </head>
 <body>
@@ -762,6 +789,7 @@ body:has(#analytics-consent:not([hidden])) .to-top{bottom:190px}
 
 
 
+<aside class="deposit-cta" id="deposit-cta" aria-labelledby="deposit-cta-title"><div class="deposit-cta-copy"><p class="deposit-cta-kicker" id="deposit-cta-kicker">שנת המס נסגרת ב־31 בדצמבר</p><h2 id="deposit-cta-title">עכשיו בדיוק הזמן להפקיד</h2><p class="deposit-cta-text" id="deposit-cta-text">כדי שההפקדה תיחשב לשנת המס הנוכחית, היא צריכה להיכנס לקופה עד 31 בדצמבר. מפקידים עכשיו, נהנים מההטבה כבר השנה ובונים את העתיד שלכם.</p></div><p class="deposit-cta-count" id="deposit-cta-count" hidden><strong id="deposit-cta-days"></strong><span id="deposit-cta-days-label">ימים נותרו להפקדה</span></p><a class="deposit-cta-action" href="https://wa.me/972528089808?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A8%D7%95%D7%A2%D7%99%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%9E%D7%97%D7%A9%D7%91%D7%95%D7%9F%20%D7%94%D7%94%D7%98%D7%91%D7%95%D7%AA%20%D7%9C%D7%A2%D7%A6%D7%9E%D7%90%D7%99%D7%9D%20%D7%95%D7%A8%D7%90%D7%99%D7%AA%D7%99%20%D7%9B%D7%9E%D7%94%20%D7%94%D7%94%D7%A4%D7%A7%D7%93%D7%94%20%D7%A9%D7%95%D7%95%D7%94%20%D7%9C%D7%99.%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%AA%D7%90%D7%9D%20%D7%A9%D7%99%D7%97%D7%94%20%D7%A7%D7%A6%D7%A8%D7%94%20%D7%9C%D7%9C%D7%90%20%D7%A2%D7%9C%D7%95%D7%AA%20%D7%95%D7%9C%D7%9C%D7%90%20%D7%94%D7%AA%D7%97%D7%99%D7%99%D7%91%D7%95%D7%AA%20%D7%9B%D7%93%D7%99%20%D7%9C%D7%94%D7%A4%D7%A7%D7%99%D7%93%20%D7%9C%D7%A4%D7%A0%D7%99%20%D7%A1%D7%95%D7%A3%20%D7%A9%D7%A0%D7%AA%20%D7%94%D7%9E%D7%A1." target="_blank" rel="noopener noreferrer"><span class="deposit-cta-action-main">מפקידים עכשיו, יחד איתי <span aria-hidden="true">↗</span></span><small>שיחת התאמה בוואטסאפ, ללא עלות וללא התחייבות</small></a></aside>
 <section class="benefit-breakdown-section" id="benefit-breakdown" aria-labelledby="breakdown-title"><div class="result-head"><div><h2 class="section-title" id="breakdown-title">מאיפה מגיעה ההטבה</h2></div><div class="breakdown-controls" role="group" aria-label="בחירת אפשרות לפירוט ההטבות"><button type="button" data-breakdown="target" aria-pressed="true">מיצוי ההטבות</button><button type="button" data-breakdown="custom" aria-pressed="false">ההפקדה שלי</button><button type="button" data-breakdown="law" aria-pressed="false">המינימום לפי החוק</button></div></div><details class="income-basis"><summary>בסיס ההכנסה לחישוב</summary><dl><div><dt>קרן השתלמות</dt><dd id="study-income"></dd></div><div><dt>פנסיה</dt><dd id="pension-income"></dd></div></dl></details><div id="benefit-table-view"><p class="detail-custom-status" id="detail-custom-status" role="status" hidden></p><div class="benefit-table-scroll"><table class="benefit-detail-table"><caption class="sr-only">פירוט הטבות המס השנתיות בקרן השתלמות ובפנסיה</caption><colgroup><col class="benefit-label-column"><col><col><col><col></colgroup><thead><tr><th scope="col">ההטבה</th><th scope="col"><h3 class="fund-heading study-heading" id="study-title">השתלמות</h3></th><th scope="col"><h3 class="fund-heading pension-heading" id="pension-title">פנסיה</h3></th><th scope="col" class="benefit-summary-heading" id="benefit-summary-heading">סיכום</th><th scope="col" class="benefit-summary-heading benefit-overall">סיכום</th></tr></thead><tbody><tr class="detail-deposits" id="detail-deposit-row" hidden><th scope="row" id="detail-deposit-label">ההפקדה השנתית שלי</th><td><label class="sr-only" for="detail-custom-study">ההפקדה השנתית שלי לקרן השתלמות</label><div class="table-input-wrap"><input id="detail-custom-study" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div><bdi class="plan-deposit" id="detail-plan-study"></bdi></td><td><label class="sr-only" for="detail-custom-pension">ההפקדה השנתית שלי לפנסיה</label><div class="table-input-wrap"><input id="detail-custom-pension" type="text" inputmode="decimal" data-max-amount="499999" autocomplete="off" aria-describedby="detail-custom-status custom-help"><span class="table-currency" aria-hidden="true">₪</span></div><bdi class="plan-deposit" id="detail-plan-pension"></bdi></td><td class="benefit-summary"><bdi id="detail-paid-total"></bdi></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-paid-total"></bdi></td></tr>
 <tr><th scope="row">הוצאה מוכרת</th><td><bdi id="study-deduction"></bdi></td><td><bdi id="deduction"></bdi></td><td class="benefit-summary"><bdi id="detail-sum-deduction"></bdi></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-deduction"></bdi></td></tr>
 <tr class="detail-tax-benefit"><th scope="row">שווי הניכוי</th><td><bdi id="study-tax"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="study-tax-multiplication"></bdi></small></td><td><bdi id="deduction-saving"></bdi><small class="deduction-multiplication"><bdi dir="ltr" id="pension-tax-multiplication"></bdi></small></td><td class="benefit-summary"><bdi id="detail-sum-deduction-saving"></bdi></td><td class="benefit-summary benefit-overall"><bdi id="detail-all-deduction-saving"></bdi></td></tr>
@@ -1310,6 +1338,7 @@ function renderComparison(r,mode){
   set('sum-health',money(targetPlan.pensionInsurance.health+targetPlan.study.insurance.health));
   // the year in the heading, what I already deposited, and the legal minimum
   set('result-year',' ב־'+targetPlan.year);
+  renderDepositCta();
   document.querySelectorAll('.income-basis').forEach(details=>{details.open=true;details.querySelector('summary').tabIndex=-1;});
   for(const key of ['pension','study']){
     const fresh=el('comparison-body').querySelector('#custom-'+key);
@@ -1338,6 +1367,26 @@ document.querySelectorAll('[data-breakdown]').forEach(button=>button.addEventLis
   if(!plan){if(mode==='custom'){renderResult(targetPlan,'custom',false);customDepositsAreValid(readCustomDeposits());}return;}
   renderResult(plan,mode,false);
 }));
+// the deposit CTA: deposits count for a tax year only when paid by 31 December of that year
+function renderDepositCta(){
+  const box=el('deposit-cta');
+  if(!targetPlan||!(targetPlan.grandTotal>0)){box.hidden=true;return;}
+  box.hidden=false;
+  const now=new Date(),thisYear=now.getFullYear();
+  const days=Math.max(1,Math.ceil((new Date(thisYear,11,31,23,59,59)-now)/86400000));
+  const current=targetPlan.year===thisYear;
+  set('deposit-cta-kicker','שנת המס '+thisYear+' נסגרת ב־31 בדצמבר');
+  el('deposit-cta-count').hidden=false;
+  set('deposit-cta-days',days===1?'היום':String(days));
+  set('deposit-cta-days-label',days===1?'היום האחרון להפקדה':'ימים נותרו להפקדה');
+  const text=el('deposit-cta-text');
+  if(current){
+    const worth=document.createElement('strong');worth.textContent=money(targetPlan.grandTotal);
+    text.replaceChildren('ההפקדה שחישבתם שווה לכם כ־',worth,' בשנה. כדי שתיחשב לשנת המס '+thisYear+', היא צריכה להיכנס לקופה עד 31 בדצמבר. מפקידים עכשיו, נהנים מההטבה כבר השנה ובונים את העתיד שלכם.');
+  }else{
+    text.textContent='שנת המס '+targetPlan.year+' כבר מאחוריכם, אבל עד 31 בדצמבר אפשר עוד ליהנות מהטבות המס של '+thisYear+'. מפקידים עכשיו, נהנים מההטבה כבר השנה ובונים את העתיד שלכם.';
+  }
+}
 function resetCalculation(){
   document.body.classList.remove('has-calculation');
   el('calculator').reset();
