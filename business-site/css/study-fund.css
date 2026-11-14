@@ -26,18 +26,16 @@
 /* ================= Opening screen ================= */
 .sf-intro { grid-template-columns: minmax(0, 1fr); }
 .sf-hero { padding: 26px 20px 28px; display: grid; gap: 16px; align-content: start; }
-.sf-hero h1 { font-size: clamp(28px, 4.2vw, 52px); font-weight: 800; line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; }
+.sf-hero h1 { font-size: clamp(28px, 4.2vw, 52px); font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; text-wrap: balance; }
 .sf-sub { font-size: var(--t-3); line-height: 1.6; color: var(--on-dark-soft); max-width: 46ch; }
 .sf-start-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 4px; }
 .sf-start-row small { font-size: var(--t-5); color: var(--on-dark-soft); }
 .sf-start { width: 100%; gap: 10px; }
 @media (hover: hover) and (pointer: fine) { .sf-start:hover .arrow { transform: translateX(-4px); } }
-.sf-facts { padding: 8px 22px; display: grid; align-content: start; }
-.sf-facts li { display: grid; gap: 2px; padding-block: 16px; border-bottom: 1px solid rgba(12, 33, 52, .12); }
-.sf-facts li:last-child { border-bottom: 0; }
-.sf-facts strong { font-weight: 800; }
-.sf-facts span { font-size: var(--t-5); color: var(--ink-soft); }
-.sf-by { grid-template-columns: 56px minmax(0, 1fr); gap: 12px !important; align-items: center; }
+.sf-side { display: grid; gap: var(--gap); align-content: start; }
+.sf-gets-tile { padding: 24px 22px; display: grid; gap: 12px; }
+.sf-gets-tile h2 { font-size: var(--t-3); font-weight: 800; }
+.sf-by { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; align-items: center; padding: 16px 22px; font-size: var(--t-5); color: var(--ink-soft); }
 .sf-by img { width: 56px; height: 56px; object-fit: cover; object-position: 50% 15%; }
 .sf-by strong { display: block; color: var(--ink); }
 @media (min-width: 560px) { .sf-start { width: auto; } }
@@ -45,17 +43,14 @@
   .sf { padding-top: 24px; }
   .sf-intro { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
   .sf-hero { padding: 48px 44px 50px; gap: 22px; align-content: center; }
-  .sf-facts { padding: 16px 30px; }
+  .sf-gets-tile { padding: 30px 30px; }
+  .sf-by { padding: 18px 30px; }
 }
 
-.sf-seo-tile { padding: 24px 20px; display: grid; gap: 12px; }
-.sf-seo-tile h2 { font-size: var(--t-2); font-weight: 800; }
 .sf-gets { display: grid; gap: 8px; max-width: 70ch; }
 .sf-gets li { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 12px; align-items: baseline; }
 .sf-gets li::before { content: ""; width: 10px; height: 10px; background: var(--gold-deep); }
 .sf-gets strong { font-weight: 800; }
-.sf-faq { margin-top: 8px; }
-@media (min-width: 900px) { .sf-seo-tile { padding: 36px 40px; } }
 
 .faq-item > div { margin-top: 10px; display: grid; gap: 8px; max-width: 64ch; font-size: 17px; }
 .faq-item > div ul { list-style: disc; padding-inline-start: 20px; display: grid; gap: 2px; }
@@ -185,6 +180,8 @@
 .whatsapp-status { grid-column: 1 / -1; font-size: var(--t-5); color: var(--gold); font-weight: 700; }
 .whatsapp-status:empty { display: none; }
 .mobile-label { display: none; }
+.sf-wa { gap: 10px; }
+.wa-icon { flex: none; }
 
 .sf-pick { margin-top: 10px; font-size: var(--t-5); font-weight: 700; color: var(--ink-soft); }
 .sf-fold { padding: 0; }
@@ -320,16 +317,13 @@ body:has(.floating-result-summary.is-visible) .foot { padding-bottom: 64px; }
 /* ================= Phones: compact, so each question fits one screen ================= */
 @media (max-width: 699px) {
   .sf { padding-top: 8px; }
-  /* opening screen: the hero already says it, so only Roei's line stays */
-  .sf-facts li:not(.sf-by) { display: none; }
-  .sf-facts { padding: 0 16px; }
-  .sf-facts li { padding-block: 12px; }
+  /* opening screen */
   .sf-hero { padding: 22px 18px 24px; gap: 14px; }
   .sf-sub { font-size: 16px; }
-  .sf-seo-tile { padding: 20px 16px; gap: 10px; }
-  .sf-seo-tile h2 { font-size: 20px; }
+  .sf-gets-tile { padding: 18px 16px; gap: 10px; }
+  .sf-gets-tile h2 { font-size: 19px; }
   .sf-gets { font-size: 15px; gap: 6px; }
-  .sf-faq { margin-top: 4px; }
+  .sf-by { padding: 12px 16px; font-size: 14px; }
   .faq-item > div { font-size: 15px; }
 
   /* questions */

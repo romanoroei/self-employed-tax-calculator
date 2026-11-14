@@ -10,7 +10,7 @@ export function buildRecommendation(result, profile) {
 }
 
 export function buildCta(result, profile) {
-  if (profile.fundStatus === 'none') return 'רוצה לבדוק איך לפתוח קרן בצורה נכונה?';
+  if (profile.fundStatus === 'none') return 'רוצה לפתוח קרן שמתאימה בדיוק לך, ולהתחיל לחסוך במס כבר השנה?';
   if (result.overCeiling > 0) return 'רוצה לבדוק מה אפשר לעשות עם הסכום שמעל התקרה?';
   if (result.remaining === 0) return 'רוצה לבדוק אם הקרן והמסלול שלך עדיין מתאימים?';
   if (result.remaining < 5000) return 'רוצה לוודא שהקרן שלך מנוהלת נכון גם אחרי השלמת ההפקדה?';

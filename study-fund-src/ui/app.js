@@ -235,7 +235,7 @@ function transitionTo(index, recordHistory = true) {
 
 function collect(years = 10) {
   const data = new FormData(form);
-  const method = data.get('depositMethod');
+  const method = data.get('fundStatus') === 'none' ? 'none' : data.get('depositMethod'); // no fund, no deposits this year, even if an earlier answer entered some
   return {
     input: {
       income: data.get('income'),
@@ -563,7 +563,7 @@ function renderResultIntro(result, profile) {
     return;
   }
   if (profile.fundStatus === 'none') {
-    $('#result-title').textContent = 'עדיין אין לך קרן השתלמות — וזו נקודת התחלה חשובה';
+    $('#result-title').textContent = 'עדיין אין לך קרן השתלמות';
     message.textContent = '';
     message.hidden = true;
   } else if (result.depositedToDate === 0) {
