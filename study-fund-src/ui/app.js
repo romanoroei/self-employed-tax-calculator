@@ -563,7 +563,7 @@ function renderResultIntro(result, profile) {
     return;
   }
   if (profile.fundStatus === 'none') {
-    $('#result-title').textContent = 'עדיין אין לך קרן השתלמות';
+    $('#result-title').textContent = 'עדיין אין לך קרן השתלמות - היום נטפל בזה';
     message.textContent = '';
     message.hidden = true;
   } else if (result.depositedToDate === 0) {
