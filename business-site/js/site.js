@@ -622,3 +622,32 @@ try {
   }
   lines.forEach((line) => { line.textContent = text; line.classList.toggle('is-open', open); line.hidden = false; });
 })();
+
+// ===== The institutions board: one logo at a time lights up in its own colours, then the next (Roei) =====
+// Runs only while the board is on screen and the tab is visible; pauses while the pointer is on the board;
+// does not run at all with reduced motion (the colours still show on hover).
+(() => {
+  const board = document.querySelector('[data-logo-light]');
+  if (!board || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const tiles = [...board.querySelectorAll('.logo-tile')];
+  if (tiles.length < 2) return;
+  const STEP = 1700; // a new logo every 1.7s
+  const HOLD = 1200; // each stays lit about a second, then fades out as the next lights up
+  let index = -1, timer = 0, offTimer = 0, inView = false, hovered = false;
+  const tick = () => {
+    index = (index + 1) % tiles.length;
+    const tile = tiles[index];
+    tile.classList.add('is-lit');
+    offTimer = setTimeout(() => tile.classList.remove('is-lit'), HOLD);
+  };
+  const stop = () => { clearInterval(timer); clearTimeout(offTimer); timer = 0; tiles.forEach((t) => t.classList.remove('is-lit')); };
+  const sync = () => {
+    const run = inView && !hovered && !document.hidden;
+    if (run && !timer) { tick(); timer = setInterval(tick, STEP); }
+    else if (!run && timer) stop();
+  };
+  new IntersectionObserver((entries) => { inView = entries[0].isIntersecting; sync(); }, { threshold: 0.4 }).observe(board);
+  board.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovered = true; sync(); } });
+  board.addEventListener('pointerleave', () => { hovered = false; sync(); });
+  document.addEventListener('visibilitychange', sync);
+})();
