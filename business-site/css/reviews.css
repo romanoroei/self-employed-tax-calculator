@@ -44,6 +44,8 @@
 .rv-table thead th { color: var(--on-dark-soft); font-weight: 700; }
 .rv-table tbody th { font-weight: 700; }
 .rv-table td { font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+/* a cell that starts with a number turns left-to-right (dir="auto"), and "start" then meant left: keep every cell on the right, under its heading (Roei) */
+.rv-table td[dir] { text-align: right; }
 .rv-table tr:last-child > * { border-bottom: 0; }
 
 /* what it means for our savings: one box per product */
