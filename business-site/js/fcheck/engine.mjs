@@ -8,7 +8,7 @@
 import { ENTRY, QUESTIONS, ROUTES, TEXTS, CONSENT } from './questions.mjs';
 import { TRACKS, TRACK_RULES, GRADE, GRADE_LABELS, GRADE_RULES, URGENCY, TALKING_POINTS } from './rules.mjs';
 import { CONFIG } from './config.mjs';
-import { INSIGHTS, STEPS, MAX_INSIGHTS, MAX_STEPS, CALL_TAIL } from './insights.mjs';
+import { INSIGHTS, STEPS, MAX_INSIGHTS, MAX_STEPS, CALL_TAIL, TRACK_YIELDS } from './insights.mjs';
 
 export const STATE_VERSION = 1;
 export const MAX_QUESTIONS = 10;
@@ -181,27 +181,31 @@ export function daysToYearEnd(now = new Date()) {
   const today = Date.UTC(+p.year, +p.month - 1, +p.day);
   return Math.round((Date.UTC(+p.year, 11, 31) - today) / 86400000);
 }
-// the fee example: a monthly deposit at 4% a year before fees, with and without 0.5% more in fees
+// the growth example: a monthly deposit over the last years, at each track's average annual yield
+// (from its cumulative figure), deposited at the end of each month
 const MONTHLY_EXAMPLE = { upto500: 500, '500to1500': 1000, '1500to3000': 2000, over3000: 3000, over1500: 2000, unknown: 1000 };
-const YEARS_EXAMPLE = { y3to5: 5, y5plus: 15, unknown: 15 };
-const fv = (m, years, rate) => { const i = rate / 12; const n = years * 12; return m * ((1 + i) ** n - 1) / i; };
-export function feeExample(facts) {
+export function growthExample(facts) {
   const m = MONTHLY_EXAMPLE[facts.monthly] || 1000;
-  const years = YEARS_EXAMPLE[facts.horizon] || 15;
-  const gap = Math.round((fv(m, years, 0.04) - fv(m, years, 0.035)) / 100) * 100;
-  return { monthly: m, years, gap };
+  const n = TRACK_YIELDS.years * 12;
+  const rows = TRACK_YIELDS.rows.map((r) => {
+    const i = (1 + r.cum / 100) ** (1 / n) - 1;
+    const total = i === 0 ? m * n : m * ((1 + i) ** n - 1) / i;
+    return { id: r.id, label: r.label, total: i === 0 ? total : Math.round(total / 1000) * 1000 };
+  });
+  return { monthly: m, deposited: m * n, rows };
 }
 const fmt = (n) => n.toLocaleString('en-US');
 function fill(text, tokens) { return String(text).replace(/\{(\w+)\}/g, (all, k) => (k in tokens ? tokens[k] : all)); }
 function outcome(ctx, now) {
-  const fee = feeExample(ctx.facts);
+  const grow = growthExample(ctx.facts);
+  const total = (id) => fmt(grow.rows.find((r) => r.id === id).total);
   const days = daysToYearEnd(now);
-  const tokens = { days: days === 0 ? 'היום' : String(days), daysText: days === 0 ? 'היום' : days === 1 ? 'מחר' : `בעוד ${days} ימים`, feeGap: fmt(fee.gap), monthlyEx: fmt(fee.monthly), years: String(fee.years) };
+  const tokens = { days: days === 0 ? 'היום' : String(days), daysText: days === 0 ? 'היום' : days === 1 ? 'מחר' : `בעוד ${days} ימים`, monthlyEx: fmt(grow.monthly), deposited: fmt(grow.deposited), bonds: total('bonds'), general: total('general'), stocks: total('stocks'), period: TRACK_YIELDS.period };
   const shown = INSIGHTS.filter((x) => ev(x.when, ctx)).slice(0, MAX_INSIGHTS).map((x) => {
     const variant = (x.variants || []).find((v) => ev(v.when, ctx));
     const v = variant || {};
     const f = v.figure || x.figure;
-    const figure = f ? { value: f.kind === 'days' ? tokens.days : f.kind === 'fee' ? `${tokens.feeGap} ₪` : f.value, caption: fill(f.caption, tokens) } : null;
+    const figure = f ? { value: f.kind === 'days' ? tokens.days : f.kind === 'growth' ? `${total('stocks')} ₪` : f.value, caption: fill(f.caption, tokens), rows: f.kind === 'growth' ? grow.rows.map((r) => ({ label: r.label, value: `${fmt(r.total)} ₪`, share: r.total / grow.rows[grow.rows.length - 1].total })) : null } : null;
     return { id: x.id, tag: v.tag || x.tag, title: fill(v.title || x.title, tokens), text: fill(v.text || x.text, tokens), figure, call: fill(x.call, tokens) };
   });
   // the finding with a figure leads, so the number sits in the gold tile; a warning about money needed soon stays first

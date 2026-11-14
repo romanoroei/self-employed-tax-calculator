@@ -29,6 +29,16 @@
 .fc-lead .fc-figure { display: grid; gap: 4px; padding-block: 4px 6px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
 .fc-lead .fc-figure b { font-size: clamp(44px, 7vw, 76px); font-weight: 900; line-height: 1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
 .fc-lead .fc-figure span { font-size: var(--t-5); font-weight: 700; max-width: 46ch; }
+/* the growth example: a bar per track, the longest is the high-risk track */
+.fc-bars { display: grid; gap: 10px; padding-block: 4px 10px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
+.fc-bars ul { display: grid; gap: 10px; }
+.fc-bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
+.fc-bars li span { font-weight: 700; font-size: var(--t-5); }
+.fc-bars li b { font-size: clamp(20px, 2.4vw, 26px); font-weight: 900; font-variant-numeric: tabular-nums; }
+.fc-bars li i { grid-column: 1 / -1; height: 10px; background: rgba(8, 24, 38, .12); position: relative; }
+.fc-bars li i::after { content: ''; position: absolute; inset-block: 0; inset-inline-start: 0; width: var(--w); background: var(--navy-deep); }
+.fc-bars li:first-child i::after { background: rgba(8, 24, 38, .45); }
+.fc-bars figcaption { font-size: 13px; font-weight: 500; max-width: 64ch; }
 .fc-insights { display: grid; gap: var(--gap); }
 .fc-ins { display: grid; gap: 10px; align-content: start; padding: 24px 22px; background: var(--paper-2); }
 .fc-ins .fc-tag { color: var(--ink-soft); }

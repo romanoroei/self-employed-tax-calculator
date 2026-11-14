@@ -342,12 +342,18 @@ test('every path gets at least two findings, a step and a call list, with no tok
   }
 });
 
-test('the year-end countdown and the fee example', async () => {
+test('the year-end countdown and the growth example', async () => {
   const E = await engine();
   assert.equal(E.daysToYearEnd(new Date('2026-11-14T10:00:00Z')), 47);
   assert.equal(E.daysToYearEnd(new Date('2026-12-31T22:30:00Z')), 364); // already 1.1.2027 in Israel
   assert.equal(E.daysToYearEnd(new Date('2026-12-31T21:30:00Z')), 0);
-  assert.deepEqual(E.feeExample({ monthly: '500to1500', horizon: 'y5plus' }), { monthly: 1000, years: 15, gap: 9800 });
+  const g = E.growthExample({ monthly: '500to1500' });
+  assert.equal(g.deposited, 84000);
+  assert.deepEqual(g.rows.map((r) => r.total), [84000, 97000, 111000, 135000]);
+  const m = E.result(run(E, ['monthly', '500to1500', 'none', 'longterm', 'y5plus', 'no', 'asap']), { now: NOW });
+  const growth = m.insights.find((x) => x.id === 'growth');
+  assert.equal(growth.figure.rows.length, 4);
+  assert.match(growth.text, /84,000 ₪/);
   const r = E.result(run(E, ['invest', 'over300', 'general', 'y5plus', 'grow', 'checking', 'asap']), { now: NOW });
   assert.equal(r.insights[0].id, 'ceiling');
   assert.equal(r.insights[0].figure.value, '41');

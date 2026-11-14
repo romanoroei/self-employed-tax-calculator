@@ -5,13 +5,27 @@
 //
 // INSIGHTS are checked in order and the first MAX_INSIGHTS that hold are shown, so put the time-limited and
 // the protective ones first. A short general one closes the list so nobody leaves with fewer than two.
-// Tokens: {days} days left to 31.12 (Israel time), {daysText} the same in words ("בעוד 47 ימים", "מחר", "היום"); {feeGap} {monthlyEx} {years} the fee example (engine.mjs).
+// Tokens: {days} days left to 31.12 (Israel time), {daysText} the same in words ("בעוד 47 ימים", "מחר", "היום"); {monthlyEx} {deposited} {bonds} {general} {stocks} {period} the growth example (engine.mjs).
 // A variant (the first that holds) may replace the tag, title, text and figure.
-// `figure` puts a number in the gold tile: { kind: 'days' } · { kind: 'fee' } · { value: '...' }.
+// `figure` puts a number in the gold tile: { kind: 'days' } · { kind: 'growth' } (a row per track) · { value: '...' }.
 // `call` is what the conversation with Roei would cover; the form lists the `call` of each insight shown.
 
 export const MAX_INSIGHTS = 3;
 export const MAX_STEPS = 3;
+
+// The growth example: the average cumulative 7-year yield of the investment provident funds in each track
+// (the Finance Ministry's figures via GemelHub, the same group rules and average as the site's yields tile;
+// the bonds track computed the same way). Update with the yields. "bank" is money that earns nothing.
+export const TRACK_YIELDS = {
+  period: '09/2026',
+  years: 7,
+  rows: [
+    { id: 'bank', label: 'בלי תשואה (עו"ש)', cum: 0 },
+    { id: 'bonds', label: 'מסלול סולידי (אשראי ואג"ח)', cum: 32.01 },
+    { id: 'general', label: 'סיכון בינוני (מסלול כללי)', cum: 71.08 },
+    { id: 'stocks', label: 'סיכון גבוה (מסלול מניות)', cum: 143.1 },
+  ],
+};
 
 const AMOUNT_ANY = ['upto25', '25to50', '50to100', '25to100', '100to300', 'over300'];
 const LUMP_ANY = ['upto25', '25to100', 'over100'];
@@ -135,12 +149,12 @@ export const INSIGHTS = [
 
   // ---------- monthly saving ----------
   {
-    id: 'fee', tag: 'דמי ניהול',
-    when: { all: [{ fact: 'need', is: 'monthly' }, { fact: 'horizon', in: ['y3to5', 'y5plus', 'unknown'] }] },
-    title: 'חצי אחוז בדמי ניהול שווה כ־{feeGap} ₪',
-    text: 'לדוגמה: הפקדה של {monthlyEx} ₪ בחודש במשך {years} שנים. בהנחה של תשואה שנתית של 4% לפני דמי ניהול, הפרש של 0.5% בשנה בדמי הניהול מהצבירה מוריד מהחיסכון כ־{feeGap} ₪. זו המחשה בלבד, לא תחזית ולא הבטחה לתשואה.',
-    figure: { kind: 'fee', caption: 'כמה עולה הפרש של 0.5% בדמי הניהול, בהמחשה של {years} שנים' },
-    call: 'אילו דמי ניהול ומסלול מתאימים לחיסכון החודשי',
+    id: 'growth', tag: 'תשואה לאורך זמן',
+    when: { all: [{ fact: 'need', is: 'monthly' }, { not: { fact: 'horizon', is: 'y1' } }] },
+    title: 'מה עשו 7 השנים האחרונות ל־{monthlyEx} ₪ בחודש',
+    text: 'מי שהפקיד {monthlyEx} ₪ בכל חודש ב־7 השנים האחרונות שם בצד {deposited} ₪. בעו"ש, בלי תשואה, זה כל מה שיש לו היום. בקופות גמל להשקעה, לפי התשואה הממוצעת של כל מסלול, אותו כסף היה מגיע לכ־{bonds} ₪ במסלול סולידי, {general} ₪ במסלול בסיכון בינוני ו־{stocks} ₪ במסלול בסיכון גבוה. מסלול עם יותר מניות עלה יותר לאורך זמן, אבל גם ירד יותר בדרך.',
+    figure: { kind: 'growth', caption: 'הפקדה של {monthlyEx} ₪ בחודש ב־7 השנים האחרונות. ממוצע קופות הגמל להשקעה בכל מסלול עד {period}, לפני דמי ניהול ובלי התאמה לאינפלציה. תשואת עבר אינה מבטיחה תשואה בעתיד.' },
+    call: 'איזו רמת סיכון מתאימה לטווח ולמטרה של החיסכון',
   },
   {
     id: 'cushion', tag: 'כרית ביטחון',

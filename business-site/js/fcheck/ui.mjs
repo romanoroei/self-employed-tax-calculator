@@ -173,7 +173,10 @@ function start() {
     const [first, ...rest] = res.insights;
     const primary = h('section', { class: 'tile tile-gold cp-res-primary fc-lead', 'aria-labelledby': 'fc-ins-1' },
       h('small', { class: 'fc-tag', text: `1 · ${first.tag}` }),
-      first.figure ? h('p', { class: 'fc-figure' }, h('b', { text: first.figure.value }), h('span', { text: first.figure.caption })) : null,
+      first.figure && first.figure.rows ? h('figure', { class: 'fc-bars' },
+        h('ul', {}, first.figure.rows.map((r) => h('li', { style: `--w:${Math.max(4, Math.round(r.share * 100))}%` }, h('span', { text: r.label }), h('b', { text: r.value }), h('i', { 'aria-hidden': 'true' })))),
+        h('figcaption', { text: first.figure.caption }))
+        : first.figure ? h('p', { class: 'fc-figure' }, h('b', { text: first.figure.value }), h('span', { text: first.figure.caption })) : null,
       h('h3', { id: 'fc-ins-1', text: first.title }),
       h('p', { text: first.text }));
     const others = rest.length ? h('div', { class: 'fc-insights' }, rest.map((x, i) => h('section', { class: 'fc-ins', 'aria-labelledby': `fc-ins-${i + 2}` },
