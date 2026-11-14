@@ -1460,9 +1460,8 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 .hero-bg, .hero-bg.hero-bg-board, .hero-bg.hero-bg-street { filter: saturate(.92) contrast(1.04); }
 /* computers and tablets: the portrait beside the words is clearer; on phones the words lie over it, so it keeps its faint level */
 @media (min-width: 701px) { .hero-slide:first-child > .hero-bg { opacity: .82; } }
+/* the portrait slide: half colour (Roei) */
+.hero-slide:first-child > .hero-bg { filter: grayscale(.5) contrast(1.04); }
 @media (min-width: 901px) { .hero-bg.hero-bg-street { filter: contrast(1.04); opacity: .9; } .hero-bg.hero-bg-board { opacity: .7; } }
-/* the four ways in: the photo in colour, fading into the card colour (no multiply, which muddied the colour on gold and paper) */
-.path-bg { filter: contrast(1.04); opacity: .72; }
-.tile-paper2 .path-bg, .tile-gold .path-bg { mix-blend-mode: normal; opacity: .78; }
-@media (hover: hover) and (pointer: fine) { .path:hover .path-bg { opacity: .92; } }
+/* the four ways in stay black and white: in colour the gold headings got lost (Roei) */
 .panel-photo img, .about-photo img, .service > img { filter: contrast(1.04); }
