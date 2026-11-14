@@ -623,7 +623,8 @@ try {
   lines.forEach((line) => { line.textContent = text; line.classList.toggle('is-open', open); line.hidden = false; });
 })();
 
-// ===== The institutions board: one logo at a time lights up in its own colours, then the next (Roei) =====
+// ===== The institutions board: one logo at a time lights up in its own colours, in a random order (Roei) =====
+// Each round lights every logo once, in a new shuffled order; a round never starts with the logo that ended the last one.
 // Runs only while the board is on screen and the tab is visible; pauses while the pointer is on the board;
 // does not run at all with reduced motion (the colours still show on hover).
 (() => {
@@ -631,12 +632,17 @@ try {
   if (!board || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const tiles = [...board.querySelectorAll('.logo-tile')];
   if (tiles.length < 2) return;
-  const STEP = 1130; // a new logo every 1.13s (a third faster, Roei)
-  const HOLD = 800; // each stays lit about 0.8s, then fades out as the next lights up
-  let index = -1, timer = 0, offTimer = 0, inView = false, hovered = false;
+  const STEP = 900; // a new logo every 0.9s (Roei: a little faster again)
+  const HOLD = 620; // each stays lit about 0.6s, then fades out as the next lights up
+  let order = [], last = -1, timer = 0, offTimer = 0, inView = false, hovered = false;
   const tick = () => {
-    index = (index + 1) % tiles.length;
-    const tile = tiles[index];
+    if (!order.length) {
+      order = tiles.map((_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) { const k = Math.floor(Math.random() * (i + 1)); [order[i], order[k]] = [order[k], order[i]]; }
+      if (order[0] === last) order.push(order.shift());
+    }
+    last = order.shift();
+    const tile = tiles[last];
     tile.classList.add('is-lit');
     offTimer = setTimeout(() => tile.classList.remove('is-lit'), HOLD);
   };
