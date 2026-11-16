@@ -111,4 +111,7 @@ assert(!LABEL.test('compass:answer-50s')&&!LABEL.test('compass:utm-somebody')&&!
 for(const t of [sf,sfjs])assert(!/googletagmanager|gtag\(|G-XF5X2QLB8L|G-9GFDYS61G9|google-analytics/i.test(t),'No Google Analytics on the study fund check');
 assert(sf.includes('src="js/study-fund.js')&&sfjs.includes('972528089808'),'The study fund check needs its script and the WhatsApp number');
 for(const page of ['knowledge.html','self-employed.html']){const t=await readFile(path.join(root,page),'utf8');assert(t.includes('href="/study-fund"')&&!t.includes('KerenHeshtalmut'),'Link the study fund check on the site, not on GitHub Pages: '+page);}}
+// SEO: guides carry Article + breadcrumb data that parses, and the legal pages carry a share image
+for(const p of ["self-employed","savings-policy","investment-fund","severance","hachshara-policy","magazine/tides-and-waves","magazine/financial-calendar"]){const t=await readFile(path.join(root,p+".html"),"utf8");const m=t.match(/<script type="application\/ld\+json">(.*?)<\/script>/);assert(m,"Structured data missing: "+p);const g=JSON.parse(m[1])["@graph"];assert(g.some(x=>x["@type"]==="Article")&&g.some(x=>x["@type"]==="BreadcrumbList"),"Article and breadcrumb data needed: "+p);}
+for(const p of ["accessibility","disclosure","privacy","terms"])assert((await readFile(path.join(root,p+".html"),"utf8")).includes("og:image"),"Share image missing: "+p);
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);
