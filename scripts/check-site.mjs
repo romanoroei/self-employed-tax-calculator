@@ -42,7 +42,7 @@ assert(home.includes('href="/self-employed-tax-calculator/"'),'Missing calculato
 assert((home.match(/<table data-yield-view=/g)||[]).length===18,'The yields tile needs all six views in all three rankings');
 assert.equal((home.match(/<ol class="policy-top"[^>]*>([\s\S]*?)<\/ol>/)?.[1].match(/<li>/g)||[]).length,5,'The policy slide needs five companies');
 const marketPage=await readFile(path.join(root,'market-data.html'),'utf8');
-assert((marketPage.match(/<table data-yield-view=[^>]*class="yield-full"/g)||[]).length===24&&!/gemelhub/i.test(marketPage)&&marketPage.includes('js/market.js'),'The market data page needs the full tables (four columns), its script, and no GemelHub');
+assert((marketPage.match(/<table data-yield-view=[^>]*class="yield-full"/g)||[]).length===30&&!/gemelhub/i.test(marketPage)&&marketPage.includes('js/market.js'),'The market data page needs the full tables (five columns: the last month and four periods), its script, and no GemelHub');
 assert(!marketPage.includes('class="yield-cta"')&&marketPage.includes('class="yield-wa" href="https://wa.me/972528089808"'),'The market data page: a WhatsApp button per fund, no link back to its own tile');
 assert(home.includes('class="yield-cta" href="/market-data"'),'The home tile sends "where does your fund stand" to /market-data');
 assert(!/gemelhub/i.test(home),'The home page must not mention GemelHub');

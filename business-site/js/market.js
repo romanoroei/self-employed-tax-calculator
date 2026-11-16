@@ -319,7 +319,8 @@
   const fundsPanel = tile.querySelector('[data-market-panel="funds"]');
   const series = JSON.parse(document.getElementById('yield-series').textContent);
   const fundsChart = makeChart(fundsPanel.querySelector('.market-chart'));
-  const COLUMN_RANGE = { y1: 12, y3: 36, y5: 60, y7: 84 };
+  // the last month has no range of its own: its chart shows the year
+  const COLUMN_RANGE = { m1: 12, y1: 12, y3: 36, y5: 60, y7: 84 };
   const WA_PRODUCTS = { invest: 'לקופת גמל להשקעה', study: 'לקרן השתלמות', policy: 'לפוליסת חיסכון' };
   const WA_TRACKS = { general: 'כללי', stocks: 'מניות' };
   // "ל־18 החודשים שנבחרו (1.5 שנים)": a point's time is the first day after its month, so the count is the gap in months

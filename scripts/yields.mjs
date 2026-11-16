@@ -18,8 +18,9 @@ export const COLUMNS = [
   { id: 'y3', label: '3 שנים' },
   { id: 'y7', label: '7 שנים' },
 ];
-// /market-data adds the five years, from the ministry's own cumulative figure (YIELD_TRAILING_5_YRS).
-export const FULL_COLUMNS = [COLUMNS[0], COLUMNS[1], { id: 'y5', label: '5 שנים' }, COLUMNS[2]];
+// /market-data adds the five years, from the ministry's own cumulative figure (YIELD_TRAILING_5_YRS),
+// and, on computers only, the last month itself (Roei, 2026-11-16).
+export const FULL_COLUMNS = [{ id: 'm1', label: 'חודש אחרון', wide: true }, COLUMNS[0], COLUMNS[1], { id: 'y5', label: '5 שנים' }, COLUMNS[2]];
 export const DEFAULT_COLUMN = 'y7';
 export const ROWS = 5;
 // The chart's ranges, in months; 0 is the whole history.
@@ -226,8 +227,12 @@ export function renderYields({ period, views, series }, { full = false } = {}) {
     const [productId, trackId] = key.split('-');
     const view = `${key}-${sort}`;
     const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${columns.find((c) => c.id === sort).label}`;
-    const heads = columns.map((c) => `<th scope="col"${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${c.label}</button></th>`).join('');
-    const cells = (row) => columns.map((c) => `<td${c.id === sort ? ' class="is-sorted"' : ''}>${percent(row[c.id])}</td>`).join('');
+    // the last month's heading carries the month itself, "09/26"
+    const headLabel = (c) => (c.id === 'm1' ? `${c.label} <span class="yield-month" dir="ltr">${String(period % 100).padStart(2, '0')}/${String(Math.floor(period / 100) % 100).padStart(2, '0')}</span>` : c.label);
+    const cellClass = (c) => [c.id === sort && 'is-sorted', c.wide && 'yield-wide'].filter(Boolean).join(' ');
+    const classAttr = (c) => (cellClass(c) ? ` class="${cellClass(c)}"` : '');
+    const heads = columns.map((c) => `<th scope="col"${c.wide ? ' class="yield-wide"' : ''}${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${headLabel(c)}</button></th>`).join('');
+    const cells = (row) => columns.map((c) => `<td${classAttr(c)}>${percent(row[c.id])}</td>`).join('');
     // the full list ends each row with a WhatsApp button to Roei about that fund
     const waHead = full ? '<th scope="col" class="yield-wa-cell"><span class="visually-hidden">וואטסאפ</span></th>' : '';
     const waCell = (r) => (full ? `<td class="yield-wa-cell">${waLink(r)}</td>` : '');
