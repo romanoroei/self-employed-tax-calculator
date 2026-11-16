@@ -20,7 +20,7 @@ export const COLUMNS = [
 ];
 // /market-data adds the five years, from the ministry's own cumulative figure (YIELD_TRAILING_5_YRS),
 // and, on computers only, the last month itself (Roei, 2026-11-16).
-export const FULL_COLUMNS = [{ id: 'm1', label: 'חודש אחרון', wide: true }, COLUMNS[0], COLUMNS[1], { id: 'y5', label: '5 שנים' }, COLUMNS[2]];
+export const FULL_COLUMNS = [{ id: 'm1', label: 'החודש', wide: true }, COLUMNS[0], COLUMNS[1], { id: 'y5', label: '5 שנים' }, COLUMNS[2]];
 export const DEFAULT_COLUMN = 'y7';
 export const ROWS = 5;
 // The chart's ranges, in months; 0 is the whole history.
@@ -209,8 +209,11 @@ const rowLogo = (company) => (ROW_LOGOS[company] ? `<img class="yield-logo" src=
 // js/market.js writes the message when the button is pressed (product, track and fund from the row), which keeps the page light
 const waLink = (r) => `<a class="yield-wa" href="https://wa.me/972528089808" data-company="${escape(r.company + (r.manager ? ` (${r.manager})` : ''))}" target="_blank" rel="noopener" aria-label="לשאול את רועי בוואטסאפ על ${escape(r.company)} (נפתח בחלון חדש)"></a>`;
 
+// the last month's column is headed by the month alone, "09/26" (Roei, 2026-11-16)
+const monthTag = (period) => `${String(period % 100).padStart(2, '0')}/${String(Math.floor(period / 100) % 100).padStart(2, '0')}`;
+
 export function renderYields({ period, views, series }, { full = false } = {}) {
-  const columns = full ? FULL_COLUMNS : COLUMNS;
+  const columns = (full ? FULL_COLUMNS : COLUMNS).map((c) => (c.id === 'm1' ? { ...c, label: monthTag(period) } : c));
   const rowsOf = (view, sort) => (full ? view.full[sort] : view.rank[sort]);
   const buttons = (group, items, first) => items.map((item) => `<button type="button" data-yield-${group}="${item.id}" aria-pressed="${item.id === first}">${item.label}</button>`).join('');
   const firstView = `${PRODUCTS[0].id}-${TRACKS[0].id}-${DEFAULT_COLUMN}`;
@@ -227,8 +230,7 @@ export function renderYields({ period, views, series }, { full = false } = {}) {
     const [productId, trackId] = key.split('-');
     const view = `${key}-${sort}`;
     const caption = `${PRODUCTS.find((p) => p.id === productId).label}, מסלול ${TRACKS.find((t) => t.id === trackId).label}, מדורג לפי ${columns.find((c) => c.id === sort).label}`;
-    // the last month's heading carries the month itself, "09/26"
-    const headLabel = (c) => (c.id === 'm1' ? `${c.label} <span class="yield-month" dir="ltr">${String(period % 100).padStart(2, '0')}/${String(Math.floor(period / 100) % 100).padStart(2, '0')}</span>` : c.label);
+    const headLabel = (c) => (c.id === 'm1' ? `<span dir="ltr">${c.label}</span>` : c.label);
     const cellClass = (c) => [c.id === sort && 'is-sorted', c.wide && 'yield-wide'].filter(Boolean).join(' ');
     const classAttr = (c) => (cellClass(c) ? ` class="${cellClass(c)}"` : '');
     const heads = columns.map((c) => `<th scope="col"${c.wide ? ' class="yield-wide"' : ''}${c.id === sort ? ' aria-sort="descending"' : ''}><button type="button" data-yield-sort="${c.id}">${headLabel(c)}</button></th>`).join('');

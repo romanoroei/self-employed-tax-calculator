@@ -1489,7 +1489,6 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 .tool-back { font-size: var(--t-5); color: var(--ink-soft); margin-bottom: 4px; }
 
 /* ===== /market-data, Roei (2026-11-16): a last-month column, on computers only ===== */
-.yield-month { display: block; font-size: .85em; font-weight: 400; opacity: .7; }
 @media (min-width: 701px) {
   .yield-full td, .yield-full thead th + th { width: 13.5%; }
 }
