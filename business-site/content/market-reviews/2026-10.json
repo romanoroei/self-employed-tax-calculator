@@ -156,5 +156,35 @@
   "marketing": {
     "topics": [],
     "items": []
+  },
+  "funds": {
+    "period": 202610,
+    "takenAt": "2026-11-19",
+    "rows": [
+      {
+        "key": "invest-general",
+        "m1": -0.25,
+        "y1": 8.54,
+        "y3": 47.26,
+        "funds": 11,
+        "companies": 11
+      },
+      {
+        "key": "study-general",
+        "m1": -0.23,
+        "y1": 8.72,
+        "y3": 46.19,
+        "funds": 11,
+        "companies": 11
+      },
+      {
+        "key": "policy-general",
+        "m1": -0.63,
+        "y1": 8.2,
+        "y3": 44.59,
+        "funds": 12,
+        "companies": 7
+      }
+    ]
   }
 }
