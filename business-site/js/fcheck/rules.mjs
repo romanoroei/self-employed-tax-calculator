@@ -28,9 +28,9 @@ export const TRACK_RULES = [
   // route E: from the main concern, the employment and the sums
   { when: { all: [{ fact: 'concern', is: 'tax' }, { fact: 'employment', in: ['self', 'both'] }] }, track: 'selfemp' },
   { when: { fact: 'concern', in: ['tax', 'unknown'] }, track: 'pension' },
-  { when: { all: [{ fact: 'concern', is: 'idle' }, { fact: 'amount', in: ['upto25', '25to100', '100to300', 'over300'] }] }, track: 'invest' },
+  { when: { all: [{ fact: 'concern', is: 'idle' }, { fact: 'amount', in: ['upto25', '25to100', '100to300', 'over300', '50to150', '150to300', '300to600', '600to1200', 'over1200'] }] }, track: 'invest' },
   { when: { fact: 'concern', in: ['idle', 'notsaving'] }, track: 'savings' },
-  { when: { all: [{ fact: 'concern', is: 'order' }, { fact: 'amount', in: ['100to300', 'over300'] }] }, track: 'invest' },
+  { when: { all: [{ fact: 'concern', is: 'order' }, { fact: 'amount', in: ['100to300', 'over300', '150to300', '300to600', '600to1200', 'over1200'] }] }, track: 'invest' },
   { when: { fact: 'concern', is: 'order' }, track: 'general' },
 ];
 
@@ -41,6 +41,11 @@ export const GRADE_LABELS = { A: 'התאמה מסחרית גבוהה', B: 'הת�
 // Each rule adds points when its condition holds. `why` is the reason Roei reads in the lead email.
 export const GRADE_RULES = [
   // the sum available now
+  // the site questionnaire's sums
+  { when: { fact: 'amount', in: ['600to1200', 'over1200'] }, pts: 45, why: 'סכום פנוי של מעל 600,000 ₪' },
+  { when: { fact: 'amount', is: '300to600' }, pts: 40, why: 'סכום פנוי של 300,000–600,000 ₪' },
+  { when: { fact: 'amount', is: '150to300' }, pts: 35, why: 'סכום פנוי של 150,000–300,000 ₪' },
+  { when: { fact: 'amount', is: '50to150' }, pts: 25, why: 'סכום פנוי של 50,000–150,000 ₪' },
   { when: { fact: 'amount', is: 'over300' }, pts: 40, why: 'סכום פנוי של מעל 300,000 ₪' },
   { when: { fact: 'amount', is: '100to300' }, pts: 35, why: 'סכום פנוי של 100,000–300,000 ₪' },
   { when: { fact: 'amount', is: '50to100' }, pts: 25, why: 'סכום פנוי של 50,000–100,000 ₪' },

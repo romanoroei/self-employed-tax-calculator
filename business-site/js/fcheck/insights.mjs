@@ -27,9 +27,9 @@ export const TRACK_YIELDS = {
   ],
 };
 
-const AMOUNT_ANY = ['upto25', '25to50', '50to100', '25to100', '100to300', 'over300'];
+const AMOUNT_ANY = ['upto25', '25to50', '50to100', '25to100', '100to300', 'over300', '50to150', '150to300', '300to600', '600to1200', 'over1200'];
 const LUMP_ANY = ['upto25', '25to100', 'over100'];
-const BIG = { any: [{ fact: 'amount', in: ['100to300', 'over300'] }, { fact: 'lump', is: 'over100' }] };
+const BIG = { any: [{ fact: 'amount', in: ['100to300', 'over300', '150to300', '300to600', '600to1200', 'over1200'] }, { fact: 'lump', is: 'over100' }] };
 // in business now: from the status (route D) or from the employment answer (routes C and E)
 const IN_BUSINESS = { any: [{ fact: 'bizStatus', in: ['exempt', 'licensed', 'company', 'both'] }, { all: [{ fact: 'employment', in: ['self', 'both'] }, { not: { fact: 'bizStatus', is: 'planning' } }] }, { all: [{ fact: 'employment', in: ['self', 'both'] }, { fact: 'need', in: ['pension', 'unsure'] }] }] };
 

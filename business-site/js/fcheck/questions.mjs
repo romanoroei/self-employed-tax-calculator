@@ -7,6 +7,8 @@
 // routes C and E), and a question whose fact is already known is never asked again.
 
 export const ENTRY = 'need';
+// the site's own questionnaire (/check, from the home page) starts from its own first question and routes
+export const SITE_ENTRY = 'need_site';
 
 export const QUESTIONS = {
   need: {
@@ -16,9 +18,44 @@ export const QUESTIONS = {
       { id: 'invest', label: 'יש לי סכום פנוי ואני רוצה לבחון אפשרויות השקעה' },
       { id: 'monthly', label: 'אני רוצה להתחיל לחסוך סכום קבוע בכל חודש' },
       { id: 'pension', label: 'אני רוצה לעשות סדר בפנסיה ובביטוחים' },
-      { id: 'retire', label: 'אני לקראת פרישה ורוצה לתכנן נכון' },
       { id: 'selfemp', label: 'אני עצמאי/ת ורוצה לבדוק הטבות מס והפקדות' },
       { id: 'unsure', label: 'אני לא ממש יודע/ת מאיפה להתחיל' },
+    ],
+  },
+
+  need_site: {
+    fact: 'need', label: 'הצורך המרכזי',
+    text: 'מה הכי חשוב לך לבדוק כרגע?',
+    options: [
+      { id: 'invest', label: 'יש לי כסף פנוי ואני רוצה להשקיע' },
+      { id: 'pension', label: 'אני רוצה לעשות סדר בפנסיה ובביטוחים' },
+      { id: 'retire', label: 'אני לקראת פרישה ורוצה לתכנן נכון' },
+      { id: 'selfemp', label: 'אני עצמאי/ת ורוצה לעשות סדר' },
+      { id: 'unsure', label: 'אני רוצה לראות את כל התמונה' },
+    ],
+  },
+  // the sums of the site questionnaire (Roei, 2026-11)
+  s_amount: {
+    fact: 'amount', label: 'סכום פנוי',
+    text: 'מה הסכום הפנוי?',
+    options: [
+      { id: '50to150', label: '50,000–150,000 ₪' },
+      { id: '150to300', label: '150,000–300,000 ₪' },
+      { id: '300to600', label: '300,000–600,000 ₪' },
+      { id: '600to1200', label: '600,000–1,200,000 ₪' },
+      { id: 'over1200', label: 'מעל 1,200,000 ₪' },
+    ],
+  },
+  s_amount_any: {
+    fact: 'amount', label: 'סכום פנוי',
+    text: 'האם יש לך סכום פנוי?',
+    options: [
+      { id: 'none', label: 'אין כרגע' },
+      { id: '50to150', label: '50,000–150,000 ₪' },
+      { id: '150to300', label: '150,000–300,000 ₪' },
+      { id: '300to600', label: '300,000–600,000 ₪' },
+      { id: '600to1200', label: '600,000–1,200,000 ₪' },
+      { id: 'over1200', label: 'מעל 1,200,000 ₪' },
     ],
   },
 
@@ -464,15 +501,8 @@ export const ROUTES = {
     { q: 'c_focus' },
     { q: 'c_insreason', when: { fact: 'focus', in: ['insurance', 'all'] } },
     { q: 'c_lastcheck' },
-    // c_known and c_change left the route (Roei, 2026-11): five or six questions at most from the home page
-    { q: 'c_when' },
-  ],
-  retire: [
-    { q: 'r_age' },
-    { q: 'r_when' },
-    { q: 'r_work', when: { not: { fact: 'retireWhen', is: 'done' } } },
-    { q: 'r_products' },
-    { q: 'r_topic' },
+    { q: 'c_known' },
+    { q: 'c_change' },
     { q: 'c_when' },
   ],
   selfemp: [
@@ -500,6 +530,51 @@ export const ROUTES = {
   ],
 };
 
+// The site questionnaire (/check): five or six questions after the need, to have the facts before the call
+// (Roei, 2026-11). The campaign page keeps ROUTES above, unchanged.
+export const SITE_ROUTES = {
+  invest: [
+    { q: 's_amount' },
+    { q: 'a_horizon' },
+    { q: 'a_priority' },
+    { q: 'a_where' },
+    { q: 'a_when' },
+  ],
+  pension: [
+    { q: 'c_employment' },
+    { q: 'c_selfdeposits', when: { fact: 'employment', in: ['self', 'both'] } },
+    { q: 'c_focus' },
+    { q: 'c_insreason', when: { fact: 'focus', in: ['insurance', 'all'] } },
+    { q: 'c_lastcheck' },
+    { q: 'c_when' },
+  ],
+  retire: [
+    { q: 'r_age' },
+    { q: 'r_when' },
+    { q: 'r_work', when: { not: { fact: 'retireWhen', is: 'done' } } },
+    { q: 'r_products' },
+    { q: 'r_topic' },
+    { q: 'c_when' },
+  ],
+  selfemp: [
+    { q: 'd_status' },
+    { q: 'd_study' },
+    { q: 'd_pension' },
+    { q: 'd_checked', when: { not: { fact: 'bizStatus', is: 'planning' } } },
+    { q: 'd_goal' },
+    { q: 'd_when' },
+  ],
+  unsure: [
+    { q: 'e_employment' },
+    { q: 'e_concern' },
+    { q: 's_amount_any' },
+    { q: 'e_when' },
+    { q: 'a_horizon', when: { track: 'invest' } },
+    { q: 'c_focus', when: { track: 'pension' } },
+    { q: 'd_checked', when: { track: 'selfemp' } },
+  ],
+};
+
 // Texts of the page around the questions.
 export const TEXTS = {
   resultTitle: 'מה עלה מהתשובות שלך',
@@ -513,6 +588,12 @@ export const TEXTS = {
   successTitle: 'תודה! הפרטים התקבלו בהצלחה.',
   successText: 'רועי קיבל את הבקשה שלך ויחזור אליך לצורך שיחת התאמה.',
   season: 'סוף שנת המס מתקרב. זה הזמן לבדוק אם ניצלת את האפשרויות הרלוונטיות לחיסכון ולהטבות מס.',
+};
+
+// The end of the site questionnaire: the call, nothing else (Roei, 2026-11)
+export const SITE_TEXTS = {
+  formTitle: 'קובעים שיחת התאמה עם רועי',
+  formText: 'משאירים שם וטלפון, ורועי חוזר אליך. בשיחה נעבור על:',
 };
 
 // The contact consent. Changing the wording means a new version: the lead record names the version agreed to.

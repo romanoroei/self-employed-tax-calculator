@@ -123,7 +123,7 @@ export async function onRequestPost(context) {
   const sent = parseInt((await db.get(rateKey)) || '0', 10);
   if (sent >= RATE_MAX) return json(429, { ok: false, error: 'rate' });
 
-  const state = fromAnswers(body.sessionId, body.answers);
+  const state = fromAnswers(body.sessionId, body.answers, { flow: body.flow === 'site' ? 'site' : undefined });
   if (!state || !result(state)) return json(400, { ok: false, error: 'answers' });
   const check = checkContact(body.contact);
   if (!check.ok) return json(400, { ok: false, error: 'contact', fields: Object.keys(check.errors) });
