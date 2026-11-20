@@ -63,9 +63,11 @@ const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.
 assert.equal([...sitemap.matchAll(/<loc>/g)].length,17+reviewPages.length,'Sitemap must include all seventeen canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
-// /financial-check is reached by its own campaign link only: not in the sitemap, linked from no other page, no Google Analytics
+// /financial-check: not in the sitemap and no Google Analytics. Only the home page links to it: the hero question and the path cards, one route each (Roei, 2026-11)
 assert(!sitemap.includes('financial-check'),'The campaign page stays out of the sitemap');
-for(const file of published.filter(p=>p.endsWith('.html')&&!p.endsWith('financial-check.html')))assert(!/href="[^"]*financial-check/.test(await readFile(file,'utf8')),'No page links to the campaign page: '+path.relative(root,file));
+for(const file of published.filter(p=>p.endsWith('.html')&&!p.endsWith('financial-check.html'))){const links=[...(await readFile(file,'utf8')).matchAll(/href="([^"]*financial-check[^"]*)"/g)].map(m=>m[1]);
+  if(path.relative(root,file)==='index.html')assert(links.length===7&&links.every(l=>/^\/financial-check\?need=(?:invest|pension|retire|selfemp|unsure)&amp;utm_source=home_(?:hero|paths)$/.test(l)),'The home page links to the routes of the check only (the hero question and the path cards)');
+  else assert(!links.length,'No other page links to the campaign page: '+path.relative(root,file));}
 {const fc=await readFile(path.join(root,'financial-check.html'),'utf8');const fdir=path.join(root,'js','fcheck');const fjs=await Promise.all((await readdir(fdir)).map(n=>readFile(path.join(fdir,n),'utf8')));
 for(const t of [fc,...fjs])assert(!/googletagmanager|gtag\(|google-analytics/i.test(t),'No Google Analytics on the campaign page');
 assert(fc.includes('href="/privacy"')&&fc.includes('href="/accessibility"')&&fc.includes('רישיון סוכן פנסיוני 00117164'),'The campaign page needs the license and the policy links');

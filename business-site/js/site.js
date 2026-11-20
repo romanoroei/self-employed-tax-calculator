@@ -296,6 +296,8 @@ document.addEventListener('click', (e) => {
   if (!a) return;
   // which call to action on which page (knowledge-mid-whatsapp...), on top of the contact total below
   if (a.dataset.cta) countClick(`cta:${a.dataset.cta}`);
+  // the fixed phone button: which page it was pressed on, on top of the WhatsApp total below
+  if (a.dataset.float) countClick(`float:${a.dataset.float}`);
   if (a.dataset.cta && !/^(?:tel:|mailto:|https:\/\/wa\.me\/)/.test(a.getAttribute('href'))) return;
   if (a.dataset.subscribe) countClick(`subscribe:${a.dataset.subscribe}`);
   else if (a.dataset.count) countClick(a.dataset.count);
@@ -439,7 +441,8 @@ document.addEventListener('click', (e) => {
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
-  let paused = still.matches;
+  // the first slide is the question of the home page: the show waits for the visitor instead of moving on (Roei)
+  let paused = still.matches || hero.hasAttribute('data-hero-still');
   let held = false;
   let finishMove = null;
 
@@ -659,4 +662,45 @@ try {
   board.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') { hovered = true; sync(); } });
   board.addEventListener('pointerleave', () => { hovered = false; sync(); });
   document.addEventListener('visibilitychange', sync);
+})();
+
+// ===== Phones: a fixed WhatsApp button whose message names the page the visitor came from =====
+// Shown on narrow screens only, after the first screen, and hidden while the contact form or the footer is in view,
+// so it never sits on top of another way to reach Roei. Bottom right: the accessibility button owns bottom left.
+(() => {
+  const page = location.pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
+  const pages = {
+    '/': ['home', 'הגעתי מהאתר ואשמח לתאם שיחת התאמה.'],
+    '/self-employed': ['self', 'הגעתי מהמדריך לעצמאים ואני רוצה לבדוק את ההפקדות שלי.'],
+    '/investment-fund': ['invest', 'הגעתי מהמדריך לקופת גמל להשקעה ואני רוצה לבדוק אפשרות להפקיד.'],
+    '/savings-policy': ['policy', 'הגעתי מהמדריך לפוליסת חיסכון ואני רוצה לבדוק אם זה מתאים לי.'],
+    '/hachshara-policy': ['hachshara', 'הגעתי מעמוד פוליסת החיסכון באתר ויש לי שאלה.'],
+    '/study-fund': ['study', 'הגעתי מבדיקת קרן ההשתלמות באתר ואני רוצה לבדוק את הקרן שלי.'],
+    '/severance': ['severance', 'הגעתי מעמוד הפיצויים באתר ויש לי שאלה על הכסף שלי.'],
+    '/knowledge': ['knowledge', 'הגעתי מהמדריכים באתר ויש לי שאלה:'],
+    '/market-data': ['market', 'הגעתי מעמוד התשואות באתר ויש לי שאלה על החיסכון שלי:'],
+    '/compass': ['compass', 'הגעתי מהמצפן הפיננסי באתר ואשמח לעבור איתך על מה שיצא לי.'],
+  };
+  const [id, text] = pages[page] || (page.startsWith('/magazine/') ? ['magazine', 'קראתי מאמר באתר ויש לי שאלה:'] : []);
+  if (!id) return;
+  const a = document.createElement('a');
+  a.className = 'wa-float';
+  a.href = `https://wa.me/972528089808?text=${encodeURIComponent(`שלום רועי, ${text}`)}`;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.dataset.float = `wa-${id}`;
+  a.setAttribute('aria-label', 'כתבו לרועי בוואטסאפ (נפתח בלשונית חדשה)');
+  a.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg>';
+  document.body.append(a);
+  const hiders = new Set();
+  const update = () => a.classList.toggle('is-on', window.scrollY > window.innerHeight * 0.6 && !hiders.size);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? hiders.add(e.target) : hiders.delete(e.target);
+      update();
+    });
+    document.querySelectorAll('#contact, footer').forEach((el) => io.observe(el));
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
 })();

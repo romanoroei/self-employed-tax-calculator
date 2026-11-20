@@ -91,3 +91,24 @@ html.a11y-still [data-reveal] { opacity: 1 !important; transform: none !importan
 .to-top svg { width: 24px; height: 24px; fill: #081826; }
 .to-top:focus-visible { outline: 3px solid #0C2134; outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) { .to-top:hover { background: #E3D6A3; } }
+
+/* ----- phones: fixed WhatsApp button (js/site.js), bottom right; bottom left belongs to the accessibility button.
+   The WhatsApp mark alone, in its own green, so it reads as WhatsApp at a glance (Roei) ----- */
+.wa-float { display: none; }
+@media (max-width: 900px) {
+  .wa-float {
+    position: fixed; right: 14px; bottom: 14px; z-index: 94;
+    display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%;
+    background: #25D366; text-decoration: none;
+    box-shadow: 0 4px 14px rgba(8, 24, 38, .3);
+    opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms;
+  }
+  .wa-float svg { width: 32px; height: 32px; fill: #fff; }
+  .wa-float.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity 220ms ease, transform 220ms ease, visibility 0s; }
+  .wa-float:focus-visible { outline: 3px solid #0C2134; outline-offset: 3px; }
+  body:has(.back-home) .wa-float { bottom: 74px; right: 10px; }
+  .has-cookie-notice .wa-float { bottom: calc(var(--cookie-notice-height, 180px) + 24px); }
+  .has-cookie-notice:has(.back-home) .wa-float { bottom: calc(var(--cookie-notice-height, 180px) + 84px); }
+}
+@media (prefers-reduced-motion: reduce) { .wa-float, .wa-float.is-on { transition: none; } }

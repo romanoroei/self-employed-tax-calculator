@@ -16,6 +16,7 @@ export const QUESTIONS = {
       { id: 'invest', label: 'יש לי סכום פנוי ואני רוצה לבחון אפשרויות השקעה' },
       { id: 'monthly', label: 'אני רוצה להתחיל לחסוך סכום קבוע בכל חודש' },
       { id: 'pension', label: 'אני רוצה לעשות סדר בפנסיה ובביטוחים' },
+      { id: 'retire', label: 'אני לקראת פרישה ורוצה לתכנן נכון' },
       { id: 'selfemp', label: 'אני עצמאי/ת ורוצה לבדוק הטבות מס והפקדות' },
       { id: 'unsure', label: 'אני לא ממש יודע/ת מאיפה להתחיל' },
     ],
@@ -325,6 +326,63 @@ export const QUESTIONS = {
     ],
   },
 
+  // ---------- route F: towards retirement (opened from the home page) ----------
+  r_age: {
+    fact: 'ageBand', label: 'טווח גילים',
+    text: 'מה טווח הגילים שלך?',
+    options: [
+      { id: 'u55', label: 'עד 55' },
+      { id: '55to60', label: '55–60' },
+      { id: '60to64', label: '60–64' },
+      { id: '64to67', label: '64–67' },
+      { id: 'over67', label: 'מעל 67' },
+    ],
+  },
+  r_when: {
+    fact: 'retireWhen', label: 'מתי הפרישה',
+    text: 'מתי בערך הפרישה מתוכננת?',
+    options: [
+      { id: 'done', label: 'כבר פרשתי' },
+      { id: 'y1', label: 'בשנה הקרובה' },
+      { id: 'y1to3', label: 'בעוד שנה עד שלוש שנים' },
+      { id: 'y3plus', label: 'בעוד יותר משלוש שנים' },
+      { id: 'unknown', label: 'עדיין לא החלטתי' },
+    ],
+  },
+  r_work: {
+    fact: 'workNow', label: 'עבודה כיום',
+    text: 'מה המצב התעסוקתי כיום?',
+    options: [
+      { id: 'employee', label: 'שכיר/ה' },
+      { id: 'self', label: 'עצמאי/ת' },
+      { id: 'both', label: 'גם שכיר/ה וגם עצמאי/ת' },
+      { id: 'notworking', label: 'כבר לא עובד/ת' },
+    ],
+  },
+  r_products: {
+    fact: 'retireProducts', label: 'מה צבור כיום',
+    text: 'איפה נמצא רוב החיסכון הפנסיוני?',
+    options: [
+      { id: 'newfund', label: 'קרן פנסיה' },
+      { id: 'manager', label: 'ביטוח מנהלים' },
+      { id: 'oldfund', label: 'קרן פנסיה ותיקה' },
+      { id: 'several', label: 'בכמה סוגים שונים' },
+      { id: 'unsure', label: 'לא בטוח/ה' },
+    ],
+  },
+  r_topic: {
+    fact: 'retireTopic', label: 'מה מעסיק כרגע',
+    text: 'מה הכי מעסיק אותך כרגע?',
+    options: [
+      { id: 'pension', label: 'כמה קצבה אקבל' },
+      { id: 'tax', label: 'המס בפרישה' },
+      { id: 'lump', label: 'קצבה או משיכה של הכסף' },
+      { id: 'work', label: 'להמשיך לעבוד לצד הקצבה' },
+      { id: 'income', label: 'תכנון ההכנסה החודשית בפרישה' },
+      { id: 'all', label: 'בדיקה כוללת לפני שמחליטים' },
+    ],
+  },
+
   // ---------- route E: not sure where to start ----------
   e_employment: {
     fact: 'employment', label: 'מצב תעסוקתי',
@@ -406,8 +464,15 @@ export const ROUTES = {
     { q: 'c_focus' },
     { q: 'c_insreason', when: { fact: 'focus', in: ['insurance', 'all'] } },
     { q: 'c_lastcheck' },
-    { q: 'c_known' },
-    { q: 'c_change' },
+    // c_known and c_change left the route (Roei, 2026-11): five or six questions at most from the home page
+    { q: 'c_when' },
+  ],
+  retire: [
+    { q: 'r_age' },
+    { q: 'r_when' },
+    { q: 'r_work', when: { not: { fact: 'retireWhen', is: 'done' } } },
+    { q: 'r_products' },
+    { q: 'r_topic' },
     { q: 'c_when' },
   ],
   selfemp: [
@@ -442,9 +507,9 @@ export const TEXTS = {
   stepsTitle: 'מה אפשר לעשות כבר היום, לבד',
   resultPrefix: 'הנושא',
   resultDisclaimer: 'זהו מיפוי ראשוני בלבד, על סמך התשובות שלך. הוא אינו המלצה להשקעה או למוצר פיננסי, אינו ייעוץ פנסיוני או ייעוץ השקעות, ואינו תחליף לבירור צרכים מקצועי.',
-  formTitle: 'רוצה לעבור על זה עם רועי?',
-  formText: 'שיחת התאמה קצרה, ללא עלות וללא התחייבות. על מה נדבר:',
-  formButton: 'שליחת הפרטים ובקשה לשיחה',
+  formTitle: 'קובעים שיחת התאמה עם רועי',
+  formText: 'משאירים שם וטלפון, ורועי חוזר אליך עם התשובות שכבר נתת. בשיחה נעבור על:',
+  formButton: 'לתיאום שיחת התאמה ←',
   successTitle: 'תודה! הפרטים התקבלו בהצלחה.',
   successText: 'רועי קיבל את הבקשה שלך ויחזור אליך לצורך שיחת התאמה.',
   season: 'סוף שנת המס מתקרב. זה הזמן לבדוק אם ניצלת את האפשרויות הרלוונטיות לחיסכון ולהטבות מס.',

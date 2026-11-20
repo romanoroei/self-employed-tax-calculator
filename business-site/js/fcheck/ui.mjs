@@ -34,6 +34,7 @@ function start() {
   };
   const KEY = cfg.storageKey;
   const SRC = cfg.storageKey + '-src';
+  const ENTRY_KEY = cfg.storageKey + '-entry'; // set while a route opened from the home page is on screen
   const SENT = cfg.storageKey + '-sent';
 
   // ---------- where the visitor came from: kept with the answers, sent only with the form ----------
@@ -82,6 +83,7 @@ function start() {
   function begin() {
     state = E.newState();
     session.del(SENT);
+    session.del(ENTRY_KEY);
     count(`fc:start-${ref}`);
     render(true);
   }
@@ -94,12 +96,15 @@ function start() {
 
   function render(focus) {
     save();
-    const v = E.view(state);
+    let v = E.view(state);
     if (!v.question) { current = null; renderResult(); return; }
     show('run');
     const q = v.question;
     current = q.id;
 
+    // opened from the home page with the need already chosen: that choice is not counted as a question
+    const skip = session.get(ENTRY_KEY) && state.history.length && state.history[0].q === 'need' ? 1 : 0;
+    v = { ...v, index: v.index - skip, total: v.total - skip };
     const pct = Math.round(((v.index - 1) / v.total) * 100);
     const bar = h('i', {});
     progress.replaceChildren(
@@ -328,6 +333,14 @@ function start() {
   }
 
   // ---------- a reload in the same tab continues where the visitor was ----------
+  // the home page opens a route directly (?need=invest|pension|retire): the first question is answered by the
+  // click there, so the visitor lands on the second. A visit already under way in this tab is kept as it is.
   const saved = E.restore(session.get(KEY) || '');
-  if (saved && saved.history.length) { state = saved; render(false); }
+  const preset = params.get('need');
+  const presetOk = preset && E.QUESTIONS.need.options.some((o) => o.id === preset);
+  if (presetOk && !(saved && saved.history.length && saved.history[0].o === preset)) {
+    begin();
+    session.set(ENTRY_KEY, '1');
+    advance('need', preset);
+  } else if (saved && saved.history.length) { state = saved; render(false); }
 }
