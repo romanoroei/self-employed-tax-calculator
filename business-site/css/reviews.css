@@ -80,6 +80,8 @@
 .rv-related { padding-block: 56px 0; }
 .rv-related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 1000px; }
 .rv-cta h2 { max-width: 30ch; }
+/* the line under the heading: smaller than the heading, like body text */
+.rv-cta .statement { font-size: var(--t-4); line-height: 1.6; margin-top: 14px; max-width: 60ch; color: var(--ink-soft); }
 .rv-cta .button svg { width: 22px; height: 22px; fill: currentColor; margin-inline-end: 10px; }
 
 /* the hub */
