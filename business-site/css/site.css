@@ -555,6 +555,8 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 
 /* ================= How ================= */
 .how { background: var(--navy); color: var(--on-dark); padding-block: calc(var(--section) * .6); }
+/* a paper gap between the gold and the dark section, so they do not run into each other (Roei) */
+.clients + .how { margin-top: calc(var(--section) * .5); }
 .how .lead { color: var(--on-dark-soft); }
 .how-figure { display: block; margin-block: 32px 28px; }
 .how-figure img { width: 100%; height: auto; }

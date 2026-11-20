@@ -5,7 +5,7 @@
 //
 // The state is only the answer history. Everything else (facts, the next question, the progress, the result)
 // is recomputed from it on every step, so a changed answer can never leave a stale conclusion behind.
-import { ENTRY, QUESTIONS, ROUTES, TEXTS, CONSENT } from './questions.mjs';
+import { ENTRY, SITE_ENTRY, QUESTIONS, ROUTES, SITE_ROUTES, TEXTS, SITE_TEXTS, CONSENT } from './questions.mjs';
 import { TRACKS, TRACK_RULES, GRADE, GRADE_LABELS, GRADE_RULES, URGENCY, TALKING_POINTS } from './rules.mjs';
 import { CONFIG } from './config.mjs';
 import { INSIGHTS, STEPS, MAX_INSIGHTS, MAX_STEPS, CALL_TAIL, TRACK_YIELDS } from './insights.mjs';
@@ -64,14 +64,18 @@ export function trackOf(facts) {
 }
 
 // ---------- the route ----------
-function plan(facts) {
-  const steps = [{ q: ENTRY }];
-  if (facts.need && ROUTES[facts.need]) steps.push(...ROUTES[facts.need]);
+// two flows share the questions: the campaign page (no flow) and the site's own questionnaire ('site')
+export const entryOf = (flow) => (flow === 'site' ? SITE_ENTRY : ENTRY);
+const routesOf = (flow) => (flow === 'site' ? SITE_ROUTES : ROUTES);
+function plan(facts, flow) {
+  const steps = [{ q: entryOf(flow) }];
+  const routes = routesOf(flow);
+  if (facts.need && routes[facts.need]) steps.push(...routes[facts.need]);
   return steps;
 }
 function pick(ctx, asked) {
   if (asked.length >= MAX_QUESTIONS) return null;
-  for (const step of plan(ctx.facts)) {
+  for (const step of plan(ctx.facts, ctx.flow)) {
     const q = QUESTIONS[step.q];
     if (asked.includes(step.q)) continue;
     if (ctx.facts[q.fact] !== undefined) continue; // already known from another answer
@@ -85,7 +89,7 @@ function remaining(ctx, asked) {
   if (!ctx.facts.need) return ROUTE_GUESS;
   let n = 0;
   const seenFacts = new Set();
-  for (const step of plan(ctx.facts)) {
+  for (const step of plan(ctx.facts, ctx.flow)) {
     const q = QUESTIONS[step.q];
     if (asked.includes(step.q) || ctx.facts[q.fact] !== undefined || seenFacts.has(q.fact)) continue;
     if (step.when && ev3(step.when, ctx) === false) continue;
@@ -98,7 +102,7 @@ function remaining(ctx, asked) {
 function walk(state, opts = {}) {
   const now = opts.now || new Date();
   const facts = {};
-  const ctx = { facts, season: inSeason(now, opts.season) };
+  const ctx = { facts, flow: state.flow, season: inSeason(now, opts.season) };
   const asked = [];
   const valid = [];
   let stale = false;
@@ -116,9 +120,9 @@ function walk(state, opts = {}) {
 }
 
 // ---------- state operations (each returns a new state) ----------
-export function newState(now = new Date()) {
+export function newState(now = new Date(), flow) {
   const id = 'f' + now.getTime().toString(36) + Math.random().toString(36).slice(2, 8);
-  return { v: STATE_VERSION, sessionId: id, history: [], drafts: {} };
+  return { v: STATE_VERSION, sessionId: id, history: [], drafts: {}, ...(flow === 'site' ? { flow } : {}) };
 }
 const clone = (s) => ({ ...s, history: s.history.slice(), drafts: { ...s.drafts } });
 
@@ -303,6 +307,7 @@ export function leadMessage(state, contact, source, consent, opts = {}) {
   const valueOf = (fact) => { const a = list.find((x) => QUESTIONS[x.q].fact === fact); return a ? a.answer : notCollected; };
   const L = [];
   L.push('פרטי הפונה');
+  if (state.flow === 'site') L.push('הגיע/ה מ: שאלון האתר (לפני שיחת התאמה)');
   L.push(`שם מלא: ${c.name}`);
   L.push(`נייד: ${c.phone}`);
   L.push(`דוא"ל: ${c.email || 'לא נמסר'}`);
@@ -346,7 +351,7 @@ export function leadMessage(state, contact, source, consent, opts = {}) {
 const SESSION_RE = /^f[a-z0-9]{6,20}$/;
 export function fromAnswers(sessionId, answers, opts) {
   if (!SESSION_RE.test(String(sessionId || '')) || !Array.isArray(answers) || answers.length > MAX_QUESTIONS) return null;
-  const state = { v: STATE_VERSION, sessionId, history: [], drafts: {} };
+  const state = { v: STATE_VERSION, sessionId, history: [], drafts: {}, ...(opts && opts.flow === 'site' ? { flow: 'site' } : {}) };
   for (const a of answers) {
     if (!a || typeof a.q !== 'string' || typeof a.o !== 'string' || !QUESTIONS[a.q]) return null;
     state.history.push({ q: a.q, o: a.o });
@@ -358,7 +363,7 @@ export function restore(json, opts) {
   try {
     const s = JSON.parse(json);
     if (!s || s.v !== STATE_VERSION) return null;
-    const state = { v: STATE_VERSION, sessionId: s.sessionId, history: [], drafts: {} };
+    const state = { v: STATE_VERSION, sessionId: s.sessionId, history: [], drafts: {}, ...(s.flow === 'site' ? { flow: 'site' } : {}) };
     if (!SESSION_RE.test(String(s.sessionId || '')) || !Array.isArray(s.history)) return null;
     state.history = s.history.filter((h) => h && QUESTIONS[h.q]).map((h) => ({ q: h.q, o: h.o }));
     state.history = walk(state, opts).valid; // whatever no longer fits the questions is dropped
@@ -388,10 +393,12 @@ export function validateDefinitions() {
     const ids = q.options.map((o) => o.id);
     if (q.options.length < 2 || new Set(ids).size !== ids.length) errors.push(`${id}: options`);
   }
-  for (const o of QUESTIONS[ENTRY].options) if (!ROUTES[o.id]) errors.push(`entry option ${o.id}: no route`);
-  for (const [r, steps] of Object.entries(ROUTES)) {
-    if (steps.length + 1 > MAX_QUESTIONS) errors.push(`route ${r}: too long`);
-    for (const s of steps) { if (!QUESTIONS[s.q]) errors.push(`route ${r}: unknown question ${s.q}`); check(s.when, `route ${r} ${s.q}`); }
+  for (const [entry, routes] of [[ENTRY, ROUTES], [SITE_ENTRY, SITE_ROUTES]]) {
+    for (const o of QUESTIONS[entry].options) if (!routes[o.id]) errors.push(`entry option ${o.id}: no route`);
+    for (const [r, steps] of Object.entries(routes)) {
+      if (steps.length + 1 > MAX_QUESTIONS) errors.push(`route ${r}: too long`);
+      for (const s of steps) { if (!QUESTIONS[s.q]) errors.push(`route ${r}: unknown question ${s.q}`); check(s.when, `route ${r} ${s.q}`); }
+    }
   }
   TRACK_RULES.forEach((r, i) => { check(r.when, `track rule ${i}`); if (!TRACKS[r.track]) errors.push(`track rule ${i}: unknown track`); });
   GRADE_RULES.forEach((r, i) => { check(r.when, `grade rule ${i}`); if (!(r.pts > 0) || !r.why) errors.push(`grade rule ${i}: points must be positive, with a reason`); });
@@ -399,4 +406,4 @@ export function validateDefinitions() {
   return errors;
 }
 
-export { QUESTIONS, ROUTES, TEXTS, CONSENT, TRACKS, CONFIG };
+export { QUESTIONS, ROUTES, SITE_ROUTES, TEXTS, SITE_TEXTS, CONSENT, TRACKS, CONFIG };

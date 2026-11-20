@@ -3,7 +3,8 @@
 // with textContent, never as HTML, so nothing typed, stored or passed in the link can inject markup.
 import * as E from './engine.mjs';
 
-const { TEXTS, CONSENT, CONFIG: cfg } = E;
+const { TEXTS, SITE_TEXTS, CONSENT, CONFIG: cfg } = E;
+// the site's own questionnaire (/check) sets data-flow="site" on its root: no intro, its own routes, a short end
 const root = document.getElementById('fcheck');
 if (root) start();
 
@@ -11,6 +12,9 @@ function start() {
   const screens = Object.fromEntries(['intro', 'run', 'result', 'done'].map((k) => [k, root.querySelector(`[data-screen="${k}"]`)]));
   const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
   const live = cfg.productionHosts.includes(location.hostname);
+  const flow = root.dataset.flow === 'site' ? 'site' : undefined;
+  const SITE = flow === 'site';
+  const entry = E.entryOf(flow);
 
   // ---------- small DOM helper ----------
   function h(tag, attrs, ...kids) {
@@ -32,8 +36,8 @@ function start() {
     set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* private mode: nothing kept */ } },
     del(k) { try { sessionStorage.removeItem(k); } catch (e) { /* nothing to clear */ } },
   };
-  const KEY = cfg.storageKey;
-  const SRC = cfg.storageKey + '-src';
+  const KEY = cfg.storageKey + (SITE ? '-site' : '');
+  const SRC = cfg.storageKey + (SITE ? '-site' : '') + '-src';
   const ENTRY_KEY = cfg.storageKey + '-entry'; // set while a route opened from the home page is on screen
   const SENT = cfg.storageKey + '-sent';
 
@@ -47,7 +51,7 @@ function start() {
     source = E.cleanSource({ ref: params.get('ref'), utm_source: params.get('utm_source'), utm_medium: params.get('utm_medium'), utm_campaign: params.get('utm_campaign'), referrer });
     session.set(SRC, JSON.stringify(source));
   }
-  const ref = E.refLabel(source.ref);
+  const ref = SITE ? 'site' : E.refLabel(source.ref); // the site questionnaire is counted on its own
 
   // ---------- anonymous totals: a label only, each at most once per page load, live site only ----------
   const counted = new Set();
@@ -81,7 +85,7 @@ function start() {
   if (E.inSeason(new Date())) { seasonBox.textContent = TEXTS.season; seasonBox.hidden = false; }
   screens.intro.querySelector('[data-start]').addEventListener('click', () => begin());
   function begin() {
-    state = E.newState();
+    state = E.newState(new Date(), flow);
     session.del(SENT);
     session.del(ENTRY_KEY);
     count(`fc:start-${ref}`);
@@ -103,7 +107,7 @@ function start() {
     current = q.id;
 
     // opened from the home page with the need already chosen: that choice is not counted as a question
-    const skip = session.get(ENTRY_KEY) && state.history.length && state.history[0].q === 'need' ? 1 : 0;
+    const skip = session.get(ENTRY_KEY) && state.history.length && state.history[0].q === entry ? 1 : 0;
     v = { ...v, index: v.index - skip, total: v.total - skip };
     const pct = Math.round(((v.index - 1) / v.total) * 100);
     const bar = h('i', {});
@@ -156,7 +160,7 @@ function start() {
   }
 
   function advance(qid, optionId) {
-    const first = qid === 'need' && !state.history.some((x) => x.q === 'need');
+    const first = qid === entry && !state.history.some((x) => x.q === entry);
     state = E.answer(state, qid, optionId);
     if (first) count(`fc:route-${optionId}`);
     render(true);
@@ -199,10 +203,11 @@ function start() {
       h('button', { type: 'button', class: 'cp-link-btn', onclick: () => { count('fc:restart'); session.del(KEY); begin(); } }, 'להתחיל מחדש'),
       h('a', { class: 'link', href: cfg.siteUrl, target: '_blank', rel: 'noopener', 'data-fc-site': 'result' }, 'רוצה להכיר את רועי רומנו קודם? ←', h('span', { class: 'visually-hidden', text: ' (נפתח בלשונית חדשה)' })));
 
-    box.replaceChildren(...[head, primary, others, steps, buildForm(res), disclaimer, mine, tools].filter(Boolean));
+    // the site questionnaire ends on the call and what can be done alone, nothing more (Roei)
+    box.replaceChildren(...(SITE ? [buildForm(res), steps] : [head, primary, others, steps, buildForm(res), disclaimer, mine, tools]).filter(Boolean));
     if (!still()) { box.classList.remove('is-entering'); void box.offsetWidth; box.classList.add('is-entering'); }
     scrollToTop(box);
-    head.querySelector('h2').focus({ preventScroll: true });
+    (SITE ? box.querySelector('#fc-form-title') : head.querySelector('h2'))?.focus({ preventScroll: true });
   }
 
   // ---------- the form: our own function, which checks everything again and forwards to Formspree and Sheets ----------
@@ -231,8 +236,8 @@ function start() {
     const hp = h('div', { class: 'fc-hp', 'aria-hidden': 'true' }, h('label', {}, 'אתר', h('input', { name: 'website', tabindex: '-1', autocomplete: 'off' })));
     const preview = h('ul', {}, E.answersList(state).map((a) => h('li', { text: `${a.question} ${a.answer}` })));
     const form = h('form', { class: 'coupon-form', novalidate: true },
-      h('h3', { id: 'fc-form-title', text: TEXTS.formTitle }),
-      h('p', { class: 'fc-form-lead', text: TEXTS.formText }),
+      h('h3', { id: 'fc-form-title', tabindex: '-1', text: SITE ? SITE_TEXTS.formTitle : TEXTS.formTitle }),
+      h('p', { class: 'fc-form-lead', text: SITE ? SITE_TEXTS.formText : TEXTS.formText }),
       h('ul', { class: 'fc-calls' }, res.calls.map((c) => h('li', { text: c }))),
       field('name', 'שם מלא', name),
       field('phone', 'מספר טלפון נייד', phone),
@@ -272,6 +277,7 @@ function start() {
         contact: check.clean,
         consent: { contact: true, marketing: marketing.checked, version: CONSENT.version },
         source,
+        ...(SITE ? { flow: 'site' } : {}),
         website: form.elements.website.value,
       };
       status.className = 'form-status';
@@ -325,7 +331,7 @@ function start() {
       h('p', { text: TEXTS.successText }),
       h('div', { class: 'fc-done-actions' },
         h('a', { class: 'button', href: cfg.siteUrl, 'data-fc-site': 'success' }, 'מעבר לאתר העסקי של רועי רומנו'),
-        h('button', { type: 'button', class: 'button button-line', onclick: () => { state = null; session.del(KEY); show('intro'); scrollToTop(screens.intro); screens.intro.querySelector('[data-start]').focus(); } }, 'חזרה לתחילת השאלון')));
+        h('button', { type: 'button', class: 'button button-line', onclick: () => { state = null; session.del(KEY); if (SITE) { begin(); return; } show('intro'); scrollToTop(screens.intro); screens.intro.querySelector('[data-start]').focus(); } }, 'חזרה לתחילת השאלון')));
     box.replaceChildren(tile);
     if (!still()) { box.classList.remove('is-entering'); void box.offsetWidth; box.classList.add('is-entering'); }
     scrollToTop(box);
@@ -337,10 +343,11 @@ function start() {
   // click there, so the visitor lands on the second. A visit already under way in this tab is kept as it is.
   const saved = E.restore(session.get(KEY) || '');
   const preset = params.get('need');
-  const presetOk = preset && E.QUESTIONS.need.options.some((o) => o.id === preset);
+  const presetOk = preset && E.QUESTIONS[entry].options.some((o) => o.id === preset);
   if (presetOk && !(saved && saved.history.length && saved.history[0].o === preset)) {
     begin();
     session.set(ENTRY_KEY, '1');
-    advance('need', preset);
+    advance(entry, preset);
   } else if (saved && saved.history.length) { state = saved; render(false); }
+  else if (SITE) begin(); // the site questionnaire has no intro: it opens on its first question
 }

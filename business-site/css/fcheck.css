@@ -92,3 +92,9 @@
 }
 
 .foot-links .fc-site-link { font-weight: 700; color: var(--gold); }
+
+/* the site questionnaire (/check): a way back to the home page under every screen (Roei) */
+.fc-home { margin-top: 20px; margin-bottom: 8px; }
+.fc-home .button { gap: 10px; }
+/* on the site questionnaire the title stays under the name, as on the rest of the site (Roei) */
+@media (max-width: 600px) { .fc-top-site .bar-brand span { display: block; } }

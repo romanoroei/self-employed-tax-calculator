@@ -49,15 +49,6 @@ test('conditional questions appear only in their cases', async () => {
   // the reason for the insurance check: only when insurance is chosen
   assert.equal(nextId(E, run(E, ['pension', 'employee', 'insurance'])), 'c_insreason');
   assert.equal(nextId(E, run(E, ['pension', 'employee', 'fees'])), 'c_lastcheck');
-  // the retirement route (from the home page): six questions at most, the work question only before retiring
-  assert.equal(nextId(E, run(E, ['retire'])), 'r_age');
-  assert.equal(nextId(E, run(E, ['retire', '60to64', 'y1'])), 'r_work');
-  assert.equal(nextId(E, run(E, ['retire', 'over67', 'done'])), 'r_products');
-  const retired = run(E, ['retire', '60to64', 'y1', 'employee', 'manager', 'lump', 'asap']);
-  const r = E.result(retired, { now: NOW });
-  assert.equal(r.track, 'retire');
-  assert.equal(r.grade, 'A');
-  assert(r.insights.some((x) => x.id === 'once'));
   // study fund and pension interest: only without one
   assert.equal(nextId(E, run(E, ['selfemp', 'licensed', 'none'])), 'd_study_interest');
   assert.equal(nextId(E, run(E, ['selfemp', 'licensed', 'regular'])), 'd_pension');
@@ -167,7 +158,7 @@ test('the grade follows the brief: big sums and the self-employed rank high, a s
   assert.equal(g(['invest', '100to300', 'general', 'y5plus', 'grow', 'deposit', 'asap']).grade, 'A');
   const self = g(['selfemp', 'licensed', 'regular', 'irregular', 'notyet', 'tax', 'yearend']);
   assert(['A', 'B'].includes(self.grade));
-  assert(['A', 'B'].includes(g(['pension', 'employee', 'all', 'general', 'never', 'asap']).grade));
+  assert(['A', 'B'].includes(g(['pension', 'employee', 'all', 'general', 'never', 'partial', 'job', 'asap']).grade));
   assert(['B', 'C'].includes(g(['monthly', 'upto500', 'none', 'longterm', 'y5plus', 'no', 'explore']).grade));
   // points are only ever added: a low sum scores more than no sum, never less
   const low = g(['unsure', 'employee', 'order', 'upto25', 'none', 'explore']).score;
@@ -184,7 +175,7 @@ test('the grade follows the brief: big sums and the self-employed rank high, a s
 
 test('the lead message lists exactly the questions asked, in order, and marks what was not collected', async () => {
   const E = await engine();
-  const s = run(E, ['pension', 'employee', 'fees', 'y3plus', 'later']);
+  const s = run(E, ['pension', 'employee', 'fees', 'y3plus', 'yes', 'none', 'later']);
   const m = E.leadMessage(s, { name: 'דנה כהן', phone: '+972 52-123-4567', email: 'dana@example.com' }, { ref: 'Partner01', utm_source: 'Instagram', utm_medium: 'influencer', utm_campaign: 'year_end_2026<script>', referrer: 'https://l.instagram.com/abc?x=1' }, { contact: true, marketing: true }, { now: NOW });
   assert.equal(m.subject, `ליד חדש – התאמה פיננסית – דנה כהן – דירוג ${m.result.grade}`);
   const list = E.answersList(s, { now: NOW });
@@ -347,7 +338,7 @@ test('every path gets at least two findings, a step and a call list, with no tok
       for (const o of v.question.options) walk(E.answer(s, v.question.id, o.id, { now }));
     };
     walk(E.newState(now));
-    assert(paths > 45000, "paths " + paths); // shorter pension route since 2026-11, plus the retirement route
+    assert(paths > 80000);
   }
 });
 
@@ -369,4 +360,50 @@ test('the year-end countdown and the growth example', async () => {
   assert.match(r.insights[0].text, /תקרת 2027/);
   const off = E.result(run(E, ['invest', 'over300', 'general', 'y5plus', 'grow', 'checking', 'asap'], OFF), { now: OFF });
   assert.equal(off.insights[0].figure.value, '83,641 ₪');
+});
+
+// ---------- the site questionnaire (/check, from the home page): its own entry and short routes ----------
+function runSite(E, picks, now = NOW) {
+  let s = E.newState(now, 'site');
+  for (const o of picks) {
+    const v = E.view(s, { now });
+    if (!v.question) throw new Error('no question left for ' + o);
+    s = E.answer(s, v.question.id, o, { now });
+  }
+  return s;
+}
+
+test('the site questionnaire: every path asks five or six questions after the need, and the campaign routes stay as they were', async () => {
+  const E = await engine();
+  assert.equal(E.view(E.newState(NOW, 'site'), { now: NOW }).question.id, 'need_site');
+  assert.equal(E.view(E.newState(NOW), { now: NOW }).question.id, 'need');
+  assert(!E.QUESTIONS.need.options.some((o) => o.id === 'retire'), 'the campaign page has no retirement route');
+  assert.equal(nextId(E, runSite(E, ['invest'])), 's_amount');
+  assert.deepEqual(E.QUESTIONS.s_amount.options.map((o) => o.id), ['50to150', '150to300', '300to600', '600to1200', 'over1200']);
+  for (const now of [NOW, OFF]) {
+    const walk = (s) => {
+      const v = E.view(s, { now });
+      if (!v.question) {
+        const n = E.answersList(s, { now }).length - 1;
+        assert(n >= 4 && n <= 6, 'questions after the need: ' + n);
+        const r = E.result(s, { now });
+        assert(r.steps.length >= 1 && r.calls.length >= 2);
+        return;
+      }
+      for (const o of v.question.options) walk(E.answer(s, v.question.id, o.id, { now }));
+    };
+    walk(E.newState(now, 'site'));
+  }
+  const retired = runSite(E, ['retire', '60to64', 'y1', 'employee', 'manager', 'lump', 'asap']);
+  const r = E.result(retired, { now: NOW });
+  assert.equal(r.track, 'retire');
+  assert.equal(r.grade, 'A');
+  const big = E.result(runSite(E, ['invest', 'over1200', 'y5plus', 'grow', 'deposit', 'asap']), { now: NOW });
+  assert.equal(big.grade, 'A');
+  // the server rebuilds the same answers only in the same flow, and the email says where the lead came from
+  const answers = retired.history;
+  assert(E.fromAnswers(retired.sessionId, answers, { flow: 'site', now: NOW }));
+  assert.equal(E.fromAnswers(retired.sessionId, answers, { now: NOW }), null);
+  const m = E.leadMessage(retired, { name: 'דנה כהן', phone: '0521234567' }, {}, { contact: true }, { now: NOW });
+  assert(m.text.includes('שאלון האתר'));
 });
