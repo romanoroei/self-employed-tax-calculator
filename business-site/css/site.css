@@ -1516,9 +1516,10 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   .hero-need:hover { color: var(--gold-soft); padding-inline-start: 10px; }
   .hero-need:hover .arrow { background: var(--gold); color: var(--navy-deep); }
 }
-@media (min-width: 901px) { .hero-slide:has(.hero-copy-ask) { justify-content: center; } .hero-copy-ask { max-width: 52%; } }
+/* the question and its options sit a little lower than the middle (Roei) */
+@media (min-width: 901px) { .hero-slide:has(.hero-copy-ask) { justify-content: center; } .hero-copy-ask { max-width: 52%; padding-top: 90px; } }
 @media (max-width: 700px) {
-  .hero-slide:first-child:has(.hero-copy-ask) { padding-top: 36px; justify-content: flex-start; }
+  .hero-slide:first-child:has(.hero-copy-ask) { padding-top: 92px; justify-content: flex-start; }
   .hero-slide:has(.hero-copy-ask) .hero-bg { opacity: .22; }
   .hero-needs { margin-top: 22px; }
   .hero-need { padding: 13px 2px; font-size: 16px; }
