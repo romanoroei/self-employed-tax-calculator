@@ -32,6 +32,7 @@ for(const file of published){
   assert(text.includes('rel="canonical" href="'+expected+'"'),'Incorrect canonical: '+rel);
   assert(/<html[^>]*lang="he"[^>]*dir="rtl"/.test(text),'Hebrew RTL missing: '+rel);
   if(rel==='check.html')assert(/<meta name="robots" content="noindex, nofollow">/.test(text)&&!/http-equiv="refresh"/.test(text),'The site questionnaire stays out of search results');
+  else if(rel.startsWith('questionnaire/'))assert(/<meta name="robots" content="noindex, nofollow">/.test(text)&&!/http-equiv="refresh"/.test(text),'The client questionnaire stays out of search results: '+rel);
   else if(rel==='financial-check.html')assert(/<meta name="robots" content="noindex, nofollow">/.test(text)&&!/http-equiv="refresh"/.test(text),'The campaign page must stay out of search results');
   else assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
@@ -66,7 +67,7 @@ for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check (the campaign page): not in the sitemap, linked from no page, no Google Analytics.
 // /check (the site questionnaire, same engine): linked only from the home page, one route per link (Roei, 2026-11)
-assert(!sitemap.includes('financial-check')&&!sitemap.includes('/check<'),'The questionnaires stay out of the sitemap');
+assert(!sitemap.includes('financial-check')&&!sitemap.includes('/check<')&&!sitemap.includes('/questionnaire'),'The questionnaires stay out of the sitemap');
 for(const file of published.filter(p=>p.endsWith('.html'))){const text=await readFile(file,'utf8');const rel=path.relative(root,file);
   assert(!/href="[^"]*financial-check/.test(text)||rel==='financial-check.html','No page links to the campaign page: '+rel);
   const links=[...text.matchAll(/href="(\/check[?"][^"]*)"/g)].map(m=>m[1]);

@@ -1,0 +1,2090 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שאלון הכרות ראשוני - רועי רומנו מתכנן פיננסי</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://romanoinvest.co.il/questionnaire/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+/* Questionnaire, in the romanoinvest.co.il design language: navy and gold tiles,
+   square corners, 8px gaps, Heebo. Text, markup and flow are unchanged; only the look. */
+:root {
+    --paper: #F1F1EE;
+    --paper-2: #E4E5E2;
+    --ink: #0C2134;
+    --ink-soft: #46586A;
+    --navy: #0C2134;
+    --navy-deep: #081826;
+    --slate: #2B3947;
+    --gold: #C9B772;
+    --gold-soft: #E3D6A3;
+    --gold-deep: #B8A55F;
+    --on-dark: #F1F1EE;
+    --on-dark-soft: #C1CEDB;
+    --font: "Heebo", Arial, sans-serif;
+    --gap: 8px;
+    --ease-out: cubic-bezier(.2, .7, .2, 1);
+
+    /* the old names, still used by inline styles in the page */
+    --navy-primary: var(--navy);
+    --navy-secondary: var(--navy-deep);
+    --dark-gray: var(--slate);
+    --gold-primary: var(--gold);
+    --gold-light: var(--gold-soft);
+    --white: #FFFFFF;
+    --text-gray: var(--ink-soft);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    font-family: var(--font);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-top: 76px;
+    padding-bottom: 96px;
+    direction: rtl;
+    overflow-x: hidden;
+}
+button, input, textarea { font: inherit; }
+::selection { background: var(--gold); color: var(--navy-deep); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+/* ===== Top bar ===== */
+.sticky-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--navy-deep);
+    padding: var(--gap);
+}
+.header-content { max-width: 1200px; margin: 0 auto; display: flex; }
+.sticky-header h1 {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 52px; padding-inline: 22px;
+    background: var(--navy); color: var(--on-dark);
+    font-size: 18px; font-weight: 800; line-height: 1.2; margin: 0;
+}
+.sticky-header h1::before {
+    content: ""; flex: none; width: 44px; height: 28px;
+    background: url("data:image/png;base64,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") center / contain no-repeat;
+}
+
+/* ===== Bottom bar ===== */
+.sticky-footer {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--navy-deep);
+    padding: var(--gap) var(--gap) calc(var(--gap) + env(safe-area-inset-bottom));
+}
+.footer-content {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: stretch; gap: var(--gap);
+}
+.footer-info { display: none; }
+.footer-name { color: var(--gold); font-size: 1rem; font-weight: 700; }
+.footer-license { color: var(--on-dark-soft); font-size: .8rem; }
+.footer-help-text {
+    flex: 1; display: flex; align-items: center; padding-inline: 22px;
+    background: var(--slate); color: var(--on-dark);
+    font-size: 15px; font-weight: 500;
+}
+.footer-actions { display: flex; gap: var(--gap); }
+.btn-contact {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 24px;
+    border: 0; border-radius: 0; cursor: pointer; text-decoration: none; white-space: nowrap;
+    font-size: 15px; font-weight: 700;
+    transition: transform 120ms var(--ease-out), background-color 160ms ease;
+}
+.btn-contact:active { transform: scale(.97); }
+.btn-phone { background: var(--navy); color: var(--on-dark); }
+.btn-phone i { color: var(--gold); }
+.btn-footer-whatsapp { background: var(--gold); color: var(--navy-deep); }
+.btn-footer-whatsapp i { font-size: 1.15em; }
+@media (hover: hover) and (pointer: fine) {
+    .btn-phone:hover { background: var(--slate); }
+    .btn-footer-whatsapp:hover { background: var(--gold-soft); }
+}
+
+/* ===== Page ===== */
+.container { max-width: 820px; margin: 16px auto; padding: 0 16px; }
+
+/* ===== Question card ===== */
+.question-card {
+    display: grid; gap: var(--gap);
+    background: transparent; border: 0; border-radius: 0; box-shadow: none;
+    padding: 0; position: relative; overflow: visible;
+}
+.section-header {
+    text-align: right;
+    padding: 28px 28px 24px;
+    background: var(--navy); color: var(--on-dark);
+    border-radius: 0; margin: 0;
+}
+.section-header h2 {
+    color: var(--gold);
+    font-size: clamp(24px, 3vw, 34px); font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.01em; margin: 0 0 6px;
+}
+.section-header p { color: var(--on-dark-soft); font-size: 16px; line-height: 1.55; max-width: 56ch; }
+
+/* progress: four square segments */
+.progress-bar-container { margin-top: 22px; }
+.progress-steps { display: flex; gap: 4px; margin-bottom: 8px; }
+.progress-step { flex: 1; text-align: right; }
+.progress-step-label { font-size: 13px; color: var(--on-dark-soft); font-weight: 500; white-space: nowrap; opacity: .75; }
+.progress-step.active .progress-step-label { color: var(--gold); font-weight: 700; opacity: 1; }
+.progress-step.completed .progress-step-label { color: var(--on-dark); opacity: 1; }
+.progress-bar { display: flex; gap: 4px; height: 6px; border-radius: 0; overflow: hidden; }
+.progress-segment { flex: 1; background: rgba(241, 241, 238, .16); border-radius: 0; overflow: hidden; }
+.progress-segment-fill { height: 100%; width: 0%; background: var(--gold); box-shadow: none; transition: width 400ms var(--ease-out); }
+.progress-segment.completed .progress-segment-fill { width: 100%; background: var(--gold-deep); }
+.progress-segment.active .progress-segment-fill { box-shadow: none; }
+
+/* the question itself */
+.question-content {
+    background: var(--paper-2);
+    padding: 28px 28px 28px;
+}
+@media (prefers-reduced-motion: no-preference) {
+    .question-content { animation: slideInFast 260ms var(--ease-out); }
+    .question-content.fade-out { animation: fadeOut 180ms ease forwards; }
+    .section-header.fade-out { animation: headerFadeOut 220ms ease forwards; }
+    .section-header.fade-in { animation: headerFadeIn 320ms var(--ease-out); }
+}
+@keyframes slideInFast { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+@keyframes headerFadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes headerFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.question-icon {
+    display: grid; place-items: center;
+    width: 44px; height: 44px; margin-bottom: 16px;
+    background: var(--gold); color: var(--navy-deep);
+    font-size: 19px;
+}
+.question-text {
+    font-size: clamp(21px, 2.4vw, 27px); font-weight: 800; line-height: 1.3;
+    color: var(--ink); text-align: right; margin-bottom: 20px;
+    text-wrap: balance; max-width: 34ch;
+}
+
+/* ===== Risk scale (1–5) ===== */
+.risk-scale { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin: 0 0 6px; padding: 0; }
+.risk-option { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
+.risk-scale-button {
+    width: 100%; height: 64px;
+    border: 0; border-radius: 0;
+    background: var(--paper); color: var(--ink);
+    font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background-color 140ms ease, color 140ms ease, transform 120ms var(--ease-out);
+}
+.risk-scale-button:active { transform: scale(.96); }
+.risk-scale-button.selected { background: var(--navy); color: var(--gold); box-shadow: none; }
+@media (hover: hover) and (pointer: fine) { .risk-scale-button:not(.selected):hover { background: #FAFAF8; } }
+.risk-label { margin-top: 8px; font-size: 13px; line-height: 1.3; text-align: center; color: var(--ink-soft); font-weight: 500; }
+
+/* ===== Yes / No ===== */
+.toggle-container { display: flex; flex-direction: column; gap: 1rem; }
+.toggle-question { font-size: 1rem; color: var(--ink); font-weight: 500; margin-bottom: .75rem; }
+.toggle-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.toggle-option {
+    min-height: 64px; padding: 0 20px;
+    border: 0; border-radius: 0;
+    background: var(--paper); color: var(--ink);
+    font-size: 19px; font-weight: 700; cursor: pointer; text-align: center;
+    transition: background-color 140ms ease, color 140ms ease, transform 120ms var(--ease-out);
+}
+.toggle-option:active { transform: scale(.98); }
+.toggle-option.selected { background: var(--navy); color: var(--on-dark); box-shadow: inset 0 -4px 0 var(--gold); }
+@media (hover: hover) and (pointer: fine) { .toggle-option:not(.selected):hover { background: #FAFAF8; } }
+
+/* ===== Checkboxes and radios: tiles like the compass ===== */
+.checkbox-group, .radio-group { display: grid; gap: 6px; }
+.checkbox-option, .radio-option {
+    display: flex; align-items: center; gap: 14px;
+    min-height: 58px; padding: 12px 16px;
+    border: 0; border-radius: 0;
+    background: var(--paper); color: var(--ink);
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease;
+}
+.checkbox-option label, .radio-option label {
+    flex: 1; cursor: pointer; color: inherit;
+    font-size: 17px; font-weight: 500; line-height: 1.35;
+}
+.checkbox-option input[type="checkbox"], .radio-option input[type="radio"] {
+    -webkit-appearance: none; appearance: none;
+    flex: none; width: 22px; height: 22px; min-width: 22px; min-height: 22px; margin: 0;
+    display: grid; place-items: center; cursor: pointer;
+    background: transparent; box-shadow: inset 0 0 0 2px var(--ink-soft);
+    pointer-events: auto;
+}
+.radio-option input[type="radio"] { border-radius: 50%; }
+.checkbox-option input[type="checkbox"]::after, .radio-option input[type="radio"]::after {
+    content: ""; width: 10px; height: 10px; background: transparent;
+}
+.radio-option input[type="radio"]::after { border-radius: 50%; }
+.checkbox-option.selected, .radio-option.selected,
+.checkbox-option:has(input:checked), .radio-option:has(input:checked) { background: var(--navy); color: var(--on-dark); }
+.checkbox-option input:checked, .radio-option input:checked { box-shadow: inset 0 0 0 2px var(--gold); }
+.checkbox-option input:checked::after, .radio-option input:checked::after { background: var(--gold); }
+.checkbox-option:has(input:focus-visible), .radio-option:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 2px; }
+.checkbox-option input:focus-visible, .radio-option input:focus-visible { outline: none; }
+@media (hover: hover) and (pointer: fine) {
+    .checkbox-option:not(.selected):not(:has(input:checked)):hover,
+    .radio-option:not(.selected):not(:has(input:checked)):hover { background: #FAFAF8; }
+}
+
+/* ===== Text fields ===== */
+.input-group { margin: 0; }
+.input-group label { display: block; margin-bottom: 8px; color: var(--ink); font-size: 15px; font-weight: 700; }
+.input-group input, .input-group textarea {
+    width: 100%; min-height: 56px; padding: 14px 16px;
+    border: 0; border-radius: 0;
+    background: var(--paper); color: var(--ink);
+    box-shadow: inset 0 0 0 1.5px rgba(12, 33, 52, .22);
+    font-size: 17px; transition: box-shadow 140ms ease;
+}
+.input-group textarea { min-height: 120px; line-height: 1.55; resize: vertical; }
+.input-group input:focus, .input-group textarea:focus { outline: none; box-shadow: inset 0 0 0 2px var(--navy), 0 0 0 3px var(--gold); }
+.input-group input::placeholder, .input-group textarea::placeholder { color: var(--ink-soft); opacity: .7; }
+
+/* ===== Buttons ===== */
+.question-actions { display: flex; flex-direction: column-reverse; gap: 6px; margin-top: 24px; }
+.btn-next, .btn-primary, .btn-whatsapp, .btn-secondary, .btn-back {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 28px;
+    border: 0; border-radius: 0; cursor: pointer; text-decoration: none;
+    font-size: 17px; font-weight: 700;
+    transition: transform 120ms var(--ease-out), background-color 160ms ease;
+}
+.btn-next, .btn-back { width: 100%; }
+.btn-next, .btn-primary, .btn-whatsapp { background: var(--gold); color: var(--navy-deep); }
+.btn-back, .btn-secondary { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--navy); }
+.btn-next:active, .btn-primary:active, .btn-whatsapp:active, .btn-secondary:active, .btn-back:active:not(:disabled) { transform: scale(.97); }
+.btn-back:disabled { opacity: .4; cursor: not-allowed; }
+@media (hover: hover) and (pointer: fine) {
+    .btn-next:hover, .btn-primary:hover, .btn-whatsapp:hover { background: var(--gold-soft); }
+    .btn-back:hover:not(:disabled), .btn-secondary:hover { background: var(--paper); }
+}
+@media (min-width: 620px) {
+    /* the primary step on the right, back beside it */
+    .question-actions { flex-direction: row; justify-content: flex-start; }
+    .question-actions .btn-next { order: -1; }
+    .btn-next, .btn-back { width: auto; min-width: 150px; }
+}
+
+/* ===== Dialogs ===== */
+.modal {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    background: rgba(8, 24, 38, .72);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000; padding: 16px;
+}
+.modal-content {
+    width: 100%; max-width: 440px;
+    background: var(--paper); color: var(--ink);
+    padding: 28px 24px 24px;
+    border: 0; border-radius: 0; box-shadow: none;
+    border-top: 6px solid var(--gold);
+}
+.modal-content h2 { color: var(--ink); font-size: 22px; font-weight: 800; line-height: 1.25; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.modal-content h2 i { color: var(--gold-deep); }
+.modal-content p { color: var(--ink-soft); line-height: 1.6; margin-bottom: 12px; font-size: 15px; }
+.modal-content a { color: var(--ink) !important; text-decoration: underline; text-underline-offset: .22em; font-weight: 700; }
+.modal-btn, .modal-content button {
+    width: 100%; min-height: 52px; padding: 0 20px; margin-top: 12px;
+    border: 0; border-radius: 0; cursor: pointer;
+    background: var(--gold) !important; color: var(--navy-deep) !important;
+    font-size: 17px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    transition: transform 120ms var(--ease-out), background-color 160ms ease;
+}
+.modal-btn:active, .modal-content button:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .modal-btn:hover, .modal-content button:hover { background: var(--gold-soft) !important; transform: none; box-shadow: none; } }
+.warning-modal { border: 0; border-top: 6px solid #8A2A2A; }
+.warning-modal h2 { color: #8A2A2A !important; }
+/* the "sent" dialog the script builds */
+.modal-content p[style*="FFF9E6"] { background: var(--paper-2) !important; border-right: 4px solid var(--gold) !important; border-radius: 0 !important; color: var(--ink) !important; }
+.modal-content p[style*="fef3c7"] { background: #F3EBD0 !important; color: #6B5310 !important; border-right: 3px solid var(--gold-deep) !important; border-radius: 0 !important; }
+.modal-content p[style*="fef3c7"] i { color: var(--gold-deep); }
+.modal-content p i.fa-check-circle { color: var(--gold-deep) !important; }
+
+/* ===== Summary ===== */
+#summaryContainer > div:first-child {
+    background: var(--navy) !important;
+    border-radius: 0 !important;
+    padding: 40px 28px !important;
+    margin-bottom: var(--gap) !important;
+}
+#summaryContainer > div:first-child i { color: var(--gold) !important; }
+#summaryContainer > div:first-child h2 {
+    color: var(--gold) !important;
+    font-size: clamp(28px, 3.6vw, 40px) !important; font-weight: 800; line-height: 1.15;
+    margin-bottom: 10px !important;
+}
+#summaryContainer > div:first-child p { color: var(--on-dark-soft) !important; font-size: 17px !important; }
+#summaryContainer h2 { color: var(--ink); font-size: clamp(24px, 3vw, 32px); font-weight: 800; margin-bottom: 1.5rem; text-align: center; }
+.summary-actions {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap);
+    padding: 20px; background: var(--paper-2);
+    margin-bottom: 2rem !important;
+}
+.summary-actions .btn-primary, .summary-actions .btn-whatsapp, .summary-actions .btn-secondary { width: 100%; }
+.summary-item { margin-bottom: 6px; padding: 16px 18px; background: var(--paper-2); border-right: 4px solid var(--gold); border-radius: 0; }
+.summary-item strong { display: block; color: var(--ink); font-size: 16px; font-weight: 700; margin-bottom: 4px; word-break: break-word; overflow-wrap: break-word; white-space: pre-wrap; }
+.summary-item span { color: var(--ink-soft); font-size: 15px; }
+
+/* ===== Edit answers ===== */
+#editContainer > h2 { color: var(--ink); font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; margin-bottom: 20px; text-align: right; }
+#editContainer > div[style*="display: flex"] { flex-wrap: wrap; gap: var(--gap) !important; }
+.edit-mode .question-card { margin-bottom: 1.5rem; }
+.edit-section { margin-bottom: var(--gap); border: 0; border-radius: 0; overflow: hidden; background: var(--paper-2); }
+.edit-section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 22px; cursor: pointer; user-select: none;
+    background: var(--navy); transition: background-color 160ms ease;
+}
+.edit-section-header.active { background: var(--navy); box-shadow: inset 0 -3px 0 var(--gold); }
+@media (hover: hover) and (pointer: fine) { .edit-section-header:hover { background: var(--slate); } }
+.edit-section-title { color: var(--gold); font-size: 19px; font-weight: 800; margin: 0; }
+.edit-section-icon { color: var(--gold); font-size: 15px; transition: transform 240ms var(--ease-out); }
+.edit-section-header.active .edit-section-icon { transform: rotate(180deg); }
+.edit-section-content { max-height: 0; overflow: hidden; background: var(--paper-2); transition: max-height 400ms var(--ease-out); }
+.edit-section-content.open { max-height: 5000px; padding: var(--gap); }
+.edit-question-item { background: var(--paper); border: 0; border-radius: 0; box-shadow: none; padding: 18px; margin-bottom: 6px; }
+.edit-question-item:last-child { margin-bottom: 0; }
+.edit-question-label { display: block; color: var(--ink); font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.edit-input {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    background: var(--paper-2); color: var(--ink);
+    border: 0; border-radius: 0; box-shadow: inset 0 0 0 1.5px rgba(12, 33, 52, .22);
+    font-size: 16px; font-family: var(--font);
+}
+.edit-input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--navy), 0 0 0 3px var(--gold); }
+.edit-input::placeholder { color: var(--ink-soft); opacity: .7; }
+/* inside an edit item the tiles sit on paper, so they take the darker paper */
+#editContainer .risk-scale-button, #editContainer .toggle-option,
+#editContainer .checkbox-option, #editContainer .radio-option { background: var(--paper-2); }
+#editContainer .risk-scale-button.selected { background: var(--navy); color: var(--gold); }
+#editContainer .toggle-option.selected,
+#editContainer .checkbox-option:has(input:checked), #editContainer .radio-option:has(input:checked) { background: var(--navy); color: var(--on-dark); }
+
+/* ===== Conditional fields ===== */
+.conditional-field { margin-top: 12px; padding: 16px; background: var(--paper); border: 0; border-radius: 0; border-right: 3px solid var(--gold); }
+
+/* the note under the page, and the short notices the script shows */
+body > div[style*="font-size: 0.75rem"] { color: var(--ink-soft) !important; opacity: 1 !important; font-size: 13px !important; }
+body > div[style*="z-index: 10000"] {
+    border-radius: 0 !important; box-shadow: none !important;
+    background: var(--navy) !important; color: var(--on-dark) !important;
+    border-top: 4px solid var(--gold) !important; font-family: var(--font);
+}
+
+/* ===== Tablets ===== */
+@media (max-width: 768px) {
+    .footer-content { flex-wrap: wrap; }
+    .footer-help-text { flex: 1 1 100%; justify-content: center; min-height: 40px; padding-block: 8px; font-size: 14px; }
+    .footer-actions { flex: 1 1 100%; }
+    .footer-actions .btn-contact { flex: 1; }
+    body { padding-bottom: 136px; }
+    .summary-actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ===== Phones ===== */
+@media (max-width: 480px) {
+    body { padding-top: 68px; padding-bottom: 124px; }
+    .sticky-header { padding: 6px; }
+    .sticky-header h1 { min-height: 48px; padding-inline: 16px; font-size: 16px; gap: 10px; }
+    .sticky-header h1::before { width: 38px; height: 24px; }
+    .sticky-footer { padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); }
+    .footer-content { gap: 6px; }
+    .footer-actions { gap: 6px; }
+    .footer-help-text { font-size: 13px; min-height: 34px; padding-block: 6px; }
+    .btn-contact { min-height: 48px; padding: 0 12px; font-size: 15px; }
+    .container { padding: 0 8px; margin: 8px auto; }
+    .section-header { padding: 20px 18px 18px; }
+    .section-header h2 { font-size: 22px; }
+    .section-header p { font-size: 14px; line-height: 1.45; }
+    .progress-bar-container { margin-top: 16px; }
+    .progress-step-label { font-size: 11px; white-space: normal; line-height: 1.15; }
+    .question-content { padding: 20px 16px 18px; }
+    .question-icon { width: 38px; height: 38px; font-size: 16px; margin-bottom: 12px; }
+    .question-text { font-size: 19px; margin-bottom: 16px; }
+    .risk-scale { gap: 4px; }
+    .risk-scale-button { height: 54px; font-size: 20px; }
+    .risk-label { font-size: 11px; }
+    .toggle-option { min-height: 56px; font-size: 17px; }
+    .checkbox-option, .radio-option { min-height: 52px; padding: 10px 14px; gap: 12px; }
+    .checkbox-option label, .radio-option label { font-size: 16px; }
+    .modal-content { padding: 22px 18px 18px; }
+    .modal-content h2 { font-size: 19px; }
+    .modal-content p { font-size: 14px; line-height: 1.5; }
+    .summary-actions { padding: 12px; }
+    .summary-item strong { font-size: 15px; }
+    .summary-item span { font-size: 14px; }
+    .edit-section-header { padding: 14px 16px; }
+    .edit-section-title { font-size: 17px; }
+    .edit-question-item { padding: 14px; }
+}
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+        <div class="header-content">
+            <h1>רועי רומנו - מתכנן פיננסי אישי</h1>
+        </div>
+    </header>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-shield-alt"></i> הודעת פרטיות</h2>
+            
+            <p style="font-size: 0.95rem; line-height: 1.7; margin: 1.5rem 0;">
+                המידע שיימסר בשאלון ישמש למתן תכנון פיננסי מותאם אישית ויישמר באופן מאובטח במערכת.
+            </p>
+
+            <p style="font-size: 0.85rem; margin-bottom: 1.5rem; text-align: center;">
+                <a href="privacy-policy.html" target="_blank" style="color: var(--gold-primary); font-weight: 600; text-decoration: underline;">
+                    <i class="fas fa-external-link-alt"></i> קרא מדיניות פרטיות מלאה
+                </a>
+            </p>
+
+            <button class="modal-btn" onclick="acceptPrivacy()">
+                <i class="fas fa-check"></i> הבנתי, המשך לשאלון
+            </button>
+        </div>
+    </div>
+
+    <!-- IRS Warning Modal -->
+    <div id="irsModal" class="modal" style="display: none;">
+        <div class="modal-content warning-modal">
+            <h2 style="color: #dc2626;">⚠️ שים לב!</h2>
+            <p>ייתכן ותהיה בעיה מול ה-IRS בפתיחת תכנית עצמאית. יש להתייעץ עם רו"ח המתמחה במיסוי.</p>
+            <button class="modal-btn" onclick="closeIRSWarning()">הבנתי והמשך</button>
+        </div>
+    </div>
+
+
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Questionnaire Container -->
+        <div id="questionnaireContainer"></div>
+
+        <!-- Summary Container -->
+        <div id="summaryContainer" style="display: none;">
+            <div style="text-align: center; background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--gold-primary); margin-bottom: 1rem;"></i>
+                <h2 style="color: var(--gold-primary); font-size: 1.8rem; margin-bottom: 0.5rem;">כל הכבוד! סיימת את השאלון</h2>
+                <p style="color: var(--white); font-size: 1rem; margin: 0;">שלח אלי בבקשה את התשובות כדי שאוכל לעבור עליהן ולחזור אליך בהקדם.</p>
+            </div>
+            
+            <div class="summary-actions" style="justify-content: center; margin-bottom: 2rem;">
+                <button class="btn-primary" onclick="sendEmail()">
+                    <i class="fas fa-envelope"></i> שלח במייל
+                </button>
+                <button class="btn-whatsapp" onclick="sendWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> שלח ב-WhatsApp
+                </button>
+                <button class="btn-secondary" onclick="editAnswers()">
+                    <i class="fas fa-edit"></i> ערוך תשובות
+                </button>
+            </div>
+            
+            <div id="summaryContent" style="display: none;"></div>
+        </div>
+
+        <!-- Edit Container -->
+        <div id="editContainer" style="display: none;">
+            <h2>ערוך תשובות</h2>
+            <div id="editContent"></div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn-primary" onclick="saveEdits()">שמור ועדכן סיכום</button>
+                <button class="btn-secondary" onclick="cancelEdit()">ביטול</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gender Note -->
+    <div style="text-align: center; padding: 1rem; margin-top: 2rem; font-size: 0.75rem; color: var(--text-gray); opacity: 0.7;">
+        הניסוח בשאלון הוא בלשון זכר מטעמי נוחות בלבד, אך פונה לשני המינים.
+    </div>
+
+    <!-- Sticky Footer -->
+    <footer class="sticky-footer">
+        <div class="footer-content">
+            <div class="footer-help-text">
+                נתקעת? צריך עזרה? אני כאן בשבילך!
+            </div>
+            <div class="footer-actions">
+                <a href="tel:+972528089808" class="btn-contact btn-phone">
+                    <i class="fas fa-phone"></i>
+                    <span>התקשר עכשיו</span>
+                </a>
+                <a href="https://wa.me/972528089808?text=שלום רועי, אני ממלא את השאלון וצריך עזרה" 
+                   target="_blank" 
+                   class="btn-contact btn-footer-whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+// ===== Global Variables =====
+let currentQuestionIndex = 0;
+let answers = {};
+let questionHistory = [];
+let allQuestions = [];
+let totalQuestions = 0;
+let isFormatting = false;
+let currentSectionTitle = '';
+let currentSectionDesc = '';
+
+// ===== Questions Data =====
+const questions = [
+    // פרטים ראשוניים
+    {
+        section: 0,
+        sectionTitle: "פרטים ראשוניים",
+        sectionDesc: "אשמח להכיר אותך טוב יותר",
+        id: "fullName",
+        text: "שם מלא",
+        type: "text",
+        icon: "fa-user",
+        required: true
+    },
+    
+    // חלק 1: שאלון רמת סיכון
+    {
+        section: 1,
+        sectionTitle: "שאלון רמת סיכון",
+        sectionDesc: "שאלון זה נועד לאמוד את רמת הסיכון המתאימה לך בהשקעות. התשובות שלך יעזרו לי להתאים את התכנית הפיננסית שלך לצרכים ולציפיות שלך בצורה הטובה ביותר.",
+        id: "risk1",
+        text: "אני מאמין שהשקעה בנכסים בעלי רמת סיכון גבוהה מוכיחה את עצמה כאפיק ההשקעה הטוב ביותר לחיסכון ארוך טווח",
+        type: "risk-scale",
+        icon: "fa-chart-line",
+        required: true
+    },
+    {
+        section: 1,
+        id: "risk2",
+        text: "אני מוכן לקחת סיכון בהשקעה במוצרים שלי. אני מודע לאפשרות ההפסד, אבל גם לפוטנציאל הרווח",
+        type: "risk-scale",
+        icon: "fa-balance-scale",
+        required: true
+    },
+    {
+        section: 1,
+        id: "risk3",
+        text: "אני מוכן לקחת סיכון גבוה בשאיפה להניב תשואה גבוהה, למרות שידוע לי כי כתוצאה מכך ייתכנו לעיתים הפסדים משמעותיים",
+        type: "risk-scale",
+        icon: "fa-exclamation-triangle",
+        required: true
+    },
+    {
+        section: 1,
+        id: "risk4",
+        text: "אני מוכן לספוג תנודות גבוהות במוצרים שלי כאשר ההשקעות מיועדות לטווח ארוך",
+        type: "risk-scale",
+        icon: "fa-wave-square",
+        required: true
+    },
+    {
+        section: 1,
+        id: "risk5",
+        text: "אמשיך להתמיד גם אם התשואות של המוצרים אשר ברשותי יהיו נתונות לירידות תכופות, גם אם אניח שבטווח הקצר ימשכו הירידות",
+        type: "risk-scale",
+        icon: "fa-arrow-trend-down",
+        required: true
+    },
+    {
+        section: 1,
+        id: "risk6",
+        text: "אני עוקב ובודק את ההשקעות והתשואות במוצרים שברשותי לעיתים קרובות",
+        type: "risk-scale",
+        icon: "fa-search-dollar",
+        required: true
+    },
+    
+    // חלק 2: הכר את הלקוח
+    {
+        section: 2,
+        sectionTitle: "הכר את הלקוח",
+        sectionDesc: "מידע זה נדרש על פי חוק למניעת הלבנת הון ומימון טרור. כל המידע נשמר בסודיות מלאה ומשמש אך ורק לצרכי תיעוד והתאמת המסמכים הנדרשים.",
+        id: "employmentStatus",
+        section: 2,
+        id: "employmentStatus",
+        text: "מצב תעסוקתי? (אפשר לסמן כמה)",
+        type: "checkbox",
+        icon: "fa-briefcase",
+        options: [
+            "שכיר",
+            "עצמאי",
+            "סטודנט",
+            "פנסיונר",
+            "לא עובד",
+            "בעל שליטה",
+            "אחר"
+        ],
+        required: true
+    },
+    {
+        section: 2,
+        id: "employerName",
+        text: "שם המעסיק (כשכיר)",
+        type: "text",
+        icon: "fa-building",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("שכיר");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "currentOccupationEmployee",
+        text: "עיסוק/תפקיד נוכחי (כשכיר)",
+        type: "text",
+        icon: "fa-id-badge",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("שכיר");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "businessName",
+        text: "שם העסק שלך כעצמאי",
+        type: "text",
+        icon: "fa-store",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("עצמאי");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "businessAddress",
+        text: "כתובת העסק שלך",
+        type: "text",
+        icon: "fa-map-marker-alt",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("עצמאי");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "annualRevenue",
+        text: "מחזור הכנסות שנתי בעסק",
+        type: "number",
+        icon: "fa-money-bill-wave",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("עצמאי");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "businessField",
+        text: "תחום עיסוק של העסק שלך",
+        type: "text",
+        icon: "fa-industry",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("עצמאי");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "currentOccupationOwner",
+        text: "עיסוק/תפקיד נוכחי (כשכיר)",
+        type: "text",
+        icon: "fa-id-badge",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("בעל שליטה");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "preRetirementJob",
+        text: "במה עבדת לפני הפרישה?",
+        type: "text",
+        icon: "fa-briefcase",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("פנסיונר");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "monthlyPension",
+        text: "סכום הקצבה החודשית שלך כפנסיונר (לא מביטוח לאומי)",
+        type: "number",
+        icon: "fa-wallet",
+        conditional: (answers) => {
+            return answers.employmentStatus && answers.employmentStatus.includes("פנסיונר");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "fundsSource",
+        text: "מה מקור הכספים שיופקדו לתכנית? (אפשר לסמן כמה)",
+        type: "checkbox",
+        icon: "fa-coins",
+        options: [
+            "משכורת",
+            "חסכונות",
+            "ניוד מקופה אחרת",
+            "ירושה",
+            "זכיה",
+            "מתנה",
+            "פיצויים",
+            "מכירת נכס",
+            "תקבולים מהעסק"
+        ],
+        required: true
+    },
+    {
+        section: 2,
+        id: "inheritanceRelation",
+        text: "מה הזיקה למוריש?",
+        type: "text",
+        icon: "fa-user-friends",
+        conditional: (answers) => {
+            return answers.fundsSource && answers.fundsSource.includes("ירושה");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "giftGiver",
+        text: "שם נותן המתנה",
+        type: "text",
+        icon: "fa-gift",
+        conditional: (answers) => {
+            return answers.fundsSource && answers.fundsSource.includes("מתנה");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "giftRelation",
+        text: "זיקה לנותן המתנה",
+        type: "text",
+        icon: "fa-handshake",
+        conditional: (answers) => {
+            return answers.fundsSource && answers.fundsSource.includes("מתנה");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "annualDeposits",
+        text: "סכום הפקדות שנתיות צפויות בתכנית",
+        type: "number",
+        icon: "fa-piggy-bank",
+        conditional: (answers) => {
+            return !answers.fundsSource || answers.fundsSource.length !== 1 || !answers.fundsSource.includes("ניוד מקופה אחרת");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "depositFrequency",
+        text: "תדירות הפקדות",
+        type: "radio",
+        icon: "fa-calendar",
+        options: ["חודשי", "רבעוני", "שנתי", "חד פעמי", "ללא הפקדות/ניוד בלבד"],
+        conditional: (answers) => {
+            return !answers.fundsSource || answers.fundsSource.length !== 1 || !answers.fundsSource.includes("ניוד מקופה אחרת");
+        },
+        required: true
+    },
+    {
+        section: 2,
+        id: "investmentHorizon",
+        text: "מה טווח ההשקעה הצפוי (בשנים)?",
+        type: "radio",
+        icon: "fa-hourglass-half",
+        options: [
+            "קצר (עד שנתיים)",
+            "בינוני (שנתיים עד חמש)",
+            "ארוך (חמש ומעלה)"
+        ],
+        required: true
+    },
+    {
+        section: 2,
+        id: "usCitizen",
+        text: "האם יש לך אזרחות/תושבות ארה\"ב?",
+        type: "toggle",
+        icon: "fa-flag-usa",
+        required: true
+    },
+    {
+        section: 2,
+        id: "otherTaxResident",
+        text: "האם אתה תושב לצרכי מס במדינה שאינה ארה\"ב או ישראל?",
+        type: "toggle",
+        icon: "fa-globe-americas",
+        required: true
+    },
+    {
+        section: 2,
+        id: "taxCountry",
+        text: "מדינה",
+        type: "text",
+        icon: "fa-flag",
+        conditional: (answers) => answers.otherTaxResident === "כן",
+        required: true
+    },
+    {
+        section: 2,
+        id: "tin",
+        text: "מספר TIN",
+        type: "text",
+        icon: "fa-hashtag",
+        conditional: (answers) => answers.otherTaxResident === "כן",
+        required: true
+    },
+    
+    // חלק 3: שאלות כלליות ומאפייני חיסכון
+    {
+        section: 3,
+        sectionTitle: "שאלות כלליות ומאפייני חיסכון",
+        sectionDesc: "מידע אישי זה יעזור לי להתאים את הפתרון הפיננסי המושלם עבורך ולהכין את המסמכים הנדרשים בצורה מדויקת.",
+        id: "maritalStatus",
+        text: "מצב משפחתי",
+        type: "radio",
+        icon: "fa-heart",
+        options: ["רווק", "נשוי", "גרוש", "אלמן", "ידועים בציבור"],
+        required: true
+    },
+    {
+        section: 3,
+        id: "hasChildren",
+        text: "ילדים?",
+        type: "toggle",
+        icon: "fa-child",
+        required: true
+    },
+    {
+        section: 3,
+        id: "childrenAges",
+        text: "גילאי הילדים (מופרדים בפסיקים)",
+        type: "text",
+        icon: "fa-children",
+        conditional: (answers) => answers.hasChildren === "כן",
+        required: true
+    },
+    {
+        section: 3,
+        id: "email",
+        text: "כתובת מייל",
+        type: "email",
+        icon: "fa-envelope",
+        required: true
+    },
+
+    {
+        section: 3,
+        id: "savingsGoals",
+        text: "מטרת החיסכון (אפשר לסמן כמה)",
+        type: "checkbox",
+        icon: "fa-bullseye",
+        options: [
+            "דאגה לעתיד",
+            "פרישה בצורה מכובדת",
+            "ברצוני לקבל קצבה בגיל פרישה",
+            "ברצוני לשלב בין סכום הוני לסכום קצבתי בגיל פרישה",
+            "ניצול הטבות מס",
+            "לצבור סכום הוני"
+        ],
+        required: true
+    },
+    {
+        section: 3,
+        id: "financialStatus",
+        text: "איך היית מגדיר את מצבך הכספי בדרך כלל?",
+        type: "radio",
+        icon: "fa-chart-pie",
+        options: [
+            "קיימת יתרה גבוהה וחיסכון חודשי מצטבר",
+            "מצליח לחסוך מעט כל חודש",
+            "מאוזן כלכלית",
+            "לא מאוזן כלכלית"
+        ],
+        required: true
+    },
+    {
+        section: 3,
+        id: "moneyManagement",
+        text: "האם לדעתך הכסף מנוהל באופן נכון?",
+        type: "toggle",
+        icon: "fa-check-circle",
+        conditional: (answers) => answers.financialStatus === "קיימת יתרה גבוהה וחיסכון חודשי מצטבר",
+        required: true
+    },
+    {
+        section: 3,
+        id: "taxRefundCheck",
+        text: "האם ביצעת בדיקה להחזרי מס בשנים האחרונות?",
+        type: "toggle",
+        icon: "fa-receipt",
+        conditional: (answers) => {
+            return !answers.employmentStatus || !answers.employmentStatus.includes("עצמאי");
+        },
+        required: true
+    },
+    {
+        section: 3,
+        id: "consultingGoals",
+        text: "מה חשוב לך להשיג בליווי הפיננסי?",
+        type: "checkbox",
+        icon: "fa-hands-helping",
+        options: [
+            "סדר בתיק",
+            "להבין זכויות",
+            "הוזלת עלויות",
+            "דוח מרכז",
+            "התאמת רמת סיכון",
+            "התאמת חסכונות",
+            "הכנה לפרישה",
+            "ליווי מתמשך"
+        ],
+        required: true
+    }
+];
+
+// ===== Initialize =====
+document.addEventListener('DOMContentLoaded', () => {
+    // Show privacy modal only
+    document.getElementById('privacyModal').style.display = 'flex';
+    
+    // Build questions array
+    buildQuestionsList();
+});
+
+function buildQuestionsList() {
+    allQuestions = [];
+    
+    questions.forEach(q => {
+        if (!q.conditional || q.conditional(answers)) {
+            allQuestions.push(q);
+        }
+    });
+    
+    totalQuestions = allQuestions.length;
+}
+
+function acceptPrivacy() {
+    document.getElementById('privacyModal').style.display = 'none';
+    showQuestion(0);
+    scrollToTop();
+}
+
+function showQuestion(index) {
+    // Rebuild questions list with conditionals
+    buildQuestionsList();
+    
+    // Adjust index if needed
+    if (index >= allQuestions.length) {
+        showSummary();
+        return;
+    }
+    
+    const prevQuestion = allQuestions[currentQuestionIndex];
+    currentQuestionIndex = index;
+    const question = allQuestions[index];
+    
+    // Check if section changed
+    const sectionChanged = !prevQuestion || prevQuestion.section !== question.section;
+    
+    // Get container
+    const container = document.getElementById('questionnaireContainer');
+    
+    // Check if we have existing content
+    const existingContent = container.querySelector('.question-content');
+    
+    if (existingContent && !sectionChanged) {
+        // Same section - only animate content
+        existingContent.classList.add('fade-out');
+        setTimeout(() => {
+            updateQuestionContent(container, question);
+        }, 200);
+    } else {
+        // Section changed or first question - render everything
+        renderAndShowQuestion(container, question, sectionChanged);
+    }
+}
+
+function updateQuestionContent(container, question) {
+    // Only update the question content, keep the header
+    const contentWrapper = container.querySelector('.question-content');
+    if (contentWrapper) {
+        contentWrapper.outerHTML = renderQuestionContent(question);
+        
+        // Update progress
+        updateProgress();
+        
+        // Add event listeners
+        addQuestionListeners(question);
+    }
+}
+
+function renderAndShowQuestion(container, question, sectionChanged) {
+    if (sectionChanged) {
+        // Fade out old header first
+        const oldHeader = container.querySelector('.section-header');
+        if (oldHeader) {
+            oldHeader.classList.add('fade-out');
+        }
+        
+        // Wait for fade-out, then render new content
+        setTimeout(() => {
+            // Render full question with header
+            container.innerHTML = renderQuestion(question);
+            container.style.display = 'block';
+            
+            // Add fade-in animation to new header
+            const newHeader = container.querySelector('.section-header');
+            if (newHeader) {
+                newHeader.classList.add('fade-in');
+                setTimeout(() => {
+                    newHeader.classList.remove('fade-in');
+                }, 400);
+            }
+            
+            // Update progress AFTER rendering
+            updateProgress();
+            
+            // Scroll to top smoothly
+            scrollToTop();
+            
+            // Add event listeners
+            addQuestionListeners(question);
+        }, 300);
+    } else {
+        // No section change - render immediately
+        container.innerHTML = renderQuestion(question);
+        container.style.display = 'block';
+        
+        // Update progress AFTER rendering
+        updateProgress();
+        
+        // Scroll to top smoothly
+        scrollToTop();
+        
+        // Add event listeners
+        addQuestionListeners(question);
+    }
+}
+
+function renderQuestion(question) {
+    // Get the section title for this question
+    // Look backwards to find the section title
+    let sectionTitle = question.sectionTitle || '';
+    let sectionDesc = question.sectionDesc || '';
+    
+    // If this question doesn't have a title, find the previous question in the same section
+    if (!sectionTitle) {
+        for (let i = currentQuestionIndex - 1; i >= 0; i--) {
+            const prevQ = allQuestions[i];
+            if (prevQ.section === question.section && prevQ.sectionTitle) {
+                sectionTitle = prevQ.sectionTitle;
+                sectionDesc = prevQ.sectionDesc || '';
+                break;
+            }
+        }
+    }
+    
+    // Update current section title
+    currentSectionTitle = sectionTitle;
+    currentSectionDesc = sectionDesc;
+    
+    // Show section header if we have a title
+    let sectionHeader = '';
+    if (currentSectionTitle) {
+        sectionHeader = `
+            <div class="section-header">
+                <h2>${currentSectionTitle}</h2>
+                <p>${currentSectionDesc}</p>
+                <div class="progress-bar-container">
+                    <div class="progress-steps">
+                        <div class="progress-step" data-section="0">
+                            <div class="progress-step-label">פרטים ראשוניים</div>
+                        </div>
+                        <div class="progress-step" data-section="1">
+                            <div class="progress-step-label">שאלון רמת סיכון</div>
+                        </div>
+                        <div class="progress-step" data-section="2">
+                            <div class="progress-step-label">הכר את הלקוח</div>
+                        </div>
+                        <div class="progress-step" data-section="3">
+                            <div class="progress-step-label">מאפייני חיסכון</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-segment" data-section="0">
+                            <div class="progress-segment-fill"></div>
+                        </div>
+                        <div class="progress-segment" data-section="1">
+                            <div class="progress-segment-fill"></div>
+                        </div>
+                        <div class="progress-segment" data-section="2">
+                            <div class="progress-segment-fill"></div>
+                        </div>
+                        <div class="progress-segment" data-section="3">
+                            <div class="progress-segment-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="question-card">
+            ${sectionHeader}
+            ${renderQuestionContent(question)}
+        </div>
+    `;
+}
+
+function renderQuestionContent(question) {
+    let inputHTML = '';
+    
+    switch (question.type) {
+        case 'risk-scale':
+            inputHTML = generateRiskScaleHTML(question);
+            break;
+        case 'toggle':
+            inputHTML = generateToggleHTML(question);
+            break;
+        case 'checkbox':
+            inputHTML = generateCheckboxHTML(question);
+            break;
+        case 'radio':
+            inputHTML = generateRadioHTML(question);
+            break;
+        default:
+            inputHTML = generateInputHTML(question);
+            break;
+    }
+    
+    return `
+        <div class="question-content">
+            <i class="fas ${question.icon} question-icon"></i>
+            <div class="question-text">${question.text}</div>
+            ${inputHTML}
+        </div>
+    `;
+}
+
+function generateRiskScaleHTML(question) {
+    return `
+        <div class="risk-scale">
+            ${[1, 2, 3, 4, 5].map(num => `
+                <div class="risk-option">
+                    <button class="risk-scale-button ${answers[question.id] == num ? 'selected' : ''}" 
+                            data-value="${num}">
+                        ${num}
+                    </button>
+                    <div class="risk-label">${getRiskLabel(num)}</div>
+                </div>
+            `).join('')}
+        </div>
+        ${currentQuestionIndex > 0 ? `
+        <div class="question-actions">
+            <button class="btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-right"></i> חזור
+            </button>
+        </div>
+        ` : ''}
+    `;
+}
+
+function generateToggleHTML(question) {
+    return `
+        <div class="toggle-container">
+            <div class="toggle-options">
+                <button class="toggle-option ${answers[question.id] === 'כן' ? 'selected' : ''}" 
+                        data-value="כן">כן</button>
+                <button class="toggle-option ${answers[question.id] === 'לא' ? 'selected' : ''}" 
+                        data-value="לא">לא</button>
+            </div>
+        </div>
+        ${currentQuestionIndex > 0 ? `
+        <div class="question-actions">
+            <button class="btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-right"></i> חזור
+            </button>
+        </div>
+        ` : ''}
+    `;
+}
+
+function generateCheckboxHTML(question) {
+    return `
+        <div class="checkbox-group">
+            ${question.options.map(option => `
+                <div class="checkbox-option ${answers[question.id] && answers[question.id].includes(option) ? 'selected' : ''}">
+                    <input type="checkbox" 
+                           id="${question.id}_${option}" 
+                           value="${option}"
+                           ${answers[question.id] && answers[question.id].includes(option) ? 'checked' : ''}>
+                    <label for="${question.id}_${option}">${option}</label>
+                </div>
+            `).join('')}
+        </div>
+        <div class="question-actions">
+            <button class="btn-next" onclick="goNext()">
+                המשך <i class="fas fa-arrow-left"></i>
+            </button>
+            ${currentQuestionIndex > 0 ? `
+            <button class="btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-right"></i> חזור
+            </button>
+            ` : ''}
+        </div>
+    `;
+}
+
+function generateRadioHTML(question) {
+    return `
+        <div class="radio-group">
+            ${question.options.map(option => `
+                <div class="radio-option ${answers[question.id] === option ? 'selected' : ''}">
+                    <input type="radio" 
+                           name="${question.id}" 
+                           id="${question.id}_${option}" 
+                           value="${option}"
+                           ${answers[question.id] === option ? 'checked' : ''}>
+                    <label for="${question.id}_${option}">${option}</label>
+                </div>
+            `).join('')}
+        </div>
+        ${currentQuestionIndex > 0 ? `
+        <div class="question-actions">
+            <button class="btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-right"></i> חזור
+            </button>
+        </div>
+        ` : ''}
+    `;
+}
+
+function generateInputHTML(question) {
+    const value = answers[question.id] || '';
+    return `
+        <div class="input-group">
+            <input type="${question.type}" 
+                   id="${question.id}" 
+                   value="${value}"
+                   placeholder="הקלד ${question.text}">
+        </div>
+        <div class="question-actions">
+            <button class="btn-next" onclick="goNext()">
+                המשך <i class="fas fa-arrow-left"></i>
+            </button>
+            ${currentQuestionIndex > 0 ? `
+            <button class="btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-right"></i> חזור
+            </button>
+            ` : ''}
+        </div>
+    `;
+}
+
+function getRiskLabel(num) {
+    const labels = {
+        1: 'כלל לא מסכים',
+        2: 'מסכים במידה מועטה',
+        3: 'מסכים',
+        4: 'מסכים במידה גבוהה',
+        5: 'מסכים לחלוטין'
+    };
+    return labels[num];
+}
+
+function addQuestionListeners(question) {
+    if (question.type === 'risk-scale') {
+        document.querySelectorAll('.risk-scale-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                answers[question.id] = btn.dataset.value;
+                setTimeout(() => goNext(true), 300);
+            });
+        });
+    } else if (question.type === 'toggle') {
+        document.querySelectorAll('.toggle-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                answers[question.id] = btn.dataset.value;
+                
+                // Check for IRS warning
+                if ((question.id === 'usCitizen' || question.id === 'usTaxResident') && 
+                    btn.dataset.value === 'כן') {
+                    showIRSWarning();
+                } else {
+                    setTimeout(() => goNext(true), 300);
+                }
+            });
+        });
+    } else if (question.type === 'radio') {
+        document.querySelectorAll('.radio-option input').forEach(radio => {
+            radio.addEventListener('change', () => {
+                answers[question.id] = radio.value;
+                setTimeout(() => goNext(true), 300);
+            });
+        });
+    } else if (question.type === 'checkbox') {
+        document.querySelectorAll('.checkbox-option input').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const checkedValues = Array.from(
+                    document.querySelectorAll('.checkbox-option input:checked')
+                ).map(cb => cb.value);
+                answers[question.id] = checkedValues;
+            });
+        });
+    } else if (question.type === 'number') {
+        const input = document.getElementById(question.id);
+        input.addEventListener('input', (e) => {
+            if (isFormatting) return;
+            
+            isFormatting = true;
+            const cursorPos = e.target.selectionStart;
+            const oldValue = e.target.value;
+            const oldLength = oldValue.length;
+            
+            // Remove non-digits
+            let value = e.target.value.replace(/[^\d]/g, '');
+            
+            // Add commas
+            if (value) {
+                value = parseInt(value).toLocaleString('en-US');
+            }
+            
+            e.target.value = value;
+            answers[question.id] = value;
+            
+            // Restore cursor position
+            const newLength = value.length;
+            const diff = newLength - oldLength;
+            const newCursorPos = cursorPos + diff;
+            e.target.setSelectionRange(newCursorPos, newCursorPos);
+            
+            isFormatting = false;
+        });
+    } else {
+        const input = document.getElementById(question.id);
+        input.addEventListener('input', (e) => {
+            answers[question.id] = e.target.value;
+        });
+    }
+}
+
+function goNext(autoAdvance = false) {
+    const question = allQuestions[currentQuestionIndex];
+    
+    // Save answer before validation
+    if (question.type === 'text' || question.type === 'email' || 
+        question.type === 'date' || question.type === 'number') {
+        const input = document.getElementById(question.id);
+        if (input) {
+            answers[question.id] = input.value;
+        }
+    }
+    
+    // Validate only if not auto-advance
+    if (!autoAdvance) {
+        if (question.required && !answers[question.id]) {
+            alert('יש לענות על השאלה לפני המשך');
+            return;
+        }
+        
+        if (question.type === 'email' && answers[question.id]) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(answers[question.id])) {
+                alert('כתובת המייל אינה תקינה. אנא הזן כתובת מייל חוקית');
+                return;
+            }
+        }
+        
+        if (question.type === 'checkbox' && answers[question.id].length === 0) {
+            alert('יש לבחור לפחות אפשרות אחת');
+            return;
+        }
+    }
+    
+    // Add to history
+    questionHistory.push(currentQuestionIndex);
+    
+    // Move to next
+    showQuestion(currentQuestionIndex + 1);
+}
+
+function goBack() {
+    if (questionHistory.length > 0) {
+        const prevIndex = questionHistory.pop();
+        showQuestion(prevIndex);
+    }
+}
+
+function showIRSWarning() {
+    document.getElementById('irsModal').style.display = 'flex';
+}
+
+function closeIRSWarning() {
+    document.getElementById('irsModal').style.display = 'none';
+    setTimeout(() => goNext(true), 300);
+}
+
+function updateProgress() {
+    const currentQuestion = allQuestions[currentQuestionIndex];
+    if (!currentQuestion) return;
+    
+    const currentSection = currentQuestion.section;
+    
+    // Count questions in each section
+    const sectionQuestions = {};
+    const sectionProgress = {};
+    
+    allQuestions.forEach((q, idx) => {
+        if (!sectionQuestions[q.section]) {
+            sectionQuestions[q.section] = 0;
+            sectionProgress[q.section] = 0;
+        }
+        sectionQuestions[q.section]++;
+        
+        // Count completed questions in this section
+        if (idx <= currentQuestionIndex && q.section === currentSection) {
+            sectionProgress[q.section]++;
+        }
+    });
+    
+    // Update segments
+    const segments = document.querySelectorAll('.progress-segment');
+    segments.forEach(segment => {
+        const segmentSection = parseInt(segment.dataset.section);
+        const fill = segment.querySelector('.progress-segment-fill');
+        
+        segment.classList.remove('completed', 'active');
+        
+        if (segmentSection < currentSection) {
+            // Completed section - 100%
+            segment.classList.add('completed');
+            if (fill) fill.style.width = '100%';
+        } else if (segmentSection === currentSection) {
+            // Current section - partial fill
+            segment.classList.add('active');
+            const totalInSection = sectionQuestions[segmentSection] || 1;
+            const completedInSection = sectionProgress[segmentSection] || 0;
+            const percentage = (completedInSection / totalInSection) * 100;
+            if (fill) fill.style.width = percentage + '%';
+        } else {
+            // Future section - 0%
+            if (fill) fill.style.width = '0%';
+        }
+    });
+    
+    // Update step labels
+    const steps = document.querySelectorAll('.progress-step');
+    steps.forEach(step => {
+        const stepSection = parseInt(step.dataset.section);
+        step.classList.remove('completed', 'active');
+        
+        if (stepSection < currentSection) {
+            step.classList.add('completed');
+        } else if (stepSection === currentSection) {
+            step.classList.add('active');
+        }
+    });
+}
+
+function showSummary() {
+    document.getElementById('questionnaireContainer').style.display = 'none';
+    
+    // Rebuild questions list to include all conditional questions that have answers
+    buildQuestionsList();
+    
+    let summaryHTML = '';
+    
+    allQuestions.forEach(q => {
+        if (answers[q.id] !== undefined && answers[q.id] !== '') {
+            let answerText = answers[q.id];
+            
+            if (Array.isArray(answerText)) {
+                answerText = answerText.join(', ');
+            }
+            
+            summaryHTML += `
+                <div class="summary-item">
+                    <strong>${q.text}</strong>
+                    <span>${answerText}</span>
+                </div>
+            `;
+        }
+    });
+    
+    document.getElementById('summaryContent').innerHTML = summaryHTML;
+    document.getElementById('summaryContainer').style.display = 'block';
+    scrollToTop();
+}
+
+function sendEmail() {
+    const clientName = answers.fullName || 'לקוח';
+    const clientEmail = answers.email || '';
+    
+    // Send email directly (no API)
+    sendFullEmail(clientEmail, clientName);
+    
+    // Show success message
+    const successModal = document.createElement('div');
+    successModal.className = 'modal';
+    successModal.id = 'successModal';
+    successModal.innerHTML = `
+        <div class="modal-content">
+            <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem;">
+                <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.3rem; margin-left: 8px;"></i>
+                תודה ${clientName}!
+            </p>
+            <p style="font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0; padding: 1.2rem; background: linear-gradient(135deg, #FFF9E6 0%, #FFF5D6 100%); border-radius: 8px; border-right: 4px solid #D4AF37; color: #1A2B3C;">
+                <i class="fas fa-envelope-open-text" style="color: #D4AF37; margin-left: 8px; font-size: 1.2rem;"></i>
+                חלון המייל נפתח - אנא לחץ "שלח" בתוכנת המייל שלך כדי להשלים את השליחה
+            </p>
+            <p style="font-size: 0.9rem; color: #d97706; background: #fef3c7; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; border-right: 3px solid #f59e0b;">
+                <i class="fas fa-exclamation-triangle" style="margin-left: 5px;"></i>
+                <strong>אם חלון המייל לא נפתח או שהמייל ריק</strong>, אנא שלח לי דרך WhatsApp
+            </p>
+            <button onclick="closeSuccessModal()" class="modal-btn" style="margin-top: 1rem;">סגור</button>
+            <button onclick="sendWhatsApp()" class="btn-secondary" style="width: 100%; margin-top: 0.5rem; background: #25D366 !important; color: white !important; border: none; font-size: 1rem; padding: 0.75rem;">
+                <i class="fab fa-whatsapp" style="font-size: 1.2rem; margin-left: 5px;"></i>
+                שלח ב-WhatsApp
+            </button>
+            <button onclick="retryEmail('${clientEmail}', '${clientName}')" class="btn-secondary" style="width: 100%; margin-top: 0.5rem; background: #1A2B3C !important; color: #D4AF37 !important; border: 2px solid #D4AF37; font-size: 0.95rem; padding: 0.7rem;">
+                <i class="fas fa-envelope" style="font-size: 1.1rem; margin-left: 5px;"></i>
+                נסה שוב במייל
+            </button>
+        </div>
+    `;
+    document.body.appendChild(successModal);
+}
+
+function retryEmail(clientEmail, clientName) {
+    // Simply call sendFullEmail again
+    sendFullEmail(clientEmail, clientName);
+}
+
+function sendFullEmail(clientEmail, clientName) {
+    const today = new Date().toLocaleDateString('he-IL');
+    
+    // Build simple text email with formatting
+    let emailBody = `${clientName} - ${today}%0D%0A%0D%0A`;
+    
+    let currentSection = -1;
+    
+    // Iterate through ALL questions (not filtered allQuestions)
+    questions.forEach(q => {
+        const hasAnswer = answers[q.id] !== undefined && 
+                         answers[q.id] !== null && 
+                         answers[q.id] !== '' && 
+                         !(Array.isArray(answers[q.id]) && answers[q.id].length === 0);
+        
+        if (hasAnswer) {
+            // Add section header if section changed
+            if (q.section !== currentSection) {
+                if (currentSection !== -1) {
+                    emailBody += `%0D%0A━━━━━━━━━━━━━━━%0D%0A`;
+                }
+                if (q.sectionTitle) {
+                    emailBody += `%0D%0A${q.sectionTitle}%0D%0A%0D%0A`;
+                }
+                currentSection = q.section;
+            }
+            
+            let answerText = answers[q.id];
+            
+            // Format arrays
+            if (Array.isArray(answerText)) {
+                answerText = answerText.join(', ');
+            }
+            
+            // Check if answer should be red
+            let isRedAnswer = false;
+            const answerLower = String(answerText).toLowerCase();
+            
+            // Red conditions - תשובות שיהיו באדום
+            if (answerLower.includes('עצמאי') ||
+                answerLower === 'חודשי' ||
+                (q.id === 'usCitizen' && answerLower === 'כן') ||
+                (q.id === 'otherTaxResident' && answerLower === 'כן') ||
+                (q.id === 'financialStatus' && answerLower.includes('לא מאוזן כלכלית')) ||
+                (q.id === 'taxRefundCheck' && answerLower === 'לא') ||
+                (q.id === 'investmentHorizon' && answerLower.includes('קצר'))) {
+                isRedAnswer = true;
+            }
+            
+            // Format with bold questions and red marker for problematic answers
+            if (isRedAnswer) {
+                emailBody += `${q.text}: 🔴 ${answerText}%0D%0A`;
+            } else {
+                emailBody += `${q.text}: ${answerText}%0D%0A`;
+            }
+        }
+    });
+    
+    // Create mailto with both recipient and cc (client gets copy)
+    const subject = encodeURIComponent(`שאלון - ${clientName}`);
+    const mailto = `mailto:roeir@ar-fo.co.il?cc=${encodeURIComponent(clientEmail)}&subject=${subject}&body=${emailBody}`;
+    
+    // Open mailto - will open email client
+    window.location.href = mailto;
+    
+    // Show success message
+    setTimeout(() => {
+        const notification = document.createElement('div');
+        notification.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(45deg, #D4AF37, #E8C547); color: #1A2B3C; padding: 1rem 2rem; border-radius: 8px; z-index: 10000; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center;';
+        notification.innerHTML = '✓ תוכנת המייל נפתחה!<br><span style="font-size: 0.85rem;">פשוט לחץ "שלח" בתוכנת המייל</span>';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }, 500);
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById('successModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function sendWhatsApp() {
+    const clientName = answers.fullName || 'לקוח';
+    const today = new Date().toLocaleDateString('he-IL');
+    
+    let message = `📋 *שאלון לקוח: ${clientName}*\n📅 *תאריך:* ${today}\n\n`;
+    
+    let currentSection = -1;
+    
+    // Iterate through ALL questions (not filtered allQuestions)
+    questions.forEach(q => {
+        const hasAnswer = answers[q.id] !== undefined && 
+                         answers[q.id] !== null && 
+                         answers[q.id] !== '' && 
+                         !(Array.isArray(answers[q.id]) && answers[q.id].length === 0);
+        
+        if (hasAnswer) {
+            // Add section divider with emoji
+            if (q.section !== currentSection) {
+                currentSection = q.section;
+                if (currentSection > 0) {
+                    message += `\n━━━━━━━━━━━━━━━\n`;
+                }
+                if (q.sectionTitle) {
+                    message += `\n📌 *${q.sectionTitle}*\n\n`;
+                }
+            }
+            
+            let answerText = answers[q.id];
+            
+            if (Array.isArray(answerText)) {
+                answerText = answerText.join(', ');
+            }
+            
+            // Check if answer should be marked as red/problematic
+            let isRedAnswer = false;
+            const answerLower = String(answerText).toLowerCase();
+            
+            // Red conditions - תשובות שיהיו מסומנות
+            if (answerLower.includes('עצמאי') ||
+                answerLower === 'חודשי' ||
+                (q.id === 'usCitizen' && answerLower === 'כן') ||
+                (q.id === 'otherTaxResident' && answerLower === 'כן') ||
+                (q.id === 'financialStatus' && answerLower.includes('לא מאוזן כלכלית')) ||
+                (q.id === 'taxRefundCheck' && answerLower === 'לא') ||
+                (q.id === 'investmentHorizon' && answerLower.includes('קצר'))) {
+                isRedAnswer = true;
+            }
+            
+            // Format message with red marker for problematic answers
+            if (isRedAnswer) {
+                message += `❓ *${q.text}*\n🔴 *${answerText}*\n\n`;
+            } else {
+                message += `❓ *${q.text}*\n✅ ${answerText}\n\n`;
+            }
+        }
+    });
+    
+    // NO footer - removed contact info as requested
+    
+    const phoneNumber = '972528089808';
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappURL, '_blank');
+    
+    // Show success message
+    setTimeout(() => {
+        const notification = document.createElement('div');
+        notification.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #25D366; color: white; padding: 1rem 2rem; border-radius: 8px; z-index: 10000; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center;';
+        notification.innerHTML = '✓ WhatsApp נפתח!<br><span style="font-size: 0.85rem;">פשוט לחץ "שלח" ב-WhatsApp</span>';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }, 500);
+}
+
+// Global variable to store open sections
+let openEditSections = new Set();
+
+function editAnswers(preserveState = false) {
+    document.getElementById('summaryContainer').style.display = 'none';
+    
+    // Save currently open sections if preserving state
+    if (preserveState) {
+        openEditSections.clear();
+        document.querySelectorAll('.edit-section-header.active').forEach(header => {
+            const title = header.querySelector('.edit-section-title').textContent;
+            openEditSections.add(title);
+        });
+    }
+    
+    // Rebuild questions list to include conditional questions
+    const editableQuestions = [];
+    questions.forEach(q => {
+        if (!q.conditional || q.conditional(answers)) {
+            editableQuestions.push(q);
+        }
+    });
+    
+    // Group questions by section
+    const sections = {};
+    editableQuestions.forEach(q => {
+        // Only include questions that have answers OR are required
+        if (answers[q.id] === undefined || answers[q.id] === '') {
+            // Still include required questions even if not answered
+            if (!q.required) return;
+        }
+        
+        if (!sections[q.section]) {
+            sections[q.section] = {
+                title: q.sectionTitle || 'שאלות כלליות',
+                questions: []
+            };
+        }
+        sections[q.section].questions.push(q);
+    });
+    
+    let editHTML = '';
+    
+    Object.keys(sections).sort().forEach(sectionKey => {
+        const section = sections[sectionKey];
+        if (section.questions.length === 0) return;
+        
+        // Check if this section should be open
+        const isOpen = preserveState && openEditSections.has(section.title);
+        const headerClass = isOpen ? 'edit-section-header active' : 'edit-section-header';
+        const contentClass = isOpen ? 'edit-section-content open' : 'edit-section-content';
+        
+        editHTML += `
+            <div class="edit-section">
+                <div class="${headerClass}" onclick="toggleEditSection(this)">
+                    <h3 class="edit-section-title">${section.title}</h3>
+                    <i class="fas fa-chevron-down edit-section-icon"></i>
+                </div>
+                <div class="${contentClass}">
+        `;
+        
+        section.questions.forEach(q => {
+            editHTML += `
+                <div class="edit-question-item">
+                    <label class="edit-question-label">${q.text}</label>
+            `;
+            
+            let inputHTML = '';
+        
+        switch (q.type) {
+            case 'risk-scale':
+                inputHTML = `
+                    <div class="risk-scale">
+                        ${[1, 2, 3, 4, 5].map(num => `
+                            <div class="risk-option">
+                                <button class="risk-scale-button ${answers[q.id] == num ? 'selected' : ''}" 
+                                        data-id="${q.id}" data-value="${num}">
+                                    ${num}
+                                </button>
+                                <div class="risk-label">${getRiskLabel(num)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                break;
+                
+            case 'toggle':
+                inputHTML = `
+                    <div class="toggle-options">
+                        <button class="toggle-option ${answers[q.id] === 'כן' ? 'selected' : ''}" 
+                                data-id="${q.id}" data-value="כן">כן</button>
+                        <button class="toggle-option ${answers[q.id] === 'לא' ? 'selected' : ''}" 
+                                data-id="${q.id}" data-value="לא">לא</button>
+                    </div>
+                `;
+                break;
+                
+            case 'checkbox':
+                inputHTML = `
+                    <div class="checkbox-group">
+                        ${q.options.map(option => `
+                            <div class="checkbox-option">
+                                <input type="checkbox" 
+                                       data-id="${q.id}" 
+                                       value="${option}"
+                                       ${answers[q.id] && answers[q.id].includes(option) ? 'checked' : ''}>
+                                <label>${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                break;
+                
+            case 'radio':
+                inputHTML = `
+                    <div class="radio-group">
+                        ${q.options.map(option => `
+                            <div class="radio-option">
+                                <input type="radio" 
+                                       name="edit_${q.id}" 
+                                       data-id="${q.id}" 
+                                       value="${option}"
+                                       ${answers[q.id] === option ? 'checked' : ''}>
+                                <label>${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                break;
+                
+            default:
+                inputHTML = `
+                    <input type="${q.type}" 
+                           class="edit-input"
+                           data-id="${q.id}" 
+                           value="${answers[q.id] || ''}"
+                           placeholder="${q.text}">
+                `;
+                break;
+            }
+            
+            editHTML += inputHTML;
+            editHTML += `
+                </div>
+            `;
+        });
+        
+        editHTML += `
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('editContent').innerHTML = editHTML;
+    document.getElementById('editContainer').style.display = 'block';
+    
+    // Add edit listeners
+    addEditListeners();
+}
+
+function toggleEditSection(header) {
+    header.classList.toggle('active');
+    const content = header.nextElementSibling;
+    content.classList.toggle('open');
+}
+
+function addEditListeners() {
+    // Risk scale
+    document.querySelectorAll('.edit-mode .risk-scale-button, #editContainer .risk-scale-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            answers[id] = btn.dataset.value;
+            
+            // Update UI
+            btn.parentElement.parentElement.querySelectorAll('.risk-scale-button').forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+        });
+    });
+    
+    // Toggle
+    document.querySelectorAll('#editContainer .toggle-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            answers[id] = btn.dataset.value;
+            
+            // Update UI
+            btn.parentElement.querySelectorAll('.toggle-option').forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+            
+            // Check if this triggers conditional questions
+            if (hasConditionalQuestions(id)) {
+                setTimeout(() => {
+                    editAnswers(true); // Preserve open sections
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #D4AF37; color: #1A2B3C; padding: 1rem 2rem; border-radius: 8px; z-index: 10000; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                    notification.textContent = 'שים לב! נפתחו/נסגרו שאלות נוספות בהתאם לתשובתך';
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3000);
+                }, 100);
+            }
+        });
+    });
+    
+    // Checkbox
+    document.querySelectorAll('#editContainer .checkbox-option input').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const id = checkbox.dataset.id;
+            const allCheckboxes = document.querySelectorAll(`#editContainer input[data-id="${id}"]`);
+            const checkedValues = Array.from(allCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            answers[id] = checkedValues;
+            
+            // Check if this triggers conditional questions
+            if (hasConditionalQuestions(id)) {
+                setTimeout(() => {
+                    editAnswers(true); // Preserve open sections
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #D4AF37; color: #1A2B3C; padding: 1rem 2rem; border-radius: 8px; z-index: 10000; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
+                    notification.textContent = 'שים לב! נפתחו/נסגרו שאלות נוספות בהתאם לתשובתך';
+                    document.body.appendChild(notification);
+                    setTimeout(() => notification.remove(), 3000);
+                }, 100);
+            }
+        });
+    });
+    
+    // Radio
+    document.querySelectorAll('#editContainer .radio-option input').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const id = radio.dataset.id;
+            answers[id] = radio.value;
+        });
+    });
+    
+    // Text inputs
+    document.querySelectorAll('#editContainer input[type="text"], #editContainer input[type="email"], #editContainer input[type="date"], #editContainer input[type="number"]').forEach(input => {
+        input.addEventListener('input', () => {
+            const id = input.dataset.id;
+            answers[id] = input.value;
+        });
+    });
+}
+
+function saveEdits() {
+    try {
+        // Validate all required fields
+        const editableQuestions = [];
+    questions.forEach(q => {
+        if (!q.conditional || q.conditional(answers)) {
+            editableQuestions.push(q);
+        }
+    });
+    
+    const missingFields = [];
+    editableQuestions.forEach(q => {
+        if (q.required) {
+            const answer = answers[q.id];
+            if (answer === undefined || answer === '' || 
+                (Array.isArray(answer) && answer.length === 0)) {
+                missingFields.push(q.text);
+            }
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        let message = 'יש להשלים את השדות הבאים:\n\n';
+        missingFields.forEach((field, index) => {
+            message += `${index + 1}. ${field}\n`;
+        });
+        alert(message);
+        return;
+    }
+    
+    // Re-render edit view to include any new conditional questions
+    const hasConditionalChanges = checkConditionalChanges();
+    if (hasConditionalChanges) {
+        editAnswers(true); // Preserve open sections
+        alert('שים לב! נפתחו/נסגרו שאלות נוספות בהתאם לשינויים שביצעת. אנא מלא אותן ושמור שוב.');
+        return;
+    }
+    
+    document.getElementById('editContainer').style.display = 'none';
+    showSummary();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    } catch (error) {
+        console.error('Error in saveEdits:', error);
+        alert('אירעה שגיאה: ' + error.message);
+    }
+}
+
+function checkConditionalChanges() {
+    // Check if any conditional questions should now be visible
+    let hasChanges = false;
+    questions.forEach(q => {
+        if (q.conditional && q.conditional(answers)) {
+            // This question should be visible
+            if (answers[q.id] === undefined || answers[q.id] === '') {
+                hasChanges = true;
+            }
+        }
+    });
+    return hasChanges;
+}
+
+function hasConditionalQuestions(triggerId) {
+    // Check if any questions depend on this answer
+    return questions.some(q => {
+        if (q.conditional) {
+            const condStr = q.conditional.toString();
+            // Check if the conditional function references this ID
+            return condStr.includes(triggerId);
+        }
+        return false;
+    });
+}
+
+function cancelEdit() {
+    document.getElementById('editContainer').style.display = 'none';
+    document.getElementById('summaryContainer').style.display = 'block';
+}
+
+function scrollToTop() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function scrollToTopInstant() {
+    window.scrollTo({top: 0, behavior: 'auto'});
+}
+    </script>
+</body>
+</html>
