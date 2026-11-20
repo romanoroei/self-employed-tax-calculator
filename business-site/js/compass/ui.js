@@ -57,6 +57,7 @@
 
   function show(name) {
     for (const [k, el] of Object.entries(screens)) el.hidden = k !== name;
+    screens.intro.classList.toggle('is-open', name === 'intro');
   }
   function scrollToTop(el) {
     const bar = document.querySelector('.topbar');
@@ -76,13 +77,13 @@
   resumeBox.querySelector('[data-resume-go]').addEventListener('click', () => begin(saved, 'compass:resume'));
   resumeBox.querySelector('[data-resume-new]').addEventListener('click', () => { store.clear(); begin(E.newState(), 'compass:start'); });
 
-  function begin(s, label) {
+  function begin(s, label, focus = true) {
     state = s;
     startedAt = Date.now();
-    count(label);
+    if (label) count(label);
     const u = utmLabel();
     if (u) count(u);
-    render(true);
+    render(focus);
   }
 
   // ---------- the question screen ----------
@@ -178,6 +179,7 @@
 
   function advance(id, val) {
     const first = !state.history.some((x) => x.questionId === id);
+    if (!state.history.length) count('compass:start');
     state = E.answer(state, id, val);
     if (first && id === 'priorities') val.forEach((p) => count(`compass:pick-${C.priorities[p].n}`));
     if (first && id === 'primary') count(`compass:primary-${C.priorities[val].n}`);
@@ -366,4 +368,8 @@
     });
     return h('section', { class: 'cp-form-tile', id: 'cp-form', hidden: true, 'aria-label': 'טופס יצירת קשר' }, form);
   }
+  // the compass opens straight on the first question, or where the visitor stopped, with no intro screen (Roei, 2026-11-20).
+  // A fresh start counts compass:start only with the first answer, so starts still mean people who began answering.
+  if (saved && saved.history.length) begin(saved, 'compass:resume', false);
+  else begin(E.newState(), null, false);
 })();
