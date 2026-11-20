@@ -441,8 +441,7 @@ document.addEventListener('click', (e) => {
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
-  // the first slide is the question of the home page: the show waits for the visitor instead of moving on (Roei)
-  let paused = still.matches || hero.hasAttribute('data-hero-still');
+  let paused = still.matches;
   let held = false;
   let finishMove = null;
 
