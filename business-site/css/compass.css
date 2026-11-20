@@ -232,3 +232,5 @@
   .cp-insights { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
   .cp-ins, .cp-today { padding: 32px 40px; }
 }
+/* with JavaScript the compass starts on the questions: the intro shows only if the script falls back to it (Roei) */
+.js .cp-intro:not(.is-open) { display: none; }
