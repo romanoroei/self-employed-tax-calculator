@@ -15,6 +15,7 @@ export const TRACKS = {
     // before the business is opened there are no deposits of this year to check, and no benefit to promise
     variants: [{ when: { fact: 'bizStatus', is: 'planning' }, text: 'נראה שכדאי לבדוק כבר עכשיו איך לבנות את החיסכון וההפקדות לקראת פתיחת העסק.' }],
   },
+  retire: { title: 'תכנון לקראת פרישה', text: 'נראה שכדאי לבדוק את החיסכון הפנסיוני מול מועד הפרישה, ולבחון את ההחלטות שנעשות פעם אחת: קצבה או משיכה, מסלול הקצבה ותיאום המס.' },
   general: { title: 'מיפוי פיננסי כללי', text: 'נראה שכדאי להתחיל במיפוי מסודר של התמונה הכלכלית: מה כבר קיים, מה חסר, ובמה כדאי לטפל קודם.' },
 };
 
@@ -23,6 +24,7 @@ export const TRACK_RULES = [
   { when: { fact: 'need', is: 'monthly' }, track: 'savings' },
   { when: { fact: 'need', is: 'pension' }, track: 'pension' },
   { when: { fact: 'need', is: 'selfemp' }, track: 'selfemp' },
+  { when: { fact: 'need', is: 'retire' }, track: 'retire' },
   // route E: from the main concern, the employment and the sums
   { when: { all: [{ fact: 'concern', is: 'tax' }, { fact: 'employment', in: ['self', 'both'] }] }, track: 'selfemp' },
   { when: { fact: 'concern', in: ['tax', 'unknown'] }, track: 'pension' },
@@ -55,7 +57,7 @@ export const GRADE_RULES = [
   { when: { fact: 'lump', is: '25to100' }, pts: 15, why: 'גם סכום חד־פעמי של 25,000–100,000 ₪' },
   { when: { fact: 'lump', is: 'upto25' }, pts: 5, why: 'גם סכום חד־פעמי של עד 25,000 ₪' },
   // a defined professional need
-  { when: { track: ['invest', 'savings', 'pension', 'selfemp'] }, pts: 10, why: 'צורך מקצועי מוגדר' },
+  { when: { track: ['invest', 'savings', 'pension', 'selfemp', 'retire'] }, pts: 10, why: 'צורך מקצועי מוגדר' },
   // employment: the self-employed are at the heart of the practice
   { when: { any: [{ fact: 'employment', in: ['self', 'both'] }, { fact: 'bizStatus', in: ['exempt', 'licensed', 'company', 'both'] }] }, pts: 10, why: 'עצמאי/ת או בעל/ת עסק' },
   { when: { fact: 'bizStatus', is: 'planning' }, pts: 5, why: 'מתכנן/ת לפתוח עסק' },
@@ -66,6 +68,11 @@ export const GRADE_RULES = [
   { when: { fact: 'lifeChange', in: ['job', 'selfemp', 'income', 'family'] }, pts: 8, why: 'שינוי משמעותי לאחרונה' },
   { when: { fact: 'selfDeposits', in: ['pension', 'study', 'none', 'unsure'] }, pts: 7, why: 'עצמאי/ת בלי הפקדות מלאות לפנסיה ולקרן השתלמות' },
   { when: { fact: 'insReason', in: ['duplicate', 'cost'] }, pts: 5, why: 'חשש לכפל ביטוחים או לעלויות' },
+  // towards retirement
+  { when: { fact: 'retireWhen', in: ['y1', 'y1to3'] }, pts: 20, why: 'פרישה בתוך שלוש שנים' },
+  { when: { fact: 'retireWhen', is: 'done' }, pts: 10, why: 'כבר פרש/ה' },
+  { when: { fact: 'retireProducts', in: ['several', 'manager', 'oldfund'] }, pts: 8, why: 'חיסכון בביטוח מנהלים, בקרן ותיקה או בכמה מוצרים' },
+  { when: { fact: 'retireTopic', in: ['all', 'lump', 'tax'] }, pts: 10, why: 'החלטה מהותית בפרישה: משיכה, מס או בדיקה כוללת' },
   // the self-employed and tax benefits
   { when: { fact: 'taxChecked', in: ['notyet', 'unknown'] }, pts: 15, why: 'לא נבדקו ההפקדות והטבות המס לשנה הנוכחית' },
   { when: { fact: 'pensionActive', in: ['none', 'irregular'] }, pts: 10, why: 'אין חיסכון פנסיוני פעיל או שההפקדות אינן סדירות' },
@@ -113,5 +120,12 @@ export const TALKING_POINTS = [
   { when: { fact: 'employment', is: 'both' }, text: 'גם שכיר/ה וגם עצמאי/ת: לבדוק את שני מקורות ההכנסה.' },
   { when: { fact: 'studyInterest', in: ['yes', 'maybe'] }, text: 'מתעניין/ת בפתיחת קרן השתלמות.' },
   { when: { fact: 'pensionActive', is: 'none' }, text: 'אין חיסכון פנסיוני פעיל: לברר את חובת ההפקדה.' },
+  { when: { fact: 'retireWhen', is: 'y1' }, text: 'פרישה בשנה הקרובה: לבדוק מועדים לבקשת קצבה ולתיאום מס.' },
+  { when: { fact: 'retireWhen', is: 'done' }, text: 'כבר פרש/ה: לברר אם הוגש קיבוע זכויות (טופס 161ד).' },
+  { when: { fact: 'retireProducts', is: 'manager' }, text: 'רוב החיסכון בביטוח מנהלים: לבדוק מקדם קצבה מובטח.' },
+  { when: { fact: 'retireProducts', is: 'oldfund' }, text: 'קרן פנסיה ותיקה: הכללים שונים מקרן חדשה.' },
+  { when: { fact: 'workNow', in: ['employee', 'self', 'both'] }, text: 'עדיין עובד/ת: לברר אם מתכנן/ת לשלב עבודה עם קצבה.' },
+  { when: { fact: 'retireTopic', is: 'lump' }, text: 'שוקל/ת משיכה הונית מול קצבה.' },
+  { when: { fact: 'retireTopic', is: 'tax' }, text: 'שאלות על המס בפרישה.' },
   { when: { fact: 'taxChecked', in: ['notyet', 'unknown'] }, text: 'ההפקדות והטבות המס לשנה הנוכחית עוד לא נבדקו.' },
 ];

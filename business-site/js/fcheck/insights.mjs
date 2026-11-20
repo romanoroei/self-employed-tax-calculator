@@ -236,6 +236,22 @@ export const INSIGHTS = [
     call: 'בדיקת ההפקדות משני מקורות ההכנסה',
   },
 
+  // ---------- towards retirement: general information, no recommendation ----------
+  {
+    id: 'once', tag: 'החלטה חד־פעמית',
+    when: { track: 'retire' },
+    title: 'בפרישה יש החלטות שעושים פעם אחת',
+    text: 'הבחירה בין קצבה למשיכה, מסלול הקצבה ואופן ניצול הפטור ממס נקבעים בדרך כלל פעם אחת, ולחלקם אין דרך חזרה. לכן כדאי לבדוק אותם לפני שמגישים בקשה לקופה, ולא אחרי.',
+    call: 'מה כדאי לבדוק לפני שמגישים בקשה לקצבה',
+  },
+  {
+    id: 'exempt', tag: 'פטור ממס',
+    when: { all: [{ track: 'retire' }, { fact: 'retireTopic', in: ['tax', 'pension', 'income', 'all', 'lump', 'work'] }] },
+    title: 'חלק מהקצבה יכול להיות פטור ממס',
+    text: 'מגיל הפרישה אפשר לקבל פטור ממס על חלק מהקצבה, באמצעות קיבוע זכויות (טופס 161ד) ברשות המסים. האופן שבו מחלקים את הפטור בין הקצבה לבין משיכות קודמות משפיע על המס לאורך כל שנות הפרישה.',
+    call: 'איך לחלק נכון את הפטור ממס',
+  },
+
   // ---------- products already held ----------
   {
     id: 'compare', tag: 'השוואה',
@@ -285,7 +301,7 @@ export const INSIGHTS = [
 
 // ---------- what can be done today, alone. Links open in a new tab ----------
 export const STEPS = [
-  { id: 'gov', when: { any: [{ track: 'pension' }, { fact: 'concern', is: 'unknown' }, { fact: 'lifeChange', is: 'job' }, { fact: 'selfDeposits', is: 'unsure' }, { fact: 'pensionActive', is: 'unsure' }, { fact: 'studyFund', is: 'unsure' }] },
+  { id: 'gov', when: { any: [{ track: ['pension', 'retire'] }, { fact: 'concern', is: 'unknown' }, { fact: 'lifeChange', is: 'job' }, { fact: 'selfDeposits', is: 'unsure' }, { fact: 'pensionActive', is: 'unsure' }, { fact: 'studyFund', is: 'unsure' }] },
     text: 'לבדוק אילו קופות רשומות על שמך', label: 'איתור חסכונות, gov.il', href: 'https://www.gov.il/he/service/pension_savings_search' },
   { id: 'harb', when: { any: [{ fact: 'focus', in: ['insurance', 'all', 'unsure'] }, { fact: 'insReason', in: ['duplicate', 'cost', 'coverage', 'needs', 'general'] }, { fact: 'lifeChange', is: 'family' }] },
     text: 'לראות את כל הפוליסות על שמך', label: 'הר הביטוח, רשות שוק ההון', href: 'https://harb.cma.gov.il/' },

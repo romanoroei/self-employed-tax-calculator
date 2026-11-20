@@ -49,6 +49,15 @@ test('conditional questions appear only in their cases', async () => {
   // the reason for the insurance check: only when insurance is chosen
   assert.equal(nextId(E, run(E, ['pension', 'employee', 'insurance'])), 'c_insreason');
   assert.equal(nextId(E, run(E, ['pension', 'employee', 'fees'])), 'c_lastcheck');
+  // the retirement route (from the home page): six questions at most, the work question only before retiring
+  assert.equal(nextId(E, run(E, ['retire'])), 'r_age');
+  assert.equal(nextId(E, run(E, ['retire', '60to64', 'y1'])), 'r_work');
+  assert.equal(nextId(E, run(E, ['retire', 'over67', 'done'])), 'r_products');
+  const retired = run(E, ['retire', '60to64', 'y1', 'employee', 'manager', 'lump', 'asap']);
+  const r = E.result(retired, { now: NOW });
+  assert.equal(r.track, 'retire');
+  assert.equal(r.grade, 'A');
+  assert(r.insights.some((x) => x.id === 'once'));
   // study fund and pension interest: only without one
   assert.equal(nextId(E, run(E, ['selfemp', 'licensed', 'none'])), 'd_study_interest');
   assert.equal(nextId(E, run(E, ['selfemp', 'licensed', 'regular'])), 'd_pension');
@@ -158,7 +167,7 @@ test('the grade follows the brief: big sums and the self-employed rank high, a s
   assert.equal(g(['invest', '100to300', 'general', 'y5plus', 'grow', 'deposit', 'asap']).grade, 'A');
   const self = g(['selfemp', 'licensed', 'regular', 'irregular', 'notyet', 'tax', 'yearend']);
   assert(['A', 'B'].includes(self.grade));
-  assert(['A', 'B'].includes(g(['pension', 'employee', 'all', 'general', 'never', 'partial', 'job', 'asap']).grade));
+  assert(['A', 'B'].includes(g(['pension', 'employee', 'all', 'general', 'never', 'asap']).grade));
   assert(['B', 'C'].includes(g(['monthly', 'upto500', 'none', 'longterm', 'y5plus', 'no', 'explore']).grade));
   // points are only ever added: a low sum scores more than no sum, never less
   const low = g(['unsure', 'employee', 'order', 'upto25', 'none', 'explore']).score;
@@ -175,7 +184,7 @@ test('the grade follows the brief: big sums and the self-employed rank high, a s
 
 test('the lead message lists exactly the questions asked, in order, and marks what was not collected', async () => {
   const E = await engine();
-  const s = run(E, ['pension', 'employee', 'fees', 'y3plus', 'yes', 'none', 'later']);
+  const s = run(E, ['pension', 'employee', 'fees', 'y3plus', 'later']);
   const m = E.leadMessage(s, { name: 'דנה כהן', phone: '+972 52-123-4567', email: 'dana@example.com' }, { ref: 'Partner01', utm_source: 'Instagram', utm_medium: 'influencer', utm_campaign: 'year_end_2026<script>', referrer: 'https://l.instagram.com/abc?x=1' }, { contact: true, marketing: true }, { now: NOW });
   assert.equal(m.subject, `ליד חדש – התאמה פיננסית – דנה כהן – דירוג ${m.result.grade}`);
   const list = E.answersList(s, { now: NOW });
@@ -338,7 +347,7 @@ test('every path gets at least two findings, a step and a call list, with no tok
       for (const o of v.question.options) walk(E.answer(s, v.question.id, o.id, { now }));
     };
     walk(E.newState(now));
-    assert(paths > 80000);
+    assert(paths > 45000, "paths " + paths); // shorter pension route since 2026-11, plus the retirement route
   }
 });
 
