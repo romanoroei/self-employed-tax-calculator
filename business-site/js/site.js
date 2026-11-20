@@ -292,8 +292,11 @@ if (sectionOf(location.hash)) {
 // Anonymous totals (functions/api/count.js). Only the label is sent; a failed count never blocks anything.
 const countClick = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };
 document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[href*="wa.me/"], a[data-count], a[data-subscribe]');
+  const a = e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[href*="wa.me/"], a[data-count], a[data-subscribe], a[data-cta]');
   if (!a) return;
+  // which call to action on which page (knowledge-mid-whatsapp...), on top of the contact total below
+  if (a.dataset.cta) countClick(`cta:${a.dataset.cta}`);
+  if (a.dataset.cta && !/^(?:tel:|mailto:|https:\/\/wa\.me\/)/.test(a.getAttribute('href'))) return;
   if (a.dataset.subscribe) countClick(`subscribe:${a.dataset.subscribe}`);
   else if (a.dataset.count) countClick(a.dataset.count);
   else if (a.href.startsWith('tel:')) countClick('contact:phone');
