@@ -277,3 +277,5 @@
   .wa-band-in { padding: 14px 16px; }
   .wa-band-go, .wa-band-btn, .art-cta-row, .art-cta-row .button { width: 100%; }
 }
+.prose .art-faq { grid-template-columns: 1fr; margin-top: 12px; margin-bottom: 28px; }
+.prose .art-faq .faq-item h3 { font-size: 19px; }

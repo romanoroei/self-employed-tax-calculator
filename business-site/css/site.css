@@ -1116,6 +1116,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .street + .services { padding-top: 0; }
 
 .how-cost { max-width: 70ch; margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(241, 241, 238, .16); font-size: var(--t-5); line-height: 1.6; color: var(--on-dark-soft); }
+.how-more { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px 28px; font-weight: 700; }
 
 /* /market-data: the home market tile on a page of its own (phones see it only there) */
 .market-page { padding-block: 8px 64px; }
