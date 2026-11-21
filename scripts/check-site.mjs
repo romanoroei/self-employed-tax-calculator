@@ -98,8 +98,13 @@ assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
 for(const page of ['index.html','about.html','pension-check.html','financial-planning.html','givatayim.html','management-fees.html','pension-fund-or-managers-insurance.html','old-pension-funds.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
-const sheets=(js.match(/SHEETS_URL = '([^']+)'/)||[])[1];
-assert(sheets&&cjs.config.includes("sheetsUrl: '"+sheets+"'"),'Compass must use the same Sheets script as the home page');
+// the home form and the compass post to our own function, which forwards to the same Formspree form and Sheets script as the questionnaires
+{const contactFn=await readFile(path.join(root,'..','functions','api','contact.js'),'utf8');const leadFn=await readFile(path.join(root,'..','functions','api','lead.js'),'utf8');
+const sheetsOf=(t)=>(t.match(/const SHEETS = '([^']+)'/)||[])[1];
+assert(sheetsOf(contactFn)&&sheetsOf(contactFn)===sheetsOf(leadFn),'The contact function must use the same Sheets script as the lead function');
+assert(contactFn.includes("const FORMSPREE = 'https://formspree.io/f/mvzjeykj'"),'The contact function must use the agreed Formspree form');
+assert(js.includes("fetch('/api/contact'")&&!/script\.google|formspree/.test(js),'The home form posts only to its own function');
+assert(cjs.config.includes("contactUrl: '/api/contact'")&&cjs.ui.includes('fetch(cfg.contactUrl')&&!cjs.ui.includes('cfg.sheetsUrl'),'The compass form posts only to its own function');}
 assert(cjs.config.includes("whatsappNumber: '972528089808'"),'Compass WhatsApp number');
 assert(cjs.config.includes("'romanoinvest.co.il'"),'Compass production host');
 for(const name of ['שם מלא','טלפון','אימייל','הסכמה','הסכמה לדיוור','מטרה','מקור'])assert(cjs.ui.includes("'"+name+"'"),'Compass form field '+name);

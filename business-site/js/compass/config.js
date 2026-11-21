@@ -5,7 +5,9 @@
     // WhatsApp: the number and the link base the "send to Roei" button uses
     whatsappNumber: '972528089808',
     whatsappBase: 'https://wa.me/',
-    // the existing lead pipeline (same endpoints and the same Sheets script as the home page form)
+    // the lead form posts to our own function (functions/api/contact.js), which forwards to Formspree and Sheets;
+    // formspreeUrl stays as the form's plain action for a browser without scripting
+    contactUrl: '/api/contact',
     formspreeUrl: 'https://formspree.io/f/mvzjeykj',
     sheetsUrl: 'https://script.google.com/macros/s/AKfycbwt-mMdDo6fA___Mh57M8085t2bFPiiVpoKhq3j22hNyhqUybEKMp2t9X5RFm6PwlXa3g/exec',
     // the form sends for real only on these hosts; elsewhere (previews, local copies) it shows what would be sent

@@ -372,14 +372,14 @@ document.addEventListener('click', (e) => {
   }
 })();
 
-// ===== Lead form: Google Sheets copy + Formspree email (same endpoints as the landing page) =====
+// ===== Lead form: sent to our own function (functions/api/contact.js), which checks it and forwards it to Formspree and Sheets =====
 (() => {
   const form = document.getElementById('lead-form');
   if (!form) return;
-  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwt-mMdDo6fA___Mh57M8085t2bFPiiVpoKhq3j22hNyhqUybEKMp2t9X5RFm6PwlXa3g/exec';
+  const LIVE = ['romanoinvest.co.il', 'www.romanoinvest.co.il'].includes(location.hostname);
   const status = document.getElementById('form-status');
   const button = form.querySelector('button[type="submit"]');
-  const ERROR = 'אירעה שגיאה בשליחה. אפשר גם להתקשר ישירות: 052-8089808.';
+  const ERROR = 'אירעה שגיאה בשליחה, והפרטים לא נשלחו. אפשר לנסות שוב, או להתקשר ישירות: 052-8089808.';
   // the topics are checkboxes, and at least one is needed
   const goals = [...form.querySelectorAll('input[name="מטרה"]')];
   const NO_GOAL = 'סמנו לפחות נושא אחד שתרצו לבדוק.';
@@ -387,7 +387,7 @@ document.addEventListener('click', (e) => {
     if (goals.some((x) => x.checked) && status.textContent === NO_GOAL) { status.className = 'form-status'; status.textContent = ''; }
   }));
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!button.disabled && goals.length && !goals.some((g) => g.checked)) {
       status.className = 'form-status error';
@@ -398,28 +398,39 @@ document.addEventListener('click', (e) => {
     if (button.disabled || !form.reportValidity()) return;
     status.className = 'form-status';
     status.textContent = '';
-    const reply = document.getElementById('replyto-field');
-    const email = document.getElementById('email');
-    if (reply && email) reply.value = email.value;
-
+    const el = form.elements;
+    const payload = {
+      form: 'home',
+      contact: { name: el['שם מלא'].value, phone: el['טלפון'].value, email: el['אימייל'].value },
+      goals: goals.filter((g) => g.checked).map((g) => g.value),
+      consent: el['הסכמה'].checked,
+      marketing: el['הסכמה לדיוור'].checked,
+      website: el.website ? el.website.value : '',
+    };
+    // previews and local copies never send
+    if (!LIVE) { status.className = 'form-status success'; status.textContent = 'בדיקה בלבד: הטופס תקין ולא נשלח.'; return; }
     button.disabled = true;
     button.textContent = 'שולח...';
-    const data = new FormData(form);
-    const topics = data.getAll('מטרה');
-    data.delete('מטרה');
-    data.append('מטרה', topics.join(', '));
-    fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
-    fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
-      .then((res) => {
-        if (!res.ok) throw new Error(String(res.status));
-        form.reset();
-        status.className = 'form-status success';
-        status.textContent = 'הפרטים נשלחו. אחזור אליכם בהקדם.';
-        countClick('contact:form');
-        countLead();
-      })
-      .catch(() => { status.className = 'form-status error'; status.textContent = ERROR; })
-      .finally(() => { button.disabled = false; button.textContent = 'לשליחת הפרטים'; });
+    try {
+      const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.ok) {
+        status.className = 'form-status error';
+        status.textContent = res.status === 400 && body.error === 'contact' ? 'נא לבדוק את השם ומספר הטלפון.' : res.status === 429 ? 'נשלחו כבר כמה פניות מהחיבור הזה בשעה האחרונה. אפשר להתקשר ישירות: 052-8089808.' : ERROR;
+        return;
+      }
+      form.reset();
+      status.className = 'form-status success';
+      status.textContent = 'הפרטים נשלחו. אחזור אליכם בהקדם.';
+      countClick('contact:form');
+      countLead();
+    } catch (err) {
+      status.className = 'form-status error';
+      status.textContent = ERROR;
+    } finally {
+      button.disabled = false;
+      button.textContent = 'לשליחת הפרטים';
+    }
   });
 })();
 

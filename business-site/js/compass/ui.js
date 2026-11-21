@@ -354,16 +354,27 @@
         done();
         return;
       }
-      fetch(cfg.sheetsUrl, { method: 'POST', mode: 'no-cors', body: data }).catch(() => {});
-      fetch(cfg.formspreeUrl, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
-        .then((r) => {
-          if (!r.ok) throw new Error(String(r.status));
+      // our own function checks the form and forwards it to Formspree and Sheets (functions/api/contact.js)
+      fetch(cfg.contactUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+        form: 'compass',
+        contact: { name: contact.name, phone: contact.phone, email: contact.email },
+        goals: topics,
+        time: contact.time,
+        summary: data.get('סיכום המצפן'),
+        sessionId: state.sessionId,
+        source: contact.source,
+        consent: data.get('הסכמה') === 'כן',
+        marketing: data.get('הסכמה לדיוור') === 'כן',
+      }) })
+        .then(async (r) => {
+          const body = await r.json().catch(() => ({}));
+          if (!r.ok || !body.ok) throw new Error(String(r.status));
           form.reset();
           status.className = 'form-status success';
           status.textContent = 'הפרטים נשלחו. רועי יחזור אליכם בהקדם.';
           count('compass:form');
         })
-        .catch(() => { status.className = 'form-status error'; status.textContent = 'אירעה שגיאה בשליחה. אפשר גם להתקשר ישירות: 052-8089808.'; })
+        .catch(() => { status.className = 'form-status error'; status.textContent = 'אירעה שגיאה בשליחה, והפרטים לא נשלחו. אפשר לנסות שוב, או להתקשר ישירות: 052-8089808.'; })
         .finally(done);
     });
     return h('section', { class: 'cp-form-tile', id: 'cp-form', hidden: true, 'aria-label': 'טופס יצירת קשר' }, form);
