@@ -81,7 +81,11 @@ test('with the mailer bound, the message goes through it and not Formspree', asy
   await post(fn, good({ update: true, sections: [...SECTIONS, { title: 'עוד', rows: [{ q: 'מצב משפחתי', a: 'נשוי' }] }] }), { MAILER });
   assert.equal(MAILER.calls.length, 2, 'edited answers go out again');
   const failing = fakeMailer(false);
-  assert.equal((await post(fn, good({ sessionId: 'other-session-1' }), { MAILER: failing })).status, 502, 'a failed send is reported');
+  const fallback = await post(fn, good({ sessionId: 'other-session-1' }), { MAILER: failing });
+  assert.equal((await fallback.json()).via, 'formspree', 'a failed mailer falls back to Formspree');
+  assert.equal(globalThis.fetch.calls.length, 1);
+  globalThis.fetch = fakeFetch(false);
+  assert.equal((await post(fn, good({ sessionId: 'other-session-3' }), { MAILER: failing })).status, 502, 'both failing is reported');
 });
 
 test('without the mailer, Formspree carries it, with the client as the reply-to', async (t) => {

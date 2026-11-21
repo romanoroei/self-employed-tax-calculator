@@ -6,8 +6,8 @@
 // plain-text copy.
 //
 // Delivery: through the service binding MAILER, a small Worker (workers/questionnaire-mailer.js) that sends with
-// Cloudflare Email Routing to Roei's verified address. Until that binding exists, the message goes to the site's
-// Formspree form instead (the address is set in Formspree, never in this code). Nothing is stored: there is no
+// Cloudflare Email Routing to Roei's verified address. When that binding is missing or the send fails, the
+// message goes to the site's Formspree form instead (the address is set in Formspree, never in this code). Nothing is stored: there is no
 // retry queue, so when delivery fails the function answers with an error and the page asks the client to send by
 // WhatsApp or e-mail. The only things kept (KV binding LEADS, when bound) are hashes for the rate and duplicate
 // checks. Nothing personal is logged.
@@ -180,9 +180,12 @@ export async function onRequestPost(context) {
   if (await db.get(dupKey)) return json(200, { ok: true, duplicate: true });
 
   const msg = buildMessage(clean);
-  const delivered = env.MAILER ? await sendMailer(env, clean, msg) : await sendFormspree(env, clean, msg);
+  // the mailer first; if it is missing or fails (an unverified address, an outage), Formspree as before
+  let via = env.MAILER && await sendMailer(env, clean, msg) ? 'mailer' : '';
+  if (!via && await sendFormspree(env, clean, msg)) via = 'formspree';
+  const delivered = !!via;
   await db.put(rateKey, String(sent + 1), HOUR);
   if (!delivered) return json(502, { ok: false, error: 'delivery' });
   await db.put(dupKey, '1', 24 * HOUR);
-  return json(200, { ok: true, via: env.MAILER ? 'mailer' : 'formspree' });
+  return json(200, { ok: true, via });
 }
