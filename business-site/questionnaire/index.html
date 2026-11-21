@@ -466,6 +466,60 @@ body > div[style*="z-index: 10000"] {
 #summaryHero[data-state="failed"] { box-shadow: inset 0 6px 0 var(--gold); }
 #summaryContainer #summaryHero[data-state="failed"] h2 { color: var(--on-dark) !important; }
 #summaryHero[data-state="sending"] i { opacity: .8; }
+/* ===== Round 3 (Roei, 2026-11-21) ===== */
+/* 1. the opening notice in the middle of the screen on phones too */
+#privacyModal { align-items: center; }
+
+/* 2. the bottom bar is one strip: the help line and the WhatsApp icon beside it */
+.sticky-footer { background: var(--slate); padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
+.footer-content { justify-content: center; align-items: center; gap: 12px; }
+.footer-help-text { flex: 0 1 auto; min-height: 0; padding: 0; background: transparent; }
+.qn-wa { width: 44px; height: 44px; }
+.qn-wa svg { width: 26px; height: 26px; }
+
+/* 4. a white header over the questions, dark type */
+.section-header { background: #FFFFFF; color: var(--ink); box-shadow: inset 0 4px 0 var(--gold); }
+.section-header h2 { color: var(--ink); }
+.section-header p { color: var(--ink-soft); }
+.progress-step-label { color: var(--ink-soft); opacity: 1; }
+.progress-step.active .progress-step-label { color: var(--ink); font-weight: 800; }
+.progress-step.completed .progress-step-label { color: var(--ink-soft); }
+.progress-segment { background: var(--paper-2); }
+.question-content { background: #FFFFFF; }
+
+/* 3. the icon sits at the start of the question's first line */
+.question-icon { float: right; width: 36px; height: 36px; font-size: 15px; margin: 0 0 4px 12px; }
+.question-text::after { content: ""; display: block; clear: both; }
+.qn-last { color: var(--gold-deep); }
+
+/* 5. phones: tighter still */
+@media (max-width: 480px) {
+    body { padding-bottom: 54px; }
+    .sticky-footer { padding: 6px 10px calc(6px + env(safe-area-inset-bottom)); }
+    .footer-content { gap: 10px; }
+    .footer-help-text { font-size: 13px; }
+    .qn-wa { width: 36px; height: 36px; }
+    .qn-wa svg { width: 21px; height: 21px; }
+    .container { margin: 4px auto; }
+    .section-header { padding: 10px 12px 9px; }
+    .section-header h2 { font-size: 16px; }
+    .section-header p { font-size: 12px; line-height: 1.35; }
+    .progress-bar-container { margin-top: 8px; }
+    .progress-steps { margin-bottom: 4px; }
+    .progress-step-label { font-size: 9.5px; }
+    .question-content { padding: 12px 10px; }
+    .question-icon { width: 28px; height: 28px; font-size: 12px; margin: 0 0 2px 8px; }
+    .question-text { font-size: 15.5px; line-height: 1.35; margin-bottom: 10px; }
+    .risk-scale-button { height: 40px; font-size: 16px; }
+    .risk-label { font-size: 10px; margin-top: 4px; }
+    .toggle-option { min-height: 42px; font-size: 15px; }
+    .checkbox-group, .radio-group { gap: 3px; }
+    .checkbox-option, .radio-option { min-height: 38px; padding: 6px 10px; gap: 9px; }
+    .checkbox-option label, .radio-option label { font-size: 14px; }
+    .input-group input, .input-group textarea { min-height: 42px; padding: 8px 12px; }
+    .question-actions { margin-top: 10px; gap: 4px; }
+    .btn-next, .btn-back, .btn-primary, .btn-whatsapp, .btn-secondary { min-height: 42px; font-size: 15px; }
+}
     </style>
 </head>
 <body>
@@ -488,7 +542,7 @@ body > div[style*="z-index: 10000"] {
     <!-- Privacy Modal -->
     <div id="privacyModal" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-shield-alt"></i> הודעת פרטיות</h2>
+            <h2><i class="fas fa-clipboard-list"></i> שאלון הכרות</h2>
             
             <p style="font-size: 0.95rem; line-height: 1.7; margin: 1.5rem 0;">
                 המידע שיימסר בשאלון ישמש למתן תכנון פיננסי מותאם אישית ויישמר באופן מאובטח במערכת. בסיום השאלון התשובות נשלחות אליי באופן אוטומטי, ואין צורך לשלוח אותן בנפרד.
@@ -534,8 +588,8 @@ body > div[style*="z-index: 10000"] {
                 <button class="btn-primary" onclick="sendEmail()">
                     <i class="fas fa-envelope"></i> שלח במייל
                 </button>
-                <button class="btn-whatsapp" onclick="sendWhatsApp()">
-                    <i class="fab fa-whatsapp"></i> שלח ב-WhatsApp
+                <button class="btn-whatsapp" id="summaryWa" onclick="qnSummaryWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> <span id="summaryWaLabel">שלח לעצמך בווטסאפ</span>
                 </button>
                 <button class="btn-secondary" onclick="editAnswers()">
                     <i class="fas fa-edit"></i> ערוך תשובות
@@ -2172,6 +2226,9 @@ function qnSetState(state) {
     const title = document.getElementById('summaryTitle');
     const lead = document.getElementById('summaryLead');
     hero.dataset.state = state;
+    // after a failed automatic send the WhatsApp button goes to Roei; otherwise it sends the client a copy
+    const waLabel = document.getElementById('summaryWaLabel');
+    if (waLabel) waLabel.textContent = state === 'failed' ? 'שלח אליי ב-WhatsApp' : 'שלח לעצמך בווטסאפ';
     if (state === 'sending') {
         icon.className = 'fas fa-circle-notch fa-spin';
         title.textContent = 'רגע, התשובות נשלחות אליי…';
@@ -2183,7 +2240,7 @@ function qnSetState(state) {
     } else {
         icon.className = 'fas fa-exclamation-circle';
         title.textContent = 'עוד צעד אחד: התשובות עוד לא נשלחו';
-        lead.textContent = 'השליחה האוטומטית לא הצליחה. לחץ על "שלח ב-WhatsApp" או "שלח במייל" כדי שהתשובות יגיעו אליי.';
+        lead.textContent = 'השליחה האוטומטית לא הצליחה. לחץ על "שלח אליי ב-WhatsApp" או "שלח במייל" כדי שהתשובות יגיעו אליי.';
     }
 }
 
@@ -2220,6 +2277,32 @@ showQuestion = function (index) {
     if (document.getElementById('summaryContainer').style.display === 'block') return; // the last answer opened the summary
     const q = allQuestions[currentQuestionIndex];
     qnSetWa(q ? `אני ממלא את השאלון ונתקעתי בשאלה: "${q.text}"` : 'אני ממלא את השאלון וצריך עזרה');
+};
+
+function qnSelfWhatsAppText() {
+    const name = answers.fullName || '';
+    const today = new Date().toLocaleDateString('he-IL');
+    const NL = '\n';
+    let text = '📋 *שאלון הכרות - רועי רומנו, מתכנן פיננסי*' + NL + (name ? '👤 ' + name + NL : '') + '📅 ' + today + NL;
+    qnSections().forEach(s => {
+        text += NL + '━━━━━━━━━━━━━━━' + NL + (s.title ? '📌 *' + s.title + '*' + NL + NL : '');
+        s.rows.forEach(r => { text += '❓ ' + r.q + NL + '✅ ' + r.a + NL + NL; });
+    });
+    return text.trim();
+}
+function qnSummaryWhatsApp() {
+    const hero = document.getElementById('summaryHero');
+    if (hero && hero.dataset.state === 'failed') { sendWhatsApp(); return; }
+    window.open('https://wa.me/?text=' + encodeURIComponent(qnSelfWhatsAppText()), '_blank');
+}
+
+// 6. the last question says so
+const qnRenderContentBase = renderQuestionContent;
+renderQuestionContent = function (question) {
+    let html = qnRenderContentBase(question);
+    const last = allQuestions[allQuestions.length - 1];
+    if (last && question.id === last.id) html = html.replace('<div class="question-text">', '<div class="question-text"><span class="qn-last">שאלה אחרונה:</span> ');
+    return html;
 };
 
 const qnShowSummaryBase = showSummary;

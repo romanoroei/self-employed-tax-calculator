@@ -144,3 +144,13 @@ test('the page posts sections to the function and tells the client whether it wo
   assert(page.includes('class="topbar"') && page.includes('data-menu-label="מילוי שאלון"'), 'the site top bar with its own call to action');
   assert(page.includes('id="qnWa"') && !page.includes('class="btn-contact'), 'only the WhatsApp icon in the bottom bar');
 });
+
+test('the page script parses (a syntax error would leave the questionnaire blank)', () => {
+  const page = fs.readFileSync(path.join(root, 'business-site/questionnaire/index.html'), 'utf8');
+  const scripts = [...page.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  assert(scripts.length >= 1);
+  for (const s of scripts) assert.doesNotThrow(() => new Function(s));
+  assert(page.includes('<span id="summaryWaLabel">שלח לעצמך בווטסאפ</span>'));
+  assert(page.includes('שאלה אחרונה:'));
+  assert(page.includes('</i> שאלון הכרות</h2>'));
+});
