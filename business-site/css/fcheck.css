@@ -135,3 +135,27 @@
   .fc .cp-card { padding: 24px 28px 0; }
   .fc .cp-nav { margin-inline: -28px; padding-inline: 28px 84px; padding-block: 16px 20px; }
 }
+
+/* the lead form at the end of a questionnaire: compact, the calls in a short list, the fields side by side (Roei, 2026-11-21) */
+.fc-form-tile .coupon-form { padding: 18px 16px 20px; gap: 8px; }
+.fc-form-tile h3 { font-size: 17px; }
+.fc-calls { gap: 2px; margin: 0 0 4px; }
+.fc-calls li { font-size: 14.5px; line-height: 1.45; padding-inline-start: 16px; }
+.fc-calls li::before { width: 6px; height: 6px; top: .6em; }
+.fc-form-row { display: grid; gap: 8px; }
+.fc-form-tile .cp-field > span { font-size: 13.5px; }
+.fc-form-tile .coupon-form input:not([type="checkbox"]) { min-height: 42px; height: 42px; padding-block: 0; font-size: 16px; }
+.fc-form-tile .cp-sent { font-size: 13.5px; }
+.fc-form-tile .coupon-consent { margin-block: 2px; font-size: 13px; line-height: 1.45; }
+.fc-form-tile .coupon-consent input { width: 18px; height: 18px; }
+.fc-form-tile .coupon-form .button { min-height: 46px; margin-top: 4px; font-size: 16px; }
+.fc .fc-steps { padding: 16px 16px; gap: 6px; }
+.fc .fc-steps h3 { font-size: 16px; }
+.fc .fc-steps li { padding-block: 8px; font-size: 14.5px; grid-template-columns: 28px minmax(0, 1fr); }
+.fc .fc-steps li::before { width: 24px; height: 24px; font-size: 13px; }
+@media (min-width: 760px) {
+  .fc-form-tile .coupon-form { padding: 24px 28px 26px; max-width: none; }
+  .fc-form-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .fc-form-tile .coupon-form .button { width: auto; justify-self: start; padding-inline: 32px; }
+  .fc .fc-steps { padding: 20px 28px; }
+}

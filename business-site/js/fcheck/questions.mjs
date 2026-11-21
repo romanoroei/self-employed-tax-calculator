@@ -582,8 +582,7 @@ export const TEXTS = {
   stepsTitle: 'מה אפשר לעשות כבר היום, לבד',
   resultPrefix: 'הנושא',
   resultDisclaimer: 'זהו מיפוי ראשוני בלבד, על סמך התשובות שלך. הוא אינו המלצה להשקעה או למוצר פיננסי, אינו ייעוץ פנסיוני או ייעוץ השקעות, ואינו תחליף לבירור צרכים מקצועי.',
-  formTitle: 'קובעים שיחת התאמה עם רועי',
-  formText: 'משאירים שם וטלפון, ורועי חוזר אליך עם התשובות שכבר נתת. בשיחה נעבור על:',
+  formTitle: 'בשיחה נעבור על:',
   formButton: 'לתיאום שיחת התאמה ←',
   successTitle: 'תודה! הפרטים התקבלו בהצלחה.',
   successText: 'רועי קיבל את הבקשה שלך ויחזור אליך לצורך שיחת התאמה.',
@@ -592,8 +591,7 @@ export const TEXTS = {
 
 // The end of the site questionnaire: the call, nothing else (Roei, 2026-11)
 export const SITE_TEXTS = {
-  formTitle: 'קובעים שיחת התאמה עם רועי',
-  formText: 'משאירים שם וטלפון, ורועי חוזר אליך. בשיחה נעבור על:',
+  formTitle: 'בשיחה נעבור על:',
 };
 
 // The contact consent. Changing the wording means a new version: the lead record names the version agreed to.

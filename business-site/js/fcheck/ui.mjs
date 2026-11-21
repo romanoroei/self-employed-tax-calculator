@@ -237,11 +237,11 @@ function start() {
     const preview = h('ul', {}, E.answersList(state).map((a) => h('li', { text: `${a.question} ${a.answer}` })));
     const form = h('form', { class: 'coupon-form', novalidate: true },
       h('h3', { id: 'fc-form-title', tabindex: '-1', text: SITE ? SITE_TEXTS.formTitle : TEXTS.formTitle }),
-      h('p', { class: 'fc-form-lead', text: SITE ? SITE_TEXTS.formText : TEXTS.formText }),
       h('ul', { class: 'fc-calls' }, res.calls.map((c) => h('li', { text: c }))),
-      field('name', 'שם מלא', name),
-      field('phone', 'מספר טלפון נייד', phone),
-      field('email', 'כתובת דוא"ל', email, true),
+      h('div', { class: 'fc-form-row' },
+        field('name', 'שם מלא', name),
+        field('phone', 'טלפון נייד', phone),
+        field('email', 'דוא"ל', email, true)),
       hp,
       h('details', { class: 'cp-sent' }, h('summary', { text: 'מה יישלח לרועי יחד עם הפרטים?' }),
         h('p', { text: 'השאלות שנשאלת והתשובות שבחרת, כדי שרועי יגיע לשיחה מוכן, ואם הגעת מקישור של שיתוף פעולה גם מקור הקישור:' }), preview),
@@ -334,7 +334,8 @@ function start() {
         h('button', { type: 'button', class: 'button button-line', onclick: () => { state = null; session.del(KEY); if (SITE) { begin(); return; } show('intro'); scrollToTop(screens.intro); screens.intro.querySelector('[data-start]').focus(); } }, 'חזרה לתחילת השאלון')));
     box.replaceChildren(tile);
     if (!still()) { box.classList.remove('is-entering'); void box.offsetWidth; box.classList.add('is-entering'); }
-    scrollToTop(box);
+    // the thank-you screen opens at the top of the page, never mid-scroll where the form was (Roei, 2026-11-21)
+    window.scrollTo({ top: 0, behavior: 'instant' });
     tile.querySelector('h2').focus({ preventScroll: true });
   }
 
