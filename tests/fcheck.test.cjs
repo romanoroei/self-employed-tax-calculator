@@ -210,7 +210,8 @@ test('contact details, campaign sources and the season are checked', async () =>
 // ---------- the lead function, with Formspree, Sheets and KV replaced by fakes ----------
 async function leadFunction() {
   const src = fs.readFileSync(path.join(root, 'functions/api/lead.js'), 'utf8')
-    .replace("'../../business-site/js/fcheck/engine.mjs'", JSON.stringify(pathToFileURL(path.join(root, 'business-site/js/fcheck/engine.mjs')).href));
+    .replace("'../../business-site/js/fcheck/engine.mjs'", JSON.stringify(pathToFileURL(path.join(root, 'business-site/js/fcheck/engine.mjs')).href))
+    .replace("'../../shared/lead-mail.mjs'", JSON.stringify(pathToFileURL(path.join(root, 'shared/lead-mail.mjs')).href));
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'fc-')), 'lead.mjs');
   fs.writeFileSync(file, src);
   return import(pathToFileURL(file).href);
@@ -230,6 +231,11 @@ function fakeFetch(formspreeOk = true) {
   const f = async (url, init) => { calls.push({ url: String(url), init }); return new Response('{}', { status: String(url).includes('formspree') ? (formspreeOk ? 200 : 500) : 200 }); };
   f.calls = calls;
   return f;
+}
+// the MAILER service binding (workers/questionnaire-mailer.js), replaced by a fake that keeps what it got
+function mailer(ok = true) {
+  const sent = [];
+  return { sent, async fetch(url, init) { sent.push(JSON.parse(init.body)); return new Response('{}', { status: ok ? 200 : 500 }); } };
 }
 async function body(E, picks, extra = {}) {
   const s = run(E, picks, new Date());
@@ -265,20 +271,38 @@ test('the lead function refuses what it should, and works out the grade itself',
   assert.equal(bot.status, 200);
   assert.equal(globalThis.fetch.calls.length, 0);
 
-  // a real lead: Formspree and Sheets get the server's own message; a grade the browser made up is ignored
+  // a real lead: the designed e-mail through MAILER and the row to Sheets, both from the server's own message;
+  // a grade the browser made up is ignored, and Formspree is not used
+  const MAILER = mailer();
   const good = await body(E, picks, { grade: 'C', result: { grade: 'C' } });
-  const r = await post(fn, good);
+  const r = await post(fn, good, { MAILER });
   assert.equal(r.status, 200);
-  const sent = JSON.parse(globalThis.fetch.calls.find((c) => c.url.includes('formspree')).init.body);
-  assert.equal(sent['דירוג'].slice(0, 1), 'A');
-  assert(sent._subject.endsWith('דירוג A'));
-  assert(sent['פירוט מלא'].includes('ref): partner01'));
-  assert(globalThis.fetch.calls.some((c) => c.url.includes('script.google.com')));
+  assert.equal((await r.json()).via, 'mailer');
+  assert.equal(MAILER.sent.length, 1);
+  const mail = MAILER.sent[0];
+  assert(mail.subject.endsWith('דירוג A'));
+  assert(mail.html.includes('dir="rtl"') && mail.html.includes('text-align:right'), 'right to left');
+  assert(mail.html.includes('דנה כהן') && mail.html.includes('tel:0521234567'));
+  assert(mail.html.includes('תשובות השאלון') && mail.html.includes('partner01'));
+  assert(mail.text.includes('partner01'));
+  assert(!globalThis.fetch.calls.some((c) => c.url.includes('formspree')), 'no Formspree when MAILER works');
+  const sheet = globalThis.fetch.calls.find((c) => c.url.includes('script.google.com'));
+  assert(sheet, 'Sheets still gets the lead');
+  assert.equal(new URLSearchParams(sheet.init.body).get('דירוג').slice(0, 1), 'A');
   // the same form again: no second email
   const before = globalThis.fetch.calls.length;
-  const again = await post(fn, good);
+  const again = await post(fn, good, { MAILER });
   assert.equal((await again.json()).duplicate, true);
   assert.equal(globalThis.fetch.calls.length, before);
+  assert.equal(MAILER.sent.length, 1);
+
+  // MAILER down: Formspree gets the same text, so the lead still arrives
+  fn._resetMemory();
+  globalThis.fetch = fakeFetch();
+  const down = await post(fn, await body(E, picks), { MAILER: mailer(false) });
+  assert.equal((await down.json()).via, 'formspree');
+  const fsBody = JSON.parse(globalThis.fetch.calls.find((c) => c.url.includes('formspree')).init.body);
+  assert(fsBody._subject.endsWith('דירוג A') && fsBody['פירוט מלא'].includes('partner01'));
 });
 
 test('the lead function limits the rate, and keeps a lead when Formspree fails', async (t) => {
@@ -307,10 +331,13 @@ test('the lead function limits the rate, and keeps a lead when Formspree fails',
   assert(qKey, 'queued');
   // the next request retries it once Formspree is back
   globalThis.fetch = fakeFetch(true);
+  const MAILER2 = mailer();
+  env2.MAILER = MAILER2;
   let flushing;
   await fn.onRequestPost({ request: new Request('https://romanoinvest.co.il/api/lead', { method: 'POST', headers: { Origin: 'https://evil.example' }, body: '{}' }), env: env2, waitUntil: (p) => { flushing = p; } });
   await flushing;
   assert(!env2.LEADS.m.has(qKey), 'sent and removed');
+  assert(MAILER2.sent.length === 1 && MAILER2.sent[0].html.includes('dir="rtl"'), 'the queued lead goes out as the designed e-mail');
 
   // Formspree down and no KV: an honest error, so the page shows the phone number
   fn._resetMemory();

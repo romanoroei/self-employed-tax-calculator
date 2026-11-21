@@ -6,11 +6,15 @@
 // - the fields are taken from a fixed list per form, trimmed and length-limited; the subject and the source
 //   label are set here, never by the browser;
 // - at most RATE_MAX sends per address per hour, and the same phone on the same form counts once an hour;
-// - Formspree emails Roei (the address lives in Formspree) and a copy goes to the Sheets script. If Formspree
-//   fails, the message waits in the KV namespace LEADS (14 days at most) and later requests try again.
+// - the e-mail to Roei is the designed right-to-left message of shared/lead-mail.mjs, sent through the MAILER
+//   Worker (Cloudflare Email Routing), like the client questionnaire; Formspree only if that fails. A copy goes
+//   to the Sheets script. If both fail, the message waits in the KV namespace LEADS (14 days at most) and later
+//   requests try again.
 // Nothing personal is logged; KV keeps hashes for the checks and, only after a failed delivery, the message.
 
-const FORMSPREE = 'https://formspree.io/f/mvzjeykj';
+import { renderLead, deliver } from '../../shared/lead-mail.mjs';
+
+const FORMSPREE = 'https://formspree.io/f/mvzjeykj'; // the agreed Formspree form, used by shared/lead-mail.mjs as the fallback
 const SHEETS = 'https://script.google.com/macros/s/AKfycbwt-mMdDo6fA___Mh57M8085t2bFPiiVpoKhq3j22hNyhqUybEKMp2t9X5RFm6PwlXa3g/exec';
 const ORIGINS = ['https://romanoinvest.co.il', 'https://www.romanoinvest.co.il'];
 const MAX_BODY = 16384;
@@ -111,18 +115,24 @@ export function buildFields(formId, body) {
   return { fields: f, phone };
 }
 
-async function sendFormspree(env, f, page) {
-  try {
-    const r = await fetch(env.CT_FORMSPREE_URL || FORMSPREE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Origin: ORIGINS[0], Referer: ORIGINS[0] + (page || '/') },
-      body: JSON.stringify(f),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!r.ok) console.error('contact: formspree status', r.status);
-    return r.ok;
-  } catch (e) { console.error('contact: formspree unreachable'); return false; }
+// the designed e-mail: who, how to reach them, and what they asked about
+export function buildMail(formId, f, now) {
+  const rows = [{ q: 'מקור', a: f['מקור'] }];
+  if (f['מטרה']) rows.push({ q: 'נושאים', a: f['מטרה'] });
+  if (f['זמן מועדף']) rows.push({ q: 'זמן נוח לשיחה', a: f['זמן מועדף'] });
+  if (f['מקור הגעה']) rows.push({ q: 'מקור הגעה', a: f['מקור הגעה'] });
+  rows.push({ q: 'הסכמה ליצירת קשר', a: f['הסכמה'] });
+  rows.push({ q: 'הסכמה לדיוור', a: f['הסכמה לדיוור'] });
+  if (f['מזהה שאלון']) rows.push({ q: 'מזהה שאלון', a: f['מזהה שאלון'] });
+  const sections = [{ title: 'פרטי הפנייה', rows }];
+  if (f['סיכום המצפן']) sections.push({ title: 'סיכום המצפן (דיווח עצמי)', rows: [{ q: '', a: f['סיכום המצפן'] }] });
+  return renderLead({
+    subject: `${f._subject} – ${f['שם מלא']}`,
+    kicker: formId === 'compass' ? 'ליד מהמצפן הפיננסי' : 'ליד מטופס יצירת הקשר באתר',
+    name: f['שם מלא'], phone: f['טלפון'], email: f['אימייל'], sections, now,
+  });
 }
+
 async function sendSheets(env, f) {
   try {
     const body = new URLSearchParams();
@@ -139,8 +149,8 @@ async function flushQueue(env) {
     for (const { name } of keys) {
       const raw = await kv.get(name);
       if (!raw) continue;
-      const { f, page } = JSON.parse(raw);
-      if (await sendFormspree(env, f, page)) await kv.delete(name);
+      const { msg, page } = JSON.parse(raw);
+      if (msg && await deliver(env, msg, page)) await kv.delete(name);
     }
   } catch (e) { console.error('contact: queue'); }
 }
@@ -174,13 +184,15 @@ export async function onRequestPost(context) {
   if (await db.get(dupKey)) return json(200, { ok: true, duplicate: true });
 
   const page = FORMS[formId].page;
-  const [delivered] = await Promise.all([sendFormspree(env, f, page), sendSheets(env, f)]);
+  const msg = buildMail(formId, f);
+  const [via] = await Promise.all([deliver(env, msg, page), sendSheets(env, f)]);
+  const delivered = !!via;
   await db.put(rateKey, String(sent + 1), HOUR);
   if (delivered) {
     await db.put(dupKey, '1', HOUR);
-    return json(200, { ok: true });
+    return json(200, { ok: true, via });
   }
-  if (db.kv && await db.put('ct:q:' + Date.now() + ':' + await sha(built.phone + Math.random()), JSON.stringify({ f, page }), QUEUE_DAYS * 86400)) {
+  if (db.kv && await db.put('ct:q:' + Date.now() + ':' + await sha(built.phone + Math.random()), JSON.stringify({ msg, page }), QUEUE_DAYS * 86400)) {
     await db.put(dupKey, '1', HOUR);
     return json(202, { ok: true, queued: true });
   }
