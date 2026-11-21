@@ -279,3 +279,11 @@
 }
 .prose .art-faq { grid-template-columns: 1fr; margin-top: 12px; margin-bottom: 28px; }
 .prose .art-faq .faq-item h3 { font-size: 19px; }
+
+/* real Google reviews, quoted short: name as written on Google, shortened to first name and initial */
+.art-reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-block: 20px 16px; }
+.prose .art-reviews li { padding: 20px; padding-inline-start: 20px; background: var(--paper-2); border-inline-start: 3px solid var(--gold-deep); font-size: 17px; }
+.prose .art-reviews li::before { content: none; }
+.art-reviews blockquote { margin: 0; }
+.art-reviews blockquote p { margin: 0 0 10px; font-size: 17px; line-height: 1.55; }
+.art-reviews span { font-size: 14px; font-weight: 700; color: var(--ink-soft); }
