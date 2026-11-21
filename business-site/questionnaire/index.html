@@ -2101,30 +2101,31 @@ let qnDelivered = false;   // the automatic send went through at least once
 let qnManualSent = false;  // the client pressed WhatsApp or e-mail
 let qnPending = false;
 
-function qnAnswersText() {
-    let text = '';
+function qnSections() {
+    const sections = [];
+    let current = null;
     let currentSection = -1;
     questions.forEach(q => {
         const a = answers[q.id];
         const hasAnswer = a !== undefined && a !== null && a !== '' && !(Array.isArray(a) && a.length === 0);
         if (!hasAnswer) return;
-        if (q.section !== currentSection) {
-            if (currentSection !== -1) text += '\n━━━━━━━━━━━━━━━\n';
-            if (q.sectionTitle) text += `\n${q.sectionTitle}\n\n`;
+        if (q.section !== currentSection || !current) {
+            current = { title: q.sectionTitle || '', rows: [] };
+            sections.push(current);
             currentSection = q.section;
         }
-        const answerText = Array.isArray(a) ? a.join(', ') : a;
-        const lower = String(answerText).toLowerCase();
-        const isRed = lower.includes('עצמאי') ||
+        const answerText = Array.isArray(a) ? a.join(', ') : String(a);
+        const lower = answerText.toLowerCase();
+        const red = lower.includes('עצמאי') ||
             lower === 'חודשי' ||
             (q.id === 'usCitizen' && lower === 'כן') ||
             (q.id === 'otherTaxResident' && lower === 'כן') ||
             (q.id === 'financialStatus' && lower.includes('לא מאוזן כלכלית')) ||
             (q.id === 'taxRefundCheck' && lower === 'לא') ||
             (q.id === 'investmentHorizon' && lower.includes('קצר'));
-        text += `${q.text}: ${isRed ? '🔴 ' : ''}${answerText}\n`;
+        current.rows.push({ q: q.text, a: answerText, red });
     });
-    return text.trim();
+    return sections;
 }
 
 function qnSetState(state) {
@@ -2151,8 +2152,8 @@ function qnSetState(state) {
 
 async function qnAutoSend() {
     if (qnPending) return;
-    const text = qnAnswersText();
-    if (!text) return;
+    const sections = qnSections();
+    if (!sections.length) return;
     qnPending = true;
     qnSetState('sending');
     let ok = false;
@@ -2160,7 +2161,7 @@ async function qnAutoSend() {
         const r = await fetch(QN_SEND_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionId: qnSession, name: answers.fullName || 'לקוח', email: answers.email || '', text, update: qnDelivered }),
+            body: JSON.stringify({ sessionId: qnSession, name: answers.fullName || 'לקוח', email: answers.email || '', sections, update: qnDelivered }),
         });
         const data = await r.json().catch(() => ({}));
         ok = r.ok && data.ok === true;

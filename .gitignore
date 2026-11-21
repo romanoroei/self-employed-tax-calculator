@@ -40,6 +40,8 @@
 
 !functions/
 !functions/**
+!workers/
+!workers/questionnaire-mailer.js
 
 !study-fund-src/
 !study-fund-src/**
