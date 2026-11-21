@@ -24,7 +24,7 @@ const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Publish an explicit file list so source, tests and working files stay private.
 // Earlier share images stay published so links shared before keep their preview; v5 is the current one.
 const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg', 'whatsapp-share-v4.jpg', 'whatsapp-share-v5.jpg'];
-const publicSiteEntries = ['index.html','about.html','pension-check.html','financial-planning.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','knowledge.html','market-data.html','compass.html','study-fund.html','financial-check.html','check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine','questionnaire'];
+const publicSiteEntries = ['index.html','about.html','pension-check.html','financial-planning.html','givatayim.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','knowledge.html','market-data.html','compass.html','study-fund.html','financial-check.html','check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine','questionnaire'];
 const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml','market-reviews.html','market-reviews',...publicSiteEntries];
 await mkdir(calc, { recursive: true });
 // Refuse an output tree containing unexpected files rather than uploading them.
@@ -83,7 +83,7 @@ for (const page of businessPages) {
 await writeFile(path.join(output,'_redirects'), ['# Homepage is served directly; calculator retains its existing path.', '# Market review short links: one per review and channel, to the review with that channel\'s measuring parameters.', ...reviewBuild.redirects].join('\n') + '\n');
 await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>העמוד לא נמצא</title><h1>העמוד לא נמצא</h1><a href="/">חזרה לאתר</a></html>');
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
-const sitePages = ['', 'about', 'pension-check', 'financial-planning', 'self-employed', 'savings-policy', 'investment-fund', 'severance', 'hachshara-policy', 'knowledge', 'market-data', 'compass', 'study-fund', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];
+const sitePages = ['', 'about', 'pension-check', 'financial-planning', 'givatayim', 'self-employed', 'savings-policy', 'investment-fund', 'severance', 'hachshara-policy', 'knowledge', 'market-data', 'compass', 'study-fund', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];
 await writeFile(path.join(output,'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages.map(p=>`<url><loc>https://romanoinvest.co.il/${p}</loc></url>`).join('')}</urlset>`);
 const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:root,stdio:'inherit'});
 if (siteCheck.error) throw siteCheck.error;
