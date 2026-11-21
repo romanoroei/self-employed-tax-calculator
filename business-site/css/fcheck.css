@@ -98,3 +98,20 @@
 .fc-home .button { gap: 10px; }
 /* on the site questionnaire the title stays under the name, as on the rest of the site (Roei) */
 @media (max-width: 600px) { .fc-top-site .bar-brand span { display: block; } }
+
+/* /check opened from a home card: the site's own top bar, the chosen topic as the page title, and a soft entrance (Roei, 2026-11-21) */
+.fc-lead { padding-top: 28px; }
+.fc-lead-back { display: inline-flex; gap: 8px; font-size: 14px; font-weight: 700; color: var(--ink-soft); text-decoration: none; }
+.fc-lead-back:hover { color: var(--ink); text-decoration: underline; text-underline-offset: .25em; }
+.fc-lead-kicker { margin-top: 18px; font-size: 15px; font-weight: 800; color: #9A8340; }
+.fc-lead-title { margin-top: 4px; font-size: var(--t-1); font-weight: 800; line-height: 1.15; }
+.fc-lead + .cp-screen, .fc-lead ~ .fc-run { margin-top: 20px; }
+@media (max-width: 700px) {
+  .fc-lead { padding-top: 18px; }
+  .fc-lead-kicker { margin-top: 12px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fc-lead, .fc-run { animation: fc-enter 420ms var(--ease-out) both; }
+  .fc-run { animation-delay: 80ms; }
+}
+@keyframes fc-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
