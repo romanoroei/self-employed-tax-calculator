@@ -543,6 +543,40 @@ body > div[style*="z-index: 10000"] {
     box-shadow: 0 12px 32px rgba(8, 24, 38, .45) !important;
     padding: 14px 20px !important; font-size: 16px !important; font-weight: 800 !important; text-align: center;
 }
+/* ===== Edit screen (Roei, 2026-11-21): new questions framed red until answered; smaller type ===== */
+.edit-question-item.qn-new { box-shadow: inset 0 0 0 1.5px #B42318; }
+#editContainer > h2 { font-size: clamp(22px, 2.6vw, 30px); margin-bottom: 12px; }
+.edit-section { margin-bottom: 5px; }
+.edit-section-header { padding: 12px 16px; }
+.edit-section-title { font-size: 16px; }
+.edit-section-icon { font-size: 13px; }
+.edit-section-content.open { padding: 5px; }
+.edit-question-item { padding: 12px 14px; margin-bottom: 4px; }
+.edit-question-label { font-size: 14px; line-height: 1.4; margin-bottom: 8px; }
+.edit-input { min-height: 40px; padding: 8px 12px; font-size: 15px; }
+#editContainer .risk-scale { gap: 4px; margin: 0; }
+#editContainer .risk-scale-button { height: 38px; font-size: 15px; }
+#editContainer .risk-label { font-size: 10.5px; margin-top: 4px; }
+#editContainer .toggle-options { gap: 4px; }
+#editContainer .toggle-option { min-height: 38px; font-size: 14px; }
+#editContainer .checkbox-group, #editContainer .radio-group { gap: 3px; }
+#editContainer .checkbox-option, #editContainer .radio-option { min-height: 34px; padding: 5px 10px; gap: 8px; }
+#editContainer .checkbox-option label, #editContainer .radio-option label { font-size: 13.5px; line-height: 1.3; }
+#editContainer .checkbox-option input[type="checkbox"], #editContainer .radio-option input[type="radio"] { width: 16px; height: 16px; min-width: 16px; min-height: 16px; }
+#editContainer .checkbox-option input::after, #editContainer .radio-option input::after { width: 7px; height: 7px; }
+#editContainer > div[style*="display: flex"] { margin-top: 14px !important; }
+@media (max-width: 480px) {
+    #editContainer > h2 { font-size: 20px; margin-bottom: 8px; }
+    .edit-section-header { padding: 10px 12px; }
+    .edit-section-title { font-size: 14.5px; }
+    .edit-question-item { padding: 10px; }
+    .edit-question-label { font-size: 13px; margin-bottom: 6px; }
+    .edit-input { min-height: 38px; font-size: 16px; }
+    #editContainer .risk-scale-button { height: 34px; font-size: 14px; }
+    #editContainer .risk-label { font-size: 9.5px; }
+    #editContainer .toggle-option { min-height: 34px; font-size: 13.5px; }
+    #editContainer .checkbox-option label, #editContainer .radio-option label { font-size: 13px; }
+}
     </style>
 </head>
 <body>
@@ -2337,6 +2371,39 @@ renderQuestionContent = function (question) {
     }
     return html;
 };
+
+// Edit screen: questions that an answer just opened get a thin red frame until they are answered (Roei)
+const qnNewInEdit = new Set();
+const qnIsEmpty = (a) => a === undefined || a === null || a === '' || (Array.isArray(a) && a.length === 0);
+const qnEditIds = () => new Set([...document.querySelectorAll('#editContent [data-id]')].map(el => el.dataset.id));
+const qnEditAnswersBase = editAnswers;
+editAnswers = function (preserveState = false) {
+    const before = preserveState ? qnEditIds() : null;
+    if (!preserveState) qnNewInEdit.clear();
+    qnEditAnswersBase(preserveState);
+    document.querySelectorAll('#editContent .edit-question-item').forEach(item => {
+        const el = item.querySelector('[data-id]');
+        if (!el) return;
+        const id = el.dataset.id;
+        if (before && before.size && !before.has(id) && qnIsEmpty(answers[id])) qnNewInEdit.add(id);
+        if (qnNewInEdit.has(id) && !qnIsEmpty(answers[id])) qnNewInEdit.delete(id);
+        item.classList.toggle('qn-new', qnNewInEdit.has(id));
+    });
+};
+function qnEditCheck(target) {
+    const item = target.closest && target.closest('#editContent .edit-question-item');
+    const el = item && item.querySelector('[data-id]');
+    if (!el || !qnNewInEdit.has(el.dataset.id)) return;
+    // a choice counts at once; a typed answer when the client leaves the field
+    setTimeout(() => {
+        if (qnIsEmpty(answers[el.dataset.id])) return;
+        qnNewInEdit.delete(el.dataset.id);
+        item.classList.remove('qn-new');
+    }, 0);
+}
+document.addEventListener('click', (e) => { if (!e.target.matches('input[type="text"], input[type="email"], input[type="date"]')) qnEditCheck(e.target); });
+document.addEventListener('change', (e) => { if (e.target.matches('input[type="checkbox"], input[type="radio"]')) qnEditCheck(e.target); });
+document.addEventListener('focusout', (e) => { if (e.target.matches('.edit-input')) qnEditCheck(e.target); });
 
 const qnShowSummaryBase = showSummary;
 showSummary = function () { qnShowSummaryBase(); qnAutoSend(); qnSetWa('סיימתי את השאלון ויש לי שאלה'); };
