@@ -1084,33 +1084,35 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 /* the market slide (phones only): the Tel Aviv index board behind the words */
 .hero-bg.hero-bg-board { object-position: 40% 50%; }
 
-/* four ways in: each card its own colour, with a photo of what it is about fading into it */
+/* "how can I help": a headline, one navy question tile with four answers, a gold strip to the contact form (Roei, 2026-11-21) */
 .paths { padding-block: calc(var(--section) * .5) 0; }
-.paths + .about { padding-top: calc(var(--section) * .6); }
 .about + .paths { padding-top: var(--section); padding-bottom: calc(var(--section) * .5); }
-.path-board { margin-top: 28px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.path { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 10px; min-height: 330px; padding: 150px 24px 22px; }
-.path-bg {
-  position: absolute; z-index: -1; inset: 0 0 auto 0; width: 100%; height: 64%;
-  object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: .5;
-  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
-          mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
-  transition: opacity 200ms ease, transform 400ms var(--ease-out);
-}
-.tile-paper2 .path-bg, .tile-gold .path-bg { mix-blend-mode: multiply; opacity: .55; }
-.path h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
-.tile-ink.path h3, .tile-slate.path h3 { color: var(--gold); }
-.path p { font-size: var(--t-5); line-height: 1.55; }
-.tile-ink.path p, .tile-slate.path p { color: var(--on-dark-soft); }
-.tile-paper2.path p { color: var(--ink-soft); }
-.tile-gold.path p { color: var(--navy); }
-.path-go { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 8px; font-size: var(--t-5); font-weight: 700; }
-.path-go .arrow { transition: transform 200ms var(--ease-out); }
+.paths-head { max-width: 860px; }
+.paths-head .h-1 { text-wrap: balance; }
+.paths-sub { margin-top: 14px; font-size: var(--t-4); line-height: 1.55; color: var(--ink-soft); }
+.path-board { margin-top: 32px; }
+.path-ask { padding: 30px 32px 32px; }
+.path-q { font-size: var(--t-2); font-weight: 800; color: var(--gold); }
+.path-list { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+.path-list li { border-top: 1px solid rgba(201, 183, 114, .35); }
+.path-list li:nth-last-child(-n+2) { border-bottom: 1px solid rgba(201, 183, 114, .35); }
+.path { display: flex; align-items: center; gap: 18px; min-height: 92px; padding: 14px 0; color: var(--on-dark); text-decoration: none; }
+.path-img { flex: none; width: 76px; height: 64px; object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: .8; transition: opacity 200ms ease, filter 200ms ease; }
+.path-label { flex: 1; font-size: var(--t-3); font-weight: 700; line-height: 1.3; }
+.path .arrow { color: var(--gold); font-size: 20px; transition: transform 200ms var(--ease-out); }
+.path:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 @media (hover: hover) and (pointer: fine) {
-  .path:hover .path-bg { opacity: .75; transform: scale(1.04); }
-  .path:hover .path-go .arrow { transform: translateX(-4px); }
+  .path:hover .path-img { opacity: 1; filter: grayscale(.3) contrast(1.05); }
+  .path:hover .path-label { color: var(--gold-soft); }
+  .path:hover .arrow { transform: translateX(-6px); }
 }
-@media (max-width: 1100px) { .path-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.path-call { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; padding: 24px 32px; text-decoration: none; }
+.path-call-text { display: flex; flex-direction: column; gap: 4px; }
+.path-call-text strong { font-size: var(--t-3); font-weight: 800; }
+.path-call-text span { font-size: var(--t-5); color: var(--navy); }
+.path-call-go { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 24px; background: var(--navy); color: var(--on-dark); font-weight: 700; }
+.path-call-go .arrow { transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .path-call:hover .path-call-go .arrow { transform: translateX(-6px); } }
 
 /* the new order puts Wall Street right before the services, both on paper: one gap between them, not two */
 .street + .services { padding-top: 0; }
@@ -1130,15 +1132,17 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .hero .hero-yields { display: none; }
 
   .paths { padding-top: 40px; }
-  .paths + .about { padding-top: 56px; }
-  .path-board { margin-top: 20px; grid-template-columns: minmax(0, 1fr); }
-  /* the photo runs down the left side and fades into the words */
-  .path { min-height: 0; gap: 6px; padding: 18px 20px; padding-inline-end: 30%; }
-  .path-bg {
-    inset: 0 auto 0 0; width: 48%; height: 100%;
-    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent 100%);
-            mask-image: linear-gradient(to right, #000 25%, transparent 100%);
-  }
+  .paths-sub { margin-top: 10px; font-size: 15px; }
+  .path-board { margin-top: 20px; }
+  .path-ask { padding: 22px 18px 18px; }
+  .path-list { grid-template-columns: minmax(0, 1fr); margin-top: 14px; }
+  .path-list li:nth-last-child(-n+2) { border-bottom: 0; }
+  .path-list li:last-child { border-bottom: 1px solid rgba(201, 183, 114, .35); }
+  .path { min-height: 0; gap: 14px; padding: 12px 0; }
+  .path-img { width: 56px; height: 48px; }
+  .path-label { font-size: 16px; }
+  .path-call { padding: 20px 18px; }
+  .path-call-go { width: 100%; justify-content: center; }
   .market-page { padding-bottom: 40px; }
 }
 
@@ -1427,12 +1431,6 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   /* the words go down with the button (Roei, 2026-11-14): the whole text sits at the foot, close above the arrows */
   .hero-slide-policy .hero-copy { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
   .hero-slide-policy .policy-fit { margin-top: 18px; padding-top: 0; }
-  /* 8. smaller "how can I help" cards */
-  .path { gap: 4px; padding: 13px 16px; }
-  .path h3 { font-size: 16px; }
-  .path p { font-size: 13.5px; line-height: 1.45; }
-  .path-go { padding-top: 4px; font-size: 13.5px; }
-  .path-board { gap: 6px; }
 }
 /* 9. /market-data: the closing call follows the table closely */
 .market-page { padding-bottom: 12px; }
