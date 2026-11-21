@@ -435,6 +435,10 @@ body > div[style*="z-index: 10000"] {
     .edit-section-title { font-size: 17px; }
     .edit-question-item { padding: 14px; }
 }
+/* the final screen while sending, after sending, and when the send failed */
+#summaryHero[data-state="failed"] { box-shadow: inset 0 6px 0 var(--gold); }
+#summaryContainer #summaryHero[data-state="failed"] h2 { color: var(--on-dark) !important; }
+#summaryHero[data-state="sending"] i { opacity: .8; }
     </style>
 </head>
 <body>
@@ -484,10 +488,10 @@ body > div[style*="z-index: 10000"] {
 
         <!-- Summary Container -->
         <div id="summaryContainer" style="display: none;">
-            <div style="text-align: center; background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
-                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--gold-primary); margin-bottom: 1rem;"></i>
-                <h2 style="color: var(--gold-primary); font-size: 1.8rem; margin-bottom: 0.5rem;">כל הכבוד! סיימת את השאלון</h2>
-                <p style="color: var(--white); font-size: 1rem; margin: 0;">שלח אלי בבקשה את התשובות כדי שאוכל לעבור עליהן ולחזור אליך בהקדם.</p>
+            <div id="summaryHero" aria-live="polite" style="text-align: center; background: linear-gradient(135deg, var(--navy-primary) 0%, var(--navy-secondary) 100%); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                <i id="summaryIcon" class="fas fa-check-circle" style="font-size: 3rem; color: var(--gold-primary); margin-bottom: 1rem;"></i>
+                <h2 id="summaryTitle" style="color: var(--gold-primary); font-size: 1.8rem; margin-bottom: 0.5rem;">כל הכבוד! סיימת את השאלון</h2>
+                <p id="summaryLead" style="color: var(--white); font-size: 1rem; margin: 0;">שלח אלי בבקשה את התשובות כדי שאוכל לעבור עליהן ולחזור אליך בהקדם.</p>
             </div>
             
             <div class="summary-actions" style="justify-content: center; margin-bottom: 2rem;">
@@ -2085,6 +2089,102 @@ function scrollToTop() {
 function scrollToTopInstant() {
     window.scrollTo({top: 0, behavior: 'auto'});
 }
+
+// ===== Automatic send (2026-11-21, Roei) =====
+// Clients used to close the page on "כל הכבוד" thinking the answers were sent. Now the answers go to Roei by
+// e-mail as soon as the summary shows (functions/api/questionnaire.js, through the site's Formspree form), and the
+// final screen says plainly whether that worked. If it failed, the page asks for WhatsApp or e-mail and warns
+// before the client leaves without sending.
+const QN_SEND_URL = '/api/questionnaire';
+const qnSession = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12));
+let qnDelivered = false;   // the automatic send went through at least once
+let qnManualSent = false;  // the client pressed WhatsApp or e-mail
+let qnPending = false;
+
+function qnAnswersText() {
+    let text = '';
+    let currentSection = -1;
+    questions.forEach(q => {
+        const a = answers[q.id];
+        const hasAnswer = a !== undefined && a !== null && a !== '' && !(Array.isArray(a) && a.length === 0);
+        if (!hasAnswer) return;
+        if (q.section !== currentSection) {
+            if (currentSection !== -1) text += '\n━━━━━━━━━━━━━━━\n';
+            if (q.sectionTitle) text += `\n${q.sectionTitle}\n\n`;
+            currentSection = q.section;
+        }
+        const answerText = Array.isArray(a) ? a.join(', ') : a;
+        const lower = String(answerText).toLowerCase();
+        const isRed = lower.includes('עצמאי') ||
+            lower === 'חודשי' ||
+            (q.id === 'usCitizen' && lower === 'כן') ||
+            (q.id === 'otherTaxResident' && lower === 'כן') ||
+            (q.id === 'financialStatus' && lower.includes('לא מאוזן כלכלית')) ||
+            (q.id === 'taxRefundCheck' && lower === 'לא') ||
+            (q.id === 'investmentHorizon' && lower.includes('קצר'));
+        text += `${q.text}: ${isRed ? '🔴 ' : ''}${answerText}\n`;
+    });
+    return text.trim();
+}
+
+function qnSetState(state) {
+    const hero = document.getElementById('summaryHero');
+    if (!hero) return;
+    const icon = document.getElementById('summaryIcon');
+    const title = document.getElementById('summaryTitle');
+    const lead = document.getElementById('summaryLead');
+    hero.dataset.state = state;
+    if (state === 'sending') {
+        icon.className = 'fas fa-circle-notch fa-spin';
+        title.textContent = 'רגע, התשובות נשלחות אליי…';
+        lead.textContent = 'זה לוקח כמה שניות. אל תסגור את הדף.';
+    } else if (state === 'sent') {
+        icon.className = 'fas fa-check-circle';
+        title.textContent = 'כל הכבוד! התשובות נשלחו אליי';
+        lead.textContent = 'קיבלתי את התשובות שלך, אעבור עליהן ואחזור אליך בהקדם. אפשר לסגור את הדף.';
+    } else {
+        icon.className = 'fas fa-exclamation-circle';
+        title.textContent = 'עוד צעד אחד: התשובות עוד לא נשלחו';
+        lead.textContent = 'השליחה האוטומטית לא הצליחה. לחץ על "שלח ב-WhatsApp" או "שלח במייל" כדי שהתשובות יגיעו אליי.';
+    }
+}
+
+async function qnAutoSend() {
+    if (qnPending) return;
+    const text = qnAnswersText();
+    if (!text) return;
+    qnPending = true;
+    qnSetState('sending');
+    let ok = false;
+    try {
+        const r = await fetch(QN_SEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: qnSession, name: answers.fullName || 'לקוח', email: answers.email || '', text, update: qnDelivered }),
+        });
+        const data = await r.json().catch(() => ({}));
+        ok = r.ok && data.ok === true;
+    } catch (e) { ok = false; }
+    qnPending = false;
+    if (ok) qnDelivered = true;
+    // after an edit that failed to go out, the earlier answers did arrive, but not the new ones
+    qnSetState(ok ? 'sent' : 'failed');
+}
+
+const qnShowSummaryBase = showSummary;
+showSummary = function () { qnShowSummaryBase(); qnAutoSend(); };
+const qnSendEmailBase = sendEmail;
+sendEmail = function () { qnManualSent = true; qnSendEmailBase(); };
+const qnSendWhatsAppBase = sendWhatsApp;
+sendWhatsApp = function () { qnManualSent = true; qnSendWhatsAppBase(); };
+
+window.addEventListener('beforeunload', (e) => {
+    const summary = document.getElementById('summaryContainer');
+    const atEnd = summary && summary.style.display === 'block';
+    const hero = document.getElementById('summaryHero');
+    const notSent = hero && (hero.dataset.state === 'failed' || hero.dataset.state === 'sending');
+    if (atEnd && notSent && !qnManualSent) { e.preventDefault(); e.returnValue = ''; }
+});
     </script>
 </body>
 </html>

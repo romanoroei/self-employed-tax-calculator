@@ -78,7 +78,7 @@ const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:r
 if (siteCheck.error) throw siteCheck.error;
 if (siteCheck.status !== 0) process.exit(siteCheck.status || 1);
 // A failed financial, consent or compass test fails the build and prevents publication.
-const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs','tests/compass.test.cjs','tests/reviews.test.cjs','tests/fcheck.test.cjs'], {
+const result = spawnSync(process.execPath, ['--test','tests/analytics.test.cjs','tests/pension.test.cjs','tests/compass.test.cjs','tests/reviews.test.cjs','tests/fcheck.test.cjs','tests/questionnaire.test.cjs'], {
   cwd: root, stdio: 'inherit', env: {...process.env, CALCULATOR_TEST_ROOT: calc}
 });
 if (result.error) throw result.error;

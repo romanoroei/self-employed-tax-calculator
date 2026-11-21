@@ -12,6 +12,7 @@
 !tests/compass.test.cjs
 !tests/reviews.test.cjs
 !tests/fcheck.test.cjs
+!tests/questionnaire.test.cjs
 !tests/fixtures/
 !tests/fixtures/market-review-sample.json
 
