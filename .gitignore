@@ -13,6 +13,7 @@
 !tests/reviews.test.cjs
 !tests/fcheck.test.cjs
 !tests/questionnaire.test.cjs
+!tests/contact.test.cjs
 !tests/fixtures/
 !tests/fixtures/market-review-sample.json
 
@@ -45,3 +46,6 @@
 
 !study-fund-src/
 !study-fund-src/**
+
+!shared/
+!shared/lead-mail.mjs

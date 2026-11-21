@@ -4,12 +4,13 @@
 // the grade itself, and builds the message for Roei from its own question texts, so nothing the browser
 // claims (a grade, a question, a label) is taken on trust.
 //
-// Delivery: Formspree emails Roei (the address is set in Formspree, never in this code) and a copy goes to the
-// Google Sheets script, the same pipeline as the other forms. If Formspree fails, the message waits in the KV
-// namespace bound as LEADS (14 days at most) and each later request tries to send it again, so a lead is not
-// lost to a short outage. LEADS also holds the duplicate and rate checks, as hashes only.
+// Delivery: the designed right-to-left e-mail of shared/lead-mail.mjs, through the MAILER Worker (Cloudflare Email
+// Routing), like the client questionnaire; Formspree only when that fails. A copy goes to the Google Sheets
+// script. If the e-mail fails, the message waits in the KV namespace bound as LEADS (14 days at most) and each
+// later request tries to send it again, so a lead is not lost to a short outage. LEADS also holds the duplicate and rate checks, as hashes only.
 // Nothing personal is logged. Without the LEADS binding the function still delivers, keeping its checks in
 // memory, and answers with an error when Formspree fails, so the visitor sees the phone number instead.
+import { renderLead, textToSections, deliver } from '../../shared/lead-mail.mjs';
 import { fromAnswers, result, leadMessage, checkContact, cleanSource, CONSENT } from '../../business-site/js/fcheck/engine.mjs';
 
 const FORMSPREE = 'https://formspree.io/f/mvzjeykj';
@@ -66,18 +67,17 @@ function fields(msg, contact, source) {
   return f;
 }
 
-async function sendFormspree(env, f) {
-  try {
-    const r = await fetch(env.FC_FORMSPREE_URL || FORMSPREE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Origin: ORIGINS[0], Referer: ORIGINS[0] + '/financial-check' },
-      body: JSON.stringify(f),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!r.ok) console.error('fcheck: formspree status', r.status);
-    return r.ok;
-  } catch (e) { console.error('fcheck: formspree unreachable'); return false; }
+// the designed e-mail, built from the same plain-text message the engine writes
+export function buildMail(msg, contact, now) {
+  return renderLead({
+    subject: msg.subject,
+    kicker: 'ליד מהשאלון באתר · ' + msg.result.title,
+    name: contact.name, phone: contact.phone, email: contact.email,
+    // the name, phone and e-mail are already in the header
+    sections: textToSections(msg.text).filter((sec) => sec.title !== 'פרטי הפונה'), now,
+  });
 }
+
 async function sendSheets(env, f) {
   try {
     const body = new URLSearchParams();
@@ -95,7 +95,10 @@ async function flushQueue(env) {
     for (const { name } of keys) {
       const raw = await kv.get(name);
       if (!raw) continue;
-      if (await sendFormspree(env, JSON.parse(raw))) await kv.delete(name);
+      const q = JSON.parse(raw);
+      // a message queued before the designed e-mail holds the Formspree fields; it goes out as plain text
+      const mail = q.mail || { subject: q._subject || 'ליד מהשאלון באתר', text: q['פירוט מלא'] || '', html: '', replyTo: q.email || '' };
+      if (await deliver(env, mail.html ? mail : { ...mail, html: '<pre dir="rtl">' + mail.text.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])) + '</pre>' }, '/financial-check')) await kv.delete(name);
     }
   } catch (e) { console.error('fcheck: queue'); }
 }
@@ -137,13 +140,15 @@ export async function onRequestPost(context) {
   const source = cleanSource(body.source);
   const msg = leadMessage(state, contact, source, { contact: true, marketing: consent.marketing === true });
   const f = fields(msg, contact, source);
-  const [delivered] = await Promise.all([sendFormspree(env, f), sendSheets(env, f)]);
+  const mail = buildMail(msg, contact);
+  const [via] = await Promise.all([deliver(env, mail, state.flow === 'site' ? '/check' : '/financial-check'), sendSheets(env, f)]);
+  const delivered = !!via;
   await db.put(rateKey, String(sent + 1), HOUR);
   if (delivered) {
     await db.put(dupKey, '1', HOUR);
-    return json(200, { ok: true });
+    return json(200, { ok: true, via });
   }
-  if (db.kv && await db.put('fc:q:' + state.sessionId, JSON.stringify(f), QUEUE_DAYS * 86400)) {
+  if (db.kv && await db.put('fc:q:' + state.sessionId, JSON.stringify({ mail }), QUEUE_DAYS * 86400)) {
     await db.put(dupKey, '1', HOUR);
     return json(202, { ok: true, queued: true });
   }
