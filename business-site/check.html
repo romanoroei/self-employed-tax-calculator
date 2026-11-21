@@ -24,13 +24,32 @@
 </head>
 <body>
 
-<header class="topbar fc-top fc-top-site" id="top">
+<header class="topbar" id="top">
   <a class="tile tile-ink bar-brand" href="/" data-fc-site="top"><img src="assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
-  <a class="tile tile-slate fc-meet" href="/" data-fc-site="top">חזרה לעמוד הראשי <span class="arrow" aria-hidden="true">←</span></a>
+  <div class="bar-tools"><a class="bar-tools-toggle" href="/knowledge"><span class="bar-tools-kicker">ארביטראז' של ידע</span><span class="bar-tools-name">מדריכים וכלים <span aria-hidden="true">←</span></span></a></div>
+  <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
+    <a href="/about">עליי</a>
+    <a href="/#clients">את מי אני מלווה</a>
+    <a href="/#how">שיטת העבודה</a>
+    <a href="/#services">תחומים</a>
+    <a href="/#partners">חברות</a>
+    <a href="/#approach">הגישה שלי</a>
+    <a href="/#faq">שאלות נפוצות</a>
+  </nav>
+  <a class="tile tile-gold bar-cta" href="/#contact">לשיחת התאמה</a>
 </header>
 
 <main class="cp fc" id="fcheck" data-flow="site">
-  <h1 class="visually-hidden">שאלות קצרות לפני שיחת ההתאמה</h1>
+  <!-- the topic picked on the home page, so the visitor sees where they landed (the script below fills it from ?need=) -->
+  <header class="cp-wrap fc-lead">
+    <a class="fc-lead-back" href="/#paths" data-fc-site="top"><span aria-hidden="true">→</span> חזרה לבחירת נושא</a>
+    <p class="fc-lead-kicker">שאלון קצר לפני שיחת ההתאמה</p>
+    <h1 class="fc-lead-title" data-need-title>כמה שאלות קצרות</h1>
+  </header>
+  <script>(() => {
+    const t = { pension: 'הפנסיה והביטוחים שלי', invest: 'יש לי כסף פנוי להשקעה', retire: 'אני מתקרב לפרישה', selfemp: 'אני עצמאי ורוצה לתכנן', unsure: 'התמונה הפיננסית המלאה' }[new URLSearchParams(location.search).get('need')];
+    if (t) document.querySelector('[data-need-title]').textContent = t;
+  })();</script>
   <!-- No intro: js/fcheck/ui.mjs opens on the question of the route chosen on the home page (data-flow="site").
        The hidden intro only holds the hooks the script expects. -->
   <section class="cp-screen" data-screen="intro" hidden><p data-season hidden></p><button type="button" data-start hidden></button></section>
@@ -72,6 +91,7 @@
   </div>
 </footer>
 
+<script src="js/site.js" defer></script>
 <script src="js/consent.js" data-root="" defer></script>
 <script type="module" src="js/fcheck/ui.mjs"></script>
 </body>

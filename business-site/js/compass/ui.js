@@ -319,7 +319,7 @@
       h('label', { class: 'coupon-consent' }, h('input', { type: 'checkbox', name: 'הסכמה', value: 'כן', required: true }),
         h('span', {}, 'אני מאשר/ת שרועי רומנו יחזור אליי בנוגע לפנייה, ושיחד עם הפרטים יישלח אליו סיכום התשובות שלי במצפן. קראתי את ', h('a', { class: 'link', href: '/privacy', target: '_blank', text: 'מדיניות הפרטיות' }), ' ואת ', h('a', { class: 'link', href: '/disclosure', target: '_blank', text: 'הגילוי הנאות' }), '.')),
       h('label', { class: 'coupon-consent' }, h('input', { type: 'checkbox', name: 'הסכמה לדיוור', value: 'כן' }),
-        h('span', { text: 'אשמח לקבל מדי פעם מאמרים ועדכונים במייל או בוואטסאפ (לא חובה, אפשר להסיר בכל עת).' })),
+        h('span', { text: 'אשמח לקבל מדי פעם מאמרים ועדכונים במייל או בוואטסאפ (אפשר להסיר בכל עת).' })),
       button, status, dry);
 
     form.addEventListener('submit', (e) => {

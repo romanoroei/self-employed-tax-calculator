@@ -1084,31 +1084,36 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 /* the market slide (phones only): the Tel Aviv index board behind the words */
 .hero-bg.hero-bg-board { object-position: 40% 50%; }
 
-/* four ways in: each card its own colour, with a photo of what it is about fading into it */
+/* "how can I help": a two-line headline and four photo cards, each a door to its short questionnaire (Roei, 2026-11-21) */
 .paths { padding-block: calc(var(--section) * .5) 0; }
-.paths + .about { padding-top: calc(var(--section) * .6); }
-.about + .paths { padding-top: var(--section); padding-bottom: calc(var(--section) * .5); }
-.path-board { margin-top: 28px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.path { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 10px; min-height: 330px; padding: 150px 24px 22px; }
-.path-bg {
-  position: absolute; z-index: -1; inset: 0 0 auto 0; width: 100%; height: 64%;
-  object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: .5;
-  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
-          mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);
-  transition: opacity 200ms ease, transform 400ms var(--ease-out);
+.about:has(+ .paths) { padding-bottom: 40px; }
+.about + .paths { padding-top: 0; padding-bottom: calc(var(--section) * .5); }
+.paths-title span { display: block; }
+.paths-title-2 { color: var(--gold-deep); }
+.paths-ask { margin-top: 34px; font-size: var(--t-2); font-weight: 800; line-height: 1.25; }
+.paths-hint { margin-top: 6px; font-size: var(--t-4); line-height: 1.55; color: var(--ink-soft); }
+.path-board { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.path {
+  height: 100%; display: flex; flex-direction: column; background: #fff; color: var(--ink); text-decoration: none;
+  box-shadow: 0 0 0 1px rgba(12, 33, 52, .1);
+  transition: transform 240ms var(--ease-out), box-shadow 240ms ease;
 }
-.tile-paper2 .path-bg, .tile-gold .path-bg { mix-blend-mode: multiply; opacity: .55; }
-.path h3 { font-size: var(--t-3); font-weight: 800; line-height: 1.25; text-wrap: balance; }
-.tile-ink.path h3, .tile-slate.path h3 { color: var(--gold); }
-.path p { font-size: var(--t-5); line-height: 1.55; }
-.tile-ink.path p, .tile-slate.path p { color: var(--on-dark-soft); }
-.tile-paper2.path p { color: var(--ink-soft); }
-.tile-gold.path p { color: var(--navy); }
-.path-go { display: inline-flex; gap: 8px; margin-top: auto; padding-top: 8px; font-size: var(--t-5); font-weight: 700; }
-.path-go .arrow { transition: transform 200ms var(--ease-out); }
+.path-photo { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--paper-2); }
+.path-photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.35) contrast(1.05); transition: transform 500ms var(--ease-out), filter 240ms ease; }
+.path-body { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 20px 20px 18px; border-top: 4px solid var(--gold); }
+.path-title { font-size: var(--t-3); font-weight: 800; line-height: 1.25; }
+.path-text { font-size: var(--t-5); line-height: 1.55; color: var(--ink-soft); }
+.path-go { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 14px; }
+.path-go-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+.path-go-tag::before { content: ""; width: 10px; height: 10px; border: 2px solid var(--gold-deep); border-radius: 50%; }
+.path-go-cta { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; background: var(--navy); color: var(--on-dark); font-size: 15px; font-weight: 700; transition: background-color 200ms ease, color 200ms ease; }
+.path-go-cta .arrow { transition: transform 200ms var(--ease-out); }
+.path:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 @media (hover: hover) and (pointer: fine) {
-  .path:hover .path-bg { opacity: .75; transform: scale(1.04); }
-  .path:hover .path-go .arrow { transform: translateX(-4px); }
+  .path:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px rgba(12, 33, 52, .14), 0 18px 36px -18px rgba(12, 33, 52, .45); }
+  .path:hover .path-photo img { transform: scale(1.05); filter: none; }
+  .path:hover .path-go-cta { background: var(--gold); color: var(--navy-deep); }
+  .path:hover .path-go-cta .arrow { transform: translateX(-4px); }
 }
 @media (max-width: 1100px) { .path-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -1130,15 +1135,20 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .hero .hero-yields { display: none; }
 
   .paths { padding-top: 40px; }
-  .paths + .about { padding-top: 56px; }
-  .path-board { margin-top: 20px; grid-template-columns: minmax(0, 1fr); }
-  /* the photo runs down the left side and fades into the words */
-  .path { min-height: 0; gap: 6px; padding: 18px 20px; padding-inline-end: 30%; }
-  .path-bg {
-    inset: 0 auto 0 0; width: 48%; height: 100%;
-    -webkit-mask-image: linear-gradient(to right, #000 25%, transparent 100%);
-            mask-image: linear-gradient(to right, #000 25%, transparent 100%);
-  }
+  .about:has(+ .paths) { padding-bottom: 28px; }
+  .paths-ask { margin-top: 24px; font-size: 22px; }
+  .paths-hint { font-size: 15px; }
+  .path-board { margin-top: 18px; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  /* phones: the photo on the right, the words beside it */
+  .path { flex-direction: row; }
+  .path-photo { position: relative; flex: none; width: 32%; aspect-ratio: auto; }
+  .path-photo img { position: absolute; inset: 0; }
+  .path-body { padding: 14px 14px 12px; gap: 4px; border-top: 0; border-inline-start: 4px solid var(--gold); }
+  .path-title { font-size: 16px; }
+  .path-text { font-size: 13.5px; line-height: 1.45; }
+  .path-go { padding-top: 8px; }
+  .path-go-tag { font-size: 12px; }
+  .path-go-cta { min-height: 34px; padding: 0 12px; font-size: 14px; }
   .market-page { padding-bottom: 40px; }
 }
 
@@ -1427,12 +1437,6 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   /* the words go down with the button (Roei, 2026-11-14): the whole text sits at the foot, close above the arrows */
   .hero-slide-policy .hero-copy { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; }
   .hero-slide-policy .policy-fit { margin-top: 18px; padding-top: 0; }
-  /* 8. smaller "how can I help" cards */
-  .path { gap: 4px; padding: 13px 16px; }
-  .path h3 { font-size: 16px; }
-  .path p { font-size: 13.5px; line-height: 1.45; }
-  .path-go { padding-top: 4px; font-size: 13.5px; }
-  .path-board { gap: 6px; }
 }
 /* 9. /market-data: the closing call follows the table closely */
 .market-page { padding-bottom: 12px; }
@@ -1533,4 +1537,10 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   .bar-brand img { grid-row: 1 / 3; align-self: center; }
   .bar-brand strong { line-height: 1.15; }
   .bar-brand span { display: block; font-size: 13px; line-height: 1.2; }
+}
+
+/* moving between pages of the site: the top bar stays, the page under it fades (browsers that support it) */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .topbar { view-transition-name: topbar; }
 }
