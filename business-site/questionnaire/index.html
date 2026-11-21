@@ -520,6 +520,29 @@ body > div[style*="z-index: 10000"] {
     .question-actions { margin-top: 10px; gap: 4px; }
     .btn-next, .btn-back, .btn-primary, .btn-whatsapp, .btn-secondary { min-height: 42px; font-size: 15px; }
 }
+/* ===== Round 4 (Roei, 2026-11-21) ===== */
+/* 5. no page scroll when the content fits (100vh is taller than the visible phone screen) */
+body { min-height: 0; }
+
+/* 2. the section box gets a gold frame */
+.section-header { box-shadow: inset 0 0 0 2px var(--gold); }
+
+/* 3. icon beside the question, every line of the question aligned after it */
+.question-content { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; align-items: start; }
+.question-content > :not(.question-icon):not(.question-text) { grid-column: 1 / -1; }
+.question-icon { float: none; margin: 0; }
+.question-text::after { content: none; }
+.qn-count { color: var(--gold-deep); font-weight: 800; font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) { .question-content { column-gap: 8px; } .question-icon { margin: 0; } }
+
+/* 7. notices (e.g. "new questions opened") stand out under the top bar, also over the edit screen */
+body > div[style*="z-index: 10000"] {
+    top: 76px !important; width: max-content; max-width: 92vw;
+    background: var(--gold) !important; color: var(--navy-deep) !important;
+    border: 2px solid var(--navy-deep) !important; border-radius: 0 !important;
+    box-shadow: 0 12px 32px rgba(8, 24, 38, .45) !important;
+    padding: 14px 20px !important; font-size: 16px !important; font-weight: 800 !important; text-align: center;
+}
     </style>
 </head>
 <body>
@@ -604,7 +627,7 @@ body > div[style*="z-index: 10000"] {
             <h2>ערוך תשובות</h2>
             <div id="editContent"></div>
             <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                <button class="btn-primary" onclick="saveEdits()">שמור ועדכן סיכום</button>
+                <button class="btn-primary" onclick="saveEdits()">שמור ושלח עדכון</button>
                 <button class="btn-secondary" onclick="cancelEdit()">ביטול</button>
             </div>
         </div>
@@ -1385,7 +1408,7 @@ function generateInputHTML(question) {
     const value = answers[question.id] || '';
     return `
         <div class="input-group">
-            <input type="${question.type}" 
+            <input type="${question.type === 'number' ? 'text' : question.type}" ${question.type === 'number' ? 'inputmode="numeric" autocomplete="off"' : ''}
                    id="${question.id}" 
                    value="${value}"
                    placeholder="הקלד ${question.text}">
@@ -1976,7 +1999,7 @@ function editAnswers(preserveState = false) {
                 
             default:
                 inputHTML = `
-                    <input type="${q.type}" 
+                    <input type="${q.type === 'number' ? 'text' : q.type}" ${q.type === 'number' ? 'inputmode="numeric" data-num="1"' : ''}
                            class="edit-input"
                            data-id="${q.id}" 
                            value="${answers[q.id] || ''}"
@@ -2089,6 +2112,11 @@ function addEditListeners() {
     document.querySelectorAll('#editContainer input[type="text"], #editContainer input[type="email"], #editContainer input[type="date"], #editContainer input[type="number"]').forEach(input => {
         input.addEventListener('input', () => {
             const id = input.dataset.id;
+            if (input.dataset.num) {
+                // amounts get thousands separators here too
+                const digits = input.value.replace(/[^d]/g, '');
+                input.value = digits ? parseInt(digits, 10).toLocaleString('en-US') : '';
+            }
             answers[id] = input.value;
         });
     });
@@ -2302,6 +2330,11 @@ renderQuestionContent = function (question) {
     let html = qnRenderContentBase(question);
     const last = allQuestions[allQuestions.length - 1];
     if (last && question.id === last.id) html = html.replace('<div class="question-text">', '<div class="question-text"><span class="qn-last">שאלה אחרונה:</span> ');
+    if (question.section === 1) {
+        const risk = allQuestions.filter(q => q.section === 1);
+        const n = risk.findIndex(q => q.id === question.id) + 1;
+        if (n > 0) html = html.replace('<div class="question-text">', `<div class="question-text"><span class="qn-count">(${n}/${risk.length})</span> `);
+    }
     return html;
 };
 
