@@ -56,7 +56,7 @@ await writeFile(marketFile, marketSource.replace('<!-- market-tile -->', marketH
 // Content versions ensure browsers pick up stylesheet and script updates together.
 // Monthly market reviews: written from business-site/content/market-reviews, published ones only.
 const reviewBuild = await buildReviews(root, output);
-const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html', 'magazine/financial-calendar.html', ...reviewBuild.pages);
+const businessPages = publicSiteEntries.filter(p=>p.endsWith('.html')).concat('magazine/tides-and-waves.html', 'magazine/financial-calendar.html', 'questionnaire/index.html', ...reviewBuild.pages);
 for (const page of businessPages) {
   const file = path.join(output, page);
   let document = await readFile(file, 'utf8');

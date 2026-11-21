@@ -57,7 +57,7 @@
     const go = document.createElement('a');
     go.className = 'site-menu-cta';
     go.href = cta.getAttribute('href');
-    go.textContent = 'לשיחת התאמה ללא עלות';
+    go.textContent = cta.dataset.menuLabel || 'לשיחת התאמה ללא עלות'; // a page can name its own (the questionnaire: מילוי שאלון)
     list.append(go);
   }
   document.body.append(panel);

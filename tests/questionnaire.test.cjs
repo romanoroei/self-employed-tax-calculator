@@ -133,10 +133,14 @@ test('the mailer wraps the message in valid MIME for Roei only', () => {
 test('the page posts sections to the function and tells the client whether it worked', () => {
   const page = fs.readFileSync(path.join(root, 'business-site/questionnaire/index.html'), 'utf8');
   assert(page.includes("const QN_SEND_URL = '/api/questionnaire';"));
-  assert(page.includes('showSummary = function () { qnShowSummaryBase(); qnAutoSend(); };'));
+  assert(page.includes('showSummary = function () { qnShowSummaryBase(); qnAutoSend();'));
   assert(page.includes('sections, update: qnDelivered'));
   for (const id of ['summaryHero', 'summaryIcon', 'summaryTitle', 'summaryLead']) assert(page.includes(`id="${id}"`), id);
   assert(page.includes('עוד צעד אחד: התשובות עוד לא נשלחו'));
   assert(page.includes('בסיום השאלון התשובות נשלחות אליי באופן אוטומטי'));
   assert(page.includes("window.addEventListener('beforeunload'"));
+  assert(page.includes('id: "publicFigure"'), 'the public office question');
+  assert.equal((page.match(/q.id === 'publicFigure'/g) || []).length, 3, 'a yes is marked red in every message');
+  assert(page.includes('class="topbar"') && page.includes('data-menu-label="מילוי שאלון"'), 'the site top bar with its own call to action');
+  assert(page.includes('id="qnWa"') && !page.includes('class="btn-contact'), 'only the WhatsApp icon in the bottom bar');
 });

@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/site.css">
     <style>
 /* Questionnaire, in the romanoinvest.co.il design language: navy and gold tiles,
    square corners, 8px gaps, Heebo. Text, markup and flow are unchanged; only the look. */
@@ -49,8 +50,8 @@ body {
     font-size: 17px;
     line-height: 1.6;
     min-height: 100vh;
-    padding-top: 76px;
-    padding-bottom: 96px;
+    padding-top: 0;
+    padding-bottom: 76px;
     direction: rtl;
     overflow-x: hidden;
 }
@@ -95,6 +96,17 @@ button, input, textarea { font: inherit; }
     font-size: 15px; font-weight: 500;
 }
 .footer-actions { display: flex; gap: var(--gap); }
+.footer-help-text { min-height: 52px; }
+.qn-wa {
+    flex: none; display: grid; place-items: center;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: #25D366; text-decoration: none;
+    transition: transform 120ms var(--ease-out), background-color 160ms ease;
+}
+.qn-wa svg { width: 30px; height: 30px; fill: #fff; }
+.qn-wa:active { transform: scale(.94); }
+.qn-wa:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .qn-wa:hover { background: #1EBE5A; } }
 .btn-contact {
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 52px; padding: 0 24px;
@@ -258,7 +270,7 @@ button, input, textarea { font: inherit; }
 .input-group input::placeholder, .input-group textarea::placeholder { color: var(--ink-soft); opacity: .7; }
 
 /* ===== Buttons ===== */
-.question-actions { display: flex; flex-direction: column-reverse; gap: 6px; margin-top: 24px; }
+.question-actions { display: flex; flex-direction: column; gap: 6px; margin-top: 24px; }
 .btn-next, .btn-primary, .btn-whatsapp, .btn-secondary, .btn-back {
     display: inline-flex; align-items: center; justify-content: center; gap: 10px;
     min-height: 52px; padding: 0 28px;
@@ -312,6 +324,14 @@ button, input, textarea { font: inherit; }
 @media (hover: hover) and (pointer: fine) { .modal-btn:hover, .modal-content button:hover { background: var(--gold-soft) !important; transform: none; box-shadow: none; } }
 .warning-modal { border: 0; border-top: 6px solid #8A2A2A; }
 .warning-modal h2 { color: #8A2A2A !important; }
+/* the opening privacy notice: a light veil and a small card (Roei: the full-screen version felt alarming) */
+#privacyModal { background: rgba(8, 24, 38, .28); align-items: flex-end; padding: 12px; }
+#privacyModal .modal-content { max-width: 400px; padding: 18px 18px 16px; border-top-width: 4px; box-shadow: 0 10px 30px rgba(8, 24, 38, .18); }
+#privacyModal .modal-content h2 { font-size: 17px; margin-bottom: 6px; }
+#privacyModal .modal-content p { font-size: 14px !important; line-height: 1.5 !important; margin: 0 0 8px !important; text-align: right !important; }
+#privacyModal .modal-btn { min-height: 46px; margin-top: 6px; font-size: 16px; }
+@media (min-width: 620px) { #privacyModal { align-items: center; } }
+
 /* the "sent" dialog the script builds */
 .modal-content p[style*="FFF9E6"] { background: var(--paper-2) !important; border-right: 4px solid var(--gold) !important; border-radius: 0 !important; color: var(--ink) !important; }
 .modal-content p[style*="fef3c7"] { background: #F3EBD0 !important; color: #6B5310 !important; border-right: 3px solid var(--gold-deep) !important; border-radius: 0 !important; }
@@ -391,49 +411,56 @@ body > div[style*="z-index: 10000"] {
 
 /* ===== Tablets ===== */
 @media (max-width: 768px) {
-    .footer-content { flex-wrap: wrap; }
-    .footer-help-text { flex: 1 1 100%; justify-content: center; min-height: 40px; padding-block: 8px; font-size: 14px; }
-    .footer-actions { flex: 1 1 100%; }
-    .footer-actions .btn-contact { flex: 1; }
-    body { padding-bottom: 136px; }
+    .footer-help-text { font-size: 14px; }
+    body { padding-bottom: 72px; }
     .summary-actions { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ===== Phones ===== */
+/* most clients fill this on a phone: smaller type so a question, its answers and the buttons fit one screen (Roei) */
 @media (max-width: 480px) {
-    body { padding-top: 68px; padding-bottom: 124px; }
-    .sticky-header { padding: 6px; }
-    .sticky-header h1 { min-height: 48px; padding-inline: 16px; font-size: 16px; gap: 10px; }
-    .sticky-header h1::before { width: 38px; height: 24px; }
-    .sticky-footer { padding: 6px 6px calc(6px + env(safe-area-inset-bottom)); }
-    .footer-content { gap: 6px; }
-    .footer-actions { gap: 6px; }
-    .footer-help-text { font-size: 13px; min-height: 34px; padding-block: 6px; }
-    .btn-contact { min-height: 48px; padding: 0 12px; font-size: 15px; }
-    .container { padding: 0 8px; margin: 8px auto; }
-    .section-header { padding: 20px 18px 18px; }
-    .section-header h2 { font-size: 22px; }
-    .section-header p { font-size: 14px; line-height: 1.45; }
-    .progress-bar-container { margin-top: 16px; }
-    .progress-step-label { font-size: 11px; white-space: normal; line-height: 1.15; }
-    .question-content { padding: 20px 16px 18px; }
-    .question-icon { width: 38px; height: 38px; font-size: 16px; margin-bottom: 12px; }
-    .question-text { font-size: 19px; margin-bottom: 16px; }
+    body { padding-bottom: 60px; font-size: 15px; }
+    .sticky-footer { padding: 5px 5px calc(5px + env(safe-area-inset-bottom)); }
+    .footer-content { gap: 5px; }
+    .footer-help-text { min-height: 44px; font-size: 13px; padding-inline: 14px; }
+    .qn-wa { width: 44px; height: 44px; }
+    .qn-wa svg { width: 26px; height: 26px; }
+    .container { padding: 0 6px; margin: 6px auto; }
+    .question-card { gap: 5px; }
+    .section-header { padding: 12px 14px 12px; }
+    .section-header h2 { font-size: 18px; margin-bottom: 2px; }
+    .section-header p { font-size: 12.5px; line-height: 1.4; }
+    .progress-bar-container { margin-top: 10px; }
+    .progress-steps { margin-bottom: 5px; }
+    .progress-step-label { font-size: 10px; white-space: normal; line-height: 1.15; }
+    .progress-bar { height: 4px; }
+    .question-content { padding: 14px 12px 14px; }
+    .question-icon { width: 30px; height: 30px; font-size: 13px; margin-bottom: 8px; }
+    .question-text { font-size: 16.5px; line-height: 1.35; margin-bottom: 12px; }
     .risk-scale { gap: 4px; }
-    .risk-scale-button { height: 54px; font-size: 20px; }
-    .risk-label { font-size: 11px; }
-    .toggle-option { min-height: 56px; font-size: 17px; }
-    .checkbox-option, .radio-option { min-height: 52px; padding: 10px 14px; gap: 12px; }
-    .checkbox-option label, .radio-option label { font-size: 16px; }
-    .modal-content { padding: 22px 18px 18px; }
-    .modal-content h2 { font-size: 19px; }
+    .risk-scale-button { height: 46px; font-size: 18px; }
+    .risk-label { font-size: 10.5px; margin-top: 5px; }
+    .toggle-option { min-height: 48px; font-size: 16px; }
+    .checkbox-group, .radio-group { gap: 4px; }
+    .checkbox-option, .radio-option { min-height: 44px; padding: 8px 12px; gap: 10px; }
+    .checkbox-option label, .radio-option label { font-size: 14.5px; line-height: 1.3; }
+    .checkbox-option input[type="checkbox"], .radio-option input[type="radio"] { width: 18px; height: 18px; min-width: 18px; min-height: 18px; }
+    .checkbox-option input[type="checkbox"]::after, .radio-option input[type="radio"]::after { width: 8px; height: 8px; }
+    .input-group input, .input-group textarea { min-height: 46px; padding: 10px 12px; font-size: 16px; }
+    .question-actions { margin-top: 14px; gap: 5px; }
+    .btn-next, .btn-back, .btn-primary, .btn-whatsapp, .btn-secondary { min-height: 46px; font-size: 15.5px; }
+    .modal-content { padding: 20px 16px 16px; }
+    .modal-content h2 { font-size: 18px; }
     .modal-content p { font-size: 14px; line-height: 1.5; }
-    .summary-actions { padding: 12px; }
-    .summary-item strong { font-size: 15px; }
-    .summary-item span { font-size: 14px; }
-    .edit-section-header { padding: 14px 16px; }
-    .edit-section-title { font-size: 17px; }
-    .edit-question-item { padding: 14px; }
+    #summaryContainer > div:first-child { padding: 24px 16px !important; }
+    #summaryContainer > div:first-child h2 { font-size: 22px !important; }
+    #summaryContainer > div:first-child p { font-size: 15px !important; }
+    .summary-actions { padding: 10px; }
+    .summary-item strong { font-size: 14px; }
+    .summary-item span { font-size: 13.5px; }
+    .edit-section-header { padding: 12px 14px; }
+    .edit-section-title { font-size: 16px; }
+    .edit-question-item { padding: 12px; }
 }
 /* the final screen while sending, after sending, and when the send failed */
 #summaryHero[data-state="failed"] { box-shadow: inset 0 6px 0 var(--gold); }
@@ -443,10 +470,19 @@ body > div[style*="z-index: 10000"] {
 </head>
 <body>
     <!-- Sticky Header -->
-    <header class="sticky-header">
-        <div class="header-content">
-            <h1>רועי רומנו - מתכנן פיננסי אישי</h1>
-        </div>
+    <header class="topbar" id="top">
+      <a class="tile tile-ink bar-brand" href="/"><img src="../assets/arbitrage-mark.png" width="44" height="28" alt=""><strong>רועי רומנו</strong><span>מתכנן פיננסי</span></a>
+      <div class="bar-tools"><a class="bar-tools-toggle" href="/knowledge"><span class="bar-tools-kicker">ארביטראז' של ידע</span><span class="bar-tools-name">מדריכים וכלים <span aria-hidden="true">←</span></span></a></div>
+      <nav class="tile tile-slate bar-nav" aria-label="ניווט ראשי">
+        <a href="/#about">עליי</a>
+        <a href="/#clients">את מי אני מלווה</a>
+        <a href="/#how">שיטת העבודה</a>
+        <a href="/#services">תחומים</a>
+        <a href="/#partners">חברות</a>
+        <a href="/#approach">הגישה שלי</a>
+        <a href="/#faq">שאלות נפוצות</a>
+      </nav>
+      <a class="tile tile-gold bar-cta" href="#top" data-menu-label="מילוי שאלון">מילוי שאלון</a>
     </header>
 
     <!-- Privacy Modal -->
@@ -531,17 +567,7 @@ body > div[style*="z-index: 10000"] {
             <div class="footer-help-text">
                 נתקעת? צריך עזרה? אני כאן בשבילך!
             </div>
-            <div class="footer-actions">
-                <a href="tel:+972528089808" class="btn-contact btn-phone">
-                    <i class="fas fa-phone"></i>
-                    <span>התקשר עכשיו</span>
-                </a>
-                <a href="https://wa.me/972528089808?text=שלום רועי, אני ממלא את השאלון וצריך עזרה" 
-                   target="_blank" 
-                   class="btn-contact btn-footer-whatsapp">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>WhatsApp</span>
-                </a>
+            <a id="qnWa" class="qn-wa" href="https://wa.me/972528089808?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A8%D7%95%D7%A2%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%9E%D7%9C%D7%90%20%D7%90%D7%AA%20%D7%94%D7%A9%D7%90%D7%9C%D7%95%D7%9F%20%D7%95%D7%A6%D7%A8%D7%99%D7%9A%20%D7%A2%D7%96%D7%A8%D7%94" target="_blank" rel="noopener" aria-label="כתבו לרועי בוואטסאפ (נפתח בלשונית חדשה)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg></a>
             </div>
         </div>
     </footer>
@@ -864,6 +890,14 @@ const questions = [
         type: "text",
         icon: "fa-hashtag",
         conditional: (answers) => answers.otherTaxResident === "כן",
+        required: true
+    },
+    {
+        section: 2,
+        id: "publicFigure",
+        text: "האם אתה, בן משפחתך או שותף עסקי שלך מכהן או כיהן בתפקיד ציבורי בכיר בארץ או בחו\"ל בחמש השנים האחרונות?",
+        type: "toggle",
+        icon: "fa-landmark",
         required: true
     },
     
@@ -1636,6 +1670,7 @@ function sendFullEmail(clientEmail, clientName) {
                 answerLower === 'חודשי' ||
                 (q.id === 'usCitizen' && answerLower === 'כן') ||
                 (q.id === 'otherTaxResident' && answerLower === 'כן') ||
+                (q.id === 'publicFigure' && answerLower === 'כן') ||
                 (q.id === 'financialStatus' && answerLower.includes('לא מאוזן כלכלית')) ||
                 (q.id === 'taxRefundCheck' && answerLower === 'לא') ||
                 (q.id === 'investmentHorizon' && answerLower.includes('קצר'))) {
@@ -1720,6 +1755,7 @@ function sendWhatsApp() {
                 answerLower === 'חודשי' ||
                 (q.id === 'usCitizen' && answerLower === 'כן') ||
                 (q.id === 'otherTaxResident' && answerLower === 'כן') ||
+                (q.id === 'publicFigure' && answerLower === 'כן') ||
                 (q.id === 'financialStatus' && answerLower.includes('לא מאוזן כלכלית')) ||
                 (q.id === 'taxRefundCheck' && answerLower === 'לא') ||
                 (q.id === 'investmentHorizon' && answerLower.includes('קצר'))) {
@@ -2120,6 +2156,7 @@ function qnSections() {
             lower === 'חודשי' ||
             (q.id === 'usCitizen' && lower === 'כן') ||
             (q.id === 'otherTaxResident' && lower === 'כן') ||
+                (q.id === 'publicFigure' && lower === 'כן') ||
             (q.id === 'financialStatus' && lower.includes('לא מאוזן כלכלית')) ||
             (q.id === 'taxRefundCheck' && lower === 'לא') ||
             (q.id === 'investmentHorizon' && lower.includes('קצר'));
@@ -2172,8 +2209,21 @@ async function qnAutoSend() {
     qnSetState(ok ? 'sent' : 'failed');
 }
 
+const QN_WA = 'https://wa.me/972528089808?text=';
+function qnSetWa(text) {
+    const a = document.getElementById('qnWa');
+    if (a) a.href = QN_WA + encodeURIComponent('שלום רועי, ' + text);
+}
+const qnShowQuestionBase = showQuestion;
+showQuestion = function (index) {
+    qnShowQuestionBase(index);
+    if (document.getElementById('summaryContainer').style.display === 'block') return; // the last answer opened the summary
+    const q = allQuestions[currentQuestionIndex];
+    qnSetWa(q ? `אני ממלא את השאלון ונתקעתי בשאלה: "${q.text}"` : 'אני ממלא את השאלון וצריך עזרה');
+};
+
 const qnShowSummaryBase = showSummary;
-showSummary = function () { qnShowSummaryBase(); qnAutoSend(); };
+showSummary = function () { qnShowSummaryBase(); qnAutoSend(); qnSetWa('סיימתי את השאלון ויש לי שאלה'); };
 const qnSendEmailBase = sendEmail;
 sendEmail = function () { qnManualSent = true; qnSendEmailBase(); };
 const qnSendWhatsAppBase = sendWhatsApp;
@@ -2184,8 +2234,11 @@ window.addEventListener('beforeunload', (e) => {
     const atEnd = summary && summary.style.display === 'block';
     const hero = document.getElementById('summaryHero');
     const notSent = hero && (hero.dataset.state === 'failed' || hero.dataset.state === 'sending');
-    if (atEnd && notSent && !qnManualSent) { e.preventDefault(); e.returnValue = ''; }
+    // also mid-questionnaire: a tap on a menu link would otherwise lose the answers
+    const midway = !atEnd && !qnDelivered && Object.keys(answers).length > 0;
+    if ((atEnd && notSent && !qnManualSent) || midway) { e.preventDefault(); e.returnValue = ''; }
 });
     </script>
+<script src="../js/site.js" defer></script>
 </body>
 </html>
