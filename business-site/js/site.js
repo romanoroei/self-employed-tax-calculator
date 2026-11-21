@@ -704,6 +704,9 @@ try {
     '/pension-check': ['pension', 'הגעתי מעמוד בדיקת התיק הפנסיוני ואני רוצה לבדוק את הפנסיה שלי.'],
     '/financial-planning': ['planning', 'הגעתי מעמוד התכנון הפיננסי ואשמח לתאם שיחה.'],
     '/givatayim': ['givatayim', 'הגעתי מהעמוד לתושבי גבעתיים והסביבה ואשמח לתאם שיחת התאמה.'],
+    '/management-fees': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
+    '/pension-fund-or-managers-insurance': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
+    '/old-pension-funds': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
     '/compass': ['compass', 'הגעתי מהמצפן הפיננסי באתר ואשמח לעבור איתך על מה שיצא לי.'],
   };
   const [id, text] = pages[page] || (page.startsWith('/magazine/') ? ['magazine', 'קראתי מאמר באתר ויש לי שאלה:'] : []);
