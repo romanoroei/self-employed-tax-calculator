@@ -1084,35 +1084,38 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 /* the market slide (phones only): the Tel Aviv index board behind the words */
 .hero-bg.hero-bg-board { object-position: 40% 50%; }
 
-/* "how can I help": a headline, one navy question tile with four answers, a gold strip to the contact form (Roei, 2026-11-21) */
+/* "how can I help": a two-line headline and four photo cards, each a door to its short questionnaire (Roei, 2026-11-21) */
 .paths { padding-block: calc(var(--section) * .5) 0; }
-.about + .paths { padding-top: var(--section); padding-bottom: calc(var(--section) * .5); }
-.paths-head { max-width: 860px; }
-.paths-head .h-1 { text-wrap: balance; }
-.paths-sub { margin-top: 14px; font-size: var(--t-4); line-height: 1.55; color: var(--ink-soft); }
-.path-board { margin-top: 32px; }
-.path-ask { padding: 30px 32px 32px; }
-.path-q { font-size: var(--t-2); font-weight: 800; color: var(--gold); }
-.path-list { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
-.path-list li { border-top: 1px solid rgba(201, 183, 114, .35); }
-.path-list li:nth-last-child(-n+2) { border-bottom: 1px solid rgba(201, 183, 114, .35); }
-.path { display: flex; align-items: center; gap: 18px; min-height: 92px; padding: 14px 0; color: var(--on-dark); text-decoration: none; }
-.path-img { flex: none; width: 76px; height: 64px; object-fit: cover; filter: grayscale(1) contrast(1.05); opacity: .8; transition: opacity 200ms ease, filter 200ms ease; }
-.path-label { flex: 1; font-size: var(--t-3); font-weight: 700; line-height: 1.3; }
-.path .arrow { color: var(--gold); font-size: 20px; transition: transform 200ms var(--ease-out); }
-.path:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-@media (hover: hover) and (pointer: fine) {
-  .path:hover .path-img { opacity: 1; filter: grayscale(.3) contrast(1.05); }
-  .path:hover .path-label { color: var(--gold-soft); }
-  .path:hover .arrow { transform: translateX(-6px); }
+.about:has(+ .paths) { padding-bottom: 40px; }
+.about + .paths { padding-top: 0; padding-bottom: calc(var(--section) * .5); }
+.paths-title span { display: block; }
+.paths-title-2 { color: var(--gold-deep); }
+.paths-ask { margin-top: 18px; font-size: var(--t-4); line-height: 1.55; color: var(--ink-soft); }
+.paths-ask strong { color: var(--ink); font-weight: 800; }
+.path-board { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.path {
+  height: 100%; display: flex; flex-direction: column; background: #fff; color: var(--ink); text-decoration: none;
+  box-shadow: 0 0 0 1px rgba(12, 33, 52, .1);
+  transition: transform 240ms var(--ease-out), box-shadow 240ms ease;
 }
-.path-call { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; padding: 24px 32px; text-decoration: none; }
-.path-call-text { display: flex; flex-direction: column; gap: 4px; }
-.path-call-text strong { font-size: var(--t-3); font-weight: 800; }
-.path-call-text span { font-size: var(--t-5); color: var(--navy); }
-.path-call-go { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 24px; background: var(--navy); color: var(--on-dark); font-weight: 700; }
-.path-call-go .arrow { transition: transform 200ms var(--ease-out); }
-@media (hover: hover) and (pointer: fine) { .path-call:hover .path-call-go .arrow { transform: translateX(-6px); } }
+.path-photo { display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--paper-2); }
+.path-photo img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.35) contrast(1.05); transition: transform 500ms var(--ease-out), filter 240ms ease; }
+.path-body { flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 20px 20px 18px; border-top: 4px solid var(--gold); }
+.path-title { font-size: var(--t-3); font-weight: 800; line-height: 1.25; }
+.path-text { font-size: var(--t-5); line-height: 1.55; color: var(--ink-soft); }
+.path-go { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 14px; }
+.path-go-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+.path-go-tag::before { content: ""; width: 10px; height: 10px; border: 2px solid var(--gold-deep); border-radius: 50%; }
+.path-go-cta { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; background: var(--navy); color: var(--on-dark); font-size: 15px; font-weight: 700; transition: background-color 200ms ease, color 200ms ease; }
+.path-go-cta .arrow { transition: transform 200ms var(--ease-out); }
+.path:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .path:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px rgba(12, 33, 52, .14), 0 18px 36px -18px rgba(12, 33, 52, .45); }
+  .path:hover .path-photo img { transform: scale(1.05); filter: none; }
+  .path:hover .path-go-cta { background: var(--gold); color: var(--navy-deep); }
+  .path:hover .path-go-cta .arrow { transform: translateX(-4px); }
+}
+@media (max-width: 1100px) { .path-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* the new order puts Wall Street right before the services, both on paper: one gap between them, not two */
 .street + .services { padding-top: 0; }
@@ -1132,17 +1135,19 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
   .hero .hero-yields { display: none; }
 
   .paths { padding-top: 40px; }
-  .paths-sub { margin-top: 10px; font-size: 15px; }
-  .path-board { margin-top: 20px; }
-  .path-ask { padding: 22px 18px 18px; }
-  .path-list { grid-template-columns: minmax(0, 1fr); margin-top: 14px; }
-  .path-list li:nth-last-child(-n+2) { border-bottom: 0; }
-  .path-list li:last-child { border-bottom: 1px solid rgba(201, 183, 114, .35); }
-  .path { min-height: 0; gap: 14px; padding: 12px 0; }
-  .path-img { width: 56px; height: 48px; }
-  .path-label { font-size: 16px; }
-  .path-call { padding: 20px 18px; }
-  .path-call-go { width: 100%; justify-content: center; }
+  .about:has(+ .paths) { padding-bottom: 28px; }
+  .paths-ask { margin-top: 12px; font-size: 15px; }
+  .path-board { margin-top: 18px; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  /* phones: the photo on the right, the words beside it */
+  .path { flex-direction: row; }
+  .path-photo { position: relative; flex: none; width: 32%; aspect-ratio: auto; }
+  .path-photo img { position: absolute; inset: 0; }
+  .path-body { padding: 14px 14px 12px; gap: 4px; border-top: 0; border-inline-start: 4px solid var(--gold); }
+  .path-title { font-size: 16px; }
+  .path-text { font-size: 13.5px; line-height: 1.45; }
+  .path-go { padding-top: 8px; }
+  .path-go-tag { font-size: 12px; }
+  .path-go-cta { min-height: 34px; padding: 0 12px; font-size: 14px; }
   .market-page { padding-bottom: 40px; }
 }
 
