@@ -291,6 +291,26 @@ if (sectionOf(location.hash)) {
 
 // Anonymous totals (functions/api/count.js). Only the label is sent; a failed count never blocks anything.
 const countClick = (label) => { try { navigator.sendBeacon('/api/count', label); } catch { /* counting is optional */ } };
+// Where a visit came from, among search and AI engines only (src:<engine>), counted once per visit. The engine is kept
+// for the visit so a contact counts again as lead:<engine>: is traffic from Google or ChatGPT turning into leads?
+// Only the engine name is kept or sent, never the address, the search or anything about the visitor.
+const ENGINES = [['chatgpt', /(^|\.)(chatgpt\.com|openai\.com)$/], ['perplexity', /(^|\.)perplexity\.ai$/], ['gemini', /^gemini\.google\.com$/],
+  ['copilot', /^copilot\.microsoft\.com$/], ['claude', /(^|\.)claude\.ai$/], ['google', /(^|\.)google\.[a-z.]+$/], ['bing', /(^|\.)bing\.com$/], ['duckduckgo', /(^|\.)duckduckgo\.com$/]];
+const visitEngine = (() => {
+  let engine = '';
+  try { engine = sessionStorage.getItem('src-engine') || ''; } catch { /* storage blocked */ }
+  if (engine) return engine;
+  let host = '';
+  try { host = document.referrer ? new URL(document.referrer).hostname : ''; } catch { /* no referrer */ }
+  const utm = (new URLSearchParams(location.search).get('utm_source') || '').toLowerCase();
+  if (host === location.hostname) return '';
+  const hit = ENGINES.find(([, re]) => re.test(host) || re.test(utm));
+  if (!hit) return '';
+  try { sessionStorage.setItem('src-engine', hit[0]); } catch { /* storage blocked */ }
+  countClick(`src:${hit[0]}`);
+  return hit[0];
+})();
+const countLead = () => { if (visitEngine) countClick(`lead:${visitEngine}`); };
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="tel:"], a[href^="mailto:"], a[href*="wa.me/"], a[data-count], a[data-subscribe], a[data-cta]');
   if (!a) return;
@@ -304,6 +324,7 @@ document.addEventListener('click', (e) => {
   else if (a.href.startsWith('tel:')) countClick('contact:phone');
   else if (a.href.startsWith('mailto:')) countClick('contact:email');
   else countClick('contact:whatsapp');
+  countLead();
 });
 
 // ===== Home page strip and the calendar's countdown, worked out from today's date =====
@@ -395,6 +416,7 @@ document.addEventListener('click', (e) => {
         status.className = 'form-status success';
         status.textContent = 'הפרטים נשלחו. אחזור אליכם בהקדם.';
         countClick('contact:form');
+        countLead();
       })
       .catch(() => { status.className = 'form-status error'; status.textContent = ERROR; })
       .finally(() => { button.disabled = false; button.textContent = 'לשליחת הפרטים'; });
@@ -682,6 +704,9 @@ try {
     '/pension-check': ['pension', 'הגעתי מעמוד בדיקת התיק הפנסיוני ואני רוצה לבדוק את הפנסיה שלי.'],
     '/financial-planning': ['planning', 'הגעתי מעמוד התכנון הפיננסי ואשמח לתאם שיחה.'],
     '/givatayim': ['givatayim', 'הגעתי מהעמוד לתושבי גבעתיים והסביבה ואשמח לתאם שיחת התאמה.'],
+    '/management-fees': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
+    '/pension-fund-or-managers-insurance': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
+    '/old-pension-funds': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
     '/compass': ['compass', 'הגעתי מהמצפן הפיננסי באתר ואשמח לעבור איתך על מה שיצא לי.'],
   };
   const [id, text] = pages[page] || (page.startsWith('/magazine/') ? ['magazine', 'קראתי מאמר באתר ויש לי שאלה:'] : []);
