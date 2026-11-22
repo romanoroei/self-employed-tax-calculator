@@ -1,5 +1,5 @@
 /* "בעמוד הזה": a table of contents for long guides, built by js/toc.js from the article's h2s.
-   Desktop: a column fixed beside the text. Narrow screens: a closed box after the opening that lists the sections. */
+   Desktop: a column fixed beside the text. Narrow screens: a closed box after the opening that sticks under the site bar. */
 .toc { --toc-w: 248px; font-size: var(--t-5); }
 .toc[hidden] { display: none; }
 .toc-list { list-style: none; margin: 0; padding: 0; }
