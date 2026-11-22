@@ -68,7 +68,7 @@
   .toc.is-open .toc-toggle svg { transform: rotate(180deg); }
   .toc-panel { display: none; padding: 0 16px 14px; max-height: calc(100svh - var(--bar) - 100px); overflow-y: auto; }
   .toc-open .wa-float, .toc-open .to-top, .toc-open .a11y, .toc-open .back-home { visibility: hidden !important; opacity: 0 !important; }
-  .has-toc [data-toc-target] { scroll-margin-top: 64px !important; }
+  .has-toc [data-toc-target] { scroll-margin-top: 84px !important; }
   .toc.is-open .toc-panel { display: block; }
   .toc-list a { padding-block: 10px; }
 }
