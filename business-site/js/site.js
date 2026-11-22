@@ -207,6 +207,8 @@
 
 // ===== Links to a section land with its heading right under the top bar =====
 // The sections have generous top padding, so the browser's own jump leaves the heading far down the screen.
+// On desktop the page is zoomed to 90% (site.css): layout offsets are page pixels, scrolling and the window are screen pixels.
+const pageZoom = () => document.body.getBoundingClientRect().width / document.body.offsetWidth || 1;
 function pageTop(element) {
   let y = 0;
   // layout offsets: a heading that has not faded in yet is still moved by a transform
@@ -228,7 +230,7 @@ function sectionTop(section) {
     // the form is the destination: center it in the space under the bar, with its words, when both fit.
     // When they do not (phones), the card starts just under the bar, its white edge showing above
     // "בואו נעשה סדר, יחד", and the form follows on scrolling.
-    const room = window.innerHeight - bar;
+    const room = window.innerHeight / pageZoom() - bar;
     const coupon = section.querySelector('.coupon');
     if (coupon.offsetHeight > room || window.innerWidth <= 700) return pageTop(coupon) - bar - 12;
     return pageTop(coupon) - bar - Math.max(16, (room - coupon.offsetHeight) / 2);
@@ -243,14 +245,14 @@ function goToPageTop() {
 }
 function goToSection(section, instant) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-still');
-  const top = sectionTop(section);
+  const top = sectionTop(section) * pageZoom();
   if (Math.abs(window.scrollY - top) < 2) return;
   window.scrollTo({ top, behavior: instant || still ? 'instant' : 'smooth' });
   if (instant || still) return;
   // images loading on the way can move the page; a visitor who scrolled away on their own stays where they are
   const settle = () => {
-    const off = window.scrollY - sectionTop(section);
-    if (Math.abs(off) > 2 && Math.abs(off) < 400) window.scrollTo({ top: sectionTop(section), behavior: 'instant' });
+    const off = window.scrollY - sectionTop(section) * pageZoom();
+    if (Math.abs(off) > 2 && Math.abs(off) < 400) window.scrollTo({ top: sectionTop(section) * pageZoom(), behavior: 'instant' });
   };
   if ('onscrollend' in window) window.addEventListener('scrollend', settle, { once: true });
   else setTimeout(settle, 1200);
