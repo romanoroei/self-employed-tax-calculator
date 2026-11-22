@@ -67,13 +67,14 @@ assert.equal([...sitemap.matchAll(/<loc>/g)].length,27+reviewPages.length,'Sitem
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check (the campaign page): not in the sitemap, linked from no page, no Google Analytics.
-// /check (the site questionnaire, same engine): linked only from the home page, one route per link (Roei, 2026-11)
+// /check (the site questionnaire, same engine): linked from the home page, and from the end button of the long-question guides (Roei, 22.11.2026), one route per link
 assert(!sitemap.includes('financial-check')&&!sitemap.includes('/check<')&&!sitemap.includes('/questionnaire'),'The questionnaires stay out of the sitemap');
 for(const file of published.filter(p=>p.endsWith('.html'))){const text=await readFile(file,'utf8');const rel=path.relative(root,file);
   assert(!/href="[^"]*financial-check/.test(text)||rel==='financial-check.html','No page links to the campaign page: '+rel);
   const links=[...text.matchAll(/href="(\/check[?"][^"]*)"/g)].map(m=>m[1]);
   if(rel==='index.html')assert(links.length===7&&links.every(l=>/^\/check\?need=(?:invest|pension|retire|selfemp|unsure)&amp;utm_source=home_(?:hero|paths)$/.test(l)),'The home page links to the routes of the site questionnaire (the hero question and the path cards)');
-  else assert(!links.length,'Only the home page links to the site questionnaire: '+rel);}
+  else if(/^(?:cash-in-bank-account|study-fund-withdraw|pension-monthly-amount)\.html$/.test(rel))assert(links.length===1&&/^\/check\?need=(?:invest|pension|retire)&amp;utm_source=guide_[a-z_]+$/.test(links[0]),'A long-question guide ends with one link to its questionnaire route: '+rel);
+  else assert(!links.length,'Only the home page and the long-question guides link to the site questionnaire: '+rel);}
 {const fc=await readFile(path.join(root,'financial-check.html'),'utf8');const fdir=path.join(root,'js','fcheck');const fjs=await Promise.all((await readdir(fdir)).map(n=>readFile(path.join(fdir,n),'utf8')));
 for(const t of [fc,...fjs])assert(!/googletagmanager|gtag\(|google-analytics/i.test(t),'No Google Analytics on the campaign page');
 assert(fc.includes('href="/privacy"')&&fc.includes('href="/accessibility"')&&fc.includes('רישיון סוכן פנסיוני 00117164'),'The campaign page needs the license and the policy links');
