@@ -14,7 +14,7 @@
   nav.className = 'toc';
   nav.setAttribute('aria-label', 'בעמוד הזה');
   nav.innerHTML =
-    '<button class="toc-toggle" type="button" aria-expanded="false"><small>בעמוד הזה</small><strong></strong>' +
+    '<button class="toc-toggle" type="button" aria-expanded="false"><small>בעמוד הזה</small><strong></strong><em class="toc-count">' + heads.length + ' נושאים</em>' +
     '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 5l5 5 5-5"/></svg></button>' +
     '<div class="toc-meter" aria-hidden="true"><span></span></div>' +
     '<div class="toc-panel"><p class="toc-label">בעמוד הזה</p><ol class="toc-list"></ol></div>';
@@ -46,7 +46,6 @@
   const setOpen = (open) => { nav.classList.toggle('is-open', open); document.body.classList.toggle('toc-open', open); toggle.setAttribute('aria-expanded', String(open)); };
   toggle.addEventListener('click', () => setOpen(!nav.classList.contains('is-open')));
   links.forEach((a) => a.addEventListener('click', () => setOpen(false)));
-  document.addEventListener('click', (e) => { if (!nav.contains(e.target)) setOpen(false); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
   const fill = meter.querySelector('span');
@@ -61,6 +60,7 @@
       current.textContent = heads[i].textContent.trim();
       if (wide.matches && nav.scrollHeight > nav.clientHeight) nav.scrollTop = links[i].offsetTop - nav.clientHeight / 2;
     }
+    if (!wide.matches) nav.classList.toggle('is-stuck', nav.getBoundingClientRect().top <= parseFloat(getComputedStyle(nav).top) + 1);
     const box = article.getBoundingClientRect();
     const done = Math.min(1, Math.max(0, (line - box.top) / (box.height - line)));
     fill.style.width = (done * 100).toFixed(1) + '%';
@@ -71,6 +71,14 @@
   let queued = false;
   const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; update(); }); } };
   addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', onScroll);
+  // desktop: line the column up with the "מדריכים וכלים" button in the site bar
+  const tools = document.querySelector('.bar-tools');
+  const align = () => {
+    const r = tools && tools.getBoundingClientRect();
+    if (r && r.width) document.body.style.setProperty('--toc-right', Math.round(document.documentElement.clientWidth - r.right) + 'px');
+    else document.body.style.removeProperty('--toc-right');
+  };
+  align();
+  addEventListener('resize', () => { align(); onScroll(); });
   update();
 })();
