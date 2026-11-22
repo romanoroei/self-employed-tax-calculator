@@ -1,11 +1,15 @@
-/* "בעמוד הזה": builds a table of contents from the article's h2s and marks the section being read. Styles: css/toc.css */
+/* "בעמוד הזה": builds a table of contents from the article's headings and marks the section being read. Styles: css/toc.css
+   Every guide, magazine article and market review loads it (scripts/check-site.mjs enforces this).
+   Headings: the h2s, plus a review's section h3s; a Q&A guide without h2s lists its questions. Pages with fewer than 4 stay without it. */
 (() => {
   const article = document.querySelector('main article');
   if (!article) return;
-  const heads = [...article.querySelectorAll('h2')].filter((h) => h.textContent.trim());
+  const pick = (sel) => [...article.querySelectorAll(sel)].filter((h) => h.textContent.trim() && !h.closest('.rv-related, .art-cta, [data-toc-skip]'));
+  let heads = pick('h2, .rv-sec h3');
+  if (heads.length < 4) heads = pick('h2, .faq-item summary h3');
   if (heads.length < 4) return;
 
-  heads.forEach((h, i) => { if (!h.id) h.id = 'part-' + (i + 1); });
+  heads.forEach((h, i) => { if (!h.id) h.id = 'part-' + (i + 1); h.setAttribute('data-toc-target', ''); });
   const nav = document.createElement('nav');
   nav.className = 'toc';
   nav.setAttribute('aria-label', 'בעמוד הזה');
@@ -17,6 +21,7 @@
   const list = nav.querySelector('.toc-list');
   const links = heads.map((h) => {
     const li = document.createElement('li');
+    if (h.closest('.rv-sec')) li.className = 'toc-sub';
     const a = document.createElement('a');
     a.href = '#' + h.id;
     a.textContent = h.textContent.trim();

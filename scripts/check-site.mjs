@@ -37,6 +37,7 @@ for(const file of published){
   else assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
   if(/^(?:self-employed|savings-policy|investment-fund|severance|hachshara-policy|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
+  if(/^(?:self-employed|savings-policy|investment-fund|severance|hachshara-policy|management-fees|old-pension-funds|pension-fund-or-managers-insurance|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(/href="(?:\.\.\/|\/)?css\/toc\.css[?"]/.test(text)&&/src="(?:\.\.\/|\/)?js\/toc\.js[?"]/.test(text),'Every guide, magazine article and market review needs the table of contents (css/toc.css + js/toc.js): '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');

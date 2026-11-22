@@ -10,6 +10,8 @@
 }
 .toc-list a[aria-current="true"] { color: var(--ink); font-weight: 700; border-inline-start: 4px solid var(--gold); padding-inline-start: 14px; }
 @media (hover: hover) and (pointer: fine) { .toc-list a:hover { color: var(--ink); } }
+.toc-sub a { padding-inline-start: 30px; font-size: 14px; }
+.toc-sub a[aria-current="true"] { padding-inline-start: 28px; }
 .toc-label { margin: 0 0 12px; font-size: 13px; font-weight: 800; letter-spacing: .02em; color: var(--gold-deep); }
 .toc-meter { height: 2px; background: rgba(12, 33, 52, .12); margin-top: 16px; }
 .toc-meter span { display: block; height: 100%; width: 0; background: var(--gold); }
@@ -64,6 +66,6 @@
   .toc.is-open .toc-panel { display: block; }
   .toc-list a { padding-block: 11px; }
   .toc-open .wa-float, .toc-open .to-top, .toc-open .a11y, .toc-open .back-home { visibility: hidden !important; opacity: 0 !important; }
-  .has-toc .prose h2, .has-toc .art-figure-cap { scroll-margin-top: calc(var(--bar) + 70px); }
+  .has-toc [data-toc-target] { scroll-margin-top: calc(var(--bar) + 70px); }
 }
 @media (prefers-reduced-motion: reduce) { .toc, .toc-toggle svg { transition: none !important; } }
