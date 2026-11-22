@@ -1386,7 +1386,7 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
   .market-page .ev-prev, .market-page .ev-table thead th:last-child { padding-inline-start: 12px; }
   /* 4. the policy slide: a slimmer label and button, so the note sits just above the slide arrows */
   .hero-slide-policy .hero-kicker { margin-bottom: 6px; padding: 1px 8px; font-size: 12.5px; }
-  .hero-slide-policy .policy-fit a { padding: 8px 14px; }
+  .hero-slide-policy .policy-fit a, .hero-slide-fund .policy-fit a { padding: 8px 14px; }
 }
 
 /* ===== /market-data, Roei (2026-11-13): smaller table type, a smaller WhatsApp on computers, each tab its own height ===== */
