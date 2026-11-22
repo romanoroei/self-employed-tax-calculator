@@ -15,33 +15,34 @@
 .toc-meter span { display: block; height: 100%; width: 0; background: var(--gold); }
 .toc-toggle { display: none; }
 
-/* desktop: beside the text, in the empty side of the column */
+/* desktop: a column on the right, the text moves beside it */
 @media (min-width: 1180px) {
-  .has-toc article .wrap { padding-inline-end: calc(var(--margin) + var(--toc-w, 248px) + 56px); }
+  .has-toc article .wrap { padding-inline-start: calc(var(--margin) + var(--toc-w, 248px) + 56px); }
   .toc {
     position: fixed; z-index: 40; top: calc(var(--bar) + 40px);
-    left: max(var(--margin), calc((100vw - var(--max)) / 2));
+    right: max(var(--margin), calc((100vw - var(--max)) / 2));
     width: var(--toc-w); max-height: calc(100vh - var(--bar) - 80px); overflow-y: auto;
-    background: var(--paper); padding: 22px 22px 20px; border-top: 3px solid var(--navy);
+    background: var(--paper); padding: 20px 0 20px 16px;
     opacity: 0; visibility: hidden; transform: translateY(6px);
     transition: opacity 220ms var(--ease-out), transform 220ms var(--ease-out), visibility 0s linear 220ms;
   }
   .toc.is-shown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 }
 
-/* narrow screens: a bar under the site bar, showing where you are */
+/* narrow screens: a light gold bar under the navy site bar, showing where you are */
 @media (max-width: 1179px) {
-  .toc { position: sticky; top: var(--bar); z-index: 45; background: var(--navy); color: var(--on-dark); margin-bottom: 8px; }
+  .toc { position: sticky; top: var(--bar); z-index: 45; background: var(--gold-soft); color: var(--ink); margin-bottom: 8px; border-bottom: 1px solid rgba(12, 33, 52, .18); }
   .toc-label { display: none; }
   .toc-toggle {
     display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 var(--margin);
     background: none; border: 0; color: inherit; font: inherit; text-align: start; cursor: pointer;
   }
-  .toc-toggle small { flex: none; font-size: 13px; font-weight: 800; color: var(--gold); }
+  .toc-toggle small { flex: none; font-size: 13px; font-weight: 800; color: var(--ink-soft); }
   .toc-toggle strong { flex: 1; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .toc-toggle svg { flex: none; width: 14px; height: 14px; stroke: var(--gold); fill: none; stroke-width: 2; transition: transform 200ms ease; }
+  .toc-toggle svg { flex: none; width: 14px; height: 14px; stroke: var(--ink); fill: none; stroke-width: 2; transition: transform 200ms ease; }
   .toc.is-open .toc-toggle svg { transform: rotate(180deg); }
-  .toc-meter { margin: 0; background: rgba(241, 241, 238, .14); }
+  .toc-meter { margin: 0; background: rgba(12, 33, 52, .12); }
+  .toc-meter span { background: var(--navy); }
   .toc-panel {
     display: none; position: absolute; inset-inline: 0; top: 100%;
     background: var(--paper); color: var(--ink); padding: 10px var(--margin) 18px;
