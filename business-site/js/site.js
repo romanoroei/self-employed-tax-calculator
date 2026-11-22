@@ -721,6 +721,9 @@ try {
     '/management-fees': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
     '/pension-fund-or-managers-insurance': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
     '/old-pension-funds': ['guide', 'קראתי את המדריך באתר ויש לי שאלה:'],
+    '/cash-in-bank-account': ['invest', 'קראתי באתר על כסף פנוי בעו״ש ואני רוצה לבדוק מה לעשות עם הכסף שלי.'],
+    '/study-fund-withdraw': ['study', 'קראתי באתר על קרן השתלמות נזילה ואני רוצה לבדוק את הקרן שלי.'],
+    '/pension-monthly-amount': ['pension', 'קראתי באתר על חישוב הקצבה ואני רוצה לבדוק כמה פנסיה אקבל.'],
     '/compass': ['compass', 'הגעתי מהמצפן הפיננסי באתר ואשמח לעבור איתך על מה שיצא לי.'],
   };
   const [id, text] = pages[page] || (page.startsWith('/magazine/') ? ['magazine', 'קראתי מאמר באתר ויש לי שאלה:'] : []);

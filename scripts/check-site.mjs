@@ -37,7 +37,7 @@ for(const file of published){
   else assert(!/noindex|http-equiv="refresh"/.test(text),'Production page must not be hidden or redirected: '+rel);
   assert(!/0011716(?!\d)/.test(text),'Outdated license number: '+rel);
   if(/^(?:self-employed|savings-policy|investment-fund|severance|hachshara-policy|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(text.includes('class="art-share"')&&text.includes(encodeURIComponent(expected)),'Article needs a WhatsApp share of its own address: '+rel);
-  if(/^(?:self-employed|savings-policy|investment-fund|severance|hachshara-policy|management-fees|old-pension-funds|pension-fund-or-managers-insurance|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(/href="(?:\.\.\/|\/)?css\/toc\.css[?"]/.test(text)&&/src="(?:\.\.\/|\/)?js\/toc\.js[?"]/.test(text),'Every guide, magazine article and market review needs the table of contents (css/toc.css + js/toc.js): '+rel);
+  if(/^(?:self-employed|savings-policy|investment-fund|severance|hachshara-policy|management-fees|old-pension-funds|pension-fund-or-managers-insurance|cash-in-bank-account|study-fund-withdraw|pension-monthly-amount|magazine\/[^/]+|market-reviews\/[^/]+)\.html$/.test(rel))assert(/href="(?:\.\.\/|\/)?css\/toc\.css[?"]/.test(text)&&/src="(?:\.\.\/|\/)?js\/toc\.js[?"]/.test(text),'Every guide, magazine article and market review needs the table of contents (css/toc.css + js/toc.js): '+rel);
  }
 }
 const home=await readFile(path.join(root,'index.html'),'utf8');
@@ -63,17 +63,18 @@ const robots=await readFile(path.join(root,'robots.txt'),'utf8');
 assert(robots.includes('Allow: /')&&!robots.includes('Disallow: /'),'Production crawling blocked');
 const sitemap=await readFile(path.join(root,'sitemap.xml'),'utf8');
 const reviewPages=(await readdir(path.join(root,'market-reviews'))).filter(n=>n.endsWith('.html'));
-assert.equal([...sitemap.matchAll(/<loc>/g)].length,24+reviewPages.length,'Sitemap must include all twenty-four canonical pages and every published review');
+assert.equal([...sitemap.matchAll(/<loc>/g)].length,27+reviewPages.length,'Sitemap must include all twenty-seven canonical pages and every published review');
 for(const p of reviewPages)assert(sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews/'+p.replace(/\.html$/,'')+'</loc>'),'Review missing from the sitemap: '+p);
 assert(!sitemap.includes('<loc>https://romanoinvest.co.il/market-reviews</loc>'),'The reviews hub stays out of the sitemap');
 // /financial-check (the campaign page): not in the sitemap, linked from no page, no Google Analytics.
-// /check (the site questionnaire, same engine): linked only from the home page, one route per link (Roei, 2026-11)
+// /check (the site questionnaire, same engine): linked from the home page, and from the end button of the long-question guides (Roei, 22.11.2026), one route per link
 assert(!sitemap.includes('financial-check')&&!sitemap.includes('/check<')&&!sitemap.includes('/questionnaire'),'The questionnaires stay out of the sitemap');
 for(const file of published.filter(p=>p.endsWith('.html'))){const text=await readFile(file,'utf8');const rel=path.relative(root,file);
   assert(!/href="[^"]*financial-check/.test(text)||rel==='financial-check.html','No page links to the campaign page: '+rel);
   const links=[...text.matchAll(/href="(\/check[?"][^"]*)"/g)].map(m=>m[1]);
   if(rel==='index.html')assert(links.length===7&&links.every(l=>/^\/check\?need=(?:invest|pension|retire|selfemp|unsure)&amp;utm_source=home_(?:hero|paths)$/.test(l)),'The home page links to the routes of the site questionnaire (the hero question and the path cards)');
-  else assert(!links.length,'Only the home page links to the site questionnaire: '+rel);}
+  else if(/^(?:cash-in-bank-account|study-fund-withdraw|pension-monthly-amount)\.html$/.test(rel))assert(links.length===1&&/^\/check\?need=(?:invest|pension|retire)&amp;utm_source=guide_[a-z_]+$/.test(links[0]),'A long-question guide ends with one link to its questionnaire route: '+rel);
+  else assert(!links.length,'Only the home page and the long-question guides link to the site questionnaire: '+rel);}
 {const fc=await readFile(path.join(root,'financial-check.html'),'utf8');const fdir=path.join(root,'js','fcheck');const fjs=await Promise.all((await readdir(fdir)).map(n=>readFile(path.join(fdir,n),'utf8')));
 for(const t of [fc,...fjs])assert(!/googletagmanager|gtag\(|google-analytics/i.test(t),'No Google Analytics on the campaign page');
 assert(fc.includes('href="/privacy"')&&fc.includes('href="/accessibility"')&&fc.includes('רישיון סוכן פנסיוני 00117164'),'The campaign page needs the license and the policy links');
@@ -97,7 +98,7 @@ assert(order.every((p,i)=>p>0&&(i===0||p>order[i-1])),'Compass scripts missing o
 const knowledge=await readFile(path.join(root,'knowledge.html'),'utf8');
 assert(home.includes('href="/compass"')&&knowledge.includes('href="/compass"'),'The compass must be linked from the home page and the knowledge page');
 // every page with the top bar opens the knowledge page from the "ארביטראז' של ידע" tile
-for(const page of ['index.html','about.html','pension-check.html','financial-planning.html','givatayim.html','management-fees.html','pension-fund-or-managers-insurance.html','old-pension-funds.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
+for(const page of ['index.html','about.html','pension-check.html','financial-planning.html','givatayim.html','management-fees.html','pension-fund-or-managers-insurance.html','old-pension-funds.html','cash-in-bank-account.html','study-fund-withdraw.html','pension-monthly-amount.html','market-data.html','compass.html','study-fund.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','knowledge.html','magazine/financial-calendar.html','magazine/tides-and-waves.html','market-reviews.html',...reviewPages.map(p=>'market-reviews/'+p)])assert((await readFile(path.join(root,page),'utf8')).includes('class="bar-tools-toggle" href="/knowledge"'),'The knowledge tile is missing on '+page);
 assert(cjs.config.includes("formspreeUrl: 'https://formspree.io/f/mvzjeykj'"),'Compass must use the agreed Formspree form');
 // the home form and the compass post to our own function, which forwards to the same Formspree form and Sheets script as the questionnaires
 {const contactFn=await readFile(path.join(root,'..','functions','api','contact.js'),'utf8');const leadFn=await readFile(path.join(root,'..','functions','api','lead.js'),'utf8');
