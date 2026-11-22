@@ -39,6 +39,7 @@ ${preview ? `<base href="${esc(preview)}">\n<meta name="robots" content="noindex
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${root}css/site.css">
 <link rel="stylesheet" href="${root}css/article.css">
+<link rel="stylesheet" href="${root}css/toc.css">
 <link rel="stylesheet" href="${root}css/reviews.css">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="${root}css/consent.css">
@@ -91,6 +92,7 @@ function foot(root, page) {
 </footer>
 
 <script src="${root}js/site.js" defer></script>
+<script src="${root}js/toc.js" defer></script>
 <script src="${root}js/consent.js" data-root="${root}" defer></script>
 <script src="${root}js/year-end.js" defer></script>
 <script src="${root}js/reviews.js" data-review-page="${esc(page)}" defer></script>
