@@ -1557,3 +1557,8 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 .hero-tagline span { display: block; text-wrap: balance; }
 .hero-tagline-2 { color: var(--gold); }
 @media (max-width: 700px) { .hero-tagline { display: none; } }
+/* on computers the planning line leads the slide, so the question itself is not shown there (Roei, 2026-11-22) */
+@media (min-width: 701px) {
+  .hero-ask-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .hero-main h1.hero-ask { margin: 0; }
+}
