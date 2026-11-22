@@ -472,7 +472,7 @@ document.addEventListener('click', (e) => {
   const slides = [...hero.querySelectorAll('[data-slide]')];
   if (slides.length < 2) return;
 
-  const INTERVAL = 4000;
+  const INTERVAL = 3000;
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
