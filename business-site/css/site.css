@@ -1572,9 +1572,9 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
   .hero-need:hover { background: rgba(201, 183, 114, .14); color: var(--on-dark); padding-inline-start: 10px; }
   .hero-need:hover .arrow { background: var(--gold-soft); color: var(--navy-deep); transform: translateX(-6px); }
 }
-/* 2. once, when the page opens: the arrows nudge left one after another, as an invitation to click */
+/* 2. every time the first slide shows: the arrows nudge left one after another, as an invitation to click */
 @media (prefers-reduced-motion: no-preference) {
-  .hero-slide:first-child .hero-needs li .arrow { animation: need-nudge 900ms var(--ease-out) both; animation-delay: calc(900ms + var(--i, 0) * 140ms); }
+  .hero-slide:first-child:not([hidden]) .hero-needs li .arrow { animation: need-nudge 900ms var(--ease-out) both; animation-delay: calc(900ms + var(--i, 0) * 140ms); }
   .hero-needs li:nth-child(2) .arrow { --i: 1; }
   .hero-needs li:nth-child(3) .arrow { --i: 2; }
   @keyframes need-nudge { 0%, 100% { transform: none; } 35% { transform: translateX(-8px); } 60% { transform: translateX(2px); } }

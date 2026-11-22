@@ -473,6 +473,7 @@ document.addEventListener('click', (e) => {
   if (slides.length < 2) return;
 
   const INTERVAL = 3000;
+  const FIRST_INTERVAL = 3500; // the first slide stays a little longer (Roei, 2026-11-22)
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
@@ -555,7 +556,7 @@ document.addEventListener('click', (e) => {
   function schedule() {
     clearTimeout(timer);
     // each slide stands still for the whole interval, and the move (650ms) comes on top (Roei)
-    if (!paused && !held && !document.hidden) timer = setTimeout(() => { step(1); schedule(); }, INTERVAL + (still.matches ? 0 : 650));
+    if (!paused && !held && !document.hidden) timer = setTimeout(() => { step(1); schedule(); }, (current === 0 ? FIRST_INTERVAL : INTERVAL) + (still.matches ? 0 : 650));
   }
 
   nav.addEventListener('click', (e) => {
