@@ -60,6 +60,7 @@
       current.textContent = heads[i].textContent.trim();
       if (wide.matches && nav.scrollHeight > nav.clientHeight) nav.scrollTop = links[i].offsetTop - nav.clientHeight / 2;
     }
+    if (!wide.matches) nav.classList.toggle('is-stuck', nav.getBoundingClientRect().top <= parseFloat(getComputedStyle(nav).top) + 1);
     const box = article.getBoundingClientRect();
     const done = Math.min(1, Math.max(0, (line - box.top) / (box.height - line)));
     fill.style.width = (done * 100).toFixed(1) + '%';

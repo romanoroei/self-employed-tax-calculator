@@ -46,9 +46,17 @@
   }
 }
 
-/* narrow screens: a closed box under the article's opening, opened to jump to a section */
+/* narrow screens: a closed box under the article's opening that sticks under the site bar while scrolling; once stuck it names the current section */
 @media (max-width: 1179px) {
-  .toc { margin: 0 var(--margin) 40px; border: 1px solid rgba(12, 33, 52, .2); border-inline-start: 4px solid var(--gold); background: var(--paper); }
+  .toc {
+    position: sticky; top: calc(var(--bar) + 8px); z-index: 45;
+    margin: 0 var(--margin) 40px; border: 1px solid rgba(12, 33, 52, .2); border-inline-start: 4px solid var(--gold); background: var(--paper);
+    transition: box-shadow 200ms ease;
+  }
+  .toc.is-stuck { box-shadow: 0 10px 24px -10px rgba(8, 24, 38, .35); }
+  .toc.is-stuck .toc-count { display: none; }
+  .toc.is-stuck .toc-toggle strong { display: block; flex: 1; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .toc.is-stuck .toc-toggle small { flex: none; font-size: 14px; color: var(--ink-soft); }
   .toc-label, .toc-meter, .toc-toggle strong { display: none; }
   .toc-toggle {
     display: flex; align-items: center; gap: 10px; width: 100%; min-height: 54px; padding: 0 16px;
@@ -58,7 +66,9 @@
   .toc-count { flex: none; font-style: normal; font-size: 14px; color: var(--ink-soft); }
   .toc-toggle svg { flex: none; width: 14px; height: 14px; stroke: var(--ink); fill: none; stroke-width: 2; transition: transform 200ms ease; }
   .toc.is-open .toc-toggle svg { transform: rotate(180deg); }
-  .toc-panel { display: none; padding: 0 16px 14px; }
+  .toc-panel { display: none; padding: 0 16px 14px; max-height: calc(100svh - var(--bar) - 100px); overflow-y: auto; }
+  .toc-open .wa-float, .toc-open .to-top, .toc-open .a11y, .toc-open .back-home { visibility: hidden !important; opacity: 0 !important; }
+  .has-toc [data-toc-target] { scroll-margin-top: 64px !important; }
   .toc.is-open .toc-panel { display: block; }
   .toc-list a { padding-block: 10px; }
 }
