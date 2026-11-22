@@ -472,8 +472,8 @@ document.addEventListener('click', (e) => {
   const slides = [...hero.querySelectorAll('[data-slide]')];
   if (slides.length < 2) return;
 
-  const INTERVAL = 3000;
-  const FIRST_INTERVAL = 3500; // the first slide stays a little longer (Roei, 2026-11-22)
+  const INTERVAL = 3500;
+  const FIRST_INTERVAL = 4000; // the first slide stays a little longer (Roei, 2026-11-22)
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   let current = 0;
   let timer = 0;
