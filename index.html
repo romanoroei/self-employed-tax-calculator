@@ -31,6 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) { body { zoom: .9; } } /* desktop at 90% size, like browser zoom 90% */
 /* Self-employed tax calculator, in the romanoinvest.co.il language: tiles on paper with narrow gaps,
    navy, slate, paper and gold, square corners, Heebo, grey photos. One stylesheet; the script only
    toggles hidden, aria-pressed, aria-invalid, .selected-plan, .has-calculation and .animate. */
@@ -1189,7 +1190,9 @@ function submitCalculation(event,navigate=true){
     const bar=document.querySelector('.topbar')?.getBoundingClientRect().bottom ?? 68;
     // measured from the layout box, so the 14px rise animation doesn't shift the target
     let node=el('results'),offset=0;while(node){offset+=node.offsetTop;node=node.offsetParent;}
-    const top=offset-bar-28;
+    // desktop pages are zoomed to 90%: offsets are page pixels, scrolling is screen pixels
+    const zoom=document.body.getBoundingClientRect().width/document.body.offsetWidth||1;
+    const top=offset*zoom-bar-28;
     window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 }

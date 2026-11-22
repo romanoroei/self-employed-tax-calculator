@@ -72,7 +72,7 @@ function start() {
   const show = (name) => { for (const [k, el] of Object.entries(screens)) el.hidden = k !== name; };
   function scrollToTop(el) {
     const bar = document.querySelector('.topbar');
-    const y = el.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 12;
+    const y = el.getBoundingClientRect().top + window.scrollY - (bar ? bar.getBoundingClientRect().height : 0) - 12;
     if (window.scrollY > y || y - window.scrollY > window.innerHeight * 0.35) window.scrollTo({ top: Math.max(0, y), behavior: still() ? 'instant' : 'smooth' });
   }
   // a visit that ends on a question: counted once per question, so the drop-off point shows in the totals

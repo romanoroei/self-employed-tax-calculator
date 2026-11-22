@@ -75,7 +75,9 @@
   const tools = document.querySelector('.bar-tools');
   const align = () => {
     const r = tools && tools.getBoundingClientRect();
-    if (r && r.width) document.body.style.setProperty('--toc-right', Math.round(document.documentElement.clientWidth - r.right) + 'px');
+    // on desktop the page is zoomed to 90% (site.css): measured pixels are on-screen ones, the CSS value is in page pixels
+    const z = document.body.getBoundingClientRect().width / document.body.offsetWidth || 1;
+    if (r && r.width) document.body.style.setProperty('--toc-right', Math.round((document.documentElement.clientWidth - r.right) / z) + 'px');
     else document.body.style.removeProperty('--toc-right');
   };
   align();

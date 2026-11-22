@@ -112,7 +112,7 @@
       <button type="button" data-consent="essential">הכרחיות בלבד</button>
     </div>`;
   const updateNoticeOffset = () => {
-    html.style.setProperty('--cookie-notice-height', `${Math.ceil(banner.getBoundingClientRect().height)}px`);
+    html.style.setProperty('--cookie-notice-height', `${Math.ceil(banner.getBoundingClientRect().height / (document.body ? (document.body.getBoundingClientRect().width / document.body.offsetWidth || 1) : 1))}px`);
   };
   const noticeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(updateNoticeOffset) : null;
   const showBanner = () => {

@@ -36,3 +36,9 @@ a { color: inherit; text-underline-offset: .22em; }
 @media (max-width: 900px) {
   .legal-page { margin-inline-start: 0; padding-top: 40px; }
 }
+
+/* Desktop: the whole page at 90% of its size, as if the browser were zoomed to 90%. Phones and tablets keep full size.
+   On body (not html), so the accessibility "larger text" zoom on html still multiplies on top. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  body { zoom: .9; }
+}

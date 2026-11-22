@@ -137,7 +137,8 @@
       const { lines, step } = options;
       const { start, span, right } = geometry;
       const box = svg.getBoundingClientRect();
-      const share = Math.min(1, Math.max(0, (clientX - box.left - PAD.left) / (right - PAD.left)));
+      // screen pixels to the chart's own (the page is zoomed to 90% on desktop)
+      const share = Math.min(1, Math.max(0, ((clientX - box.left) * svg.clientWidth / (box.width || 1) - PAD.left) / (right - PAD.left)));
       let t = start + span * share;
       // a line chart snaps to its nearest point; a step chart keeps the exact day
       if (!step) {
@@ -213,7 +214,8 @@
     // an end of the measured period under the pointer, to drag it wider or narrower
     function endAt(clientX, pointerType) {
       if (!range || !geometry) return -1;
-      const px = clientX - svg.getBoundingClientRect().left;
+      const box = svg.getBoundingClientRect();
+      const px = (clientX - box.left) * svg.clientWidth / (box.width || 1);
       const gaps = range.map((s) => Math.abs(geometry.x(s.t) - px));
       const n = gaps[0] <= gaps[1] ? 0 : 1;
       return gaps[n] <= (pointerType === 'mouse' ? 10 : 22) ? n : -1;
