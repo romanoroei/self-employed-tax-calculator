@@ -1550,3 +1550,15 @@ main:has(> .hero) { --section: clamp(52px, 5.5vw, 84px); }
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
   body { zoom: .9; }
 }
+
+/* ===== Roei, 2026-11-22: the planning line moves from the paths section to the first slide, on computers only ===== */
+.paths-ask:first-child { margin-top: 0; }
+.hero-tagline { margin-bottom: 22px; font-size: clamp(24px, 2.6vw, 38px); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; color: var(--on-dark); }
+.hero-tagline span { display: block; text-wrap: balance; }
+.hero-tagline-2 { color: var(--gold); }
+@media (max-width: 700px) { .hero-tagline { display: none; } }
+/* on computers the planning line leads the slide, so the question itself is not shown there (Roei, 2026-11-22) */
+@media (min-width: 701px) {
+  .hero-ask-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .hero-main h1.hero-ask { margin: 0; }
+}
