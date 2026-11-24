@@ -280,9 +280,12 @@ export function renderPolicySlide({ period, views }) {
     const managed = manager ? `<img class="policy-mgr" src="assets/logos/${manager[0]}" width="${manager[1]}" height="${manager[2]}" alt="בניהול ${escape(r.manager)}" loading="lazy">` : (r.manager ? `<b>${escape(r.manager)}</b>` : '');
     return `<li><span class="policy-logo">${mark}${managed}</span><span class="policy-bar" style="--w: ${(r.y7 / max).toFixed(3)}"><span>${percent(r.y7)}</span></span></li>`;
   }).join('');
-  return `<p class="policy-head">מסלול כללי (סיכון בינוני) · תשואה מצטברת ל־7 שנים</p>`
-    + `<ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
-    + `<p class="policy-note">נכון ל${periodLabel(period)}, לפי נתוני משרד האוצר, לפני דמי ניהול. ממוצע הקבוצה ${percent(average.y7)}. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
+  // the group average as a quiet dashed line across the bars: all five leaders clear it (Roei, 2026-11-24)
+  const avg = Math.min(1, average.y7 / max).toFixed(3);
+  return `<p class="policy-head"><b>תשואה מצטברת ל־7 שנים</b><span>פוליסות חיסכון · מסלול כללי (סיכון בינוני)</span></p>`
+    + `<div class="policy-chart"><ol class="policy-top" aria-label="חמש החברות שהובילו בפוליסות החיסכון, מסלול כללי, תשואה מצטברת ל־7 שנים">${rows}</ol>`
+    + `<span class="policy-avg" style="--a: ${avg}" aria-hidden="true"><span>ממוצע ${percent(average.y7)}</span></span></div>`
+    + `<p class="policy-note">משרד האוצר, ${periodLabel(period)} · לפני דמי ניהול. תשואות עבר אינן מבטיחות תשואות בעתיד.</p>`;
 }
 
 // The same slide on phones: one line of proof (the range of the five leaders over three years, whole percents, rounded down) and its note.
