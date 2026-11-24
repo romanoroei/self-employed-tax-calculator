@@ -584,7 +584,9 @@ document.addEventListener('click', (e) => {
   // a swipe on a touch screen: pulling to the right brings the next slide in from the left
   let startX = null;
   let startY = 0;
-  hero.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
+  // a finger on the tile is a phone visitor reading it: hold the slide there, as a resting mouse does on a computer,
+  // so the three needs do not slide away under the finger (Roei, 2026-11-24). Arrows, dots and swipes still move it.
+  hero.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; held = true; schedule(); }, { passive: true });
   hero.addEventListener('touchend', (e) => {
     if (startX === null) return;
     const dx = e.changedTouches[0].clientX - startX;
