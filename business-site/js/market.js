@@ -659,7 +659,7 @@
     ['us', '2026-09-16'], ['eu', '2026-09-10'], ['uk', '2026-09-17'],
     ['il', '2026-10-21'], ['us', '2026-10-28'], ['eu', '2026-10-29'], ['uk', '2026-11-05'],
     ['il', '2026-11-23'], ['us', '2026-12-09'], ['eu', '2026-12-17'], ['uk', '2026-12-17'],
-    ['us', '2027-01-27'], ['eu', '2027-02-04'], ['uk', '2027-02-04'],
+    ['il', '2027-01-04'], ['us', '2027-01-27'], ['eu', '2027-02-04'], ['uk', '2027-02-04'],
   ];
   const SHORT_MONTHS = ['ינו׳', 'פבר׳', 'מרץ', 'אפר׳', 'מאי', 'יוני', 'יולי', 'אוג׳', 'ספט׳', 'אוק׳', 'נוב׳', 'דצמ׳'];
   // small flags drawn here, so nothing is fetched from elsewhere (Windows shows no flag emoji)
@@ -687,14 +687,24 @@
     return { date: iso(d), time: d.getDay() === 5 ? '14:00' : '18:30' };
   }
   const rateText = (id, v) => (id === 'us' ? `${number(v - 0.25, 2)}–${number(v, 2)}%` : `${number(v, 2)}%`);
-  // A decision's rate and the one before it: a change within a week of the decision day (the new rate
-  // takes effect a day or two later), or else the rate that held, once the data reach past those days.
-  function decisionFigures(item, date) {
+  // A decision's rate and the one before it: a change within a week of the decision day, or else the rate
+  // that held, once the data reach the day a new rate would have taken effect. That day differs by bank:
+  // the Bank of Israel three days later (a Monday decision, a Thursday rate), the Fed the next day, the
+  // Bank of England the same day, the ECB the following Wednesday (six days after its Thursday meeting).
+  // For the Bank of Israel there is no need to wait: /api/rates also passes on the rate the Bank announced
+  // (item.decided), so its row fills the evening of the decision (Roei asked, after 23.11.2026 stayed blank).
+  const TAKES_EFFECT = { il: 3, us: 1, eu: 6, uk: 0 };
+  function decisionFigures(id, item, date) {
     if (!item) return null;
     const history = item.history;
     const i = history.findIndex(([d]) => d >= addDays(date, -1) && d <= addDays(date, 7));
     if (i > 0) return { actual: history[i][1], previous: history[i - 1][1] };
-    if (!item.asOf || item.asOf < addDays(date, 4)) return null;
+    const decided = item.decided;
+    if (decided && decided.date >= date && decided.date <= addDays(date, 1) && Number.isFinite(decided.rate)) {
+      const before = history.filter(([d]) => d <= date).pop();
+      if (before) return { actual: decided.rate, previous: before[1] };
+    }
+    if (!item.asOf || item.asOf < addDays(date, TAKES_EFFECT[id] ?? 4)) return null;
     const held = history.filter(([d]) => d <= date).pop();
     return held ? { actual: held[1], previous: held[1] } : null;
   }
@@ -723,7 +733,10 @@
     const cpiOk = cpi && Number.isFinite(cpi.percent);
 
     // coming up: the scheduled decisions and the next indices, each beside the figure it will replace
-    const coming = DECISIONS.filter(([, date]) => date >= today).map(([id, date]) => ({ id, date, title: BANKS[id], previous: current(item(id)) === undefined ? '' : rateText(id, current(item(id))) }));
+    // the Bank of Israel's next decision day, as the Bank itself states it, when the list below lacks it
+    const nextIl = item('il')?.decided?.next;
+    const decisions = nextIl && !DECISIONS.some(([id, d]) => id === 'il' && d === nextIl) ? [...DECISIONS, ['il', nextIl]] : DECISIONS;
+    const coming = decisions.filter(([, date]) => date >= today).map(([id, date]) => ({ id, date, title: BANKS[id], previous: current(item(id)) === undefined ? '' : rateText(id, current(item(id))) }));
     const now = new Date();
     for (let k = 0; k < 3; k += 1) {
       const month = new Date(now.getFullYear(), now.getMonth() + k, 1);
@@ -738,7 +751,7 @@
     const lately = [];
     for (const id of Object.keys(BANKS)) {
       for (const last of DECISIONS.filter(([bank, date]) => bank === id && date < today).slice(FULL_PAGE ? -2 : -1)) {
-        const f = decisionFigures(item(id), last[1]);
+        const f = decisionFigures(id, item(id), last[1]);
         lately.push({ id, date: last[1], title: BANKS[id], actual: f ? rateText(id, f.actual) : '', previous: f ? rateText(id, f.previous) : '', dir: f && move(f.actual, f.previous) });
       }
     }

@@ -42,9 +42,21 @@ const isoDay = (date) => new Date(`${date}T00:00:00Z`).getTime();
 const startDate = () => { const d = new Date(); d.setUTCFullYear(d.getUTCFullYear() - YEARS); return d.toISOString().slice(0, 10); };
 
 const RATES = {
+  // The series holds the rate from the day it takes effect, a few days after the decision. The Bank's
+  // own site states the decided rate the moment it is announced, and the next decision day; that part is
+  // best-effort, so the series alone still answers when the site does not.
   async il() {
     const url = `https://edge.boi.org.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/BR/1.0/?c%5BDATA_TYPE%5D=OF00&startperiod=${startDate()}&format=csv`;
-    return series(csvRows(await (await source(url)).text(), 'MNT_RIB_BOI_D'));
+    const [rows, announced] = await Promise.all([
+      source(url).then((r) => r.text()).then((text) => csvRows(text, 'MNT_RIB_BOI_D')),
+      source('https://www.boi.org.il/PublicApi/GetInterest').then((r) => r.json()).catch((error) => { console.error('il announcement', error.message); return null; }),
+    ]);
+    const result = series(rows);
+    const day = (value) => (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value) ? value.slice(0, 10) : null);
+    if (announced && Number.isFinite(announced.currentInterest) && day(announced.lastPublishedDate)) {
+      result.decided = { date: day(announced.lastPublishedDate), rate: announced.currentInterest, next: day(announced.nextInterestDate) };
+    }
+    return result;
   },
   async us() {
     const today = new Date().toISOString().slice(0, 10);
@@ -135,13 +147,13 @@ async function rates(origin, waitUntil, env) {
 export async function onRequestGet({ request, waitUntil, env }) {
   const cache = globalThis.caches?.default;
   const origin = new URL(request.url).origin;
-  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback; v3: before asOf and the BIS fallback for the UK; v4: before the daily Bank of England file)
-  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=4`);
+  // the version in the key drops answers held from an older shape of the data (v2: before the last-good fallback; v3: before asOf and the BIS fallback for the UK; v4: before the daily Bank of England file; v5: before the Bank of Israel's announced decision)
+  const key = new Request(`${origin}/api/rates?years=${YEARS}&v=5`);
   const held = cache && await cache.match(key);
   if (held) return held;
   // The last whole answer is also kept for a month. When the fresh one has expired, a visitor gets that
   // one at once while a new answer is fetched in the background, so nobody waits for four banks.
-  const staleKey = new Request(`${origin}/api/rates-last?years=${YEARS}&v=4`);
+  const staleKey = new Request(`${origin}/api/rates-last?years=${YEARS}&v=5`);
   const refresh = async () => {
     const { body, complete } = await rates(origin, waitUntil, env);
     const text = JSON.stringify(body);
