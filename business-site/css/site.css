@@ -1158,7 +1158,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .hero-slide-policy .hero-copy { flex: 1 1 0; max-width: none; }
 .hero-slide-policy .hero-title { font-size: clamp(28px, 2.5vw, 40px); }
 .policy-board {
-  flex: 1 1 0; max-width: 460px; padding: 18px 20px 14px; color: var(--on-dark);
+  flex: 1.3 1 0; max-width: 640px; margin-inline-end: clamp(0px, 4vw, 80px); padding: 18px 20px 14px; color: var(--on-dark);
   background: linear-gradient(180deg, rgba(201, 183, 114, .07), rgba(201, 183, 114, 0) 70%);
   border: 1px solid rgba(201, 183, 114, .35); border-top: 3px solid var(--gold);
 }
@@ -1166,15 +1166,15 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .policy-head { display: grid; gap: 2px; margin-bottom: 14px; }
 .policy-head b { font-size: 17px; font-weight: 800; line-height: 1.25; color: var(--on-dark); }
 .policy-head span { font-size: 12.5px; font-weight: 500; color: var(--on-dark-soft); }
-.policy-top li { display: grid; grid-template-columns: 100px minmax(0, 1fr); align-items: center; gap: 12px; }
-.policy-logo { display: flex; align-items: center; gap: 4px; height: 22px; }
-/* every mark in white, so no company's colours compete with the leader's gold */
-.policy-logo img { width: auto; max-width: 100px; height: 100%; object-fit: contain; object-position: right center; filter: brightness(0) invert(1); opacity: .88; }
-.policy-top li:first-child .policy-logo img { opacity: 1; }
-.policy-logo b { font-size: 13px; font-weight: 800; }
+.policy-top li { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: center; gap: 12px; }
+/* each mark in its own colours on a small light chip, the height of its bar */
+.policy-logo { display: flex; align-items: center; justify-content: center; gap: 4px; height: 30px; padding: 4px 8px; background: var(--paper); }
+.policy-logo img { width: auto; max-width: 96px; height: 100%; object-fit: contain; object-position: center; }
+.policy-top li:first-child .policy-logo { box-shadow: inset 0 0 0 2px var(--gold); }
+.policy-logo b { font-size: 13px; font-weight: 800; color: var(--ink); }
 /* הכשרה with מיטב, who manages its policy investments: two marks share the row */
-.policy-logo:has(.policy-mgr) img { max-width: 50px; }
-.policy-logo .policy-mgr { height: 80%; padding-inline-start: 6px; border-inline-start: 1px solid rgba(241, 241, 238, .3); }
+.policy-logo:has(.policy-mgr) img { max-width: 46px; }
+.policy-logo .policy-mgr { height: 80%; padding-inline-start: 5px; border-inline-start: 1px solid rgba(12, 33, 52, .2); }
 .policy-bar { display: flex; align-items: center; height: 30px; width: calc(var(--w) * 100%); min-width: 76px; background: rgba(193, 206, 219, .16); color: var(--on-dark); }
 .policy-top li:first-child .policy-bar { background: var(--gold); color: var(--navy-deep); box-shadow: 0 0 24px rgba(201, 183, 114, .35); }
 .policy-bar span { padding-inline: 10px; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
@@ -1183,7 +1183,7 @@ html:not(.js) .panel + .panel { margin-top: 32px; }
 .policy-chart { position: relative; padding-bottom: 20px; }
 .policy-avg {
   position: absolute; top: -6px; bottom: 0; z-index: 1; pointer-events: none;
-  inset-inline-start: calc(112px + (100% - 112px) * var(--a));
+  inset-inline-start: calc(124px + (100% - 124px) * var(--a));
   border-inline-start: 1px dashed rgba(241, 241, 238, .55);
 }
 .policy-avg > span { position: absolute; bottom: 0; inset-inline-end: 6px; padding: 0; font-size: 11px; font-weight: 700; line-height: 16px; white-space: nowrap; color: var(--on-dark-soft); background: var(--navy-deep); }
@@ -1200,7 +1200,7 @@ h2[id][data-reveal] { scroll-margin-top: 30px; }
 
 @media (max-width: 900px) {
   .hero-slide-policy { flex-direction: column; align-items: stretch; gap: 14px; }
-  .policy-board { max-width: none; }
+  .policy-board { max-width: none; margin-inline-end: 0; }
 }
 @media (max-width: 700px) {
   /* no photo on this slide, so it starts high and keeps the slide show short */
