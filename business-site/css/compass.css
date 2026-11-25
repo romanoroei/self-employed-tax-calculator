@@ -205,7 +205,6 @@
 .cp-lead .cp-figure span { font-size: var(--t-5); font-weight: 700; max-width: 52ch; }
 .cp-bars { display: grid; gap: 10px; padding-block: 4px 10px; border-bottom: 1px solid rgba(8, 24, 38, .22); }
 .cp-bars ul { display: grid; gap: 10px; }
-.cp-res-primary .cp-bars-head { display: flex; max-width: none; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 800; color: rgba(8, 24, 38, .7); }
 .cp-bars li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: baseline; }
 .cp-bars li span { font-weight: 700; font-size: var(--t-5); }
 .cp-bars li b { font-size: clamp(20px, 2.4vw, 26px); font-weight: 900; font-variant-numeric: tabular-nums; }

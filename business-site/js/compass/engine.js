@@ -356,9 +356,8 @@
         const half = avgYear / 2;
         const mand = (inc) => t1 * Math.min(inc, half) + t2 * Math.max(0, Math.min(inc, avgYear) - half);
         Object.assign(t, { avgYear: fmt(avgYear), half: fmt(half), tier1: String(+(t1 * 100).toFixed(2)), tier2: String(+(t2 * 100).toFixed(2)),
-          mandMax: fmt(mand(avgYear)), mandMonthly: fmt(Math.round(mand(avgYear) / 12 / 10) * 10), mand100k: fmt(Math.round(mand(100000) / 10) * 10) });
-        // the obligation by taxable income, a row per level, so each client finds the amount that fits them
-        t.mandRows = [60000, 100000, 130000, avgYear].map((inc) => ({ label: inc === avgYear ? `${fmt(inc)} ₪ ומעלה` : `${fmt(inc)} ₪`, total: inc === avgYear ? Math.round(mand(inc)) : Math.round(mand(inc) / 10) * 10 }));
+          mandMax: fmt(mand(avgYear)), mandMonthly: fmt(Math.round(mand(avgYear) / 12 / 10) * 10), mand100k: fmt(Math.round(mand(100000) / 10) * 10),
+          mandMaxPct: String(+(mand(avgYear) / avgYear * 100).toFixed(1)) });
         const sfCap = F('studyFundThresholds.deductionIncomeCap');
         const sfRate = F('studyFundThresholds.deductionRate');
         const sfExempt = F('studyFundThresholds.exemptDepositCap');
@@ -395,7 +394,7 @@
         if (out.length >= L.maxFindings) break;
         if (x.needs && !figureOk(x.needs, ctx.year)) continue;
         if (!ev(x.when, ctx)) continue;
-        const v = (x.variants || []).find((z) => ev(z.when, ctx)) || {};
+        const v = (x.variants || []).find((z) => ev(z.when, ctx) && (!z.needs || figureOk(z.needs, ctx.year))) || {};
         const f = v.figure || x.figure;
         let figure = null;
         if (f && f.kind === 'growth') {
@@ -403,10 +402,6 @@
           const rows = growthRows(lump);
           const top = rows[rows.length - 1].total;
           figure = { caption: fillTokens(f.caption, t), rows: rows.map((r) => ({ label: r.label, value: `${fmt(r.total)} ₪`, share: r.total / top })) };
-        } else if (f && f.kind === 'obligation') {
-          if (!t.mandRows) continue;
-          const top = t.mandRows[t.mandRows.length - 1].total;
-          figure = { head: f.head, caption: fillTokens(f.caption, t), rows: t.mandRows.map((r) => ({ label: r.label, value: `${fmt(r.total)} ₪`, share: r.total / top })) };
         } else if (f) figure = { value: fillTokens(f.value, t), caption: fillTokens(f.caption, t) };
         const item = { id: x.id, tag: v.tag || x.tag, title: fillTokens(v.title || x.title, t), text: fillTokens(v.text || x.text, t), figure, call: fillTokens(x.call, t) };
         const all = [item.title, item.text, item.call, figure ? figure.caption + (figure.value || '') : ''].join(' ');
