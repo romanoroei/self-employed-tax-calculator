@@ -389,7 +389,9 @@
       const t = tokensFor(ctx);
       const R = C.result;
       const out = [];
-      for (const x of R.findings) {
+      // a finding that must lead (leadWhen) is weighed first, so the limit on findings never pushes it out
+      const ordered = [...R.findings.filter((x) => x.leadWhen && ev(x.leadWhen, ctx)), ...R.findings.filter((x) => !(x.leadWhen && ev(x.leadWhen, ctx)))];
+      for (const x of ordered) {
         if (out.length >= L.maxFindings) break;
         if (x.needs && !figureOk(x.needs, ctx.year)) continue;
         if (!ev(x.when, ctx)) continue;

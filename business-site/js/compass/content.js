@@ -703,7 +703,7 @@
           id: 'disability', tag: 'אם לא תוכלו לעבוד',
           when: { any: [{ fact: 'altIncome', in: ['no', 'partial'] }, { fact: 'worry', in: ['income', 'both'] }] },
           title: 'לעצמאים אין מעסיק שימשיך לשלם',
-          text: 'בקרן פנסיה יש בדרך כלל כיסוי לנכות של עד 75% מההכנסה המבוטחת, וביטוח אובדן כושר עבודה פרטי יכול להשלים אותו. כדאי לדעת כמה תקבלו בפועל אם לא תוכלו לעבוד, ומאיזה חודש.',
+          text: 'בקרן פנסיה יש בדרך כלל כיסוי לנכות של עד 75% מההכנסה המבוטחת. כדאי לדעת כמה תקבלו בפועל אם לא תוכלו לעבוד, ומאיזה חודש.',
           call: 'כמה הכנסה תקבלו אם לא תוכלו לעבוד, ומאיפה',
         },
         {
@@ -730,7 +730,7 @@
         {
           id: 'coverage-deposit', tag: 'ביטוח בקרן הפנסיה',
           leadWhen: { primary: 'protection' },
-          when: { any: [{ fact: 'coverageImpact', in: ['no', 'unaware'] }, { all: [{ priority: 'protection' }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }] },
+          when: { any: [{ primary: 'protection' }, { fact: 'coverageImpact', in: ['no', 'unaware'] }, { all: [{ priority: 'protection' }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }] },
           variants: [{
             when: { primary: 'protection' }, needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
             title: 'הפקדת מינימום פירושה הגנה מינימלית',
