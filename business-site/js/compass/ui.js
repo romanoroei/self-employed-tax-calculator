@@ -211,6 +211,7 @@
     const [first, ...rest] = res.findings;
     const figureOf = (f) => (f.rows
       ? h('figure', { class: 'cp-bars' },
+        f.head ? h('p', { class: 'cp-bars-head' }, h('span', { text: f.head[0] }), h('span', { text: f.head[1] })) : null,
         h('ul', {}, f.rows.map((r) => h('li', { style: `--w:${Math.max(4, Math.round(r.share * 100))}%` }, h('span', { text: r.label }), h('b', { text: r.value }), h('i', { 'aria-hidden': 'true' })))),
         h('figcaption', { text: f.caption }))
       : h('p', { class: 'cp-figure' }, h('b', { text: f.value }), h('span', { text: f.caption })));

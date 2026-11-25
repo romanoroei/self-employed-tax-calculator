@@ -592,7 +592,7 @@
       // Shown in order, the first `limits.maxFindings` that hold; the one with a figure goes to the gold tile.
       // Every figure comes from regulatory.js through the tokens below, and a finding whose figures are not
       // verified for the year is dropped (needs). General information only: never a product, track or company.
-      // Tokens: {mandMax} {mandMonthly} {mand100k} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
+      // Tokens: {mandMax} {mandMonthly} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
       // {sfExempt} {sfYou} {sfFigure} {benefitCap} {ifCap} {days} {daysText} {lumpEx} {bonds} {general} {stocks} {period}
       findings: [
         {
@@ -617,9 +617,9 @@
           needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
           when: { all: [{ any: [{ fact: 'income', in: ['b1', 'unknown'] }, { fact: 'income', asked: false }] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
             { any: [{ priority: 'minimum' }, { priority: 'tax' }, { priority: 'liquidity' }, { fact: 'deposits', in: ['none', 'irregular', 'annual', 'unknown'] }, { fact: 'obligationKnown', in: ['no', 'unsure'] }] }] },
-          title: 'חובת ההפקדה: עד {mandMax} ₪ בשנה, לפי ההכנסה',
-          text: 'החובה מחושבת לפי ההכנסה החייבת: {tier1}% על ההכנסה עד {half} ₪ בשנה, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. למשל, בהכנסה חייבת של 100,000 ₪ החובה היא כ־{mand100k} ₪ בשנה. ההפקדה צריכה להיכנס באותה שנת מס.',
-          figure: { value: '{mand100k} ₪', caption: 'חובת ההפקדה ב־2026 בהכנסה חייבת של 100,000 ₪ בשנה (המרבית: {mandMax} ₪)' },
+          title: 'כמה להפקיד השנה: לפי ההכנסה החייבת שלכם',
+          text: 'מצאו בטבלה את ההכנסה הקרובה לשלכם. זה הסכום השנתי שהחוק מחייב להפקיד לפנסיה: {tier1}% על ההכנסה עד {half} ₪, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. על הכנסה מעל {avgYear} ₪ אין חובה נוספת. ההפקדה צריכה להיכנס עד 31.12.',
+          figure: { kind: 'obligation', head: ['הכנסה חייבת בשנה', 'חובת ההפקדה בשנה'], caption: 'חובת ההפקדה לפנסיה לעצמאים ב־{year}.' },
           call: 'כמה בדיוק החובה לפי ההכנסה שלכם, ואם היא כבר מולאה השנה',
         },
         {
