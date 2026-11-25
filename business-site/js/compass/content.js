@@ -592,7 +592,7 @@
       // Shown in order, the first `limits.maxFindings` that hold; the one with a figure goes to the gold tile.
       // Every figure comes from regulatory.js through the tokens below, and a finding whose figures are not
       // verified for the year is dropped (needs). General information only: never a product, track or company.
-      // Tokens: {mandMax} {mandMonthly} {mand100k} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
+      // Tokens: {mandMax} {mandMonthly} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
       // {sfExempt} {sfYou} {sfFigure} {benefitCap} {ifCap} {days} {daysText} {lumpEx} {bonds} {general} {stocks} {period}
       findings: [
         {
@@ -605,7 +605,7 @@
         {
           id: 'obligation-full', tag: 'חובת ההפקדה',
           needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
-          when: { all: [{ fact: 'income', in: ['b2', 'b3'] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
+          when: { all: [{ not: { primary: 'protection' } }, { fact: 'income', in: ['b2', 'b3'] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
             { any: [{ priority: 'minimum' }, { priority: 'tax' }, { priority: 'liquidity' }, { fact: 'deposits', in: ['none', 'irregular', 'annual', 'unknown'] }, { fact: 'obligationKnown', in: ['no', 'unsure'] }] }] },
           title: 'זו ההפקדה שהחוק מחייב אתכם השנה',
           text: 'החובה מחושבת עד השכר הממוצע במשק בלבד: {tier1}% על ההכנסה עד {half} ₪ בשנה, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. בהכנסה כמו שציינתם זו ההפקדה המרבית לפי החובה, כ־{mandMonthly} ₪ לחודש, והיא צריכה להיכנס באותה שנת מס.',
@@ -615,11 +615,11 @@
         {
           id: 'obligation-partial', tag: 'חובת ההפקדה',
           needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
-          when: { all: [{ any: [{ fact: 'income', in: ['b1', 'unknown'] }, { fact: 'income', asked: false }] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
+          when: { all: [{ not: { primary: 'protection' } }, { any: [{ fact: 'income', in: ['b1', 'unknown'] }, { fact: 'income', asked: false }] }, { not: { fact: 'age', is: '60p' } }, { not: { fact: 'yearsActive', is: 'lt6m' } },
             { any: [{ priority: 'minimum' }, { priority: 'tax' }, { priority: 'liquidity' }, { fact: 'deposits', in: ['none', 'irregular', 'annual', 'unknown'] }, { fact: 'obligationKnown', in: ['no', 'unsure'] }] }] },
-          title: 'חובת ההפקדה: עד {mandMax} ₪ בשנה, לפי ההכנסה',
-          text: 'החובה מחושבת לפי ההכנסה החייבת: {tier1}% על ההכנסה עד {half} ₪ בשנה, ו־{tier2}% על החלק שמעליה ועד {avgYear} ₪. למשל, בהכנסה חייבת של 100,000 ₪ החובה היא כ־{mand100k} ₪ בשנה. ההפקדה צריכה להיכנס באותה שנת מס.',
-          figure: { value: '{mand100k} ₪', caption: 'חובת ההפקדה ב־2026 בהכנסה חייבת של 100,000 ₪ בשנה (המרבית: {mandMax} ₪)' },
+          title: 'חובת ההפקדה שלכם תלויה בהכנסה החייבת',
+          text: 'החוק מחייב אחוז מההכנסה, עד תקרה. ככל שההכנסה נמוכה יותר, החובה נמוכה יותר. ההפקדה צריכה להיכנס עד 31.12, ובשיחה קצרה נחשב את הסכום המדויק לפי ההכנסה שלכם.',
+          figure: { value: 'עד {mandMax} ₪', caption: 'בשנה. זו החובה המרבית, בהכנסה חייבת של {avgYear} ₪ ומעלה' },
           call: 'כמה בדיוק החובה לפי ההכנסה שלכם, ואם היא כבר מולאה השנה',
         },
         {
@@ -729,7 +729,13 @@
         },
         {
           id: 'coverage-deposit', tag: 'ביטוח בקרן הפנסיה',
+          leadWhen: { primary: 'protection' },
           when: { any: [{ fact: 'coverageImpact', in: ['no', 'unaware'] }, { all: [{ priority: 'protection' }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }] },
+          variants: [{
+            when: { primary: 'protection' }, needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
+            title: 'הפקדת מינימום פירושה הגנה מינימלית',
+            text: 'בקרן הפנסיה, הקצבה לנכות ולשארים נקבעת לפי ההפקדה. מי שמפקיד רק את מה שהחוק מחייב מבוטח על חלק מההכנסה בלבד. אם יקרה משהו, הקצבה לכם או למשפחה תחושב לפי ההפקדה הנמוכה. כדי להגן על המשפחה, ההפקדה צריכה להתאים להכנסה שאתם רוצים לשמור עליה, לא למינימום שבחוק.',
+          }],
           title: 'גובה ההפקדה קובע גם את הכיסוי',
           text: 'בקרן פנסיה, הכיסוי לנכות ולשארים נקבע לפי ההכנסה שממנה מפקידים. הפקדה נמוכה מקטינה גם את הכיסוי, וכשאין הפקדות הכיסוי נמשך זמן מוגבל בלבד.',
           call: 'מה הכיסוי שיש לכם היום בקרן, ואם הוא מתאים להכנסה',
