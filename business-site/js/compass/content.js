@@ -592,7 +592,7 @@
       // Shown in order, the first `limits.maxFindings` that hold; the one with a figure goes to the gold tile.
       // Every figure comes from regulatory.js through the tokens below, and a finding whose figures are not
       // verified for the year is dropped (needs). General information only: never a product, track or company.
-      // Tokens: {mandMax} {mandMonthly} {mandMaxPct} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
+      // Tokens: {mandMax} {mandMonthly} {half} {avgYear} {tier1} {tier2} {sfRate} {sfCap} {sfMax}
       // {sfExempt} {sfYou} {sfFigure} {benefitCap} {ifCap} {days} {daysText} {lumpEx} {bonds} {general} {stocks} {period}
       findings: [
         {
@@ -729,12 +729,12 @@
         },
         {
           id: 'coverage-deposit', tag: 'ביטוח בקרן הפנסיה',
+          leadWhen: { primary: 'protection' },
           when: { any: [{ fact: 'coverageImpact', in: ['no', 'unaware'] }, { all: [{ priority: 'protection' }, { fact: 'deposits', in: ['irregular', 'annual', 'none'] }] }] },
           variants: [{
             when: { primary: 'protection' }, needs: ['averageWageMonthly', 'mandatoryContributionRates.tier1Rate', 'mandatoryContributionRates.tier2Rate'],
             title: 'הפקדת מינימום פירושה הגנה מינימלית',
             text: 'בקרן הפנסיה, הקצבה לנכות ולשארים נקבעת לפי ההפקדה. מי שמפקיד רק את מה שהחוק מחייב מבוטח על חלק מההכנסה בלבד. אם יקרה משהו, הקצבה לכם או למשפחה תחושב לפי ההפקדה הנמוכה. כדי להגן על המשפחה, ההפקדה צריכה להתאים להכנסה שאתם רוצים לשמור עליה, לא למינימום שבחוק.',
-            figure: { value: 'עד {mandMaxPct}%', caption: 'מההכנסה החייבת: זו כל חובת ההפקדה לפנסיה של עצמאי, והכיסוי לנכות ולשארים נגזר ממנה' },
           }],
           title: 'גובה ההפקדה קובע גם את הכיסוי',
           text: 'בקרן פנסיה, הכיסוי לנכות ולשארים נקבע לפי ההכנסה שממנה מפקידים. הפקדה נמוכה מקטינה גם את הכיסוי, וכשאין הפקדות הכיסוי נמשך זמן מוגבל בלבד.',

@@ -356,8 +356,7 @@
         const half = avgYear / 2;
         const mand = (inc) => t1 * Math.min(inc, half) + t2 * Math.max(0, Math.min(inc, avgYear) - half);
         Object.assign(t, { avgYear: fmt(avgYear), half: fmt(half), tier1: String(+(t1 * 100).toFixed(2)), tier2: String(+(t2 * 100).toFixed(2)),
-          mandMax: fmt(mand(avgYear)), mandMonthly: fmt(Math.round(mand(avgYear) / 12 / 10) * 10), mand100k: fmt(Math.round(mand(100000) / 10) * 10),
-          mandMaxPct: String(+(mand(avgYear) / avgYear * 100).toFixed(1)) });
+          mandMax: fmt(mand(avgYear)), mandMonthly: fmt(Math.round(mand(avgYear) / 12 / 10) * 10), mand100k: fmt(Math.round(mand(100000) / 10) * 10) });
         const sfCap = F('studyFundThresholds.deductionIncomeCap');
         const sfRate = F('studyFundThresholds.deductionRate');
         const sfExempt = F('studyFundThresholds.exemptDepositCap');
@@ -403,7 +402,7 @@
           const top = rows[rows.length - 1].total;
           figure = { caption: fillTokens(f.caption, t), rows: rows.map((r) => ({ label: r.label, value: `${fmt(r.total)} ₪`, share: r.total / top })) };
         } else if (f) figure = { value: fillTokens(f.value, t), caption: fillTokens(f.caption, t) };
-        const item = { id: x.id, tag: v.tag || x.tag, title: fillTokens(v.title || x.title, t), text: fillTokens(v.text || x.text, t), figure, call: fillTokens(x.call, t) };
+        const item = { id: x.id, leadWhen: x.leadWhen, tag: v.tag || x.tag, title: fillTokens(v.title || x.title, t), text: fillTokens(v.text || x.text, t), figure, call: fillTokens(x.call, t) };
         const all = [item.title, item.text, item.call, figure ? figure.caption + (figure.value || '') : ''].join(' ');
         if (unfilled(all) || !safe(all)) continue; // a figure that is missing for the year, or forbidden wording: never shown
         out.push(item);
@@ -411,6 +410,10 @@
       // the finding with a figure leads, so the number sits in the gold tile; a warning about money needed soon stays first
       const lead = out.findIndex((x) => x.figure);
       if (lead > 0 && out[0].id !== 'horizon-short') out.unshift(...out.splice(lead, 1));
+      // a finding marked `leadWhen` takes the gold tile when its condition holds (e.g. cover for whoever put protection first)
+      const forced = out.findIndex((x) => x.leadWhen && ev(x.leadWhen, ctx));
+      if (forced > 0 && out[0].id !== 'horizon-short') out.unshift(...out.splice(forced, 1));
+      for (const x of out) delete x.leadWhen;
       const steps = C.result.steps.filter((x) => ev(x.when, ctx)).slice(0, L.maxSteps).map(({ id, text, label, href }) => ({ id, text, label, href }));
       return { findings: out, steps, calls: [...out.map((x) => x.call), C.result.callTail], findingsLead: fillTokens(C.result.findingsLead(out.length), t) };
     }
