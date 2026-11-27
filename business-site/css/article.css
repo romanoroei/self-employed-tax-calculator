@@ -289,7 +289,29 @@
 .art-reviews span { font-size: 14px; font-weight: 700; color: var(--ink-soft); }
 /* Apollo track article: the as-of notice under the byline, and a two-bar yield chart */
 .ap-asof { margin: 22px 0 0; padding: 12px 16px; background: var(--paper-2); border-inline-start: 4px solid var(--gold-deep); font-size: var(--t-5); line-height: 1.5; }
-.ap-bars { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 520px; }
-.ap-bars .bar { height: calc(var(--v) / 5.3 * 100%); }
+/* the yield build-up: positive parts stand on a zero line, costs hang below it */
+.ap-stack { --u: 34px; margin-top: 44px; max-width: 620px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+.ap-col { display: grid; grid-template-rows: calc(7.9 * var(--u) + 100px) auto auto; }
+.ap-total { margin: 0 0 10px; font-size: var(--t-5); color: var(--on-dark-soft); }
+.ap-total strong { display: block; font-size: var(--t-1); font-weight: 800; line-height: 1.05; color: var(--gold); }
+.ap-gap { display: block; width: fit-content; margin-bottom: 14px; padding: 6px 12px; background: var(--paper); color: var(--navy-deep); font-weight: 700; }
+.ap-pos { display: flex; flex-direction: column; justify-content: flex-end; border-bottom: 2px solid var(--on-dark); }
+.ap-neg { display: flex; flex-direction: column; }
+.ap-seg { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: calc(var(--v) * var(--u)); min-height: 24px; padding: 0 12px; font-size: 14px; font-weight: 500; line-height: 1.2; }
+.ap-seg b { font-weight: 800; }
+.ap-seg-tr { background: var(--gold); color: var(--navy-deep); }
+.ap-seg-nt { background: var(--gold-soft); color: var(--navy-deep); }
+.ap-seg-boi { background: #9AA6B2; color: var(--navy-deep); }
+.ap-seg-hd { background: #F09C86; color: var(--navy-deep); }
+.ap-seg-fee { background: #D9DAD6; color: var(--navy-deep); font-size: 13px; }
+.ap-name { margin: 12px 0 0; font-size: var(--t-5); font-weight: 700; }
+@media (max-width: 700px) {
+  .ap-stack { --u: 27px; gap: 0 10px; margin-top: 28px; }
+  .ap-col { grid-template-rows: calc(7.9 * var(--u) + 80px) auto auto; }
+  .ap-seg { padding: 0 8px; font-size: 12.5px; }
+  .ap-seg-fee { font-size: 12px; }
+  .ap-total strong { font-size: 30px; }
+  .ap-gap { font-size: 12.5px; padding: 5px 8px; }
+}
 .ap-compare tbody td:last-child { font-weight: 500; color: var(--on-dark-soft); }
 .ap-compare tbody td:nth-child(2) { font-size: var(--t-4); font-weight: 800; }
