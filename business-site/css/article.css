@@ -149,9 +149,7 @@
 @media (hover: hover) and (pointer: fine) { .back-home:hover { background: var(--slate); } }
 @media (max-width: 700px) { .back-home { right: 8px; bottom: 8px; padding: 0 14px; } }
 
-/* "ארביטראז' של ידע" (/knowledge): a column of guides and articles beside a column of tools */
-.kn-head { padding-bottom: 24px; }
-.kn-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; padding-block: 16px 72px; align-items: start; }
+/* cards, used by the market review pages (related reading, archive) */
 .kn-title { font-size: var(--t-2); font-weight: 800; line-height: 1.25; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 3px solid var(--gold); }
 .kn-grid { display: grid; gap: var(--gap); }
 .kn-card {
@@ -169,17 +167,58 @@
   .kn-card:hover { background: #D9DBD7; }
   .kn-card:hover .kn-go { transform: translateX(-4px); }
 }
-.kn-cols + .art-cta { margin-top: 0; }
-/* market reviews: their own category above the columns, each card opens the review itself */
-.kn-reviews { padding-block: 8px 32px; }
-.kn-lead { font-size: var(--t-5); color: var(--ink-soft); margin: -4px 0 14px; }
-.kn-reviews-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* /knowledge "מדריכים וכלים": the guides and tools sorted by what the reader needs (Roei, 27.11.2026).
+   Six topics in two columns, each a numbered title and a list of rows split by hairlines, no cards */
+.kn-head { padding-bottom: 8px; }
+.kn-kicker { font-size: 13px; font-weight: 800; color: #6E5B20; margin-bottom: 6px; }
+.kn-search { margin-top: 26px; position: relative; }
+.kn-search-label { display: block; font-size: 14px; font-weight: 800; margin-bottom: 8px; }
+.kn-search-field { display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #fff; box-shadow: inset 0 0 0 2px var(--navy); }
+.kn-search-field svg { flex: none; width: 22px; height: 22px; fill: none; stroke: var(--navy); stroke-width: 2.2; stroke-linecap: round; }
+.kn-search-field input { flex: 1; min-width: 0; height: 56px; border: 0; background: transparent; font: inherit; font-size: 18px; color: var(--ink); outline: none; }
+.kn-search-field input::placeholder { color: #7A8794; }
+.kn-search-field:focus-within { box-shadow: inset 0 0 0 3px var(--navy); }
+.kn-search-out:empty { display: none; }
+.kn-search-out { background: #fff; border-top: 1px solid #D5D8D3; box-shadow: 0 0 0 2px var(--navy); margin: 0 2px; }
+.kn-jump { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 22px; font-size: 15px; font-weight: 700; }
+.kn-jump a { color: var(--ink); text-decoration: none; padding-block: 4px; border-bottom: 2px solid var(--gold); }
+@media (hover: hover) and (pointer: fine) { .kn-jump a:hover { border-color: var(--navy); } }
+.kn-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px 48px; padding-block: 36px 80px; align-items: start; }
+.kn-alias { display: block; height: 0; grid-column: 1 / -1; margin-bottom: -56px; }
+.kn-topic { scroll-margin-top: calc(var(--bar) + 16px); }
+.kn-topic .kn-title { display: flex; align-items: baseline; gap: 12px; font-size: var(--t-2); font-weight: 800; line-height: 1.25; padding-bottom: 10px; border-bottom: 3px solid var(--navy); }
+.kn-n { font-size: 14px; font-weight: 800; color: #6E5B20; letter-spacing: .04em; }
+.kn-topic .kn-lead { font-size: 15px; color: var(--ink-soft); margin: 10px 0 4px; }
+.kn-list { list-style: none; margin: 0; padding: 0; }
+.kn-list > li { border-bottom: 1px solid #CFD3CE; }
+.kn-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "k go" "t go" "s go"; column-gap: 16px;
+  padding: 14px 0; color: var(--ink); text-decoration: none;
+}
+.kn-row::after { content: "←"; grid-area: go; align-self: center; font-size: 18px; color: #6E5B20; transition: transform 200ms var(--ease-out); }
+.kn-row[target="_blank"]::after { content: "↗"; }
+.kn-row .kn-k { grid-area: k; font-size: 12.5px; font-weight: 800; color: #6E5B20; }
+.kn-k-tool { color: var(--navy); }
+.kn-k-tool::before { content: ""; display: inline-block; width: 7px; height: 7px; background: var(--gold); margin-inline-end: 6px; vertical-align: 1px; }
+.kn-row strong { grid-area: t; font-size: 17px; font-weight: 800; line-height: 1.35; }
+.kn-row small { grid-area: s; font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin-top: 2px; }
+.kn-row:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  .kn-row:hover strong { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .kn-row:hover::after { transform: translateX(-4px); }
+}
 .kn-more { margin-top: 12px; font-size: var(--t-5); }
-@media (max-width: 1000px) { .kn-reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 800px) { .kn-reviews { padding-bottom: 16px; } .kn-reviews-grid { grid-template-columns: minmax(0, 1fr); } }
-/* phones and narrow tablets: the tools column goes under the guides */
+.kn-list > li.kn-more { border-bottom: 0; padding: 12px 0 0; font-size: 15px; font-weight: 700; }
+.kn-topics + .art-cta { margin-top: 0; }
 @media (max-width: 800px) {
-  .kn-cols { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-bottom: 48px; }
+  .kn-topics { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-block: 28px 48px; }
+  .kn-alias { margin-bottom: -40px; }
+  .kn-search-field input { height: 52px; font-size: 17px; }
+  .kn-jump { gap: 4px 16px; font-size: 14.5px; }
+  .kn-row { padding: 13px 0; column-gap: 12px; }
+  .kn-row strong { font-size: 16px; }
+  .kn-row small { font-size: 13.5px; }
   .kn-card { padding: 12px 14px; gap: 0 12px; }
   .kn-text strong { font-size: 15px; }
   .kn-text small { font-size: 13px; }

@@ -32,6 +32,7 @@
 !scripts/yields-data.json
 !scripts/update-boe.mjs
 !scripts/market-reviews.mjs
+!scripts/search-index.mjs
 !scripts/review-funds.mjs
 
 !.github/

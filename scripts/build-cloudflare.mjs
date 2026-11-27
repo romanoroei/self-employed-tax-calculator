@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import { calendarFeed } from './calendar-feed.mjs';
 import { renderYields, renderPolicySlide, renderPolicyProof } from './yields.mjs';
 import { buildReviews } from './market-reviews.mjs';
+import { buildSearchIndex } from './search-index.mjs';
 
 const plain = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 // Every <details class="fold faq-item"> on a page: the <h3> in its summary is the question, the rest is the answer.
@@ -25,7 +26,7 @@ const siteUrl = 'https://romanoinvest.co.il/self-employed-tax-calculator/';
 // Earlier share images stay published so links shared before keep their preview; v5 is the current one.
 const assets = ['brand-logo.png', 'whatsapp-share-v2.jpg', 'whatsapp-share-v3.jpg', 'whatsapp-share-v4.jpg', 'whatsapp-share-v5.jpg'];
 const publicSiteEntries = ['index.html','about.html','pension-check.html','financial-planning.html','givatayim.html','management-fees.html','pension-fund-or-managers-insurance.html','old-pension-funds.html','cash-in-bank-account.html','study-fund-withdraw.html','pension-monthly-amount.html','self-employed.html','savings-policy.html','investment-fund.html','severance.html','hachshara-policy.html','phoenix-apollo.html','knowledge.html','market-data.html','compass.html','study-fund.html','financial-check.html','check.html','accessibility.html','disclosure.html','privacy.html','terms.html','favicon.svg','assets','css','js','magazine','questionnaire'];
-const expectedRoot = ['404.html','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml','market-reviews.html','market-reviews',...publicSiteEntries];
+const expectedRoot = ['404.html','search-index.json','_redirects','robots.txt','self-employed-tax-calculator','sitemap.xml','market-reviews.html','market-reviews',...publicSiteEntries];
 await mkdir(calc, { recursive: true });
 // Refuse an output tree containing unexpected files rather than uploading them.
 assert.deepEqual((await readdir(output)).filter(n=>!expectedRoot.includes(n)), [], 'Unexpected file in dist; review before publishing');
@@ -85,6 +86,8 @@ await writeFile(path.join(output,'404.html'), '<!doctype html><html lang="he" di
 await writeFile(path.join(output,'robots.txt'), 'User-agent: *\nAllow: /\nSitemap: https://romanoinvest.co.il/sitemap.xml\n');
 const sitePages = ['', 'about', 'pension-check', 'financial-planning', 'givatayim', 'management-fees', 'pension-fund-or-managers-insurance', 'old-pension-funds', 'cash-in-bank-account', 'study-fund-withdraw', 'pension-monthly-amount', 'self-employed', 'savings-policy', 'investment-fund', 'severance', 'hachshara-policy', 'phoenix-apollo', 'knowledge', 'market-data', 'compass', 'study-fund', 'accessibility','disclosure','privacy','terms','magazine/tides-and-waves','magazine/financial-calendar',...reviewBuild.sitemap,'self-employed-tax-calculator/'];
 await writeFile(path.join(output,'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitePages.map(p=>`<url><loc>https://romanoinvest.co.il/${p}</loc></url>`).join('')}</urlset>`);
+// The site search reads one index of every public page, written from the pages as published.
+await writeFile(path.join(output,'search-index.json'), JSON.stringify(await buildSearchIndex(output, sitePages)));
 const siteCheck = spawnSync(process.execPath, ['scripts/check-site.mjs'], {cwd:root,stdio:'inherit'});
 if (siteCheck.error) throw siteCheck.error;
 if (siteCheck.status !== 0) process.exit(siteCheck.status || 1);

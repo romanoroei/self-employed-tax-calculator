@@ -135,4 +135,12 @@ for(const file of published.filter(p=>p.endsWith('.html'))){const t=await readFi
 assert(roei&&roei.hasCredential.identifier==='00117164'&&roei.url==='https://romanoinvest.co.il/about','Home needs the Person with the license and the about page');
 assert(g.some(x=>x['@type']==='FinancialService'&&x.address.addressLocality==='פתח תקווה'),'Home needs the business with the Google Business Profile address');
 const about=await readFile(path.join(root,'about.html'),'utf8');assert(about.includes('"@type":"ProfilePage"')&&about.includes('"mainEntity":{"@id":"https://romanoinvest.co.il/#roei"}')&&home.includes('href="/about"'),'The about page is the profile page, linked from home');}
+// Site search: every page with the top bar loads it, and the index covers the guides, tools and reviews (Roei, 27.11.2026).
+{const idx=JSON.parse(await readFile(path.join(root,'search-index.json'),'utf8'));const urls=idx.pages.map(p=>p.u);
+for(const u of ['/','/management-fees','/self-employed','/severance','/self-employed-tax-calculator/','/compass','/market-data',...reviewPages.map(p=>'/market-reviews/'+p.replace(/\.html$/,''))])assert(urls.includes(u),'Search index misses '+u);
+assert(!urls.some(u=>/privacy|terms|financial-check|\/check$|questionnaire/.test(u)),'Search index must leave out legal pages and the questionnaires');
+for(const p of idx.pages)assert(p.t&&p.k&&Array.isArray(p.s),'Search index entry incomplete: '+p.u);
+for(const file of published.filter(p=>p.endsWith('.html'))){const t=await readFile(file,'utf8');const rel=path.relative(root,file).replaceAll('\\','/');
+  if(!t.includes('class="topbar"')||/^(?:check|financial-check|questionnaire\/.*)\.html$/.test(rel))continue;
+  assert(/js\/search\.js/.test(t)&&/css\/search\.css/.test(t),'Page with the top bar needs the site search: '+rel);}}
 console.log(`Site packaging checked: ${pageCount} HTML pages; local links, assets, scripts, lead fields, canonicals and crawl configuration passed.`);
