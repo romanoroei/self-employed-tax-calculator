@@ -290,25 +290,24 @@
 /* Apollo track article: the as-of notice under the byline, and a two-bar yield chart */
 .ap-asof { margin: 22px 0 0; padding: 12px 16px; background: var(--paper-2); border-inline-start: 4px solid var(--gold-deep); font-size: var(--t-5); line-height: 1.5; }
 /* the yield build-up: positive parts stand on a zero line, costs hang below it */
-.ap-stack { --u: 34px; --head: 100px; position: relative; margin-top: 44px; max-width: 620px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
-/* one zero line across both columns: both stacks start from it */
-.ap-stack::after { content: ""; position: absolute; inset-inline: 0; top: calc(7.9 * var(--u) + var(--head)); height: 2px; margin-top: -1px; background: var(--on-dark); pointer-events: none; }
-.ap-col { display: grid; grid-template-rows: calc(7.9 * var(--u) + var(--head)) auto auto; }
+.ap-stack { --u: 34px; margin-top: 44px; max-width: 620px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 0 20px; }
+/* both bars stand on the same base, so the fee rows line up */
+.ap-col { display: flex; flex-direction: column; justify-content: flex-end; }
 .ap-total { margin: 0 0 10px; font-size: var(--t-5); color: var(--on-dark-soft); }
 .ap-total strong { display: block; font-size: var(--t-1); font-weight: 800; line-height: 1.05; color: var(--gold); }
 .ap-gap { display: block; width: fit-content; margin-bottom: 14px; padding: 6px 12px; background: var(--paper); color: var(--navy-deep); font-weight: 700; }
 .ap-pos { display: flex; flex-direction: column; justify-content: flex-end; }
-.ap-neg { display: flex; flex-direction: column; min-height: calc(2.65 * var(--u)); }
+.ap-neg { display: flex; flex-direction: column; border-top: 2px solid var(--on-dark); }
 .ap-seg { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: calc(var(--v) * var(--u)); min-height: 24px; padding: 0 12px; font-size: 14px; font-weight: 500; line-height: 1.2; }
 .ap-seg b { font-weight: 800; }
 .ap-seg-tr { background: var(--gold); color: var(--navy-deep); }
 .ap-seg-nt { background: var(--gold-soft); color: var(--navy-deep); }
 .ap-seg-boi { background: #9AA6B2; color: var(--navy-deep); }
 .ap-seg-hd { background: #F09C86; color: var(--navy-deep); }
-.ap-seg-fee { background: #D9DAD6; color: var(--navy-deep); font-size: 13px; }
+.ap-seg-fee { height: calc(.85 * var(--u)); background: #D9DAD6; color: var(--navy-deep); font-size: 13px; }
 .ap-name { margin: 12px 0 0; font-size: var(--t-5); font-weight: 700; }
 @media (max-width: 700px) {
-  .ap-stack { --u: 27px; --head: 80px; gap: 0 10px; margin-top: 28px; }
+  .ap-stack { --u: 27px; gap: 0 10px; margin-top: 28px; }
   .ap-seg { padding: 0 8px; font-size: 12.5px; }
   .ap-seg-fee { font-size: 12px; }
   .ap-total strong { font-size: 30px; }
