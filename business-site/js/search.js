@@ -198,9 +198,13 @@
     wire(input, out, { emptyHtml: popular() });
 
     let lastFocus = null;
+    let hideTimer = 0;
     open = (q) => {
       lastFocus = document.activeElement;
+      clearTimeout(hideTimer);
       box.hidden = false;
+      // a frame later, so the fade-in runs from the hidden state (Roei: appear gently, not all at once)
+      requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add('is-in')));
       document.documentElement.classList.add('ss-open');
       btn.setAttribute('aria-expanded', 'true');
       if (typeof q === 'string') { input.value = q; input.dispatchEvent(new Event('input')); }
@@ -208,7 +212,8 @@
       load();
     };
     const close = () => {
-      box.hidden = true;
+      box.classList.remove('is-in');
+      hideTimer = setTimeout(() => { box.hidden = true; }, 220);
       document.documentElement.classList.remove('ss-open');
       btn.setAttribute('aria-expanded', 'false');
       if (lastFocus && lastFocus.focus) lastFocus.focus();
@@ -220,11 +225,11 @@
     // a result on this same page: close first, so the page can scroll to it
     out.addEventListener('click', (e) => { const a = e.target.closest('a'); if (a && a.pathname === location.pathname && a.hash) close(); });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !box.hidden) { e.preventDefault(); close(); return; }
+      if (e.key === 'Escape' && box.classList.contains('is-in')) { e.preventDefault(); close(); return; }
       const typing = /^(input|textarea|select)$/i.test(e.target.tagName) || e.target.isContentEditable;
-      if (box.hidden && !typing && (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'))) { e.preventDefault(); open(); }
+      if (!box.classList.contains('is-in') && !typing && (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'))) { e.preventDefault(); open(); }
       // keep the focus inside the dialog
-      if (e.key === 'Tab' && !box.hidden) {
+      if (e.key === 'Tab' && box.classList.contains('is-in')) {
         const f = [...box.querySelectorAll('input, button, a[href]')];
         if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
         else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
