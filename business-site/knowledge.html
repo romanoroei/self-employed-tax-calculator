@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ארביטראז' של ידע: מדריכים, מאמרים וכלים | רועי רומנו מתכנן פיננסי</title>
+<title>מדריכים וכלים: פנסיה, עצמאים, כסף פנוי ופרישה | רועי רומנו מתכנן פיננסי</title>
 <meta name="description" content="כל המדריכים, המאמרים והכלים של רועי רומנו, מתכנן פיננסי וסוכן פנסיוני, במקום אחד: פנסיה לעצמאים, פוליסת חיסכון, לוח השנה הפיננסי, המצפן הפיננסי ומחשבון הטבות המס.">
 <meta property="og:title" content="ארביטראז' של ידע: מדריכים, מאמרים וכלים">
 <meta property="og:description" content="מדריכים, מאמרים וכלים לחישוב, במקום אחד.">
@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/search.css">
 <link rel="stylesheet" href="css/article.css">
 <script>document.documentElement.classList.add('js')</script>
 <link rel="stylesheet" href="css/consent.css">
@@ -45,112 +46,93 @@
   <header class="wrap art-head kn-head">
     <div class="art-col">
       <p class="art-back" data-reveal><a class="link" href="/">→ חזרה לעמוד הראשי</a></p>
-      <h1 class="art-title" data-reveal>ארביטראז' של ידע</h1>
-      <p class="art-standfirst" data-reveal>מדריכים, מאמרים וכלים לחישוב, במקום אחד. כדי שתוכלו לראות את התמונה המלאה ולהגיע לשיחה עם השאלות הנכונות.</p>
+      <p class="kn-kicker" data-reveal>ארביטראז' של ידע</p>
+      <h1 class="art-title" data-reveal>מדריכים וכלים</h1>
+      <p class="art-standfirst" data-reveal>כל המדריכים, המחשבונים והסקירות, מסודרים לפי מה שאתם צריכים. כתבו מה מעניין אתכם, או בחרו נושא.</p>
+      <form class="kn-search" role="search" action="/knowledge" data-ss-inline>
+        <label class="kn-search-label" for="kn-q">חיפוש באתר</label>
+        <div class="kn-search-field">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+          <input id="kn-q" name="q" type="search" autocomplete="off" enterkeyhint="search" placeholder="למשל: דמי ניהול, קרן השתלמות, פיצויים">
+        </div>
+        <div class="kn-search-out" aria-live="polite"></div>
+      </form>
+      <nav class="kn-jump" aria-label="נושאים בעמוד">
+        <a href="#kn-pension">הפנסיה שלי</a>
+        <a href="#kn-self">עצמאים</a>
+        <a href="#kn-money">כסף פנוי</a>
+        <a href="#kn-withdraw">משיכה ופרישה</a>
+        <a href="#market-reviews">שוק ההון</a>
+        <a href="#kn-plan">תמונה מלאה</a>
+      </nav>
     </div>
   </header>
 
-  <section class="wrap kn-reviews" id="market-reviews" aria-labelledby="kn-reviews-h">
-    <h2 id="kn-reviews-h" class="kn-title" data-reveal>סקירות שוק ההון</h2>
-    <p class="kn-lead">מדי חודש: מה קרה בשווקים בישראל ובעולם, ומה זה אומר על החסכונות שלנו.</p>
-    <!-- market-reviews-list -->
-  </section>
+  <div class="wrap kn-topics" id="kn-read">
+    <span id="kn-use" class="kn-alias" aria-hidden="true"></span>
 
-  <div class="wrap kn-cols">
-    <section class="kn-section" aria-labelledby="kn-read">
-      <h2 id="kn-read" class="kn-title" data-reveal>מדריכים ומאמרים</h2>
-      <div class="kn-grid" data-reveal>
-        <a class="kn-card" href="/pension-check">
-          <span class="kn-text"><span class="kn-k">מדריך</span><strong>בדיקת תיק פנסיוני</strong><small>דמי ניהול, מסלול, כיסויים, מוטבים וקופות ישנות: מה בודקים ומה מקבלים בסוף</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/financial-planning">
-          <span class="kn-text"><span class="kn-k">מדריך</span><strong>תכנון פיננסי אישי</strong><small>פנסיה, השתלמות, ביטוח וכסף פנוי בתמונה אחת, ותוכנית אחת שנשארת מעודכנת</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/management-fees">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>דמי ניהול בפנסיה</strong><small>כמה משלמים, מה התקרה בחוק, איפה רואים את זה ואיך מורידים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/pension-fund-or-managers-insurance">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>קרן פנסיה או ביטוח מנהלים?</strong><small>מה ההבדל, מה זה מקדם מובטח, ומתי לא נוגעים בפוליסה ישנה</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/old-pension-funds">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>קופות פנסיה ישנות</strong><small>איך מוצאים כסף ממקומות עבודה קודמים, ומה בודקים לפני שמאחדים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/cash-in-bank-account">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>כסף פנוי בעו״ש: מה עושים איתו?</strong><small>קרן כספית, פיקדון, קופת גמל להשקעה או פוליסה, לפי מתי תצטרכו את הכסף</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/study-fund-withdraw">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>קרן השתלמות נזילה: למשוך או להשאיר?</strong><small>מה מפסידים כשמושכים, ומתי כן נכון למשוך</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/pension-monthly-amount">
-          <span class="kn-text"><span class="kn-k">שאלות ותשובות</span><strong>כמה פנסיה אקבל בחודש?</strong><small>צבירה, מקדם המרה ומה עוד משפיע על הקצבה, עם דוגמה במספרים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/self-employed">
-          <span class="kn-text"><span class="kn-k">מדריך</span><strong>פנסיה וחיסכון לעצמאים</strong><small>כמה חובה להפקיד, אילו הטבות מס אפשר לקבל ומה לבדוק לפני סוף השנה</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/savings-policy">
-          <span class="kn-text"><span class="kn-k">מדריך</span><strong>פוליסת חיסכון</strong><small>נזילות, מסלולים, דמי ניהול ומס על הרווחים, ומה לבדוק לפני שמצטרפים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/investment-fund">
-          <span class="kn-text"><span class="kn-k">מדריך</span><strong>קופת גמל להשקעה</strong><small>נזילות, מס על הרווחים וקצבה פטורה ממס מגיל 60</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/hachshara-policy">
-          <span class="kn-text"><span class="kn-k">מאמר <span class="hp-stamp kn-stamp" data-until="2027-01-01T00:00:00+02:00">מבצע סוף שנה בדמי ניהול</span></span><strong>פוליסת החיסכון של הכשרה</strong><small>שישה מנהלי השקעות בפוליסה אחת, ומעבר ביניהם בלי אירוע מס</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/phoenix-apollo">
-          <span class="kn-text"><span class="kn-k">מאמר</span><strong>מסלול אפולו בהפניקס</strong><small>אשראי ואג״ח בחו״ל, מגודר לשקל, מול פיקדון וקרן כספית</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/magazine/tides-and-waves">
-          <span class="kn-text"><span class="kn-k">מאמר</span><strong>הגאות והגלים</strong><small>שוק ההון ומסלולי החיסכון שלנו, ולמה כדאי לזכור את 2022</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-      </div>
+    <section class="kn-topic" id="kn-pension" aria-labelledby="kn-pension-h">
+      <h2 id="kn-pension-h" class="kn-title" data-reveal><span class="kn-n">01</span>הפנסיה שלי</h2>
+      <p class="kn-lead">דמי ניהול, מסלול, קופות ישנות וכמה תקבלו בסוף.</p>
+      <ul class="kn-list">
+        <li><a class="kn-row" href="/pension-check"><span class="kn-k">מדריך</span><strong>בדיקת תיק פנסיוני</strong><small>דמי ניהול, מסלול, כיסויים, מוטבים וקופות ישנות: מה בודקים ומה מקבלים בסוף</small></a></li>
+        <li><a class="kn-row" href="/management-fees"><span class="kn-k">שאלות ותשובות</span><strong>דמי ניהול בפנסיה</strong><small>כמה משלמים, מה התקרה בחוק, איפה רואים את זה ואיך מורידים</small></a></li>
+        <li><a class="kn-row" href="/pension-fund-or-managers-insurance"><span class="kn-k">שאלות ותשובות</span><strong>קרן פנסיה או ביטוח מנהלים?</strong><small>מה ההבדל, מה זה מקדם מובטח, ומתי לא נוגעים בפוליסה ישנה</small></a></li>
+        <li><a class="kn-row" href="/old-pension-funds"><span class="kn-k">שאלות ותשובות</span><strong>קופות פנסיה ישנות</strong><small>איך מוצאים כסף ממקומות עבודה קודמים, ומה בודקים לפני שמאחדים</small></a></li>
+        <li><a class="kn-row" href="/pension-monthly-amount"><span class="kn-k">שאלות ותשובות</span><strong>כמה פנסיה אקבל בחודש?</strong><small>צבירה, מקדם המרה ומה עוד משפיע על הקצבה, עם דוגמה במספרים</small></a></li>
+      </ul>
     </section>
 
-    <section class="kn-section" aria-labelledby="kn-use">
-      <h2 id="kn-use" class="kn-title" data-reveal>כלים ומחשבונים</h2>
-      <div class="kn-grid" data-reveal>
-        <a class="kn-card" href="/compass">
-          <span class="kn-text"><span class="kn-k">שאלון</span><strong>המצפן הפיננסי לעצמאים</strong><small>כמה שאלות קצרות, ותדעו מה כדאי לכם לבדוק קודם</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/market-data">
-          <span class="kn-text"><span class="kn-k">נתונים</span><strong>תשואות ונתוני שוק</strong><small>מי הוביל בתשואות בקופות, אירועים כלכליים, מט"ח, ריביות ומדדים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/self-employed-tax-calculator/">
-          <span class="kn-text"><span class="kn-k">מחשבון</span><strong>מחשבון הטבות מס לעצמאים</strong><small>כמה שוות לכם ההפקדות לפנסיה ולקרן השתלמות, בשקלים</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/magazine/financial-calendar">
-          <span class="kn-text"><span class="kn-k">לוח שנה</span><strong>לוח השנה הפיננסי</strong><small>מה לבדוק בכל חודש, עם תזכורות ישר ליומן</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/severance">
-          <span class="kn-text"><span class="kn-k">מדריך ומחשבון</span><strong>סיום עבודה וכספי פיצויים</strong><small>טופס 161, כמה פטור ממס, ומה לבחור: משיכה או רצף</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="/study-fund">
-          <span class="kn-text"><span class="kn-k">כלי</span><strong>קרן השתלמות לעצמאים</strong><small>כמה להפקיד ומה ההטבה</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>
-        <a class="kn-card" href="https://romanoroei.github.io/DrawWise/" target="_blank" rel="noopener">
-          <span class="kn-text"><span class="kn-k">כלי</span><strong>מאיפה למשוך קודם</strong><small>סדר משיכות מהחסכונות לפי מס</small></span>
-          <span class="kn-go" aria-hidden="true">↗</span>
-        </a>
-      </div>
+    <section class="kn-topic" id="kn-self" aria-labelledby="kn-self-h">
+      <h2 id="kn-self-h" class="kn-title" data-reveal><span class="kn-n">02</span>עצמאים</h2>
+      <p class="kn-lead">כמה חובה להפקיד, כמה מס זה חוסך, ומה סוגרים לפני סוף השנה.</p>
+      <ul class="kn-list">
+        <li><a class="kn-row" href="/self-employed"><span class="kn-k">מדריך</span><strong>פנסיה וחיסכון לעצמאים</strong><small>כמה חובה להפקיד, אילו הטבות מס אפשר לקבל ומה לבדוק לפני סוף השנה</small></a></li>
+        <li><a class="kn-row" href="/self-employed-tax-calculator/"><span class="kn-k kn-k-tool">מחשבון</span><strong>מחשבון הטבות מס לעצמאים</strong><small>כמה שוות לכם ההפקדות לפנסיה ולקרן השתלמות, בשקלים</small></a></li>
+        <li><a class="kn-row" href="/study-fund"><span class="kn-k kn-k-tool">מחשבון</span><strong>קרן השתלמות לעצמאים</strong><small>כמה להפקיד השנה ומה ההטבה</small></a></li>
+        <li><a class="kn-row" href="/compass"><span class="kn-k kn-k-tool">שאלון</span><strong>המצפן הפיננסי לעצמאים</strong><small>כמה שאלות קצרות, ותדעו מה לבדוק קודם</small></a></li>
+      </ul>
+    </section>
+
+    <section class="kn-topic" id="kn-money" aria-labelledby="kn-money-h">
+      <h2 id="kn-money-h" class="kn-title" data-reveal><span class="kn-n">03</span>כסף פנוי והשקעה</h2>
+      <p class="kn-lead">איפה להחזיק כסף שלא צריך עכשיו, לפי מתי תצטרכו אותו.</p>
+      <ul class="kn-list">
+        <li><a class="kn-row" href="/cash-in-bank-account"><span class="kn-k">שאלות ותשובות</span><strong>כסף פנוי בעו״ש: מה עושים איתו?</strong><small>קרן כספית, פיקדון, קופת גמל להשקעה או פוליסה, לפי מתי תצטרכו את הכסף</small></a></li>
+        <li><a class="kn-row" href="/investment-fund"><span class="kn-k">מדריך</span><strong>קופת גמל להשקעה</strong><small>נזילות, מס על הרווחים וקצבה פטורה ממס מגיל 60</small></a></li>
+        <li><a class="kn-row" href="/savings-policy"><span class="kn-k">מדריך</span><strong>פוליסת חיסכון</strong><small>נזילות, מסלולים, דמי ניהול ומס על הרווחים, ומה לבדוק לפני שמצטרפים</small></a></li>
+        <li><a class="kn-row" href="/hachshara-policy"><span class="kn-k">מאמר <span class="hp-stamp kn-stamp" data-until="2027-01-01T00:00:00+02:00">מבצע סוף שנה בדמי ניהול</span></span><strong>פוליסת החיסכון של הכשרה</strong><small>שישה מנהלי השקעות בפוליסה אחת, ומעבר ביניהם בלי אירוע מס</small></a></li>
+        <li><a class="kn-row" href="/phoenix-apollo"><span class="kn-k">מאמר</span><strong>מסלול אפולו בהפניקס</strong><small>אשראי ואג״ח בחו״ל, מגודר לשקל, מול פיקדון וקרן כספית</small></a></li>
+      </ul>
+    </section>
+
+    <section class="kn-topic" id="kn-withdraw" aria-labelledby="kn-withdraw-h">
+      <h2 id="kn-withdraw-h" class="kn-title" data-reveal><span class="kn-n">04</span>משיכה, עזיבת עבודה ופרישה</h2>
+      <p class="kn-lead">לפני שמושכים: כמה זה עולה במס ומה מפסידים.</p>
+      <ul class="kn-list">
+        <li><a class="kn-row" href="/study-fund-withdraw"><span class="kn-k">שאלות ותשובות</span><strong>קרן השתלמות נזילה: למשוך או להשאיר?</strong><small>מה מפסידים כשמושכים, ומתי כן נכון למשוך</small></a></li>
+        <li><a class="kn-row" href="/severance"><span class="kn-k kn-k-tool">מדריך ומחשבון</span><strong>סיום עבודה וכספי פיצויים</strong><small>טופס 161, כמה פטור ממס, ומה לבחור: משיכה או רצף</small></a></li>
+        <li><a class="kn-row" href="https://romanoroei.github.io/DrawWise/" target="_blank" rel="noopener"><span class="kn-k kn-k-tool">כלי</span><strong>מאיפה למשוך קודם</strong><small>סדר משיכות מהחסכונות לפי מס</small></a></li>
+      </ul>
+    </section>
+
+    <section class="kn-topic" id="market-reviews" aria-labelledby="kn-reviews-h">
+      <h2 id="kn-reviews-h" class="kn-title" data-reveal><span class="kn-n">05</span>שוק ההון והחיסכון שלי</h2>
+      <p class="kn-lead">מה קרה בשווקים החודש, ואיפה הקופה שלכם עומדת מול האחרות.</p>
+      <ul class="kn-list">
+        <!-- market-reviews-list -->
+        <li><a class="kn-row" href="/market-data"><span class="kn-k kn-k-tool">נתונים</span><strong>תשואות ונתוני שוק</strong><small>מי הוביל בתשואות בקופות, אירועים כלכליים, מט"ח, ריביות ומדדים</small></a></li>
+        <li><a class="kn-row" href="/magazine/tides-and-waves"><span class="kn-k">מאמר</span><strong>הגאות והגלים</strong><small>שוק ההון ומסלולי החיסכון שלנו, ולמה כדאי לזכור את 2022</small></a></li>
+      </ul>
+    </section>
+
+    <section class="kn-topic" id="kn-plan" aria-labelledby="kn-plan-h">
+      <h2 id="kn-plan-h" class="kn-title" data-reveal><span class="kn-n">06</span>תמונה מלאה</h2>
+      <p class="kn-lead">פנסיה, ביטוח, חיסכון ויעדים בתוכנית אחת, ומה לבדוק בכל חודש.</p>
+      <ul class="kn-list">
+        <li><a class="kn-row" href="/financial-planning"><span class="kn-k">מדריך</span><strong>תכנון פיננסי אישי</strong><small>פנסיה, השתלמות, ביטוח וכסף פנוי בתמונה אחת, ותוכנית אחת שנשארת מעודכנת</small></a></li>
+        <li><a class="kn-row" href="/magazine/financial-calendar"><span class="kn-k kn-k-tool">לוח שנה</span><strong>לוח השנה הפיננסי</strong><small>מה לבדוק בכל חודש, עם תזכורות ישר ליומן</small></a></li>
+      </ul>
     </section>
   </div>
 
@@ -158,7 +140,7 @@
     <div class="wrap">
       <div class="art-col">
         <p class="statement" data-reveal>הכלים נותנים כיוון. בשיחת ההתאמה נראה מה נכון בשבילכם.</p>
-        <div class="art-cta-row"><a class="button button-ink art-cta-btn" href="/#contact" data-cta="knowledge-end-contact">לשיחת התאמה ללא עלות</a>
+        <div class="art-cta-row"><a class="button button-ink art-cta-btn" href="/#contact" data-cta="knowledge-end-contact">לשיחת התאמה</a>
         <a class="button button-line-ink art-cta-btn art-cta-wa" href="https://wa.me/972528089808?text=%D7%94%D7%99%D7%99%20%D7%A8%D7%95%D7%A2%D7%99%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%28%D7%90%D7%A8%D7%91%D7%99%D7%98%D7%A8%D7%90%D7%96%27%20%D7%A9%D7%9C%20%D7%99%D7%93%D7%A2%29%20%D7%95%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A9%D7%90%D7%9C%D7%94%3A" target="_blank" rel="noopener" data-cta="knowledge-end-whatsapp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>או לשאלה קצרה בוואטסאפ</a></div>
       </div>
     </div>
@@ -188,5 +170,6 @@
 <script src="js/site.js" defer></script>
 <script src="js/consent.js" data-root="" defer></script>
 <script src="js/year-end.js" defer></script>
+<script src="js/search.js" defer></script>
 </body>
 </html>

@@ -38,6 +38,7 @@ ${preview ? `<base href="${esc(preview)}">\n<meta name="robots" content="noindex
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${root}css/site.css">
+<link rel="stylesheet" href="${root}css/search.css">
 <link rel="stylesheet" href="${root}css/article.css">
 <link rel="stylesheet" href="${root}css/toc.css">
 <link rel="stylesheet" href="${root}css/reviews.css">
@@ -93,6 +94,7 @@ function foot(root, page) {
 
 <script src="${root}js/site.js" defer></script>
 <script src="${root}js/toc.js" defer></script>
+<script src="${root}js/search.js" defer></script>
 <script src="${root}js/consent.js" data-root="${root}" defer></script>
 <script src="${root}js/year-end.js" defer></script>
 <script src="${root}js/reviews.js" data-review-page="${esc(page)}" defer></script>
@@ -378,15 +380,11 @@ ${older.length ? `
 
 // The "סקירות שוק ההון" category on /knowledge: a direct link to each of the latest reviews, newest first,
 // and a quiet link to the full archive. Fills the <!-- market-reviews-list --> slot in knowledge.html.
-export function renderKnowledgeReviews(reviews, limit = 6) {
-  const cards = reviews.slice(0, limit).map(r => `<a class="kn-card" href="/market-reviews/${r.id}">
-          <span class="kn-text"><span class="kn-k">${esc(monthLabel(r.id))}</span><strong>${esc(r.title)}</strong><small>${esc((r.topics || []).filter(t => t.trim()).join(' · '))}</small></span>
-          <span class="kn-go" aria-hidden="true">←</span>
-        </a>`).join('\n        ');
-  return `${cards ? `<div class="kn-grid kn-reviews-grid" data-reveal>
-        ${cards}
-      </div>` : '<p class="kn-more">הסקירה הראשונה תעלה כאן בקרוב.</p>'}
-      <p class="kn-more"><a class="link" href="/market-reviews">${reviews.length > limit ? 'לכל הסקירות הקודמות' : 'לעמוד הסקירות'}</a></p>`;
+export function renderKnowledgeReviews(reviews, limit = 3) {
+  // rows in the "שוק ההון" topic of /knowledge: the newest reviews first, then a link to all of them
+  const rows = reviews.slice(0, limit).map(r => `<li><a class="kn-row" href="/market-reviews/${r.id}"><span class="kn-k">סקירת שוק · ${esc(monthLabel(r.id))}</span><strong>${esc(r.title)}</strong><small>${esc((r.topics || []).filter(t => t.trim()).join(' · '))}</small></a></li>`).join('\n        ');
+  const more = `<li class="kn-more"><a class="link" href="/market-reviews">${reviews.length > limit ? 'לכל סקירות שוק ההון' : 'לעמוד הסקירות'}</a></li>`;
+  return rows ? `${rows}\n        ${more}` : '<li class="kn-more">הסקירה הראשונה תעלה כאן בקרוב.</li>';
 }
 
 // Sitemap paths for the build.

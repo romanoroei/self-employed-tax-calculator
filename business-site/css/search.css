@@ -1,0 +1,84 @@
+/* Site search: the top bar button and the overlay (js/search.js). Brand: navy bar, paper results, gold marks. */
+
+/* the button sits after "מדריכים וכלים": the bar gets one more column */
+.topbar.has-search { grid-template-columns: auto auto auto auto auto minmax(0, 1fr); }
+.bar-search {
+  display: flex; align-items: center; gap: 8px; padding-inline: 18px;
+  background: var(--navy); color: var(--on-dark); border: 0; cursor: pointer;
+  font: inherit; font-size: 15px; font-weight: 700; white-space: nowrap;
+  transition: background-color 160ms ease;
+}
+.bar-search svg, .ss-form svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; flex: none; }
+.bar-search svg { color: var(--gold); }
+.bar-search:focus-visible { outline: 3px solid var(--gold); outline-offset: -3px; }
+@media (hover: hover) and (pointer: fine) { .bar-search:hover { background: var(--slate); } }
+/* the search takes room from the links: one goes earlier than before */
+@media (max-width: 1440px) { .topbar.has-search .bar-nav a:nth-child(n+5) { display: none; } }
+@media (max-width: 1180px) { .topbar.has-search .bar-nav a:nth-child(n+4) { display: none; } }
+@media (max-width: 1000px) { .topbar.has-search .bar-nav a:nth-child(n+3) { display: none; } }
+@media (max-width: 900px) {
+  .topbar.has-search { grid-template-columns: minmax(0, 1fr) auto auto auto; }
+  .bar-search { padding-inline: 13px; }
+  .bar-search span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+@media (max-width: 520px) { .bar-search { padding-inline: 10px; } .bar-search svg { width: 19px; height: 19px; } }
+
+/* the overlay */
+html.ss-open { overflow: hidden; }
+.ss {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(8, 24, 38, .62);
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: 72px 16px 24px;
+}
+.ss[hidden] { display: none; }
+/* a gentle entrance (Roei, 27.11.2026): the shade fades in, the panel drifts down a few pixels as it appears */
+.ss { opacity: 0; transition: opacity 220ms ease; }
+.ss-panel { opacity: 0; transform: translateY(-10px); transition: opacity 240ms ease, transform 280ms var(--ease-out, cubic-bezier(.2, .7, .2, 1)); }
+.ss.is-in { opacity: 1; }
+.ss.is-in .ss-panel { opacity: 1; transform: none; transition-delay: 40ms; }
+@media (prefers-reduced-motion: reduce) { .ss, .ss-panel { transition: none; transform: none; } }
+.ss-panel { width: min(760px, 100%); max-height: 100%; display: flex; flex-direction: column; background: var(--paper); color: var(--ink); box-shadow: 0 24px 60px rgba(8, 24, 38, .35); }
+.ss-form { display: flex; align-items: center; gap: 12px; padding: 0 8px 0 0; padding-inline-start: 20px; background: var(--navy-deep); color: var(--gold); }
+.ss-input {
+  flex: 1; min-width: 0; height: 64px; border: 0; background: transparent; outline: none;
+  font: inherit; font-size: 20px; font-weight: 500; color: var(--on-dark);
+}
+.ss-input::placeholder { color: #8FA0B2; }
+.ss-input::-webkit-search-cancel-button, .kn-search-field input::-webkit-search-cancel-button { display: none; }
+.ss-close { flex: none; width: 48px; height: 48px; border: 0; background: transparent; color: var(--on-dark); font-size: 30px; line-height: 1; cursor: pointer; }
+.ss-close:focus-visible { outline: 2px solid var(--gold); }
+.ss-out { overflow-y: auto; overscroll-behavior: contain; padding: 8px 22px 18px; }
+
+/* the results (overlay and /knowledge): rows split by hairlines */
+.ss-results { list-style: none; margin: 0; padding: 0; }
+.ss-results li { border-bottom: 1px solid #CFD3CE; }
+.ss-results li:last-child { border-bottom: 0; }
+.ss-hit { display: flex; flex-direction: column; gap: 3px; padding: 13px 0; color: var(--ink); text-decoration: none; }
+.ss-hit:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.ss-k { font-size: 12.5px; font-weight: 800; color: #6E5B20; }
+.ss-in { color: var(--ink-soft); font-weight: 700; }
+.ss-hit strong { font-size: 17px; font-weight: 800; line-height: 1.35; }
+.ss-hit small { font-size: 14px; line-height: 1.55; color: var(--ink-soft); }
+.ss-hit mark { background: var(--gold-soft); color: inherit; padding: 0 1px; }
+@media (hover: hover) and (pointer: fine) { .ss-hit:hover strong { text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; text-underline-offset: 4px; } }
+.ss-note, .ss-label { font-size: 13px; font-weight: 800; color: var(--ink-soft); padding-top: 10px; }
+.ss-empty { padding: 16px 0 6px; font-size: 15.5px; line-height: 1.6; }
+.ss-popular { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.ss-popular a { display: block; padding: 8px 14px; font-size: 15px; font-weight: 700; color: var(--ink); text-decoration: none; box-shadow: inset 0 0 0 1.5px var(--navy); }
+@media (hover: hover) and (pointer: fine) { .ss-popular a:hover { background: var(--navy); color: var(--on-dark); } }
+.ss-popular a:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.ss-all { margin-top: 16px; font-size: 15px; font-weight: 700; }
+.kn-search-out { padding: 0 18px; }
+
+/* phones: the search fills the screen */
+@media (max-width: 700px) {
+  .ss { padding: 0; background: var(--paper); }
+  .ss-panel { width: 100%; height: 100%; max-height: none; box-shadow: none; }
+  .ss-form { padding-inline-start: 14px; }
+  .ss-input { height: 60px; font-size: 18px; }
+  .ss-out { padding: 6px 16px 24px; }
+  .ss-hit strong { font-size: 16px; }
+  .ss-hit small { font-size: 13.5px; }
+  .kn-search-out { padding: 0 14px; }
+}
