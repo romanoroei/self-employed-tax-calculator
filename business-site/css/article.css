@@ -295,7 +295,7 @@
 .ap-col { display: flex; flex-direction: column; justify-content: flex-end; }
 .ap-total { margin: 0 0 10px; font-size: var(--t-5); color: var(--on-dark-soft); }
 .ap-total strong { display: block; font-size: var(--t-1); font-weight: 800; line-height: 1.05; color: var(--gold); }
-.ap-gap { display: block; width: fit-content; margin-bottom: 14px; padding: 6px 12px; background: var(--paper); color: var(--navy-deep); font-weight: 700; }
+.ap-gap { display: block; width: fit-content; margin-bottom: 36px; padding: 6px 12px; background: var(--paper); color: var(--navy-deep); font-weight: 700; }
 .ap-pos { display: flex; flex-direction: column; justify-content: flex-end; }
 .ap-neg { display: flex; flex-direction: column; border-top: 2px solid var(--on-dark); }
 .ap-seg { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: calc(var(--v) * var(--u)); min-height: 24px; padding: 0 12px; font-size: 14px; font-weight: 500; line-height: 1.2; }
